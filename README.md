@@ -99,6 +99,10 @@ directly; you don't need Python.
 bands/
   <band-slug>/
     band.yaml                  # MusicGroup metadata
+    media/                     # band-level photos/videos/posters, not tied
+      band-photo.jpg           # to any one release (kept locally; gitignored,
+      concert-poster.webp      # not committed)
+      ...
     <release-slug>/
       release.yaml              # MusicAlbum metadata
       01-track-slug.mp3          # audio files, as originally sourced

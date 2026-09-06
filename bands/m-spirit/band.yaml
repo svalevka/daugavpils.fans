@@ -48,7 +48,7 @@ sameAs:
   - https://www.last.fm/ru/music/M.Spirit/+wiki
 image:
   - "@type": ImageObject
-    contentUrl: m-spirit-group-photo.webp
+    contentUrl: media/m-spirit-group-photo.webp
     encodingFormat: image/webp
     caption: >
       Group photo at the graffiti-covered wall at a former factory site in
@@ -67,7 +67,7 @@ image:
         propertyID: sha256
         value: 274eeff74f2933409063ddeeb263db0662fb5fe5814ac401d578cd733a359333
   - "@type": ImageObject
-    contentUrl: m-spirit-concert-valka.webp
+    contentUrl: media/m-spirit-concert-valka.webp
     encodingFormat: image/webp
     caption: >
       Informal group photo, likely backstage or hanging out around the
@@ -83,7 +83,7 @@ image:
         propertyID: sha256
         value: 92d7ca05a480e160e276aa908c4189c34236ab83cbe8aed9b2c4e367ea3f3199
   - "@type": ImageObject
-    contentUrl: m-spirit-newspaper-article.webp
+    contentUrl: media/m-spirit-newspaper-article.webp
     encodingFormat: image/webp
     caption: >
       Newspaper article "Медицинский Спирт" из Даугавпилса ("Medical Spirit"
