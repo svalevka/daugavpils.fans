@@ -99,6 +99,19 @@
           "description": "e.g. 'Band photo, 1995'",
           "title": "Caption"
         },
+        "caption_en": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "English translation of caption",
+          "title": "Caption En"
+        },
         "contentLocation": {
           "anyOf": [
             {
@@ -320,6 +333,19 @@
       "default": null,
       "description": "Provenance / liner notes",
       "title": "Description"
+    },
+    "description_en": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "English translation of description (editorial/provenance text, not lyrics)",
+      "title": "Description En"
     },
     "track": {
       "items": {

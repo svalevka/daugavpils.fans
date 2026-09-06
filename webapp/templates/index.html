@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ t.archive_title }} — daugavpils.fans{% endblock %}
+{% block content %}
+<h1>{{ t.archive_title }}</h1>
+<p class="meta">{{ t.site_tagline }}</p>
+
+<ul class="band-list">
+  {% for band in bands %}
+  <li>
+    <a href="/{{ lang_prefix }}bands/{{ band.slug }}/">{{ band.name }}</a>
+    {% if band.location or band.foundingDate %}
+    <div class="meta">
+      {{ band.location }}{% if band.location and band.foundingDate %} · {% endif %}{% if band.foundingDate %}{{ band.foundingDate }}{% if band.dissolutionDate %}–{{ band.dissolutionDate }}{% endif %}{% endif %}
+    </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}daugavpils.fans{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="lang-{{ lang }}">
+<header class="site-header">
+  <a class="site-title" href="{{ home_url }}">daugavpils.fans</a>
+  <nav class="lang-switch">
+    <a href="{{ ru_url }}"{% if lang == "ru" %} class="active" aria-current="true"{% endif %}>RU</a>
+    <a href="{{ en_url }}"{% if lang == "en" %} class="active" aria-current="true"{% endif %}>EN</a>
+  </nav>
+</header>
+<main>
+  {% block breadcrumb %}{% endblock %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

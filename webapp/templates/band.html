@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros with context %}
+{% set media_base = "/bands/" ~ band.slug ~ "/" %}
+{% block title %}{{ band.name }} — daugavpils.fans{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb"><a href="/{{ lang_prefix }}">← {{ t.all_bands }}</a></div>
+{% endblock %}
+{% block content %}
+<h1>{{ band.name }}</h1>
+<div class="meta">
+  {{ band.location }}{% if band.location and band.foundingDate %} · {% endif %}{% if band.foundingDate %}{{ band.foundingDate }}{% if band.dissolutionDate %}–{{ band.dissolutionDate }}{% endif %}{% endif %}
+  {% if band.genre %} · {{ band.genre | join(", ") }}{% endif %}
+</div>
+
+{% if band.alternateName %}
+<p class="meta">{{ t.also_known_as }}: {{ band.alternateName | join(", ") }}</p>
+{% endif %}
+
+{% if band.description %}
+{{ macros.bio(localize(band, "description", lang)) }}
+{% endif %}
+
+{% if band.member %}
+<h2>{{ t.members }}</h2>
+<ul class="member-list">
+  {% for m in band.member %}
+  <li>
+    <strong>{{ localize(m, "name", lang) }}</strong>
+    {% set role = localize(m, "role", lang) %}
+    {% if role %} — {{ role }}{% endif %}
+    {% if m.period %} <span class="meta">({{ m.period }})</span>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if band.image %}
+<h2>{{ t.photos }}</h2>
+{{ macros.gallery(band.image, "band-photo", band.name, media_base) }}
+{% endif %}
+
+{% if band.video %}
+<h2>{{ t.video }}</h2>
+{% for vid in band.video %}
+<video controls preload="none" style="max-width: 100%;">
+  <source src="{{ media_base }}{{ vid.contentUrl }}" type="{{ vid.encodingFormat }}">
+</video>
+{% if vid.name %}<p class="meta">{{ vid.name }}</p>{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if releases %}
+<h2>{{ t.releases }}</h2>
+<ul class="release-list">
+  {% for release in releases %}
+  <li>
+    <a href="/{{ lang_prefix }}bands/{{ band.slug }}/{{ release.slug }}/">{{ release.name }}</a>
+    <span class="meta">({{ release.datePublished }})</span>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if band.sameAs %}
+<h2>{{ t.elsewhere }}</h2>
+<ul class="member-list">
+  {% for url in band.sameAs %}
+  <li><a href="{{ url }}">{{ url }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

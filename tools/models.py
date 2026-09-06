@@ -65,6 +65,7 @@ class ImageObject(MediaObjectBase):
 
     type_: str = Field(default="ImageObject", alias="@type")
     caption: Optional[str] = Field(default=None, description="e.g. 'Band photo, 1995'")
+    caption_en: Optional[str] = Field(default=None, description="English translation of caption")
     contentLocation: Optional[str] = Field(
         default=None, description="Where the photo was taken, e.g. 'Valka, Latvia'"
     )
@@ -95,8 +96,10 @@ class GroupMember(BaseModel):
     kept intentionally minimal (schema.org has no standard way to attach a
     role/period to a member relationship)."""
 
-    name: str
+    name: str = Field(description="Name as actually written, in its real script/alphabet")
+    name_en: Optional[str] = Field(default=None, description="Latin transliteration of name")
     role: Optional[str] = None
+    role_en: Optional[str] = Field(default=None, description="English translation of role")
     period: Optional[str] = Field(default=None, description="e.g. '1994-1996'")
 
 
@@ -116,6 +119,11 @@ class MusicGroup(BaseModel):
     member: list[GroupMember] = Field(default_factory=list)
     description: Optional[str] = Field(
         default=None, description="Biography, in the language it was actually written in - may be long-form"
+    )
+    description_en: Optional[str] = Field(
+        default=None,
+        description="English translation of description, only for editorial/provenance text - "
+        "never used to translate first-hand testimony, which stays in its original words",
     )
     sameAs: list[str] = Field(default_factory=list, description="External reference URLs")
     image: list[ImageObject] = Field(default_factory=list, description="Band photos")
@@ -137,6 +145,9 @@ class MusicAlbum(BaseModel):
     genre: list[str] = Field(default_factory=list)
     license: str = Field(description="License URL, e.g. a Creative Commons license URL")
     description: Optional[str] = Field(default=None, description="Provenance / liner notes")
+    description_en: Optional[str] = Field(
+        default=None, description="English translation of description (editorial/provenance text, not lyrics)"
+    )
     track: list[MusicRecording]
     image: list[ImageObject] = Field(default_factory=list, description="Cover art, era photos")
     video: list[VideoObject] = Field(

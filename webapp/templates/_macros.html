@@ -1,0 +1,36 @@
+{% macro gallery(images, prefix, fallback_alt, media_base) %}
+<div class="gallery">
+  {% for img in images %}
+  {% set caption = localize(img, "caption", lang) %}
+  <a href="#{{ prefix }}-{{ loop.index }}" class="gallery-item">
+    <figure>
+      <img src="{{ media_base }}{{ img.contentUrl }}" alt="{{ caption or fallback_alt }}" loading="lazy">
+      {% if caption %}<figcaption>{{ caption }}</figcaption>{% endif %}
+    </figure>
+  </a>
+  {% endfor %}
+</div>
+{% for img in images %}
+{% set caption = localize(img, "caption", lang) %}
+<div class="lightbox" id="{{ prefix }}-{{ loop.index }}">
+  <a href="#" class="lightbox-backdrop" aria-label="Close"></a>
+  <a href="#" class="lightbox-close" aria-label="Close">&times;</a>
+  <img src="{{ media_base }}{{ img.contentUrl }}" alt="{{ caption or fallback_alt }}">
+</div>
+{% endfor %}
+{% endmacro %}
+
+{% macro bio(text) %}
+{% set paras = text.split('\n') | select | list %}
+<div class="bio">
+  <p>{{ paras[0] }}</p>
+  {% if paras | length > 1 %}
+  <details class="bio-more">
+    <summary>Read more</summary>
+    {% for p in paras[1:] %}
+    <p>{{ p }}</p>
+    {% endfor %}
+  </details>
+  {% endif %}
+</div>
+{% endmacro %}

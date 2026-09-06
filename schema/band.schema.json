@@ -4,8 +4,22 @@
       "description": "A person's involvement in a MusicGroup. Not a formal schema.org type;\nkept intentionally minimal (schema.org has no standard way to attach a\nrole/period to a member relationship).",
       "properties": {
         "name": {
+          "description": "Name as actually written, in its real script/alphabet",
           "title": "Name",
           "type": "string"
+        },
+        "name_en": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latin transliteration of name",
+          "title": "Name En"
         },
         "role": {
           "anyOf": [
@@ -18,6 +32,19 @@
           ],
           "default": null,
           "title": "Role"
+        },
+        "role_en": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "English translation of role",
+          "title": "Role En"
         },
         "period": {
           "anyOf": [
@@ -77,6 +104,19 @@
           "default": null,
           "description": "e.g. 'Band photo, 1995'",
           "title": "Caption"
+        },
+        "caption_en": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "English translation of caption",
+          "title": "Caption En"
         },
         "contentLocation": {
           "anyOf": [
@@ -292,6 +332,19 @@
       "default": null,
       "description": "Biography, in the language it was actually written in - may be long-form",
       "title": "Description"
+    },
+    "description_en": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "English translation of description, only for editorial/provenance text - never used to translate first-hand testimony, which stays in its original words",
+      "title": "Description En"
     },
     "sameAs": {
       "description": "External reference URLs",

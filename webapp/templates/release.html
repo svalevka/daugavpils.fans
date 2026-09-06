@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros with context %}
+{% set media_base = "/bands/" ~ band.slug ~ "/" ~ release.slug ~ "/" %}
+{% block title %}{{ release.name }} — {{ band.name }} — daugavpils.fans{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb"><a href="/{{ lang_prefix }}">← {{ t.all_bands }}</a> / <a href="/{{ lang_prefix }}bands/{{ band.slug }}/">{{ band.name }}</a></div>
+{% endblock %}
+{% block content %}
+<h1>{{ release.name }}</h1>
+<div class="meta">
+  {{ band.name }} · {{ release.datePublished }}
+  {% if release.genre %} · {{ release.genre | join(", ") }}{% endif %}
+</div>
+
+{% if release.image %}
+{{ macros.gallery(release.image, "release-photo", release.name, media_base) }}
+{% endif %}
+
+{% if release.description %}
+{{ macros.bio(localize(release, "description", lang)) }}
+{% endif %}
+
+<h2>{{ t.tracklist }}</h2>
+<table class="tracklist">
+  {% for track in release.track %}
+  <tr>
+    <td class="track-position">{{ track.position }}</td>
+    <td>
+      {{ track.name }}
+      {% if track.alternateName %}<div class="meta">{{ track.alternateName }}</div>{% endif %}
+    </td>
+    <td><audio controls preload="none" src="{{ media_base }}{{ track.audio.contentUrl }}"></audio></td>
+    <td class="track-duration">{{ track.audio.duration | duration }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% if release.video %}
+<h2>{{ t.video }}</h2>
+{% for vid in release.video %}
+<video controls preload="none" style="max-width: 100%;">
+  <source src="{{ media_base }}{{ vid.contentUrl }}" type="{{ vid.encodingFormat }}">
+</video>
+{% if vid.name %}<p class="meta">{{ vid.name }}</p>{% endif %}
+{% endfor %}
+{% endif %}
+
+<p class="license">{{ t.licensed_under }}: <a href="{{ release.license }}">{{ release.license | license_label }}</a>.</p>
+{% endblock %}
