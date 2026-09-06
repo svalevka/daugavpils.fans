@@ -7,7 +7,7 @@ genre:
 - Post-punk
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
 description: 'Более поздний сборник 2007 года, изданный на Bandcamp-странице группы
-  - не то же самое, что дуэтный альбом Рыбы и Вайды "Из-за птиц" (1997), хотя частично
+  - не то же самое, что дуэтный альбом Рыба и Вайды "Из-за птиц" (1997), хотя частично
   пересекается с ним по песням (в других вариантах записи и/или названиях: "Гадюкин"
   здесь "Г-н Гадюкин", "Из-за птиц" здесь "Изоптиц", "Вагон" здесь "Последний вагон"),
   и добавляет два новых трека, включая короткий набросок "А завтра". Аудио взято напрямую
@@ -17,7 +17,7 @@ description: 'Более поздний сборник 2007 года, издан
 
   '
 description_en: 'A later, 2007 compilation released on the band''s Bandcamp page -
-  not the same thing as Riba and Vaida''s 1997 duo album "Из-за птиц", though it partially
+  not the same thing as Ryb and Vaida''s 1997 duo album "Из-за птиц", though it partially
   overlaps with it in songs (in different takes and/or titles), and adds two new tracks,
   including a short 15-second sketch, "А завтра". Unlike the rest of this archive,
   this release''s audio was sourced directly from the Bandcamp stream (no higher-quality
@@ -26,6 +26,8 @@ description_en: 'A later, 2007 compilation released on the band''s Bandcamp page
   '
 sameAs:
 - https://glazkistekolschika.bandcamp.com/album/--2
+- https://archive.org/details/daugavpils-fans-glazki-stekolshchika-2007-chernoviaki
+- https://archive.org/download/daugavpils-fans-glazki-stekolshchika-2007-chernoviaki/daugavpils-fans-glazki-stekolshchika-2007-chernoviaki_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1

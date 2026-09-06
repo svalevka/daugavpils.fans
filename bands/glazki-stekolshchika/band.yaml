@@ -119,9 +119,9 @@ description: 'Со слов Рыба.
   Спеть надо.
 
   '
-description_en: 'In Riba''s (Alexander Rybakov''s) own words: he and Vaida (Vladislav
+description_en: 'In Ryb''s (Alexander Rybakov''s) own words: he and Vaida (Vladislav
   Petkun, then playing in "M.Spirit" in Riga) came up with the band''s name while
-  hanging out at Riba''s apartment, inspired by a TV scene of Charlie Chaplin replacing
+  hanging out at Ryb''s apartment, inspired by a TV scene of Charlie Chaplin replacing
   windows a boy had broken with stones - "Glazki Stekolshchika" ("The Glazier''s Eyes").
   The two recorded a first tape album, "Ждите Изоптица" ("Wait for the Iso-bird"),
   joined by Vantuz and his home 4-channel setup. A second, larger album followed once
@@ -132,6 +132,8 @@ description_en: 'In Riba''s (Alexander Rybakov''s) own words: he and Vaida (Vlad
   '
 sameAs:
 - https://www.last.fm/ru/music/Глазки+Стекольщика/+wiki
+- https://archive.org/details/daugavpils-fans-glazki-stekolshchika
+- https://archive.org/download/daugavpils-fans-glazki-stekolshchika/daugavpils-fans-glazki-stekolshchika_archive.torrent
 image:
 - contentUrl: media/glazki-stekolshchika-daugavpils-bridge.webp
   encodingFormat: image/webp
@@ -176,12 +178,12 @@ image:
   caption_en: Screenshot of a 2017-02-18 LiveJournal post about the band by user pamupe_cc
   depicts: []
 video:
-- contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.flv
-  encodingFormat: video/x-flv
+- contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
+  encodingFormat: video/mp4
   identifier:
   - '@type': PropertyValue
     propertyID: sha256
-    value: f5f78650547e2f413af6c8ded8722d5474824ce3a6f881991f46a9e676d275d5
+    value: 8bf9dbc504a8da35faf29b16dfa71e9c063ecd2b510f0844ef0205c121426db3
   '@type': VideoObject
   name: Белая дорога (фестиваль "Krabis", 26.10.1998, Даугавпилс)
   bitrate: 1242 kbps

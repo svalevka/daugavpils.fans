@@ -15,8 +15,8 @@ member:
   name_en: Nekrofil (Shura)
   role: вокал, акустическая гитара
   role_en: vocals, acoustic guitar
-description: 'Акустический дуэт-побочный проект Рыбы (Александра Рыбакова, также участника
-  "Глазки Стекольщика") и его друга Шуры по прозвищу Некрофил. По словам Рыбы: пока
+description: 'Акустический дуэт-побочный проект Рыба (Александра Рыбакова, также участника
+  "Глазки Стекольщика") и его друга Шуры по прозвищу Некрофил. По словам Рыба: пока
   он несколько месяцев служил на пожарной вышке в Черепово, Некрофил навещал его с
   гитарой, и вдвоём они придумали небольшой альбом "Провал", назвавшись "Хориные Бега"
   - потому что носились тогда вдвоем с акустиками, "что твои хорьки". Аудиозаписи
@@ -24,8 +24,8 @@ description: 'Акустический дуэт-побочный проект Р
   выступлений.
 
   '
-description_en: 'An acoustic duo side project of Riba (Alexander Rybakov, also of
-  "Глазки Стекольщика") and his friend Shura, nicknamed Nekrofil. While Riba was stationed
+description_en: 'An acoustic duo side project of Ryb (Alexander Rybakov, also of "Глазки
+  Стекольщика") and his friend Shura, nicknamed Nekrofil. While Ryb was stationed
   for several months at a fire watchtower in Cherepovo, Nekrofil would visit him with
   a guitar, and the two put together a small album, "Провал", naming themselves "Хориные
   Бега" ("Ferret Races") after how the two of them used to run around with their acoustic
@@ -33,7 +33,9 @@ description_en: 'An acoustic duo side project of Riba (Alexander Rybakov, also o
   footage has been preserved so far.
 
   '
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-khoriniye-bega
+- https://archive.org/download/daugavpils-fans-khoriniye-bega/daugavpils-fans-khoriniye-bega_archive.torrent
 image: []
 video:
 - contentUrl: media/khoriniye-bega-ga-ga-ga.mp4

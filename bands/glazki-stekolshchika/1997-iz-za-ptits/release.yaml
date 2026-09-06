@@ -6,7 +6,7 @@ byArtist: glazki-stekolshchika
 genre:
 - Post-punk
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
-description: 'Дуэтный магнитоальбом Александра Рыбакова (Рыбы) и Владислава Петкуна
+description: 'Дуэтный магнитоальбом Александра Рыбакова (Рыба) и Владислава Петкуна
   (Вайды), записанный до/около первого альбома группы "Ждите Изоптица". Название альбома
   отсылает к песне "Это из-за птиц", не поместившейся на "Ждите Изоптица" - отсюда
   и название того альбома. Точный год записи неизвестен, датирован приблизительно
@@ -14,7 +14,7 @@ description: 'Дуэтный магнитоальбом Александра Р�
   треки идут в алфавитном порядке названий. Оцифровано в MP3 (320 kbps CBR).
 
   '
-description_en: 'A duo tape album by Alexander Rybakov (Riba) and Vladislav Petkun
+description_en: 'A duo tape album by Alexander Rybakov (Ryb) and Vladislav Petkun
   (Vaida), recorded before/around the band''s first album "Ждите Изоптица". The exact
   recording year is unknown and estimated from context in the band''s biography. The
   original track order was not preserved; tracks here are listed alphabetically by
@@ -141,3 +141,6 @@ track:
     duration: PT2M53S
 image: []
 video: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-glazki-stekolshchika-1997-iz-za-ptits
+- https://archive.org/download/daugavpils-fans-glazki-stekolshchika-1997-iz-za-ptits/daugavpils-fans-glazki-stekolshchika-1997-iz-za-ptits_archive.torrent

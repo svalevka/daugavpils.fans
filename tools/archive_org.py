@@ -27,3 +27,15 @@ def archive_org_url(item_id: str, content_url: str) -> str:
     is used as-is as the file's path within the item, so it matches the
     band/release.yaml `contentUrl` exactly."""
     return f"https://archive.org/download/{item_id}/{content_url}"
+
+
+def item_page_url(item_id: str) -> str:
+    """The public archive.org details page for a whole item (band or release)."""
+    return f"https://archive.org/details/{item_id}"
+
+
+def item_torrent_url(item_id: str) -> str:
+    """archive.org auto-generates one torrent per item, at this predictable
+    URL - same naming convention as archive_org_url, just for the whole item
+    rather than one file."""
+    return f"https://archive.org/download/{item_id}/{item_id}_archive.torrent"

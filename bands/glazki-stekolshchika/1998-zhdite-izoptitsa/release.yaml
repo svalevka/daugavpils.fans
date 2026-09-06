@@ -11,7 +11,7 @@ description: 'Изначально самостоятельно издано н�
   Название альбома объясняется в биографии группы: слово "Изоптица" стало понятно
   только в следующем альбоме, поскольку для песни "Это из-за птиц" места на этом альбоме
   уже не хватило. Авторство песен: нечётные треки (1, 3, 5, 7, 9, 11, 13, 15) написаны
-  и спеты Вайдой; чётные (2, 4, 6, 8, 10, 12, 14) и треки 16-17 - Рыбой. Оцифровано
+  и спеты Вайдой; чётные (2, 4, 6, 8, 10, 12, 14) и треки 16-17 - Рыбом. Оцифровано
   в MP3 (320 kbps CBR). На странице группы на Bandcamp представлена 18-трековая версия
   этого альбома с Intro и Outro, которых нет в этой 17-трековой оцифровке кассеты;
   здесь эти два трека отсутствуют.
@@ -20,13 +20,15 @@ description: 'Изначально самостоятельно издано н�
 description_en: 'Originally self-released on cassette in 1997-1998, Daugavpils. The
   band''s first tape album, recorded at Vantuz''s home on his 4-channel mixing desk.
   Odd-numbered tracks were written and sung by Vaida; even-numbered tracks (plus 16-17)
-  by Riba. Digitized to MP3 (320 kbps CBR). The band''s Bandcamp page lists an 18-track
+  by Ryb. Digitized to MP3 (320 kbps CBR). The band''s Bandcamp page lists an 18-track
   version of this album with an Intro and Outro not present in this 17-track tape
   digitization; those two tracks are not included here.
 
   '
 sameAs:
 - https://glazkistekolschika.bandcamp.com/album/-
+- https://archive.org/details/daugavpils-fans-glazki-stekolshchika-1998-zhdite-izoptitsa
+- https://archive.org/download/daugavpils-fans-glazki-stekolshchika-1998-zhdite-izoptitsa/daugavpils-fans-glazki-stekolshchika-1998-zhdite-izoptitsa_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1

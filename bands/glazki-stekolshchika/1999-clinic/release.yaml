@@ -7,30 +7,32 @@ genre:
 - Post-punk
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
 description: 'Второй магнитоальбом группы, записанный на дом-студии "Кикос Воскрес"
-  при участии Вайды, Рыбы, Рубрехта и Вантуза (звук/сведение), а также друзей группы:
+  при участии Вайды, Рыба, Рубрехта и Вантуза (звук/сведение), а также друзей группы:
   Стакана, Кузи, Толика, Петухова, Еремея и Некрофила. Вайда не дожил до завершения
   альбома - умер в Риге, в общежитии, - и альбом досводили без него. Известна более
   полная версия трек-листа: архивная копия сайта "Черный Понедельник" 2008 года документирует
   21 трек с полными данными об участниках, а на Bandcamp-странице группы альбом представлен
   как 24 трека (включая четыре инструментальные интерлюдии "Драпировка"). В этой оцифровке
   сохранилась более короткая 17-трековая версия. Известное авторство песен из этой
-  версии: Вайда - 2, 6, 8, 9, 11, 12, 16; Рыба - 3, 4, 7, 10, 13, 15. Авторство остальных
+  версии: Вайда - 2, 6, 8, 9, 11, 12, 16; Рыб - 3, 4, 7, 10, 13, 15. Авторство остальных
   треков (1, 5, 14, 17) не зафиксировано. Оцифровано в MP3 (320 kbps CBR).
 
   '
 description_en: 'The band''s second tape album, recorded at the "Кикос Воскрес" home
-  studio with Vaida, Riba, Rubrekht and Vantuz (sound/mixing), plus contributions
-  from several friends of the band. Vaida died before the album was finished and it
-  was mixed to completion without him. A fuller tracklist is documented elsewhere:
-  a 2008 archived snapshot of the old "Черный Понедельник" site lists 21 tracks with
-  full session credits (see sameAs), and the band''s Bandcamp page lists the album
-  as 24 tracks (including four instrumental "Драпировка" interludes). This digitization
+  studio with Vaida, Ryb, Rubrekht and Vantuz (sound/mixing), plus contributions from
+  several friends of the band. Vaida died before the album was finished and it was
+  mixed to completion without him. A fuller tracklist is documented elsewhere: a 2008
+  archived snapshot of the old "Черный Понедельник" site lists 21 tracks with full
+  session credits (see sameAs), and the band''s Bandcamp page lists the album as 24
+  tracks (including four instrumental "Драпировка" interludes). This digitization
   preserves a shorter, 17-track version. Digitized to MP3 (320 kbps CBR).
 
   '
 sameAs:
 - https://glazkistekolschika.bandcamp.com/album/clinic
 - http://web.archive.org/web/20080227002753/http://chepe.lv/group.php?group=1999_2
+- https://archive.org/details/daugavpils-fans-glazki-stekolshchika-1999-clinic
+- https://archive.org/download/daugavpils-fans-glazki-stekolshchika-1999-clinic/daugavpils-fans-glazki-stekolshchika-1999-clinic_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1

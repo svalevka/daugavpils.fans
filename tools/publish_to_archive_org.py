@@ -27,7 +27,7 @@ from pathlib import Path
 
 import yaml
 
-from archive_org import archive_org_url, band_item_id, release_item_id
+from archive_org import archive_org_url, band_item_id, item_page_url, item_torrent_url, release_item_id
 from models import MusicAlbum, MusicGroup
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -58,11 +58,30 @@ def media_files(base_dir: Path, media_items) -> dict[str, Path]:
     return {item.contentUrl: base_dir / item.contentUrl for item in media_items}
 
 
+def record_same_as(yaml_path: Path, urls: list[str]) -> None:
+    """Add any of `urls` not already listed to yaml_path's `sameAs`, and
+    write the file back if that changed anything - the same "compute once,
+    record the fact" pattern validate.py --write uses for checksums."""
+    data = yaml.safe_load(yaml_path.read_text())
+    existing = data.get("sameAs", [])
+    changed = False
+    for url in urls:
+        if url not in existing:
+            existing.append(url)
+            changed = True
+    if not changed:
+        return
+    data["sameAs"] = existing
+    yaml_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False))
+    print(f"    recorded sameAs in {yaml_path.relative_to(REPO_ROOT)}")
+
+
 def publish_item(
     item_id: str,
     files: dict[str, Path],
     metadata: dict[str, str],
     dry_run: bool,
+    yaml_path: Path,
 ) -> None:
     if not files:
         print(f"  {item_id}: nothing to publish, skipping")
@@ -84,6 +103,8 @@ def publish_item(
         checksum=True,  # skip files whose remote MD5 already matches
         verbose=True,
     )
+
+    record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
 
 
 def band_metadata(band: MusicGroup) -> dict[str, str]:
@@ -134,6 +155,7 @@ def main() -> int:
             media_files(band_dir, band.image + band.video),
             band_metadata(band),
             args.dry_run,
+            band_dir / "band.yaml",
         )
 
         for release_dir in sorted(p for p in band_dir.iterdir() if p.is_dir()):
@@ -147,6 +169,7 @@ def main() -> int:
                 files,
                 release_metadata(release, band),
                 args.dry_run,
+                release_yaml,
             )
 
     print("\nDry run: nothing was uploaded." if args.dry_run else "\nDone.")
