@@ -1,0 +1,263 @@
+'@type': MusicAlbum
+name: Ждите Изоптица
+slug: 1998-zhdite-izoptitsa
+datePublished: '1998'
+byArtist: glazki-stekolshchika
+genre:
+- Post-punk
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Изначально самостоятельно издано на кассете в 1997-1998 годах, Даугавпилс.
+  Первый магнитоальбом группы, записанный дома у Вантуза на его 4-х канальном пульте.
+  Название альбома объясняется в биографии группы: слово "Изоптица" стало понятно
+  только в следующем альбоме, поскольку для песни "Это из-за птиц" места на этом альбоме
+  уже не хватило. Авторство песен: нечётные треки (1, 3, 5, 7, 9, 11, 13, 15) написаны
+  и спеты Вайдой; чётные (2, 4, 6, 8, 10, 12, 14) и треки 16-17 - Рыбой. Оцифровано
+  в MP3 (320 kbps CBR). На странице группы на Bandcamp представлена 18-трековая версия
+  этого альбома с Intro и Outro, которых нет в этой 17-трековой оцифровке кассеты;
+  здесь эти два трека отсутствуют.
+
+  '
+description_en: 'Originally self-released on cassette in 1997-1998, Daugavpils. The
+  band''s first tape album, recorded at Vantuz''s home on his 4-channel mixing desk.
+  Odd-numbered tracks were written and sung by Vaida; even-numbered tracks (plus 16-17)
+  by Riba. Digitized to MP3 (320 kbps CBR). The band''s Bandcamp page lists an 18-track
+  version of this album with an Intro and Outro not present in this 17-track tape
+  digitization; those two tracks are not included here.
+
+  '
+sameAs:
+- https://glazkistekolschika.bandcamp.com/album/-
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Солнышко
+  audio:
+    contentUrl: 01-solnyshko.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fd03ca0ffc2264d2440f05873273fd86bc51a6e649230887ab46cb1d3b64f6ec
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M7S
+- '@type': MusicRecording
+  position: 2
+  name: Майский жук
+  audio:
+    contentUrl: 02-maiskii-zhuk.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b31eb25bc32a30b654e6aa509b1dbcad55e24b2e69ccffa0e2f3273ca02bfcf6
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT1M38S
+- '@type': MusicRecording
+  position: 3
+  name: Brivibas Piemineklis
+  audio:
+    contentUrl: 03-brivibas-piemineklis.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 04594c409a9d2ecaf2a531f9959af8b5e1378facf280d3e3c089983030aa4878
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M41S
+- '@type': MusicRecording
+  position: 4
+  name: Локотком к локотку
+  audio:
+    contentUrl: 04-lokotkom-k-lokotku.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 549e11403c08d3b5952196b055f2832ad5eee07eee1732338ed558cf98a74e0b
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M34S
+- '@type': MusicRecording
+  position: 5
+  name: Мэри Гиппус
+  audio:
+    contentUrl: 05-meri-gippus.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 59945ec0580ac0e5588a338effaf8e67079f904e439c692c15eae3732e8fb15a
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M54S
+- '@type': MusicRecording
+  position: 6
+  name: На конце
+  audio:
+    contentUrl: 06-na-kontse.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: df77b7e727f0c884817b7c678694a019b0276b4a13044f276d7005e2d165fc8e
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M23S
+- '@type': MusicRecording
+  position: 7
+  name: Пулю пущу
+  audio:
+    contentUrl: 07-puliu-pushchu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d9a33a09371ad2e667a77b96d7777a5ff98689605ae04d5fbc03abfd3791402d
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT1M37S
+- '@type': MusicRecording
+  position: 8
+  name: Про прибор
+  audio:
+    contentUrl: 08-pro-pribor.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6db36f8d1a699083dae0f897a763036e7d435a149d0106faa3e77e88c7acf519
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M21S
+- '@type': MusicRecording
+  position: 9
+  name: На поляне
+  audio:
+    contentUrl: 09-na-poliane.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 315252b1107a74befe1ec9e2151efc37f12f7c7bfc75e8a0feae1837fd89c360
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M51S
+- '@type': MusicRecording
+  position: 10
+  name: Мальчик и птица
+  audio:
+    contentUrl: 10-mal-chik-i-ptitsa.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d2c48fdc173a2c5d9a83bea1f60efa71b8c08bbf3d715a3ed9a6a5cf5bfcf924
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M22S
+- '@type': MusicRecording
+  position: 11
+  name: К нулю
+  audio:
+    contentUrl: 11-k-nuliu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5ced6872ac899578532bd632f76876cf0121f5f256ffef2fc5837beaba00960c
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M37S
+- '@type': MusicRecording
+  position: 12
+  name: Белогрудка
+  audio:
+    contentUrl: 12-belogrudka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ab43e8bba6af5e5eea76956748da251c5acb2ae09ea6927e15dd49cd91572c68
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT4M41S
+- '@type': MusicRecording
+  position: 13
+  name: Здравствуй, милая девочка
+  audio:
+    contentUrl: 13-zdravstvui-milaia-devochka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cb5f4cb158005829f4f10cd41e49118395e3dc0c639ed483677a56b1454a0fff
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M36S
+- '@type': MusicRecording
+  position: 14
+  name: Кони на дебила
+  audio:
+    contentUrl: 14-koni-na-debila.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 51b36dcbb8d7eeb3766494ee54348f0bf117e9b0e889d3c18a06875010cbc064
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M24S
+- '@type': MusicRecording
+  position: 15
+  name: Зелёная
+  audio:
+    contentUrl: 15-zelionaia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7823a99b0db8b4d2b5f7cb9b71bb9f8aba880010ea43ba8bff8f1a466ed7c6ba
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT1M12S
+- '@type': MusicRecording
+  position: 16
+  name: Лунь
+  audio:
+    contentUrl: 16-lun.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ebd32a9ecf86295e2d867245ecd3e409d0d8da0be28731120de4cf6a2ca019f6
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT1M23S
+- '@type': MusicRecording
+  position: 17
+  name: Куда попал
+  audio:
+    contentUrl: 17-kuda-popal.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8498ff4f473a8c05d472a18c0636fd9a911b856317d06041a8edd5c8067aa633
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M32S
+image:
+- contentUrl: cover.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d07f304720ab4aac021216337a1bd0f3714f4312b8cf61f19dee899fc79c22f7
+  '@type': ImageObject
+  caption: Обложка альбома (Bandcamp)
+  caption_en: Album cover (Bandcamp)
+  depicts: []
+video: []

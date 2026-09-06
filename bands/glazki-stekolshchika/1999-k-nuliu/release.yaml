@@ -1,0 +1,181 @@
+'@type': MusicAlbum
+name: К нулю
+slug: 1999-k-nuliu
+datePublished: '1999'
+byArtist: glazki-stekolshchika
+genre:
+- Post-punk
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Кассетный сборник 1999 года, составленный из части песен второго альбома
+  (пересекается с треками альбома "Clinic", записанными в те же сессии, в частности
+  "Mystification"/"Mistifikasion", "Номер раз", "Дверка", "Обои", "Латгальская прощальная",
+  "Чудище" и "...16, 17...") и четырёх треков, повторно взятых с первого альбома "Ждите
+  Изоптица" ("Солнышко", "Мэри Гиппус", "На поляне", "К нулю"). Оцифровано в MP3 (320
+  kbps CBR).
+
+  '
+description_en: 'A 1999 cassette compilation combining part of the second album''s
+  material (overlapping with tracks on "Clinic", from the same recording sessions)
+  with four tracks carried over from the first album, "Ждите Изоптица". Digitized
+  to MP3 (320 kbps CBR).
+
+  '
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Mystification
+  audio:
+    contentUrl: 01-mystification.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 54209dd3d0edef2219f44a3997c345d9fff1b2de82d1cc4ae85434f1a4da13f6
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT4M12S
+- '@type': MusicRecording
+  position: 2
+  name: Номер раз
+  audio:
+    contentUrl: 02-nomer-raz.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a2b98511c3291c0b7d4edee0225ce55cecbcb2dcf9713b53f53e2615a51ee806
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M9S
+- '@type': MusicRecording
+  position: 3
+  name: Дверка
+  audio:
+    contentUrl: 03-dverka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e19fbb8312fd7afe9360418f724ba0decd854c6ef57e0b624ffcec4cfea38d45
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M56S
+- '@type': MusicRecording
+  position: 4
+  name: Обои
+  audio:
+    contentUrl: 04-oboi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e567e7c87f06dc961b529c6f58c3c6b07a2270045926060589cf4c3fd4933621
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT4M31S
+- '@type': MusicRecording
+  position: 5
+  name: Страшный сон
+  audio:
+    contentUrl: 05-strashnyi-son.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c8c6aa04ff9345779d0d6325823fa9b04407f97618746f7ee390d02ecaca18f1
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT4M27S
+- '@type': MusicRecording
+  position: 6
+  name: Латгальская прощальная
+  audio:
+    contentUrl: 06-latgal-skaia-proshchal-naia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 67523c777664ef80404e72ba624fec1cec197ea4bea1a3e9845945f10db7325f
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M31S
+- '@type': MusicRecording
+  position: 7
+  name: Чудище
+  audio:
+    contentUrl: 07-chudishche.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3086f781aea0a6f2d0be628f3ba3b5006ca4379ccdf65e9974dc839ae8c2aaec
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M24S
+- '@type': MusicRecording
+  position: 8
+  name: '...16, 17...'
+  audio:
+    contentUrl: 08-16-17.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a033ab5b8f5b1f413c11a6a91877df8899ce7095570af41b1c7582b71f008c2e
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT1M25S
+- '@type': MusicRecording
+  position: 9
+  name: Солнышко
+  audio:
+    contentUrl: 09-solnyshko.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 58a263e1a41860a1cae1666dfc757c8f43a54ed41c1e6607dc524a71e86d2fd9
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M7S
+- '@type': MusicRecording
+  position: 10
+  name: Мэри Гиппус
+  audio:
+    contentUrl: 10-meri-gippus.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f27ddea4fa792df2341dd6b29f864202b21d39996ab14612cdd302d38ef46f0f
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M57S
+- '@type': MusicRecording
+  position: 11
+  name: На поляне
+  audio:
+    contentUrl: 11-na-poliane.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b7fb3e245d6f596934ac7bbc733465a28579058e1440e2e2d086cd8b05a23968
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M55S
+- '@type': MusicRecording
+  position: 12
+  name: К нулю
+  audio:
+    contentUrl: 12-k-nuliu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fb7fda673d943b6615701b0fb9faf7d287960fba9ab083d7c152c2dea213c6a5
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M38S
+image: []
+video: []

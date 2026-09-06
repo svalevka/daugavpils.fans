@@ -111,11 +111,24 @@ flowchart LR
    [github.com/svalevka/daugavpils.fans](https://github.com/svalevka/daugavpils.fans),
    нажмите зелёную кнопку **"Code"**, затем **"Download ZIP"**. Скачается
    архив со всеми текстами, треклистами и биографиями.
-2. **Сами записи, фото и видео** — зайдите на
-   [archive.org](https://archive.org) и найдите группу или альбом по
-   названию (например, "daugavpils-fans-m-spirit"). На странице каждой
-   группы/альбома есть кнопка **"Download Options"** — там можно скачать
-   как отдельные файлы, так и всё сразу одним архивом или торрентом.
+2. **Сами записи, фото и видео** — искать ничего не нужно: у каждой группы
+   и у каждого альбома есть свой прямой адрес на archive.org, который
+   складывается по простому правилу:
+   - страница группы: `archive.org/details/daugavpils-fans-НАЗВАНИЕ-ГРУППЫ`
+   - страница альбома: `archive.org/details/daugavpils-fans-НАЗВАНИЕ-ГРУППЫ-НАЗВАНИЕ-АЛЬБОМА`
+
+   Например, страница группы M. Spirit — это
+   [archive.org/details/daugavpils-fans-m-spirit](https://archive.org/details/daugavpils-fans-m-spirit),
+   а её альбома 1995 года — [archive.org/details/daugavpils-fans-m-spirit-1995-zadushevnie-pesenki-ms-pankukhina](https://archive.org/details/daugavpils-fans-m-spirit-1995-zadushevnie-pesenki-ms-pankukhina).
+   Точные названия-slug (латиницей, через дефис) для каждой группы и
+   альбома видны прямо на сайте [daugavpils.fans](https://daugavpils.fans)
+   в адресной строке браузера, когда вы открываете страницу этой группы
+   или альбома.
+
+   На странице каждой группы/альбома на archive.org есть кнопка
+   **"Download Options"** — там можно скачать как отдельные файлы, так и
+   всё сразу одним архивом или торрентом (торрент за тем же адресом, только
+   с окончанием `_archive.torrent`).
 
 ```mermaid
 flowchart TD

@@ -1,0 +1,88 @@
+'@type': MusicGroup
+name: Хориные Бега
+slug: khoriniye-bega
+alternateName: []
+location: Daugavpils, Latvia
+genre:
+- Acoustic
+- Post-punk
+member:
+- name: Александр Рыбаков (Рыба)
+  name_en: Alexander Rybakov (Riba)
+  role: вокал, акустическая гитара
+  role_en: vocals, acoustic guitar
+- name: Некрофил (Шура)
+  name_en: Nekrofil (Shura)
+  role: вокал, акустическая гитара
+  role_en: vocals, acoustic guitar
+description: 'Акустический дуэт-побочный проект Рыбы (Александра Рыбакова, также участника
+  "Глазки Стекольщика") и его друга Шуры по прозвищу Некрофил. По словам Рыбы: пока
+  он несколько месяцев служил на пожарной вышке в Черепово, Некрофил навещал его с
+  гитарой, и вдвоём они придумали небольшой альбом "Провал", назвавшись "Хориные Бега"
+  - потому что носились тогда вдвоем с акустиками, "что твои хорьки". Аудиозаписи
+  альбома "Провал" в этот архив пока не добавлены; сохранены только видеозаписи живых
+  выступлений.
+
+  '
+description_en: 'An acoustic duo side project of Riba (Alexander Rybakov, also of
+  "Глазки Стекольщика") and his friend Shura, nicknamed Nekrofil. While Riba was stationed
+  for several months at a fire watchtower in Cherepovo, Nekrofil would visit him with
+  a guitar, and the two put together a small album, "Провал", naming themselves "Хориные
+  Бега" ("Ferret Races") after how the two of them used to run around with their acoustic
+  guitars. Audio for the "Провал" album is not yet in this archive; only live video
+  footage has been preserved so far.
+
+  '
+sameAs: []
+image: []
+video:
+- contentUrl: media/khoriniye-bega-ga-ga-ga.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 6a14ecce14103004eddafd714c2b7162aee0ab49189bc2fef5faad480337cd11
+  '@type': VideoObject
+  name: Га-га-га
+  bitrate: 235 kbps
+  duration: PT1M59S
+- contentUrl: media/khoriniye-bega-bez-nazvaniia.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 51c713e4215e23968193677efe262402a2fde1d78023e5ac104101e40799c700
+  '@type': VideoObject
+  name: '***'
+  bitrate: 232 kbps
+  duration: PT3M38S
+- contentUrl: media/khoriniye-bega-khorosho.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ed3a56edd24316fc976abaa2a7d492eb09d9bb4c67c2a6ffe8d96923c587711e
+  '@type': VideoObject
+  name: Хорошо
+  bitrate: 418 kbps
+  duration: PT3M15S
+- contentUrl: media/khoriniye-bega-topchu-dver.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e7c3d1daaa5ee233cd96cf6577b156326cfd57517bab9e7d65bd6d4e5925a490
+  '@type': VideoObject
+  name: Топчу дверь
+  bitrate: 235 kbps
+  duration: PT5M1S
+- contentUrl: media/khoriniye-bega-moguchie-paltsy.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 940b876e094c2234bc60d5baace17cb2da626cb23d204f1b1897f209ec66e3bd
+  '@type': VideoObject
+  name: Могучие пальцы
+  bitrate: 255 kbps
+  duration: PT1M13S

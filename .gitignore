@@ -18,6 +18,7 @@ bands/**/*.webp
 bands/**/*.mp4
 bands/**/*.mov
 bands/**/*.mkv
+bands/**/*.flv
 
 # Generated static site output (ADR-0001) - a build artifact, not source.
 webapp/dist/

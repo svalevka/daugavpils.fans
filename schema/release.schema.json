@@ -347,6 +347,14 @@
       "description": "English translation of description (editorial/provenance text, not lyrics)",
       "title": "Description En"
     },
+    "sameAs": {
+      "description": "External reference URLs",
+      "items": {
+        "type": "string"
+      },
+      "title": "Sameas",
+      "type": "array"
+    },
     "track": {
       "items": {
         "$ref": "#/$defs/MusicRecording"

@@ -1,0 +1,201 @@
+'@type': MusicAlbum
+name: Черновяки
+slug: 2007-chernoviaki
+datePublished: '2007'
+byArtist: glazki-stekolshchika
+genre:
+- Post-punk
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Более поздний сборник 2007 года, изданный на Bandcamp-странице группы
+  - не то же самое, что дуэтный альбом Рыбы и Вайды "Из-за птиц" (1997), хотя частично
+  пересекается с ним по песням (в других вариантах записи и/или названиях: "Гадюкин"
+  здесь "Г-н Гадюкин", "Из-за птиц" здесь "Изоптиц", "Вагон" здесь "Последний вагон"),
+  и добавляет два новых трека, включая короткий набросок "А завтра". Аудио взято напрямую
+  с Bandcamp-стрима (мастер-записи на 320 kbps не найдены) - в отличие от остальных
+  релизов в этом архиве, это не оцифровка оригинальной плёнки, а копия 128 kbps MP3
+  потока с Bandcamp.
+
+  '
+description_en: 'A later, 2007 compilation released on the band''s Bandcamp page -
+  not the same thing as Riba and Vaida''s 1997 duo album "Из-за птиц", though it partially
+  overlaps with it in songs (in different takes and/or titles), and adds two new tracks,
+  including a short 15-second sketch, "А завтра". Unlike the rest of this archive,
+  this release''s audio was sourced directly from the Bandcamp stream (no higher-quality
+  320 kbps master was available) rather than digitized from an original tape.
+
+  '
+sameAs:
+- https://glazkistekolschika.bandcamp.com/album/--2
+track:
+- '@type': MusicRecording
+  position: 1
+  name: 16-17
+  audio:
+    contentUrl: 01-16-17.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 790830a8103342c8a4993ca21cec33464129e6504c288a4d033aa08a67f4a681
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M29S
+- '@type': MusicRecording
+  position: 2
+  name: А завтра
+  audio:
+    contentUrl: 02-a-zavtra.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b2be9f7e659d508db92b6bce58d501d443cee6699e9f118e10f3195902325aed
+    '@type': AudioObject
+    bitrate: 129 kbps
+    duration: PT15S
+- '@type': MusicRecording
+  position: 3
+  name: Друг собаки
+  audio:
+    contentUrl: 03-drug-sobaki.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9ae18538e61f65dc9ba47b8898055aa180f51fa664e97b49ec0bee603102a5c9
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M50S
+- '@type': MusicRecording
+  position: 4
+  name: Г-н Гадюкин
+  audio:
+    contentUrl: 04-g-n-gadiukin.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9be87e7dc9d18557ef0124445af2b2224a38613e56e185db5cffb8d92f3481b0
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT7M14S
+- '@type': MusicRecording
+  position: 5
+  name: Иваново
+  audio:
+    contentUrl: 05-ivanovo.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bf220a2f815e5e388d79c95c1a333a3c08c828b535c78f5199d899db64be2c95
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M2S
+- '@type': MusicRecording
+  position: 6
+  name: Изоптиц
+  audio:
+    contentUrl: 06-izoptits.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7e73b72eabc8a824089d6a6319eb62b2983df29d2a7a684fa8dd79047fc5b770
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M17S
+- '@type': MusicRecording
+  position: 7
+  name: Лучик
+  audio:
+    contentUrl: 07-luchik.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8e33409f49be5e2d5df6ef2fa94698012e01757cf98aee41d5e87ceeeefc4f0a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M57S
+- '@type': MusicRecording
+  position: 8
+  name: Маки
+  audio:
+    contentUrl: 08-maki.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a5b6b9e90f95116c3bf736a78e23ea651513d21191f6fa4a277cc04b4a76ad16
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT6M53S
+- '@type': MusicRecording
+  position: 9
+  name: Трансваль
+  audio:
+    contentUrl: 09-transval.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: da1d14b0e66a57fde5e83d39005b2c60f273cd0e00accc2b7d42440c583fc3f9
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT8M20S
+- '@type': MusicRecording
+  position: 10
+  name: Последний вагон
+  audio:
+    contentUrl: 10-poslednii-vagon.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2ebd47e1372af265ceb2cfd6d6432077d81c9847fededf4299f908c5138416a4
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M53S
+image:
+- contentUrl: cover.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7ff0f1af2628460b1bf6fb04faf2809c7c947800728d487fbe5c42074651dc2f
+  '@type': ImageObject
+  caption: Обложка альбома (Bandcamp)
+  caption_en: Album cover (Bandcamp)
+  depicts: []
+video:
+- contentUrl: video-drug-sobaki.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 348ddf9203523e348562e8a24b97ad374fece15dccd584766051298a58fd9142
+  '@type': VideoObject
+  name: Друг собаки (видео)
+  bitrate: 217 kbps
+  duration: PT3M50S
+- contentUrl: video-izoptits.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 8251950b164a07276c15ec3195945689dd5c2114cc838263f1307a24bb76cf62
+  '@type': VideoObject
+  name: Изоптиц (видео)
+  bitrate: 301 kbps
+  duration: PT3M17S
+- contentUrl: video-poslednii-vagon.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 621eee4968ead7cc66199ca045c7615aa3b119ede068a2508e04115eb87a9b1a
+  '@type': VideoObject
+  name: Последний вагон (видео)
+  bitrate: 406 kbps
+  duration: PT2M53S

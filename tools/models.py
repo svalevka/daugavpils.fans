@@ -148,6 +148,7 @@ class MusicAlbum(BaseModel):
     description_en: Optional[str] = Field(
         default=None, description="English translation of description (editorial/provenance text, not lyrics)"
     )
+    sameAs: list[str] = Field(default_factory=list, description="External reference URLs")
     track: list[MusicRecording]
     image: list[ImageObject] = Field(default_factory=list, description="Cover art, era photos")
     video: list[VideoObject] = Field(
