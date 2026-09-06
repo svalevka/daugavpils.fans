@@ -118,6 +118,11 @@ tools/
 docs/agents/                    # config consumed by AI coding-agent skills
                                  # (issue tracker, triage labels, domain docs)
                                  # - not part of the archive itself
+webapp/                          # public website built from the archive (ADR-0001)
+  build.py                       # renders bands/**/*.yaml into static HTML
+  templates/, static/            # Jinja2 templates, CSS
+  deploy/                        # docker-compose + nginx config run on the host
+  dist/                          # generated output (gitignored, not committed)
 ```
 
 ### Naming convention
@@ -210,8 +215,10 @@ metadata governance from file hosting entirely, and how
 trusted circle plus a written admission policy and torrent/mirror
 distribution instead of centralized paid hosting.
 
-Explicitly out of scope so far: any website/frontend, actual torrent
-creation, and inviting other contributors.
+A public website now exists (see `webapp/` and ADR-0001) - a static site
+built from the same archive and hosted separately from it, not a
+replacement for the torrent distribution model above. Still explicitly out
+of scope: actual torrent creation, and inviting other contributors.
 
 ## Tooling usage
 
