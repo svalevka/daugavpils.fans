@@ -40,7 +40,7 @@
       "type": "object"
     },
     "ImageObject": {
-      "description": "schema.org ImageObject - e.g. a band photo or album cover.",
+      "description": "schema.org ImageObject - e.g. a band photo, album cover, or press clipping.",
       "properties": {
         "contentUrl": {
           "description": "Path to the file, relative to its band/release folder",
@@ -77,6 +77,27 @@
           "default": null,
           "description": "e.g. 'Band photo, 1995'",
           "title": "Caption"
+        },
+        "contentLocation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the photo was taken, e.g. 'Valka, Latvia'",
+          "title": "Contentlocation"
+        },
+        "depicts": {
+          "description": "Names of people or things shown, e.g. ['Vaida', 'Valera']. Free text, not required to match member[].name - a photo may show people who were never formal members.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Depicts",
+          "type": "array"
         }
       },
       "required": [
@@ -269,7 +290,7 @@
         }
       ],
       "default": null,
-      "description": "Short bio",
+      "description": "Biography, in the language it was actually written in - may be long-form",
       "title": "Description"
     },
     "sameAs": {

@@ -61,10 +61,19 @@ class VideoObject(MediaObjectBase):
 
 
 class ImageObject(MediaObjectBase):
-    """schema.org ImageObject - e.g. a band photo or album cover."""
+    """schema.org ImageObject - e.g. a band photo, album cover, or press clipping."""
 
     type_: str = Field(default="ImageObject", alias="@type")
     caption: Optional[str] = Field(default=None, description="e.g. 'Band photo, 1995'")
+    contentLocation: Optional[str] = Field(
+        default=None, description="Where the photo was taken, e.g. 'Valka, Latvia'"
+    )
+    depicts: list[str] = Field(
+        default_factory=list,
+        description="Names of people or things shown, e.g. ['Vaida', 'Valera']. "
+        "Free text, not required to match member[].name - a photo may show "
+        "people who were never formal members.",
+    )
 
 
 class MusicRecording(BaseModel):
@@ -105,7 +114,9 @@ class MusicGroup(BaseModel):
     location: Optional[str] = Field(default=None, description="City, e.g. 'Daugavpils'")
     genre: list[str] = Field(default_factory=list)
     member: list[GroupMember] = Field(default_factory=list)
-    description: Optional[str] = Field(default=None, description="Short bio")
+    description: Optional[str] = Field(
+        default=None, description="Biography, in the language it was actually written in - may be long-form"
+    )
     sameAs: list[str] = Field(default_factory=list, description="External reference URLs")
     image: list[ImageObject] = Field(default_factory=list, description="Band photos")
     video: list[VideoObject] = Field(

@@ -13,6 +13,7 @@ bands/**/*.m4a
 bands/**/*.jpg
 bands/**/*.jpeg
 bands/**/*.png
+bands/**/*.webp
 bands/**/*.mp4
 bands/**/*.mov
 bands/**/*.mkv
