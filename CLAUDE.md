@@ -15,3 +15,10 @@ Default label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `read
 ### Domain docs
 
 Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Tools inventory
+
+`tools/TOOLS.md` describes, in plain English, what each file in `tools/`
+is for, what problem it solves, and when/how to use it. Whenever you add,
+remove, or meaningfully change the purpose of a file in `tools/`, update
+`tools/TOOLS.md` in the same change.
