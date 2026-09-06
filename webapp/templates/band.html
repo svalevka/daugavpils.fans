@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros with context %}
-{% set media_base = "/bands/" ~ band.slug ~ "/" %}
+{% set media_url = partial(band_media_url, band) %}
 {% block title %}{{ band.name }} — daugavpils.fans{% endblock %}
 {% block breadcrumb %}
 <div class="breadcrumb"><a href="/{{ lang_prefix }}">← {{ t.all_bands }}</a></div>
@@ -36,14 +36,14 @@
 
 {% if band.image %}
 <h2>{{ t.photos }}</h2>
-{{ macros.gallery(band.image, "band-photo", band.name, media_base) }}
+{{ macros.gallery(band.image, "band-photo", band.name, media_url) }}
 {% endif %}
 
 {% if band.video %}
 <h2>{{ t.video }}</h2>
 {% for vid in band.video %}
 <video controls preload="none" style="max-width: 100%;">
-  <source src="{{ media_base }}{{ vid.contentUrl }}" type="{{ vid.encodingFormat }}">
+  <source src="{{ media_url(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
 </video>
 {% if vid.name %}<p class="meta">{{ vid.name }}</p>{% endif %}
 {% endfor %}

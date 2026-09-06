@@ -13,7 +13,7 @@ arrangement, or maintainer.
 ## How this works, at a glance
 
 The two layers stay separate all the way through: git carries the small,
-reviewable **metadata**; torrents carry the actual **media**. Nothing
+reviewable **metadata**; archive.org carries the actual **media**. Nothing
 about "how do people get the music" depends on this GitHub repo staying
 online, or on any one person's hosting bill.
 
@@ -29,37 +29,36 @@ flowchart TD
     F["Contributor's local media files<br/>(audio / image / video)"] --> E
     D --> E["tools/validate.py --write<br/>computes checksums, duration, bitrate"]
 
-    subgraph release["Periodic release — torrent"]
-        E --> G["Release cut: bundle the<br/>bands/ tree (metadata + media)"]
-        G --> H["Torrent file<br/>+ the sha256 checksums already<br/>recorded in release.yaml"]
+    subgraph release["Publish — archive.org"]
+        E --> G["tools/publish_to_archive_org.py<br/>one item per band, one per release"]
+        G --> H["archive.org item<br/>+ auto-generated torrent,<br/>verified against sha256 in release.yaml"]
     end
 
     subgraph distribution["Distribution — no single point of failure"]
-        H --> I["Maintainer seeds"]
-        H --> J["Anyone who downloads<br/>can also seed"]
-        I --> K["Downloader"]
+        H --> I["archive.org hosts + seeds"]
+        H --> J["Anyone who downloads<br/>the torrent can also seed"]
+        I --> K["Downloader / the Site"]
         J --> K
     end
 
     K --> L["Verify downloaded files against<br/>the recorded sha256 checksums"]
-    L -. future .-> M["A website or streaming app<br/>reads from a local torrent copy"]
+    L --> M["The Site streams media<br/>directly from archive.org"]
 ```
 
 In words: someone contributes a band's recordings by opening a pull
 request against this repo with just the metadata (the actual files stay
-local); the quorum reviews and merges it; periodically, someone with
-release access bundles the current state of `bands/` — metadata plus
-everyone's media files — into a **single, self-sufficient torrent**,
-using the checksums already sitting in each `release.yaml` as the
-built-in integrity manifest. That torrent is a complete, working copy of
-the archive on its own — it needs no dependency on GitHub, or this repo,
-or anyone's hosting still being alive to be useful. It gets seeded by
-whoever chooses to (starting with the maintainer, ideally joined by
-anyone who downloads it), so no single host or person disappearing takes
-the archive down with them, and anyone downloading a copy can verify it's
-intact independent of who they got it from. A website or streaming app is
-a possible future consumer of that data — not a dependency of the archive
-existing in the first place.
+local); the quorum reviews and merges it; `tools/publish_to_archive_org.py`
+publishes that band/release's media as its own archive.org item, using
+the checksums already sitting in each `release.yaml` to know exactly what
+should be there. Each item is a complete, working copy of that
+band/release's media on its own — it needs no dependency on GitHub, or
+this repo, or anyone's hosting still being alive to be useful — and
+archive.org auto-generates a torrent for it, so anyone who downloads it
+can also seed it. Anyone downloading a copy can verify it's intact,
+independent of who they got it from. The Site (see `webapp/`) is a
+consumer of that same archive.org-hosted data, streaming media directly
+from it rather than hosting its own copy — not a dependency of the
+archive existing in the first place.
 
 ## What's actually portable here
 
@@ -72,19 +71,17 @@ validate them without this repo's Python tooling.
 **Only the metadata is version-controlled, right now.** Audio/image/video
 files live under `bands/` locally (`tools/validate.py` reads and
 checksums them there) but are excluded from git (see `.gitignore`) — per
-the model above, they're meant to reach people via a torrent release, not
-by committing binaries into this repository's history.
+the model above, they're meant to reach people via archive.org, not by
+committing binaries into this repository's history.
 
-**The git-tracked metadata is the contract a torrent release must
+**The git-tracked metadata is the contract an archive.org item must
 satisfy.** Each `release.yaml`/`band.yaml` declares exactly which files
 must exist (`contentUrl`) and what their exact byte-content must be
-(`sha256`, under `identifier`). `tools/validate.py` is what currently
-enforces that contract — checking that every file the metadata claims
-exists actually exists locally, with the checksum it claims. A release is
-only ever cut from a local `bands/` tree that has already passed
-`validate.py`, so a torrent inherits that guarantee by construction; there
-isn't yet a separate automated "cut a release" tool that re-checks this at
-release time (see the tickets tracking this repo's remaining work).
+(`sha256`, under `identifier`). `tools/validate.py` enforces that
+contract locally — checking that every file the metadata claims exists,
+with the checksum it claims — and `tools/publish_to_archive_org.py`
+refuses to publish over a tree that hasn't already passed `validate.py`,
+so every archive.org item inherits that guarantee by construction.
 
 The **tooling** (`tools/`, Python + Pydantic) is a convenience layer for
 *this* maintainer: it validates metadata against the schema and computes
@@ -92,6 +89,14 @@ checksums/audio properties. It is not part of the contract. `schema/*.schema.jso
 is generated from `tools/models.py` — if you want to validate this archive
 from Go, Node, or anything else, validate against those JSON Schema files
 directly; you don't need Python.
+
+**`webapp/` is one opinionated way to present this data, not the only
+one.** It's a Jinja2/static-HTML site (see ADR-0001) reflecting this
+maintainer's choices about routes, layout, and language handling. Because
+the archive underneath it is just schema-validated YAML + files on
+archive.org, anyone could build a different website, app, or tool against
+the same data without needing `webapp/`'s code or agreeing with its
+choices - `webapp/` is a consumer of the archive, not a definition of it.
 
 ## Layout
 
@@ -115,14 +120,18 @@ tools/
   models.py                     # Pydantic models (source of the schema)
   export_schema.py              # regenerates schema/*.schema.json
   validate.py                   # validates bands/ against the schema
+  archive_org.py                # archive.org item-id/URL conventions
+  publish_to_archive_org.py     # publishes bands/**/*.yaml's media to archive.org
 docs/agents/                    # config consumed by AI coding-agent skills
                                  # (issue tracker, triage labels, domain docs)
                                  # - not part of the archive itself
 webapp/                          # public website built from the archive (ADR-0001)
-  build.py                       # renders bands/**/*.yaml into static HTML
+  build.py                       # renders bands/**/*.yaml into static HTML,
+                                  # linking media straight to archive.org
   templates/, static/            # Jinja2 templates, CSS
   deploy/                        # docker-compose + nginx config run on the host
-  dist/                          # generated output (gitignored, not committed)
+  dist/                          # generated output: HTML/CSS only, no media
+                                  # (gitignored, not committed)
 ```
 
 ### Naming convention
@@ -203,9 +212,9 @@ verified by `tools/validate.py`. This means:
 
 - Anyone can verify a copy of the archive (or of a single file) hasn't
   been corrupted or tampered with, independent of where they got it from.
-- When this archive is eventually released as a torrent, the checksums
-  already recorded here double as the verification manifest — no
-  separate step needed later.
+- When this archive is published to archive.org, the checksums already
+  recorded here double as the verification manifest — no separate step
+  needed at publish time.
 
 ## Design precedents & current status
 
@@ -216,9 +225,10 @@ trusted circle plus a written admission policy and torrent/mirror
 distribution instead of centralized paid hosting.
 
 A public website now exists (see `webapp/` and ADR-0001) - a static site
-built from the same archive and hosted separately from it, not a
-replacement for the torrent distribution model above. Still explicitly out
-of scope: actual torrent creation, and inviting other contributors.
+built from the same archive, streaming media directly from archive.org
+rather than hosting a copy of it (see `tools/publish_to_archive_org.py`),
+not a replacement for the archive.org distribution model above. Still
+explicitly out of scope: inviting other contributors.
 
 ## Tooling usage
 
@@ -233,4 +243,9 @@ python tools/export_schema.py
 python tools/validate.py                          # check only
 python tools/validate.py --write                  # also compute missing checksums/duration/bitrate
 python tools/validate.py --bands-dir path/to/dir   # validate a different directory (e.g. a test fixture)
+
+# publish media to archive.org (requires `ia configure` once, using the
+# project's archive.org account - see tools/TOOLS.md):
+python tools/publish_to_archive_org.py             # publish anything new or changed
+python tools/publish_to_archive_org.py --dry-run   # preview without uploading
 ```

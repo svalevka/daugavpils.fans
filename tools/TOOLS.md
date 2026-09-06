@@ -55,6 +55,46 @@ SHA-256 checksum plus (for audio/video) duration/bitrate.
   other than the repo's own `bands/`. This is what the test suite uses to
   validate temporary fixture trees without touching real archive data.
 
+## `archive_org.py`
+
+**Problem it solves:** the publish tool and the website both need to agree
+on exactly which archive.org item a given band/release lives in, and what
+URL a given file has within it - without inventing a new metadata field
+just to record that.
+
+**How:** two pure functions deriving an archive.org identifier from the
+`slug` fields already in `band.yaml`/`release.yaml` (e.g.
+`daugavpils-fans-m-spirit`), plus one building the public download URL for
+a file within an item. No I/O, no dependency on the rest of `tools/` or
+`webapp/`.
+
+**When you'd touch it:** you're changing the identifier naming convention
+itself - a rare, deliberate decision, since existing archive.org items
+can't be silently renamed.
+
+## `publish_to_archive_org.py`
+
+**Problem it solves:** getting a band/release's media onto archive.org -
+the archive's actual distribution mechanism (see `README.md`) and the only
+place the website links to for media (see `webapp/build.py`).
+
+**How:** walks `bands/`, and for each band/release uploads its media
+(`internetarchive.upload(..., checksum=True)`, which skips any file
+already present with a matching checksum) to the item id computed by
+`archive_org.py`, with title/creator/date/license metadata drawn from the
+band/release YAML. Refuses to run over an archive that hasn't already
+passed `validate.py`.
+
+**When you'd run it:**
+- `python tools/publish_to_archive_org.py` - publish anything new or
+  changed. Run this after adding a new band/release's media, before the
+  next `webapp/build.py`.
+- `python tools/publish_to_archive_org.py --dry-run` - show what would be
+  published without uploading anything.
+- Requires an authenticated `ia` config on the machine running it (`ia
+  configure`, once, using the project's archive.org account - not a
+  personal one).
+
 ## `archive_fixture.py`
 
 **Problem it solves:** every test that exercises `validate.py` needs a

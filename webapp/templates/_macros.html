@@ -1,10 +1,10 @@
-{% macro gallery(images, prefix, fallback_alt, media_base) %}
+{% macro gallery(images, prefix, fallback_alt, url_fn) %}
 <div class="gallery">
   {% for img in images %}
   {% set caption = localize(img, "caption", lang) %}
   <a href="#{{ prefix }}-{{ loop.index }}" class="gallery-item">
     <figure>
-      <img src="{{ media_base }}{{ img.contentUrl }}" alt="{{ caption or fallback_alt }}" loading="lazy">
+      <img src="{{ url_fn(img.contentUrl) }}" alt="{{ caption or fallback_alt }}" loading="lazy">
       {% if caption %}<figcaption>{{ caption }}</figcaption>{% endif %}
     </figure>
   </a>
@@ -15,7 +15,7 @@
 <div class="lightbox" id="{{ prefix }}-{{ loop.index }}">
   <a href="#" class="lightbox-backdrop" aria-label="Close"></a>
   <a href="#" class="lightbox-close" aria-label="Close">&times;</a>
-  <img src="{{ media_base }}{{ img.contentUrl }}" alt="{{ caption or fallback_alt }}">
+  <img src="{{ url_fn(img.contentUrl) }}" alt="{{ caption or fallback_alt }}">
 </div>
 {% endfor %}
 {% endmacro %}

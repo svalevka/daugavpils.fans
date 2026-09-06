@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros with context %}
-{% set media_base = "/bands/" ~ band.slug ~ "/" ~ release.slug ~ "/" %}
+{% set media_url = partial(release_media_url, band, release) %}
 {% block title %}{{ release.name }} — {{ band.name }} — daugavpils.fans{% endblock %}
 {% block breadcrumb %}
 <div class="breadcrumb"><a href="/{{ lang_prefix }}">← {{ t.all_bands }}</a> / <a href="/{{ lang_prefix }}bands/{{ band.slug }}/">{{ band.name }}</a></div>
@@ -13,7 +13,7 @@
 </div>
 
 {% if release.image %}
-{{ macros.gallery(release.image, "release-photo", release.name, media_base) }}
+{{ macros.gallery(release.image, "release-photo", release.name, media_url) }}
 {% endif %}
 
 {% if release.description %}
@@ -29,7 +29,7 @@
       {{ track.name }}
       {% if track.alternateName %}<div class="meta">{{ track.alternateName }}</div>{% endif %}
     </td>
-    <td><audio controls preload="none" src="{{ media_base }}{{ track.audio.contentUrl }}"></audio></td>
+    <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}"></audio></td>
     <td class="track-duration">{{ track.audio.duration | duration }}</td>
   </tr>
   {% endfor %}
@@ -39,7 +39,7 @@
 <h2>{{ t.video }}</h2>
 {% for vid in release.video %}
 <video controls preload="none" style="max-width: 100%;">
-  <source src="{{ media_base }}{{ vid.contentUrl }}" type="{{ vid.encodingFormat }}">
+  <source src="{{ media_url(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
 </video>
 {% if vid.name %}<p class="meta">{{ vid.name }}</p>{% endif %}
 {% endfor %}

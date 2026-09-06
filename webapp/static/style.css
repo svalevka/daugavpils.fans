@@ -36,6 +36,18 @@ header.site-header .site-title {
   letter-spacing: 0.02em;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.support-link {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
 .lang-switch {
   font-size: 0.85rem;
   white-space: nowrap;

@@ -20,6 +20,7 @@ STRINGS = {
         "licensed_under": "Лицензия",
         "structured_data": "Структурированные данные",
         "view_structured_data": "Показать метаданные (JSON-LD)",
+        "support_link": "Поддержка",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -35,6 +36,7 @@ STRINGS = {
         "licensed_under": "Licensed under",
         "structured_data": "Structured data",
         "view_structured_data": "View metadata (JSON-LD)",
+        "support_link": "Support",
     },
 }
 

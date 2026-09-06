@@ -4,7 +4,8 @@ __pycache__/
 
 # Audio/image/video media files are deliberately kept out of git (see
 # README: "What's actually portable here" / distribution model). They live
-# locally, and are distributed separately as checksummed torrent releases.
+# locally, and are distributed separately via archive.org (see
+# tools/publish_to_archive_org.py).
 bands/**/*.mp3
 bands/**/*.flac
 bands/**/*.wav

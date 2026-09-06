@@ -4,12 +4,14 @@ Static site builder for the Daugavpils Music Archive website (ADR-0001).
 
 Renders bands/**/*.yaml into plain HTML under webapp/dist/, once per
 language in i18n.LANGS (default "ru" at the site root, others under
-/<lang>/). Media files are copied exactly once, mirroring bands/, and every
-page - in every language - references them by absolute path (e.g.
-/bands/m-spirit/media/x.webp), since they aren't duplicated per language.
+/<lang>/). No media (audio/image/video) is copied anywhere - the Site
+links directly to archive.org, where each band/release's media lives as
+its own item (see tools/archive_org.py, tools/publish_to_archive_org.py).
 
-Requires the archive to already pass tools/validate.py - this script
-refuses to build over a broken or incomplete bands/ tree.
+Requires the archive to already pass tools/validate.py, and every
+referenced media file to already be published to archive.org - this
+script refuses to build over a broken/incomplete bands/ tree, or over
+media the Site would otherwise link to a 404.
 
 Usage:
     python webapp/build.py
@@ -20,6 +22,7 @@ import json
 import shutil
 import subprocess
 import sys
+from functools import partial
 from pathlib import Path
 
 import yaml
@@ -29,6 +32,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from archive_org import archive_org_url, band_item_id, release_item_id  # noqa: E402
 from models import MusicAlbum, MusicGroup  # noqa: E402
 from i18n import STRINGS, LANGS, DEFAULT_LANG, home_url, band_url, release_url, lang_prefix  # noqa: E402
 
@@ -92,12 +96,12 @@ def load_release(release_dir: Path) -> MusicAlbum:
     return MusicAlbum.model_validate(raw)
 
 
-def copy_media(src_dir: Path, dst_dir: Path, media_items) -> None:
-    for item in media_items:
-        src = src_dir / item.contentUrl
-        dst = dst_dir / item.contentUrl
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(src, dst)
+def band_media_url(band: MusicGroup, content_url: str) -> str:
+    return archive_org_url(band_item_id(band.slug), content_url)
+
+
+def release_media_url(band: MusicGroup, release: MusicAlbum, content_url: str) -> str:
+    return archive_org_url(release_item_id(band.slug, release.slug), content_url)
 
 
 def require_valid_archive() -> None:
@@ -109,6 +113,37 @@ def require_valid_archive() -> None:
             "Fix the errors above, or run `python tools/validate.py --write` "
             "first if it's just missing checksums/duration/bitrate."
         )
+        sys.exit(1)
+
+
+def _missing_from_item(item_id: str, content_urls: list[str]) -> list[str]:
+    import internetarchive as ia
+
+    if not content_urls:
+        return []
+    present = {f["name"] for f in ia.get_item(item_id).files}
+    return [f"{item_id}/{c}" for c in content_urls if c not in present]
+
+
+def require_media_published(bands: list[MusicGroup], releases_by_band: dict[str, list[MusicAlbum]]) -> None:
+    """The Site links directly to archive.org - it can never build a page
+    linking to media that isn't there yet (see tools/publish_to_archive_org.py)."""
+    print("Checking media is published to archive.org...")
+    missing: list[str] = []
+    for band in bands:
+        missing.extend(
+            _missing_from_item(band_item_id(band.slug), [m.contentUrl for m in band.image + band.video])
+        )
+        for release in releases_by_band[band.slug]:
+            content_urls = [t.audio.contentUrl for t in release.track]
+            content_urls += [m.contentUrl for m in release.image + release.video]
+            missing.extend(_missing_from_item(release_item_id(band.slug, release.slug), content_urls))
+
+    if missing:
+        print("\nAborted: the following media isn't published to archive.org yet:\n")
+        for m in missing:
+            print(f"- {m}")
+        print("\nRun `python tools/publish_to_archive_org.py` first.")
         sys.exit(1)
 
 
@@ -127,30 +162,21 @@ def build() -> None:
     env.filters["duration"] = format_duration
     env.filters["license_label"] = license_label
     env.globals["localize"] = localize
+    env.globals["band_media_url"] = band_media_url
+    env.globals["release_media_url"] = release_media_url
+    env.globals["partial"] = partial
 
     band_dirs = sorted(p for p in BANDS_DIR.iterdir() if p.is_dir())
     bands = [load_band(d) for d in band_dirs]
     releases_by_band: dict[str, list[MusicAlbum]] = {}
 
-    # Media is language-independent: copy it exactly once, mirroring bands/.
     for band_dir, band in zip(band_dirs, bands):
-        band_dist_dir = DIST_DIR / "bands" / band.slug
-        band_dist_dir.mkdir(parents=True)
-        copy_media(band_dir, band_dist_dir, band.image)
-        copy_media(band_dir, band_dist_dir, band.video)
-
         release_dirs = sorted(
             p for p in band_dir.iterdir() if p.is_dir() and (p / "release.yaml").exists()
         )
-        releases = [load_release(d) for d in release_dirs]
-        releases_by_band[band.slug] = releases
+        releases_by_band[band.slug] = [load_release(d) for d in release_dirs]
 
-        for release_dir, release in zip(release_dirs, releases):
-            release_dist_dir = band_dist_dir / release.slug
-            release_dist_dir.mkdir(parents=True)
-            copy_media(release_dir, release_dist_dir, [t.audio for t in release.track])
-            copy_media(release_dir, release_dist_dir, release.image)
-            copy_media(release_dir, release_dist_dir, release.video)
+    require_media_published(bands, releases_by_band)
 
     index_tmpl = env.get_template("index.html")
     band_tmpl = env.get_template("band.html")

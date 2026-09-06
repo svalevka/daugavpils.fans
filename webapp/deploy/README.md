@@ -39,9 +39,13 @@ history, or just re-derive it - it's all reissuable.
      -d daugavpils.fans -d www.daugavpils.fans \
      --agree-tos --non-interactive --email daugavpils@gmail.com --no-eff-email
    ```
-4. Build and deploy the site itself (from a machine with the full local
-   `bands/` media tree - see repo root README and ADR-0001):
+4. Build and deploy the site itself. Media isn't part of the Site Build -
+   it's published separately to archive.org (`tools/publish_to_archive_org.py`,
+   requires the full local `bands/` media tree) and `webapp/build.py`
+   refuses to build if anything it needs isn't already there. `dist/`
+   ends up as HTML/CSS only:
    ```bash
+   python tools/publish_to_archive_org.py   # first time, or after adding media
    python webapp/build.py
    rsync -avz --delete webapp/dist/ <server>:/opt/daugavpils-fans/dist/
    ```
