@@ -47,6 +47,15 @@
 
 <p class="license">{{ t.licensed_under }}: <a href="{{ release.license }}">{{ release.license | license_label }}</a>.</p>
 
+{% if release.sameAs %}
+<h2>{{ t.elsewhere }}</h2>
+<ul class="member-list">
+  {% for url in release.sameAs %}
+  <li><a href="{{ url }}">{{ url }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
 <h2>{{ t.structured_data }}</h2>
 <details class="jsonld-block">
   <summary>{{ t.view_structured_data }}</summary>
