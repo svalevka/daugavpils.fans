@@ -1,0 +1,39 @@
+"@type": MusicGroup
+name: M. Spirit
+slug: m-spirit
+alternateName:
+  - Metal Spirit
+foundingDate: "1994"
+dissolutionDate: "1996"
+location: Daugavpils, Latvia
+genre:
+  - Punk Rock
+  - Indie
+  - Grunge
+member:
+  - name: Vladislav Petkun (Vaida)
+    role: guitar, vocals, primary songwriter
+    period: "1994-1996"
+  - name: Sergey Valevka (Valera)
+    role: vocals
+    period: "1994-1996"
+  - name: Dmitry Raginevich (Reagan)
+    role: bass
+  - name: Dima Khairulin (Jack)
+    role: drums
+  - name: Slayer
+    role: bass (temporary, stood in for the 1995 recording)
+    period: "1995"
+description: >
+  Formed in Daugavpils in 1994 as "Metal Spirit" (shortened to "M. Spirit"
+  to avoid sounding exclusively metal-focused), when Vladislav Petkun (Vaida)
+  and Sergey Valevka (Valera) met in a specialized high-school class and
+  later reconnected at Riga Aviation University. Early influences included
+  The Exploited and Sex Pistols, later shifting toward indie and grunge,
+  particularly Pixies. Played mostly around Daugavpils, with some
+  performances in Riga and Valmiera. The band effectively dissolved in the
+  mid-1990s due to scheduling difficulties, though members stayed in touch.
+  Vladislav Petkun (Vaida) died in February 1999, shortly before graduating
+  university.
+sameAs:
+  - https://www.last.fm/ru/music/M.Spirit/+wiki

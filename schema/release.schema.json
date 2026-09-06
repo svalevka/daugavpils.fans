@@ -1,0 +1,337 @@
+{
+  "$defs": {
+    "AudioObject": {
+      "description": "schema.org AudioObject describing one audio file on disk.",
+      "properties": {
+        "contentUrl": {
+          "description": "Path to the file, relative to its band/release folder",
+          "title": "Contenturl",
+          "type": "string"
+        },
+        "encodingFormat": {
+          "description": "MIME type, e.g. audio/mpeg, video/mp4, image/jpeg",
+          "title": "Encodingformat",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Checksums etc, e.g. a PropertyValue with propertyID=sha256",
+          "items": {
+            "$ref": "#/$defs/PropertyValue"
+          },
+          "title": "Identifier",
+          "type": "array"
+        },
+        "@type": {
+          "default": "AudioObject",
+          "title": "@Type",
+          "type": "string"
+        },
+        "bitrate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. '320 kbps'",
+          "title": "Bitrate"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 duration, e.g. PT1M30S",
+          "title": "Duration"
+        }
+      },
+      "required": [
+        "contentUrl",
+        "encodingFormat"
+      ],
+      "title": "AudioObject",
+      "type": "object"
+    },
+    "ImageObject": {
+      "description": "schema.org ImageObject - e.g. a band photo or album cover.",
+      "properties": {
+        "contentUrl": {
+          "description": "Path to the file, relative to its band/release folder",
+          "title": "Contenturl",
+          "type": "string"
+        },
+        "encodingFormat": {
+          "description": "MIME type, e.g. audio/mpeg, video/mp4, image/jpeg",
+          "title": "Encodingformat",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Checksums etc, e.g. a PropertyValue with propertyID=sha256",
+          "items": {
+            "$ref": "#/$defs/PropertyValue"
+          },
+          "title": "Identifier",
+          "type": "array"
+        },
+        "@type": {
+          "default": "ImageObject",
+          "title": "@Type",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'Band photo, 1995'",
+          "title": "Caption"
+        }
+      },
+      "required": [
+        "contentUrl",
+        "encodingFormat"
+      ],
+      "title": "ImageObject",
+      "type": "object"
+    },
+    "MusicRecording": {
+      "description": "schema.org MusicRecording - one track.",
+      "properties": {
+        "@type": {
+          "default": "MusicRecording",
+          "title": "@Type",
+          "type": "string"
+        },
+        "position": {
+          "description": "Track number, source of truth for ordering",
+          "title": "Position",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Canonical title",
+          "title": "Name",
+          "type": "string"
+        },
+        "alternateName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Other known title, e.g. from a differing filename",
+          "title": "Alternatename"
+        },
+        "audio": {
+          "$ref": "#/$defs/AudioObject"
+        }
+      },
+      "required": [
+        "position",
+        "name",
+        "audio"
+      ],
+      "title": "MusicRecording",
+      "type": "object"
+    },
+    "PropertyValue": {
+      "description": "schema.org PropertyValue - used here to carry the sha256 checksum.",
+      "properties": {
+        "@type": {
+          "default": "PropertyValue",
+          "title": "@Type",
+          "type": "string"
+        },
+        "propertyID": {
+          "title": "Propertyid",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "propertyID",
+        "value"
+      ],
+      "title": "PropertyValue",
+      "type": "object"
+    },
+    "VideoObject": {
+      "description": "schema.org VideoObject - e.g. concert footage, an interview, a music video.",
+      "properties": {
+        "contentUrl": {
+          "description": "Path to the file, relative to its band/release folder",
+          "title": "Contenturl",
+          "type": "string"
+        },
+        "encodingFormat": {
+          "description": "MIME type, e.g. audio/mpeg, video/mp4, image/jpeg",
+          "title": "Encodingformat",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Checksums etc, e.g. a PropertyValue with propertyID=sha256",
+          "items": {
+            "$ref": "#/$defs/PropertyValue"
+          },
+          "title": "Identifier",
+          "type": "array"
+        },
+        "@type": {
+          "default": "VideoObject",
+          "title": "@Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'Live at ..., 1995'",
+          "title": "Name"
+        },
+        "bitrate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. '2000 kbps'",
+          "title": "Bitrate"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 duration, e.g. PT3M12S",
+          "title": "Duration"
+        }
+      },
+      "required": [
+        "contentUrl",
+        "encodingFormat"
+      ],
+      "title": "VideoObject",
+      "type": "object"
+    }
+  },
+  "description": "schema.org MusicAlbum - one release by a MusicGroup.",
+  "properties": {
+    "@type": {
+      "default": "MusicAlbum",
+      "title": "@Type",
+      "type": "string"
+    },
+    "name": {
+      "description": "Album title as actually written, in its real script/alphabet",
+      "title": "Name",
+      "type": "string"
+    },
+    "slug": {
+      "description": "ASCII, URL-safe folder-name version of the title",
+      "title": "Slug",
+      "type": "string"
+    },
+    "datePublished": {
+      "description": "Year or ISO date",
+      "title": "Datepublished",
+      "type": "string"
+    },
+    "byArtist": {
+      "description": "Slug of the MusicGroup this release belongs to",
+      "title": "Byartist",
+      "type": "string"
+    },
+    "genre": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Genre",
+      "type": "array"
+    },
+    "license": {
+      "description": "License URL, e.g. a Creative Commons license URL",
+      "title": "License",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Provenance / liner notes",
+      "title": "Description"
+    },
+    "track": {
+      "items": {
+        "$ref": "#/$defs/MusicRecording"
+      },
+      "title": "Track",
+      "type": "array"
+    },
+    "image": {
+      "description": "Cover art, era photos",
+      "items": {
+        "$ref": "#/$defs/ImageObject"
+      },
+      "title": "Image",
+      "type": "array"
+    },
+    "video": {
+      "description": "e.g. an official music video, or live footage from this release's era",
+      "items": {
+        "$ref": "#/$defs/VideoObject"
+      },
+      "title": "Video",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "datePublished",
+    "byArtist",
+    "license",
+    "track"
+  ],
+  "title": "MusicAlbum",
+  "type": "object"
+}

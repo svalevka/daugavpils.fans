@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Audio/image/video media files are deliberately kept out of git (see
+# README: "What's actually portable here" / distribution model). They live
+# locally, and are distributed separately as checksummed torrent releases.
+bands/**/*.mp3
+bands/**/*.flac
+bands/**/*.wav
+bands/**/*.ogg
+bands/**/*.m4a
+bands/**/*.jpg
+bands/**/*.jpeg
+bands/**/*.png
+bands/**/*.mp4
+bands/**/*.mov
+bands/**/*.mkv

@@ -1,0 +1,306 @@
+{
+  "$defs": {
+    "GroupMember": {
+      "description": "A person's involvement in a MusicGroup. Not a formal schema.org type;\nkept intentionally minimal (schema.org has no standard way to attach a\nrole/period to a member relationship).",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. '1994-1996'",
+          "title": "Period"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GroupMember",
+      "type": "object"
+    },
+    "ImageObject": {
+      "description": "schema.org ImageObject - e.g. a band photo or album cover.",
+      "properties": {
+        "contentUrl": {
+          "description": "Path to the file, relative to its band/release folder",
+          "title": "Contenturl",
+          "type": "string"
+        },
+        "encodingFormat": {
+          "description": "MIME type, e.g. audio/mpeg, video/mp4, image/jpeg",
+          "title": "Encodingformat",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Checksums etc, e.g. a PropertyValue with propertyID=sha256",
+          "items": {
+            "$ref": "#/$defs/PropertyValue"
+          },
+          "title": "Identifier",
+          "type": "array"
+        },
+        "@type": {
+          "default": "ImageObject",
+          "title": "@Type",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'Band photo, 1995'",
+          "title": "Caption"
+        }
+      },
+      "required": [
+        "contentUrl",
+        "encodingFormat"
+      ],
+      "title": "ImageObject",
+      "type": "object"
+    },
+    "PropertyValue": {
+      "description": "schema.org PropertyValue - used here to carry the sha256 checksum.",
+      "properties": {
+        "@type": {
+          "default": "PropertyValue",
+          "title": "@Type",
+          "type": "string"
+        },
+        "propertyID": {
+          "title": "Propertyid",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "propertyID",
+        "value"
+      ],
+      "title": "PropertyValue",
+      "type": "object"
+    },
+    "VideoObject": {
+      "description": "schema.org VideoObject - e.g. concert footage, an interview, a music video.",
+      "properties": {
+        "contentUrl": {
+          "description": "Path to the file, relative to its band/release folder",
+          "title": "Contenturl",
+          "type": "string"
+        },
+        "encodingFormat": {
+          "description": "MIME type, e.g. audio/mpeg, video/mp4, image/jpeg",
+          "title": "Encodingformat",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Checksums etc, e.g. a PropertyValue with propertyID=sha256",
+          "items": {
+            "$ref": "#/$defs/PropertyValue"
+          },
+          "title": "Identifier",
+          "type": "array"
+        },
+        "@type": {
+          "default": "VideoObject",
+          "title": "@Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'Live at ..., 1995'",
+          "title": "Name"
+        },
+        "bitrate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. '2000 kbps'",
+          "title": "Bitrate"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 duration, e.g. PT3M12S",
+          "title": "Duration"
+        }
+      },
+      "required": [
+        "contentUrl",
+        "encodingFormat"
+      ],
+      "title": "VideoObject",
+      "type": "object"
+    }
+  },
+  "description": "schema.org MusicGroup - one band.",
+  "properties": {
+    "@type": {
+      "default": "MusicGroup",
+      "title": "@Type",
+      "type": "string"
+    },
+    "name": {
+      "description": "Name as actually written, in its real script/alphabet, e.g. 'M. Spirit'",
+      "title": "Name",
+      "type": "string"
+    },
+    "slug": {
+      "description": "ASCII, URL-safe folder-name version of the name, e.g. 'm-spirit'",
+      "title": "Slug",
+      "type": "string"
+    },
+    "alternateName": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Alternatename",
+      "type": "array"
+    },
+    "foundingDate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Foundingdate"
+    },
+    "dissolutionDate": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dissolutiondate"
+    },
+    "location": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "City, e.g. 'Daugavpils'",
+      "title": "Location"
+    },
+    "genre": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Genre",
+      "type": "array"
+    },
+    "member": {
+      "items": {
+        "$ref": "#/$defs/GroupMember"
+      },
+      "title": "Member",
+      "type": "array"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Short bio",
+      "title": "Description"
+    },
+    "sameAs": {
+      "description": "External reference URLs",
+      "items": {
+        "type": "string"
+      },
+      "title": "Sameas",
+      "type": "array"
+    },
+    "image": {
+      "description": "Band photos",
+      "items": {
+        "$ref": "#/$defs/ImageObject"
+      },
+      "title": "Image",
+      "type": "array"
+    },
+    "video": {
+      "description": "Concert footage, interviews, etc. not tied to one release",
+      "items": {
+        "$ref": "#/$defs/VideoObject"
+      },
+      "title": "Video",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "slug"
+  ],
+  "title": "MusicGroup",
+  "type": "object"
+}

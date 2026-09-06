@@ -1,0 +1,247 @@
+'@type': MusicAlbum
+name: Задушевные песенки М.С. Панкухина
+slug: 1995-zadushevnie-pesenki-ms-pankukhina
+datePublished: '1995'
+byArtist: m-spirit
+genre:
+- Punk Rock
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Originally self-released on cassette in 1995, Daugavpils. Digitized
+  to MP3 (320 kbps CBR). Track 02 is missing from this digitization and its original
+  title is unknown; it is omitted here rather than invented. A few tracks carried
+  a different title in the original digitized filenames than in their embedded ID3
+  tags (recorded here as alternateName) - most notably track 14, whose original filename
+  used uncensored language ("Хочетсй сказать Блять!") where the ID3 tag was softened
+  to "Хочется сказать".
+
+  '
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Ящер
+  audio:
+    '@type': AudioObject
+    contentUrl: 01-iashcher.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M13S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 83915c684c583ec4667873db5b1c414f88caced7fce8a3e52c2de551d9030c62
+- '@type': MusicRecording
+  position: 3
+  name: Ты не хочешь мне сказать
+  audio:
+    '@type': AudioObject
+    contentUrl: 03-ty-ne-khochesh-mne-skazat.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT50S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fa894f31666e9fc531a196ae53b824520f0ac57bc289b34431251077ca59eff6
+- '@type': MusicRecording
+  position: 4
+  name: Сны
+  audio:
+    '@type': AudioObject
+    contentUrl: 04-sny.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M20S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f1cbbf8b4be13b2963002f486452700972ac03a464f32c86ce999443f3c258bb
+- '@type': MusicRecording
+  position: 5
+  name: Хиппи во Вьетнаме
+  audio:
+    '@type': AudioObject
+    contentUrl: 05-khippi-vo-v-etname.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M24S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ef82818893b10e86c9d5adcc98db10c767fc5df254316b2d983eae331a91b560
+- '@type': MusicRecording
+  position: 6
+  name: Яд
+  audio:
+    '@type': AudioObject
+    contentUrl: 06-iad.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M5S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 16e0d1e12095bb01da2f9c495bc7030618488cd369ee075c3c9206f806bcdd72
+- '@type': MusicRecording
+  position: 7
+  name: Старушка
+  alternateName: Моя костлявая подружка
+  audio:
+    '@type': AudioObject
+    contentUrl: 07-starushka.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M18S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 99551148cc315f74cb4a9576a51ee5773f0a8f84694065d8d2c257c85a2d7019
+- '@type': MusicRecording
+  position: 8
+  name: Смотри в магазине
+  alternateName: А на небе пустота
+  audio:
+    '@type': AudioObject
+    contentUrl: 08-smotri-v-magazine.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M16S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 145721483d647df6fcaefb196ab006324715168b442c4f3969c05cfcdc160b0a
+- '@type': MusicRecording
+  position: 9
+  name: Ёлочка
+  alternateName: Маленькой елочке холодно зимой
+  audio:
+    '@type': AudioObject
+    contentUrl: 09-iolochka.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M25S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7a0261585abf7c14ab9935148221a91cfe6323ebb7daa0786f26c73ab1dad3d6
+- '@type': MusicRecording
+  position: 10
+  name: Дайте мне оружие
+  alternateName: Мне нужно оружие
+  audio:
+    '@type': AudioObject
+    contentUrl: 10-daite-mne-oruzhie.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT43S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d429a6253b818d6c07970496301b9afbb619a8f7c7fc52ca59c87784e74745d0
+- '@type': MusicRecording
+  position: 11
+  name: Oi
+  alternateName: Ой!
+  audio:
+    '@type': AudioObject
+    contentUrl: 11-oi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M34S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a6d18d18f724a298cd77ac899f92107572c62ef58b8d4a1ebb5346bb25c0e749
+- '@type': MusicRecording
+  position: 12
+  name: Daugavpils
+  alternateName: Даугавпилс
+  audio:
+    '@type': AudioObject
+    contentUrl: 12-daugavpils.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M29S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 56dc024ad64da0f0866ef0afa697b135d782ec42768aa6556a310ca5c9d44dfe
+- '@type': MusicRecording
+  position: 13
+  name: Я люблю кидать свой ножик
+  audio:
+    '@type': AudioObject
+    contentUrl: 13-ia-liubliu-kidat-svoi-nozhik.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M10S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 406465e67bc52039fc0f619f4a0888a1bd1444835e2cca04e4059073bc754a48
+- '@type': MusicRecording
+  position: 14
+  name: Хочется сказать
+  alternateName: Хочетсй сказать Блять!
+  audio:
+    '@type': AudioObject
+    contentUrl: 14-khochetsia-skazat.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M10S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 54259bd7bbdb027b90ab56ecd3335ebd46a6142a83e1a78b194b91c78c571bcc
+- '@type': MusicRecording
+  position: 15
+  name: Долой
+  audio:
+    '@type': AudioObject
+    contentUrl: 15-doloi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 321 kbps
+    duration: PT37S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 307597d33538da8715fd07b995df451595bdc1d0371ad96a2de96d2795f3d562
+- '@type': MusicRecording
+  position: 16
+  name: Я насилую ваши уши
+  audio:
+    '@type': AudioObject
+    contentUrl: 16-ia-nasiluiu-vashi-ushi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M4S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 22730d22529c8db45e8624a7eb540f352d417afbd1da2035b3880e6ea1d144e5
+- '@type': MusicRecording
+  position: 17
+  name: Латвия в огне
+  audio:
+    '@type': AudioObject
+    contentUrl: 17-latviia-v-ogne.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M37S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8ccc0712824613b430f0d15d3b3a70276dd3a06d88a596de5fe071e413e27f57
+- '@type': MusicRecording
+  position: 18
+  name: Atropin
+  alternateName: Атропин
+  audio:
+    '@type': AudioObject
+    contentUrl: 18-atropin.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M28S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3eae68edbe7dc918ff49cb86e675ad6b020c094a61e6e32b5164248d6716e7be
