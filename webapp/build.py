@@ -16,6 +16,7 @@ Usage:
 """
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import sys
@@ -71,6 +72,14 @@ def license_label(url: str) -> str:
         version = parts[i + 2] if len(parts) > i + 2 else ""
         return f"CC {variant} {version}".strip()
     return url
+
+
+def band_jsonld(band: MusicGroup) -> str:
+    """Pretty-printed schema.org JSON-LD for a band, straight from the same
+    model that backs band.yaml - exposed on the band page for transparency/
+    education, not just for crawlers."""
+    data = band.model_dump(by_alias=True, exclude_none=True, mode="json")
+    return json.dumps(data, ensure_ascii=False, indent=2)
 
 
 def load_band(band_dir: Path) -> MusicGroup:
@@ -175,6 +184,7 @@ def build() -> None:
                     home_url=home_url(lang),
                     band=band,
                     releases=releases,
+                    jsonld=band_jsonld(band),
                 )
             )
 

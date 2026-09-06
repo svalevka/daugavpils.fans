@@ -18,6 +18,8 @@ STRINGS = {
         "elsewhere": "Ещё",
         "tracklist": "Треклист",
         "licensed_under": "Лицензия",
+        "structured_data": "Структурированные данные",
+        "view_structured_data": "Показать метаданные (JSON-LD)",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -31,6 +33,8 @@ STRINGS = {
         "elsewhere": "Elsewhere",
         "tracklist": "Tracklist",
         "licensed_under": "Licensed under",
+        "structured_data": "Structured data",
+        "view_structured_data": "View metadata (JSON-LD)",
     },
 }
 
