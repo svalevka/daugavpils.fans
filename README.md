@@ -172,6 +172,14 @@ than an invented field name:
 
 - **Checksums** use schema.org's generic `identifier` / `PropertyValue`
   pattern: `{"@type": "PropertyValue", "propertyID": "sha256", "value": "..."}`.
+- **`sameAs`** (on both `MusicGroup` and `MusicAlbum`) holds external
+  reference URLs. Some are hand-authored (a last.fm/Bandcamp page cited
+  as a source); others - each item's archive.org details-page and
+  torrent URL - are written automatically by
+  `tools/publish_to_archive_org.py` right after a successful publish,
+  the same "compute once, record it" pattern used for checksums (see
+  `tools/TOOLS.md`). Never hand-type an archive.org/torrent URL into
+  `sameAs`; let the publish tool record it.
 - **Band member role/period** (`member:` on a `MusicGroup`) is a
   minimal, non-standard structure (`name`, `role`, `period`), since
   schema.org has no standard way to attach a role and time period to a

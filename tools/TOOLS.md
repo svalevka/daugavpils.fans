@@ -83,7 +83,13 @@ place the website links to for media (see `webapp/build.py`).
 already present with a matching checksum) to the item id computed by
 `archive_org.py`, with title/creator/date/license metadata drawn from the
 band/release YAML. Refuses to run over an archive that hasn't already
-passed `validate.py`.
+passed `validate.py`. After a successful upload, it also records that
+item's archive.org details-page URL and auto-generated torrent URL into
+the band/release YAML's `sameAs` list (skipping any already present) -
+the same "compute once, record it" pattern `validate.py --write` uses for
+checksums, so `sameAs` reflects a confirmed publish rather than a
+by-hand-typed guess. Running it again is always safe: already-recorded
+URLs and already-matching files are just skipped.
 
 **When you'd run it:**
 - `python tools/publish_to_archive_org.py` - publish anything new or
