@@ -74,11 +74,11 @@ def license_label(url: str) -> str:
     return url
 
 
-def band_jsonld(band: MusicGroup) -> str:
-    """Pretty-printed schema.org JSON-LD for a band, straight from the same
-    model that backs band.yaml - exposed on the band page for transparency/
-    education, not just for crawlers."""
-    data = band.model_dump(by_alias=True, exclude_none=True, mode="json")
+def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
+    """Pretty-printed schema.org JSON-LD for a band or release, straight from
+    the same model that backs its band.yaml/release.yaml - exposed on the
+    page for transparency/education, not just for crawlers."""
+    data = model.model_dump(by_alias=True, exclude_none=True, mode="json")
     return json.dumps(data, ensure_ascii=False, indent=2)
 
 
@@ -184,7 +184,7 @@ def build() -> None:
                     home_url=home_url(lang),
                     band=band,
                     releases=releases,
-                    jsonld=band_jsonld(band),
+                    jsonld=to_jsonld(band),
                 )
             )
 
@@ -199,6 +199,7 @@ def build() -> None:
                         home_url=home_url(lang),
                         band=band,
                         release=release,
+                        jsonld=to_jsonld(release),
                     )
                 )
 
