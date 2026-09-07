@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   apply:
@@ -59,6 +60,17 @@ jobs:
           git add -A -- bands
           git commit -m "Apply approved proposal #${{ inputs.proposal_id }}"
           git push origin main
+
+      # GitHub doesn't let a push made with this workflow's own
+      # auto-issued GITHUB_TOKEN trigger another workflow's `on: push`
+      # (anti-recursion protection) - pages.yml would otherwise never
+      # run for a commit landed this way. Its own `workflow_dispatch`
+      # trigger sidesteps that; `actions: write` above is what lets this
+      # token call it.
+      - name: Trigger Pages mirror rebuild
+        run: gh workflow run pages.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Report result
         if: always()
