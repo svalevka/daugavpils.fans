@@ -25,6 +25,7 @@ member:
   name_en: Dmitry Raginevich (Reagan)
   role: бас
   role_en: bass
+  period: 1994-1996
 - name: Дима Хайруллин (Джек)
   name_en: Dima Khairulin (Jack)
   role: барабаны
@@ -154,9 +155,13 @@ sameAs:
 - https://archive.org/details/daugavpils-fans-m-spirit
 - https://archive.org/download/daugavpils-fans-m-spirit/daugavpils-fans-m-spirit_archive.torrent
 image:
-- '@type': ImageObject
-  contentUrl: media/m-spirit-group-photo.webp
+- contentUrl: media/m-spirit-group-photo.webp
   encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 274eeff74f2933409063ddeeb263db0662fb5fe5814ac401d578cd733a359333
+  '@type': ImageObject
   caption: Погулянка, фотография для обложки альбома
   caption_en: Pogulanka, photo for the album cover
   contentLocation: Pogulanka, Daugavpils, Latvia
@@ -165,13 +170,13 @@ image:
   - Valera
   - Jack
   - Slayer
+- contentUrl: media/m-spirit-concert-valka.webp
+  encodingFormat: image/webp
   identifier:
   - '@type': PropertyValue
     propertyID: sha256
-    value: 274eeff74f2933409063ddeeb263db0662fb5fe5814ac401d578cd733a359333
-- '@type': ImageObject
-  contentUrl: media/m-spirit-concert-valka.webp
-  encodingFormat: image/webp
+    value: 92d7ca05a480e160e276aa908c4189c34236ab83cbe8aed9b2c4e367ea3f3199
+  '@type': ImageObject
   caption: Концерт в Валке
   caption_en: Concert in Valka
   contentLocation: Valka, Latvia
@@ -180,16 +185,14 @@ image:
   - Vaida
   - Valera
   - Jack
-  identifier:
-  - '@type': PropertyValue
-    propertyID: sha256
-    value: 92d7ca05a480e160e276aa908c4189c34236ab83cbe8aed9b2c4e367ea3f3199
-- '@type': ImageObject
-  contentUrl: media/m-spirit-newspaper-article.webp
+- contentUrl: media/m-spirit-newspaper-article.webp
   encodingFormat: image/webp
-  caption: Статья в Даугавпилсской прессе
-  caption_en: Article in the Daugavpils press
   identifier:
   - '@type': PropertyValue
     propertyID: sha256
     value: 6a6ceec40818bfc188ae4888132c3e33b8aa6dd1b54d940e74dbc31aa57aa86a
+  '@type': ImageObject
+  caption: Статья в Даугавпилсской прессе
+  caption_en: Article in the Daugavpils press
+  depicts: []
+video: []
