@@ -44,8 +44,13 @@ jobs:
       - name: Apply the proposal
         run: python tools/apply_proposal.py --proposal-file proposal.json
 
-      - name: Validate the archive
-        run: python tools/validate.py
+      # No tools/validate.py step here: this runner has no local media
+      # tree (same limitation as the Pages mirror and the sync timer -
+      # see ADR-0002 and sync-and-deploy.sh's comment on
+      # SITE_SKIP_LOCAL_VALIDATION), so its missing-file checks would
+      # fail on every proposal regardless of content. apply_proposal.py
+      # already re-validates the edited band/release against the
+      # Pydantic schema on write (see its module docstring).
 
       - name: Commit and push
         run: |
