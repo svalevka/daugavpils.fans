@@ -178,6 +178,16 @@ track:
     bitrate: 1619 kbps
     duration: PT5M2S
 image:
+- contentUrl: cover.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 9cbe98c3597e87251695430a01d0f4d4a485f557e3abe24a0650aeda29f9c7a8
+  '@type': ImageObject
+  caption: Обложка альбома
+  caption_en: Album cover
+  depicts: []
 - contentUrl: cover-back.webp
   encodingFormat: image/webp
   identifier:
