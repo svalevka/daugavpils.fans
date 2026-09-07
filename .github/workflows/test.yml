@@ -1,0 +1,27 @@
+name: Run tests
+
+# Runs the tools/ unittest suite on every push/PR. The repo previously had
+# no test-running CI at all (pages.yml only builds the Site) - see
+# https://github.com/svalevka/daugavpils.fans/issues/9.
+
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Run tools/ test suite
+        run: python -m unittest discover -s tools -p 'test_*.py' -v

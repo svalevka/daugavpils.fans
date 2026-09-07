@@ -55,6 +55,55 @@ SHA-256 checksum plus (for audio/video) duration/bitrate.
   other than the repo's own `bands/`. This is what the test suite uses to
   validate temporary fixture trees without touching real archive data.
 
+## `editable_fields.py`
+
+**Problem it solves:** letting the public propose text edits (see the
+GitHub issue tracker's #8/#9/#11 work) safely means both the web-facing
+form and the script that actually writes to disk need to agree, in one
+place, on exactly which `band.yaml`/`release.yaml` fields are safe to
+expose - never two separately-maintained lists that can drift apart.
+
+**How:** a plain tuple of `(target, field, kind)` entries and a `lookup()`
+function, covering the stage-1 free-text fields on `MusicGroup`,
+`MusicAlbum`, `GroupMember`, `MusicRecording`, `ImageObject`, and
+`VideoObject`. Deliberately excludes structural identity fields (`slug`,
+`byArtist`, `name`) and anything machine-computed by `validate.py --write`
+(checksums, `bitrate`, `duration`, `contentUrl`, `encodingFormat`).
+
+**When you'd touch it:** you're adding a new field to the set the public
+can propose edits to (e.g. opening up a stage-2/3/4 field). Both
+`apply_proposal.py` below and the review app import this same list rather
+than each hand-maintaining their own copy.
+
+## `apply_proposal.py`
+
+**Problem it solves:** turning one approved public text-edit proposal
+into an actual, safe change to the archive - the one piece of code
+authorized to do so, meant to run only inside a GitHub Action after a
+curated approver has signed off, never inside the web-facing app itself.
+
+**How:** given a proposal (band/release slug, target, field, the value it
+expected to see, the value to write), it independently re-checks the
+field against `editable_fields.py`, rejects unsafe/invalid slugs (no path
+traversal), refuses to apply if the file's actual current value no longer
+matches what the proposal expected (a staleness guard - someone else may
+have changed it since), and otherwise mutates the target model in place
+and re-dumps the whole file via the exact `yaml.safe_load` -> Pydantic
+model -> `model_dump(by_alias=True, exclude_none=True)` ->
+`yaml.safe_dump(allow_unicode=True, sort_keys=False)` idiom
+`validate.py --write` already uses, keeping diffs minimal. Does not run
+`validate.py` itself - the caller (the Action) does that immediately
+after as a safety net.
+
+**When you'd run it:**
+- `python tools/apply_proposal.py --proposal-file proposal.json` -- apply
+  one proposal to the repo's own `bands/`. This is what the
+  `apply-proposal.yml` Action invokes.
+- `python tools/apply_proposal.py --proposal-file proposal.json --bands-dir PATH`
+  -- point it at a directory other than the repo's own `bands/`. This is
+  what the test suite uses to validate temporary fixture trees without
+  touching real archive data.
+
 ## `archive_org.py`
 
 **Problem it solves:** the publish tool and the website both need to agree
@@ -125,13 +174,51 @@ fully valid one-band/one-release/one-track tree under a temp directory,
 with a correct checksum and duration/bitrate already filled in.
 `build_archive_missing_av_info()` does the same but with a real
 ffmpeg-generated audio file and no checksum/duration/bitrate recorded,
-for testing `--write`. `run_validate()` invokes `validate.py` as a
-subprocess against a given directory and captures its output.
+for testing `--write`. `build_archive_with_nested_fields()` builds on
+`build_valid_archive()`'s layout but also populates every free-text
+field `apply_proposal.py`/`editable_fields.py` can touch (band
+description/location/alternateName/genre, one band member, one band
+image, release description/genre, the track's alternateName, one release
+image), for testing proposal application. `run_validate()` invokes
+`validate.py` as a subprocess against a given directory and captures its
+output; `run_apply_proposal()` does the same for `apply_proposal.py`,
+writing a given proposal dict to a scratch JSON file first.
 
 **When you'd touch it:** you're writing a new test that needs a fixture
 variation this file doesn't yet support (e.g. a fixture with two tracks,
 or a band with no releases). Extend the builder here rather than
 constructing YAML by hand in the test file, so later tests can reuse it.
+
+## `test_editable_fields.py`
+
+**Problem it solves:** `editable_fields.py`'s allowlist is a security
+boundary (it's what stands between the public internet and being able to
+name arbitrary fields on `band.yaml`/`release.yaml`) - it needs to be
+checked against the exact agreed field list, not just "does it import."
+
+**How:** calls `lookup()` directly for every stage-1 field that should be
+allowed and asserts each resolves, then calls it for a representative set
+of structural/computed fields (`slug`, `name`, `sameAs`, `byArtist`,
+`contentUrl`, `identifier`, etc.) and asserts each is refused.
+
+## `test_apply_proposal.py`
+
+**Problem it solves:** `apply_proposal.py` is the one script with
+authority to write an approved public proposal into the archive - proving
+it applies valid edits correctly *and* safely refuses invalid ones
+(disallowed fields, bad slugs, stale proposals) matters more here than
+almost anywhere else in `tools/`.
+
+**How:** invokes `apply_proposal.py` as a real subprocess (via
+`archive_fixture.run_apply_proposal()`) against a
+`build_archive_with_nested_fields()` fixture - the same "invoke the real
+CLI, assert on exit code and file contents" idiom
+`test_validate_write.py` uses for `validate.py --write`. Covers every
+target kind (band/release scalar and list fields, member/track/image
+fields nested by index) applying correctly with everything else in the
+file left unchanged, plus each rejection case (disallowed field, unknown
+or path-traversal slug, stale `original_value`) leaving the file
+completely untouched.
 
 ## `test_export_schema_drift.py`
 
