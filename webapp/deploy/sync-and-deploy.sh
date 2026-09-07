@@ -45,7 +45,9 @@
 # defaults are cherry's actual layout (see README.md).
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-git@github.com:svalevka/daugavpils.fans.git}"
+# HTTPS, not SSH: this repo is public, so a plain clone/fetch needs no
+# auth at all this way - no deploy key to generate or rotate on this box.
+REPO_URL="${REPO_URL:-https://github.com/svalevka/daugavpils.fans.git}"
 REPO_DIR="${REPO_DIR:-/opt/daugavpils-fans/repo}"
 REMOTE="${REMOTE:-origin}"
 BRANCH="${BRANCH:-main}"

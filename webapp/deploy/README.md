@@ -129,10 +129,11 @@ The service unit's `Environment=` lines already point at this layout
 (`/opt/daugavpils-fans/repo`, `/opt/daugavpils-fans/site/checkouts`, etc.)
 and at a venv Python (`/opt/daugavpils-fans/venv/bin/python3` - create it with
 `python3 -m venv /opt/daugavpils-fans/venv && /opt/daugavpils-fans/venv/bin/pip install -r tools/requirements.txt -r webapp/requirements.txt`
-if it doesn't exist yet); `REPO_URL` points at this repo over SSH, so the
-`sergei` user's SSH agent/key needs read access to it. First run
-bootstraps `/opt/daugavpils-fans/repo` itself via `git clone` - nothing
-else needs to pre-exist.
+if it doesn't exist yet); `REPO_URL` points at this repo over plain HTTPS
+(it's public, so cloning/fetching needs no auth at all this way - no
+deploy key to provision on this box). First run bootstraps
+`/opt/daugavpils-fans/repo` itself via `git clone` - nothing else needs
+to pre-exist.
 
 Check on it:
 
