@@ -70,10 +70,5 @@
 </ul>
 {% endif %}
 
-<h2>{{ t.structured_data }}</h2>
-<details class="jsonld-block">
-  <summary>{{ t.view_structured_data }}</summary>
-  <pre class="jsonld">{{ jsonld }}</pre>
-</details>
 <script type="application/ld+json">{{ jsonld.replace("</", "<\/") | safe }}</script>
 {% endblock %}

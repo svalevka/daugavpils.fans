@@ -18,8 +18,6 @@ STRINGS = {
         "elsewhere": "Ещё",
         "tracklist": "Треклист",
         "licensed_under": "Лицензия",
-        "structured_data": "Структурированные данные",
-        "view_structured_data": "Показать метаданные (JSON-LD)",
         "support_link": "Поддержка",
     },
     "en": {
@@ -34,8 +32,6 @@ STRINGS = {
         "elsewhere": "Elsewhere",
         "tracklist": "Tracklist",
         "licensed_under": "Licensed under",
-        "structured_data": "Structured data",
-        "view_structured_data": "View metadata (JSON-LD)",
         "support_link": "Support",
     },
 }

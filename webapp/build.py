@@ -119,8 +119,8 @@ def render_maintenance_html() -> str:
 
 def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
     """Pretty-printed schema.org JSON-LD for a band or release, straight from
-    the same model that backs its band.yaml/release.yaml - exposed on the
-    page for transparency/education, not just for crawlers."""
+    the same model that backs its band.yaml/release.yaml - embedded as a
+    <script type="application/ld+json"> for crawlers."""
     data = model.model_dump(by_alias=True, exclude_none=True, mode="json")
     return json.dumps(data, ensure_ascii=False, indent=2)
 
