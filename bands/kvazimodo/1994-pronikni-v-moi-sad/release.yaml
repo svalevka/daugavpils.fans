@@ -1,0 +1,156 @@
+'@type': MusicAlbum
+name: Проникни в мой сад
+slug: 1994-pronikni-v-moi-sad
+datePublished: '1994'
+byArtist: kvazimodo
+genre: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Первый альбом группы, записанный за один вечер, без наложений, на бобину,
+  у Айвара Янсона дома в Юности (Яуниbе) - Янсон же сыграл на барабанах. Состав: Александр
+  Рыбаков (Рыб) (гитара, тексты), Андрей Фаткутдинов (Андрон) (гитара, вокал), Варик
+  (бас), Айвар Янсон (барабаны, запись). Оцифровано без потерь в FLAC.
+
+  '
+description_en: 'The band''s first album, recorded in a single evening with no overdubs,
+  straight to reel, at Aivar Ianson''s home in Yaunība - with Ianson himself on drums.
+  Lineup: Alexander Rybakov (Ryb) (guitar, lyrics), Andrei Fatkutdinov (Andron) (guitar,
+  vocals), Varik (bass), Aivar Ianson (drums, recording). Digitized losslessly to
+  FLAC.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-kvazimodo-1994-pronikni-v-moi-sad
+- https://archive.org/download/daugavpils-fans-kvazimodo-1994-pronikni-v-moi-sad/daugavpils-fans-kvazimodo-1994-pronikni-v-moi-sad_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Аргонавт
+  audio:
+    contentUrl: 01-argonavt.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 862cc7b33a775da2bb1ba9eae96a0841ff8ceb4863ed0c22c7ae1755e5d0bad0
+    '@type': AudioObject
+    bitrate: 926 kbps
+    duration: PT3M32S
+- '@type': MusicRecording
+  position: 2
+  name: Любовь Никогда Не Пройдёт Через Эти Города
+  audio:
+    contentUrl: 02-liubov-nikogda-ne-proidiot-cherez-eti-goroda.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f91efbe3693838728817517cccd56b6fc1e48d711f34d8f17ba2a2ecf6c34aae
+    '@type': AudioObject
+    bitrate: 925 kbps
+    duration: PT3M33S
+- '@type': MusicRecording
+  position: 3
+  name: Ни Слова О Любви
+  audio:
+    contentUrl: 03-ni-slova-o-liubvi.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5d36cdd40a49b7af899084f855bd9272c85d6bdd1f086c85423991c97e69ff1f
+    '@type': AudioObject
+    bitrate: 879 kbps
+    duration: PT4M31S
+- '@type': MusicRecording
+  position: 4
+  name: Я Вернулся
+  audio:
+    contentUrl: 04-ia-vernulsia.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 73100dea249876d5586eba72751beb4ac4203561a44c7b725f04322d2e95c1f2
+    '@type': AudioObject
+    bitrate: 883 kbps
+    duration: PT3M56S
+- '@type': MusicRecording
+  position: 5
+  name: Пройдись По Этим Берегам
+  audio:
+    contentUrl: 05-proidis-po-etim-beregam.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 95bab0dc2773561c45c0898da019275461d80d235186b9ed5530a08e41830872
+    '@type': AudioObject
+    bitrate: 867 kbps
+    duration: PT2M11S
+- '@type': MusicRecording
+  position: 6
+  name: Соседка
+  audio:
+    contentUrl: 06-sosedka.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2d48800e9bada1402179ce14afa8f44031447ac2ee1b4d776899e13e54c856c9
+    '@type': AudioObject
+    bitrate: 971 kbps
+    duration: PT2M19S
+- '@type': MusicRecording
+  position: 7
+  name: Не Умирай
+  audio:
+    contentUrl: 07-ne-umirai.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9b4401e12b794945756fed98f86bd07f647e1a0a1872d6a34062c08c07230c21
+    '@type': AudioObject
+    bitrate: 874 kbps
+    duration: PT3M58S
+- '@type': MusicRecording
+  position: 8
+  name: Голубь
+  audio:
+    contentUrl: 08-golub.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 47b04dd3c107789062210911f04cbc7bde22a6b6a1e669005bc6ed7d236e1478
+    '@type': AudioObject
+    bitrate: 927 kbps
+    duration: PT4M2S
+- '@type': MusicRecording
+  position: 9
+  name: Проникни в Мой Сад
+  audio:
+    contentUrl: 09-pronikni-v-moi-sad.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 78f5c19b11bbfb62480c42499c7308cf639867fbbc967146780fd79aabde3bca
+    '@type': AudioObject
+    bitrate: 900 kbps
+    duration: PT4M52S
+- '@type': MusicRecording
+  position: 10
+  name: Видения
+  audio:
+    contentUrl: 10-videniia.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c6b7287cf90d9f06434074079881c87849d92f41d99653a7027a034496d91b37
+    '@type': AudioObject
+    bitrate: 950 kbps
+    duration: PT2M39S
+image: []
+video: []

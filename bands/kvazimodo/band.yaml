@@ -1,0 +1,130 @@
+'@type': MusicGroup
+name: Квазимодо
+slug: kvazimodo
+alternateName: []
+dissolutionDate: '1996'
+location: Daugavpils, Latvia
+genre: []
+member:
+- name: Александр Рыбаков (Рыб)
+  name_en: Alexander Rybakov (Ryb)
+  role: гитара, тексты
+- name: Андрей Фаткутдинов (Андрон)
+  name_en: Andrei Fatkutdinov (Andron)
+  role: гитара, вокал
+- name: Варик
+  name_en: Varik
+  role: бас
+- name: Айвар Янсон
+  name_en: Aivar Ianson
+  role: барабаны, запись
+description: 'Со слов Рыба.
+
+  Начиналось всё ещё в школе - с магнитофона с кнопкой "запись", детской мини-гитары,
+  кастрюль и унитазного стульчака вместо барабанов. Настоящая дружба и совместное
+  творчество - с Андроном (Андреем Фаткутдиновым), к которым позже присоединился Варик.
+  Втроём играли акустику, сочиняли что придётся.
+
+  Ключевую роль в становлении группы сыграл Айвар Янсон - старший, опытный музыкант,
+  который взялся учить троицу играть не лекциями по теории, а на практике: "ты, Варик,
+  играешь бум-пум, ты, Андрюша - трапа-ти-ту-ти-уа, а ты, Саша - шлёпай свои аккорды".
+  Сам садился за установку и ровно им подыгрывал. Название "Квазимодо" группа носила
+  ещё до этого - со времён кастрюль и стульчака.
+
+  Первый концерт - акустикой, в "Торговке", на новый год или рождество. Затем - рок-концерт
+  в Варпе вместе с "Overnight Sensation", "Двинск", "Neisseria" и "Камчатка".
+
+  Первый альбом, "Проникни в мой сад", был записан за один вечер, без наложений, на
+  бобину - у Янсона дома, в Юности (Яунибе), где Янсон же и сыграл на барабанах.
+
+  Позже у группы появился свой постоянный барабанщик - Андрис Зелч (не без участия
+  Гоблина из группы "Лом", с которой квазимодовцы к тому времени успели познакомиться
+  и многому научиться). Андрон тем временем сам стал одновременно вести соло-гитару
+  и петь. Пробовали и других вокалистов - школьного товарища Лёху, затем Шуру Некрофила
+  (позже - "Хориные Бега"), но подолгу они не задерживались.
+
+  Группа фактически распалась, когда Андрон её покинул. Начатый второй альбом, "Твоё
+  радио лжёт" (1996), доделывали уже без Рыба - остальные участники, при участии гитариста
+  Кузи (тогда уже бывшего участника "Двинска"). Этот альбом в архив пока не добавлен.
+
+  '
+description_en: 'In Ryb''s own words.
+
+  It started back in school - with a cassette recorder with a "record" button, a child''s
+  mini-guitar, some pots and pans, and a toilet seat lid standing in for drums. Real
+  friendship and songwriting began with Andron (Andrei Fatkutdinov), later joined
+  by Varik. The three of them played acoustic songs, writing whatever came to mind.
+
+  Aivar Ianson played a key role in the band actually coming together - an older,
+  experienced musician who took it upon himself to teach the trio not through theory
+  lectures but hands-on: "you, Varik, play boom-pum, you, Andryusha - trapa-ti-tu-ti-ua,
+  and you, Sasha - just strum your chords." He''d sit at the kit himself and keep
+  steady time for them. The band had already been calling itself "Kvazimodo" since
+  the pots-and-toilet-seat days, before any of this.
+
+  Their first concert was acoustic, at "Torgovka", around New Year or Christmas. Then
+  came a rock concert at Varpa alongside "Overnight Sensation", "Dvinsk", "Neisseria",
+  and "Kamchatka".
+
+  Their first album, "Проникни в мой сад" ("Get Into My Garden"), was recorded in
+  a single evening, with no overdubs, straight to reel - at Ianson''s home in Yaunība,
+  with Ianson himself playing drums.
+
+  Later the band got its own steady drummer, Andris Zelch (with some help from Goblin
+  of the band "Lom", whom the Kvazimodo crew had gotten to know and learned a lot
+  from by then). Andron, meanwhile, took over both lead guitar and vocals at once.
+  They tried other singers too - schoolmate Lyokha, then Shura Nekrofil (later of
+  "Хориные Бега"/"Ferret Races") - but none stuck around for long.
+
+  The band effectively fell apart when Andron left it. Their started second album,
+  "Твоё радио лжёт" ("Your Radio Is Lying", 1996), was finished without Ryb - by the
+  remaining members, with guitarist Kuzya (by then a former member of "Dvinsk") helping
+  out. That album is not yet in this archive.
+
+  '
+sameAs:
+- http://chepe.lv/group.php?group=1996_4
+- https://archive.org/details/daugavpils-fans-kvazimodo
+- https://archive.org/download/daugavpils-fans-kvazimodo/daugavpils-fans-kvazimodo_archive.torrent
+image: []
+video:
+- contentUrl: media/kvazimodo-1994-repa.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ec0deb080fb9b31f2d1bed34ca03ce97a698f1388f689387958aa36972c2abe9
+  '@type': VideoObject
+  name: Репетиция, 1994
+  bitrate: 922 kbps
+  duration: PT9M32S
+- contentUrl: media/kvazimodo-ni-slova-o-liubvi-live.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 25934671a64b8f963ea63cd419fa65b979bd5a358431a0a319f59711aaa35446
+  '@type': VideoObject
+  name: Ни слова о любви (концерт)
+  bitrate: 991 kbps
+  duration: PT4M28S
+- contentUrl: media/kvazimodo-pronikni-v-moi-sad-live.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 91efc9c4eb88d3966ae4d2141333b5bca391f36eab46d942d20d01e7b6478022
+  '@type': VideoObject
+  name: Проникни в мой сад (концерт)
+  bitrate: 944 kbps
+  duration: PT5M10S
+- contentUrl: media/kvazimodo-tvoe-radio-lzhet-live.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7aa3b30fb70688df8b599d752cc102b43068103b78f2f9fe181ffadbf8222b78
+  '@type': VideoObject
+  name: Твоё радио лжёт (концерт)
+  bitrate: 1014 kbps
+  duration: PT2M5S
