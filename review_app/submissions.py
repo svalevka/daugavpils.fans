@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from flask import Blueprint, abort, current_app, render_template, request, session
+from flask import Blueprint, abort, current_app, render_template, request, session, url_for
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -265,10 +265,11 @@ def create_proposal():
     conn.commit()
 
     scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
+    login_url = url_for("auth.login_form", _external=True)
     summary = (
         f"New proposal #{cur.lastrowid} for {scope} ({target}.{field}):\n\n"
         f"- {original_value!r}\n+ {proposed_value!r}\n\n"
-        "Log in to the dashboard to review it."
+        f"Log in to the dashboard to review it: {login_url}"
     )
     # The proposal is already durably committed above - a submitter
     # should never see a failure just because the notification couldn't
