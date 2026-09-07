@@ -182,6 +182,15 @@ than an invented field name:
   the same "compute once, record it" pattern used for checksums (see
   `tools/TOOLS.md`). Never hand-type an archive.org/torrent URL into
   `sameAs`; let the publish tool record it.
+- **The metadata itself is backed up to archive.org, not just GitHub.**
+  `tools/publish_to_archive_org.py` uploads each `band.yaml`/`release.yaml`
+  alongside that band/release's media, into the same item, at a
+  predictable URL:
+  `https://archive.org/download/<item-id>/band.yaml` (or `release.yaml`) -
+  e.g. https://archive.org/download/daugavpils-fans-m-spirit/band.yaml.
+  Re-published on every metadata edit, same as a changed media file would
+  be - one more way the Archive doesn't depend on GitHub alone (see "How
+  this works, at a glance" above).
 - **Band member role/period** (`member:` on a `MusicGroup`) is a
   minimal, non-standard structure (`name`, `role`, `period`), since
   schema.org has no standard way to attach a role and time period to a
