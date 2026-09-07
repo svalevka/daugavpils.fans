@@ -227,7 +227,9 @@ Each release carries a `license` field (a URL, typically a Creative
 Commons license chosen by the contributing artist/rights-holder — e.g.
 `CC BY-NC-SA 4.0`). This is what makes redistribution via torrent legally
 coherent — it must be decided per-release, by whoever holds the rights,
-not assumed archive-wide.
+not assumed archive-wide. (This is the media's license specifically; see
+"License" at the bottom of this file for how the repo as a whole —
+code, structural metadata, and testimony text — is licensed.)
 
 ### Integrity
 
@@ -509,3 +511,36 @@ python -m http.server 8000 --directory webapp/dist   # then open http://localhos
 `webapp/dist/` is disposable, generated output (gitignored) - re-run
 `webapp/build.py` and refresh the browser after editing a `band.yaml`/
 `release.yaml` or anything under `webapp/templates/`/`webapp/static/`.
+
+## License
+
+Consistent with "anyone, anywhere, should be able to pick this archive up
+and keep maintaining it" (see "Resilience" above), this repo is licensed
+in three parts rather than left unlicensed:
+
+- **Code** (`tools/`, `webapp/`, everything else not under `bands/` or
+  `schema/`) - **MIT** (`LICENSE`). Fork it, run it, modify it, build a
+  competing tool against it - no restriction beyond keeping the copyright
+  notice.
+- **Structural/factual metadata** - folder layout, `slug`s, dates, track
+  `position`, `contentUrl`, `encodingFormat`/`bitrate`/`duration`,
+  checksums (`identifier`), and `schema/*.schema.json` - **CC0 1.0**
+  (`LICENSE-METADATA`, public domain dedication). No restriction at all;
+  this is factual/structural data, not creative authorship.
+- **Testimony text** - `description`/`description_en` and
+  `member[].name`/`role`/`period` on `band.yaml`/`release.yaml` - **CC BY-NC-SA
+  4.0** (https://creativecommons.org/licenses/by-nc-sa/4.0/), not CC0. This
+  is first-hand biography and provenance narrative contributed by real
+  people about themselves and others (see "Band/release descriptions" in
+  `CLAUDE.md`) - the same license already used for each release's actual
+  recording, so a personal life story isn't given weaker protection than
+  the music it accompanies. Reuse requires attribution, forbids commercial
+  use, and any adaptation must carry the same license forward.
+- **Audio/image/video media** - covered individually by each release's own
+  `license` field (see "Licensing" above), decided by whoever holds the
+  rights to that specific recording, not assumed archive-wide.
+
+None of this changes anything about attribution as a courtesy on top of
+what a license technically requires - crediting contributors and
+performers by name remains the norm here regardless of which license
+technically permits omitting it.
