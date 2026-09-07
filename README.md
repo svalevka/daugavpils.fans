@@ -312,6 +312,110 @@ python tools/publish_to_archive_org.py             # publish anything new or cha
 python tools/publish_to_archive_org.py --dry-run   # preview without uploading
 ```
 
+## Adding a new band, step by step
+
+This walks through the actual sequence, end to end. `tools/models.py` is
+the authoritative field list (required vs. optional); this is a minimal
+worked example, not the full field reference. For a real, fleshed-out
+example to copy from, look at an existing band - e.g.
+`bands/m-spirit/band.yaml` and
+`bands/m-spirit/1995-zadushevnie-pesenki-ms-pankukhina/release.yaml`.
+
+1. **Create the band folder and `band.yaml`.** Pick a slug (see "Naming
+   convention" above) and create `bands/<band-slug>/band.yaml`. Only
+   `name` and `slug` are required - everything else (`member`,
+   `description`, `genre`, ...) can be added later or left out if unknown:
+
+   ```yaml
+   '@type': MusicGroup
+   name: Двинск
+   slug: dvinsk
+   foundingDate: '1993'
+   location: Daugavpils, Latvia
+   genre:
+     - Hard Rock
+   description: 'История группы...'
+   ```
+
+2. **Add band-level media (optional).** Drop band photos/posters/videos
+   into `bands/<band-slug>/media/`, then list each one under `image:`/
+   `video:` in `band.yaml` with `contentUrl` pointing at it (relative to
+   `band.yaml`) and `encodingFormat` (e.g. `image/webp`). Leave
+   `identifier:` (the sha256) out for now - step 5 fills it in.
+
+3. **Create a release.** For each album/recording, create
+   `bands/<band-slug>/<release-slug>/release.yaml` and put the audio
+   files (`01-track-slug.mp3`, ...) in that same folder. `name`, `slug`,
+   `datePublished`, `byArtist` (the band's `slug`), `license`, and
+   `track` are required:
+
+   ```yaml
+   '@type': MusicAlbum
+   name: Карманный Мир
+   slug: 1993-karmannyi-mir
+   datePublished: '1993'
+   byArtist: dvinsk
+   license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+   track:
+     - '@type': MusicRecording
+       position: 1
+       name: Первая песня
+       audio:
+         '@type': AudioObject
+         contentUrl: 01-pervaia-pesnia.mp3
+         encodingFormat: audio/mpeg
+   ```
+
+   Add release-level `image:` (cover art) the same way as band photos in
+   step 2. Leave `bitrate`, `duration`, and every `identifier:` (sha256)
+   blank - `validate.py --write` computes those from the actual files.
+
+4. **Check it validates.**
+
+   ```bash
+   python tools/validate.py
+   ```
+
+   This checks both YAML files against the schema and confirms every
+   `contentUrl` you referenced actually exists on disk next to its
+   `band.yaml`/`release.yaml`.
+
+5. **Fill in checksums, duration, bitrate.**
+
+   ```bash
+   python tools/validate.py --write
+   ```
+
+   This computes `sha256` for every audio/image/video file (via
+   `ffprobe` for duration/bitrate) and rewrites the YAML files with those
+   values filled in. Re-run plain `python tools/validate.py` afterward to
+   confirm it's now clean.
+
+6. **Open a pull request** with the new `band.yaml`/`release.yaml` (media
+   files themselves are gitignored - see "What's actually portable here"
+   above - so only the metadata is committed). Once reviewed and merged:
+
+7. **Publish the media to archive.org.**
+
+   ```bash
+   python tools/publish_to_archive_org.py --dry-run   # preview first
+   python tools/publish_to_archive_org.py             # actually upload
+   ```
+
+   This uploads the band's/release's audio/image/video files as their own
+   archive.org item, writes the resulting archive.org + torrent URLs back
+   into `sameAs` in the YAML, and backs up every `band.yaml`/`release.yaml`
+   to the consolidated `daugavpils-fans-metadata` item (see "Metadata
+   schema" above) - all in one run.
+
+### Updating an existing band or release later
+
+Same loop, smaller: edit the `band.yaml`/`release.yaml` (or add new media
+files), run `python tools/validate.py --write` to pick up any new/changed
+checksums, open a PR, and once merged re-run
+`python tools/publish_to_archive_org.py` - it only pushes what's new or
+changed, and re-uploads the metadata backup either way.
+
 ## Running the Site locally
 
 The Site Build is plain static HTML/CSS, so once it's built, any static
