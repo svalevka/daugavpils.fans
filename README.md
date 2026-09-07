@@ -242,13 +242,43 @@ rather than hosting a copy of it (see `tools/publish_to_archive_org.py`),
 not a replacement for the archive.org distribution model above. Still
 explicitly out of scope: inviting other contributors.
 
-It's deployed from two independent places (see ADR-0002): the primary,
-**daugavpils.fans**, manually rsynced to a Hetzner server; and a live
-mirror at this repo's GitHub Pages URL, rebuilt automatically by
-`.github/workflows/pages.yml` on every push to `main` - no local media
-tree required there, since CI builds with `SITE_SKIP_LOCAL_VALIDATION=1`
-and leans on the archive.org existence check instead of a local
-checksum recheck (see ADR-0002 for why that's still a real guarantee).
+## Resilience
+
+The Archive layer (git + archive.org, "How this works, at a glance"
+above) already has no single point of failure - it doesn't depend on
+this repo, any one host, or the Site being online. The Site (`webapp/`)
+is the one remaining layer that could, on its own, depend on a single
+maintainer's server - so it's deployed to two independent places (see
+ADR-0002), not one:
+
+- **daugavpils.fans** (primary) - a Hetzner server the maintainer
+  administers. Deploying here is manual: run `webapp/build.py`, then
+  rsync `webapp/dist/` to the server (see `webapp/deploy/README.md`).
+  This build re-validates every local media file's checksum for real,
+  every time (`tools/validate.py`), since the maintainer's machine
+  actually holds the local media tree.
+- **A live GitHub Pages mirror**, at this repo's default Pages URL
+  (`https://<owner>.github.io/<repo-name>/`) - reachable right now,
+  independently of daugavpils.fans. `.github/workflows/pages.yml`
+  rebuilds and republishes it automatically on every push to `main`.
+  GitHub's CI runner has no local media tree at all (it's gitignored -
+  see above), so this build sets `SITE_SKIP_LOCAL_VALIDATION=1` and
+  relies instead on confirming every referenced file still exists on
+  archive.org's public API - a real guarantee, not a weaker one, since
+  `tools/publish_to_archive_org.py` never lets a file reach archive.org
+  without already having passed `tools/validate.py` for real, against
+  the maintainer's actual files, at publish time (see ADR-0002 for the
+  full reasoning, including a wrong first assumption that got corrected
+  once the first CI run actually failed on it).
+
+Nothing here rewires which domain serves `daugavpils.fans` - DNS still
+points at Hetzner, and the two builds only ever drift in *when* they
+were last built, not in what they contain, since both render the exact
+same git history. If Hetzner ever goes dark, the Archive is unaffected,
+and the GitHub Pages mirror is already there to point people at while
+DNS gets sorted out. (See `MAINTENANCE.md`, or the on-site `/support/`
+page, for the plain-language version of this story aimed at listeners,
+not maintainers.)
 
 ## Tooling usage
 
