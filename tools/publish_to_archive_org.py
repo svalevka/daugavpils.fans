@@ -9,6 +9,10 @@ of this repo, this maintainer's machine, or any single host - the same goal
 CONTEXT.md's "Archive Release" concept describes, implemented via
 archive.org instead of a hand-rolled torrent bundle.
 
+Each item also gets a copy of its own band.yaml/release.yaml alongside the
+media - a metadata backup independent of GitHub, since right now GitHub is
+the only place the descriptions/tracklists/bios actually live.
+
 Requires an authenticated `ia` (internetarchive) config on this machine -
 run `ia configure` once, using the project's archive.org account, before
 a real (non---dry-run) publish.
@@ -83,28 +87,39 @@ def publish_item(
     dry_run: bool,
     yaml_path: Path,
 ) -> None:
+    """Uploads `files` (this band/release's media) plus its own
+    band.yaml/release.yaml as one more file in the same item - a backup copy
+    of the metadata that isn't only on GitHub (see MAINTENANCE.md's "Что
+    будет, если этим станет некому заниматься"). `checksum=True` means a
+    metadata edit gets picked up and re-uploaded on the next publish run,
+    same as a changed media file would be."""
     if not files:
         print(f"  {item_id}: nothing to publish, skipping")
         return
 
-    print(f"  {item_id}: {len(files)} file(s)")
+    print(f"  {item_id}: {len(files)} file(s) + {yaml_path.name} (metadata backup)")
     for content_url in sorted(files):
         print(f"    {content_url} -> {archive_org_url(item_id, content_url)}")
+    print(f"    {yaml_path.name} -> {archive_org_url(item_id, yaml_path.name)}")
 
     if dry_run:
         return
 
     import internetarchive as ia
 
+    # Record archive.org's own URLs into the metadata file *before* uploading
+    # it, so the backup copy already includes them - otherwise it would omit
+    # its own location until whatever the next publish run happens to be.
+    record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
+
+    upload_files = {**files, yaml_path.name: yaml_path}
     ia.upload(
         item_id,
-        files={content_url: str(path) for content_url, path in files.items()},
+        files={content_url: str(path) for content_url, path in upload_files.items()},
         metadata=metadata,
         checksum=True,  # skip files whose remote MD5 already matches
         verbose=True,
     )
-
-    record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
 
 
 def band_metadata(band: MusicGroup) -> dict[str, str]:
