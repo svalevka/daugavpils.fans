@@ -1,8 +1,8 @@
 name: Run tests
 
-# Runs the tools/ and webapp/deploy/ unittest suites on every push/PR. The
-# repo previously had no test-running CI at all (pages.yml only builds the
-# Site) - see https://github.com/svalevka/daugavpils.fans/issues/9.
+# Runs the tools/, webapp/deploy/, and review_app/ unittest suites on every
+# push/PR. The repo previously had no test-running CI at all (pages.yml
+# only builds the Site) - see https://github.com/svalevka/daugavpils.fans/issues/9.
 
 on:
   push:
@@ -21,10 +21,13 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -r tools/requirements.txt
+        run: pip install -r tools/requirements.txt -r review_app/requirements.txt
 
       - name: Run tools/ test suite
         run: python -m unittest discover -s tools -p 'test_*.py' -v
 
       - name: Run webapp/deploy/ test suite
         run: python -m unittest discover -s webapp/deploy -p 'test_*.py' -v
+
+      - name: Run review_app/ test suite
+        run: python -m unittest discover -s review_app -p 'test_*.py' -v

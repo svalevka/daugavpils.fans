@@ -1,0 +1,23 @@
+<!doctype html>
+<title>Propose an edit</title>
+<h1>What would you like to correct?</h1>
+
+{% if releases is not none %}
+<h2>Releases</h2>
+<ul>
+{% for release in releases %}
+  <li><a href="/submit/{{ band_slug }}/{{ release.slug }}">{{ release.name }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<h2>Fields</h2>
+<ul>
+{% for opt in options %}
+  <li>
+    <a href="{% if release_slug %}/submit/{{ band_slug }}/{{ release_slug }}/edit{% else %}/submit/{{ band_slug }}/edit{% endif %}?target={{ opt.target }}&field={{ opt.field }}{% if opt.list_index is not none %}&index={{ opt.list_index }}{% endif %}">
+      {{ opt.label }}
+    </a>
+  </li>
+{% endfor %}
+</ul>

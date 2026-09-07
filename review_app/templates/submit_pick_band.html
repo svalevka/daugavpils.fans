@@ -1,0 +1,9 @@
+<!doctype html>
+<title>Propose an edit</title>
+<h1>Propose an edit</h1>
+<p>Pick a band to correct or extend.</p>
+<ul>
+{% for band in bands %}
+  <li><a href="/submit/{{ band.slug }}">{{ band.name }}</a></li>
+{% endfor %}
+</ul>

@@ -95,6 +95,13 @@ model -> `model_dump(by_alias=True, exclude_none=True)` ->
 `validate.py` itself - the caller (the Action) does that immediately
 after as a safety net.
 
+Its band/release-loading and nested-field-navigation functions
+(`load_band`, `load_release`, `container_for`) are public and also
+imported read-only by `review_app/archive_read.py`, so the "current
+value" a submitter sees on the proposal form can never drift from what
+this same navigation logic will later compare a proposal's
+`original_value` against.
+
 **When you'd run it:**
 - `python tools/apply_proposal.py --proposal-file proposal.json` -- apply
   one proposal to the repo's own `bands/`. This is what the

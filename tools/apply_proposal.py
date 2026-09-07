@@ -102,7 +102,7 @@ def _resolve_slug_dir(bands_dir: Path, slug: str, what: str) -> Path:
     return candidate
 
 
-def _load_band(bands_dir: Path, band_slug: str) -> tuple[Path, Path, MusicGroup]:
+def load_band(bands_dir: Path, band_slug: str) -> tuple[Path, Path, MusicGroup]:
     band_dir = _resolve_slug_dir(bands_dir, band_slug, "band")
     band_yaml = band_dir / "band.yaml"
     if not band_yaml.exists():
@@ -114,7 +114,7 @@ def _load_band(bands_dir: Path, band_slug: str) -> tuple[Path, Path, MusicGroup]
     return band_dir, band_yaml, band
 
 
-def _load_release(band_dir: Path, release_slug: str) -> tuple[Path, Path, MusicAlbum]:
+def load_release(band_dir: Path, release_slug: str) -> tuple[Path, Path, MusicAlbum]:
     if not SLUG_RE.match(release_slug):
         raise ApplyError(f"release slug {release_slug!r} is not a valid slug")
     release_dir = (band_dir / release_slug).resolve()
@@ -130,7 +130,7 @@ def _load_release(band_dir: Path, release_slug: str) -> tuple[Path, Path, MusicA
     return release_dir, release_yaml, release
 
 
-def _container_for(
+def container_for(
     target: str,
     list_index: int | None,
     band: MusicGroup | None,
@@ -138,7 +138,10 @@ def _container_for(
 ) -> BaseModel:
     """Return the specific model instance (band, release, or one entry of
     one of their nested lists) that the proposal's field actually lives
-    on."""
+    on. Reused read-only by review_app/archive_read.py to show a
+    submitter the live current value of whatever they're proposing to
+    change, so that display can never drift from what this same
+    navigation logic will compare against when the proposal is applied."""
     if target == "band":
         assert band is not None
         return band
@@ -178,13 +181,13 @@ def apply_proposal(proposal: dict[str, Any], bands_dir: Path) -> Path:
     if target in BAND_SCOPED_TARGETS and target not in RELEASE_SCOPED_TARGETS and release_slug:
         raise ApplyError(f"target {target!r} must not have release_slug")
 
-    band_dir, band_yaml, band = _load_band(bands_dir, band_slug)
+    band_dir, band_yaml, band = load_band(bands_dir, band_slug)
 
     release_dir = release_yaml = release = None
     if release_slug:
-        release_dir, release_yaml, release = _load_release(band_dir, release_slug)
+        release_dir, release_yaml, release = load_release(band_dir, release_slug)
 
-    container = _container_for(target, list_index, band, release)
+    container = container_for(target, list_index, band, release)
 
     current_value = getattr(container, field)
     if editable.kind == "list":
