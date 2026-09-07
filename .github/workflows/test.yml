@@ -20,6 +20,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install ffmpeg
+        # tools/archive_fixture.py's generate_silent_mp3() (used by
+        # tools/test_validate_write.py) shells out to ffmpeg/ffprobe to
+        # build a real, decodable audio fixture - not guaranteed
+        # preinstalled on the runner image, so install it explicitly
+        # rather than assume.
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
       - name: Install dependencies
         run: pip install -r tools/requirements.txt -r review_app/requirements.txt
 
