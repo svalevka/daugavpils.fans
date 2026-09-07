@@ -292,6 +292,62 @@ DNS gets sorted out. (See `MAINTENANCE.md`, or the on-site `/support/`
 page, for the plain-language version of this story aimed at listeners,
 not maintainers.)
 
+### If the current archive.org account becomes inaccessible
+
+Publishing (`tools/publish_to_archive_org.py`) currently runs under one
+archive.org account. If whoever holds that account's login disappears or
+loses access, **nothing that's already published is lost** - every item
+is public and freely downloadable with no login, and the full metadata
+(every `band.yaml`/`release.yaml`) is independently recoverable from
+either this repo's git history or the `daugavpils-fans-metadata`
+archive.org item (see "Metadata schema" above), without needing the old
+account at all. What breaks is narrower: **nobody can add new files to
+an already-existing item, or publish new items under the
+`daugavpils-fans-*` id prefix, without that specific account** - item
+ownership on archive.org belongs to whichever account created the item,
+and doesn't transfer on its own.
+
+If you're a new maintainer picking this project up and the old account
+is gone, here's the actual sequence:
+
+1. **Try to recover the old account first.** This is worth attempting
+   before anything below, since it's the only path that keeps every
+   existing item's id, URL, and already-merged `sameAs` link working
+   unchanged: archive.org's own password-reset flow against the account's
+   registered email, and if that fails, contacting archive.org support
+   directly - point them at this repo's public commit history as evidence
+   you're continuing a legitimate, ongoing open-source archive, not
+   hijacking an account. Not guaranteed to work, but low-cost to try.
+
+2. **If it's genuinely unrecoverable, create a new archive.org account**
+   and give it its own id namespace, rather than trying to reuse
+   `daugavpils-fans-*` (uploads to those existing ids will simply be
+   rejected - they're owned by the old account). Change `ITEM_PREFIX` in
+   `tools/archive_org.py` to something new (e.g. a prefix identifying the
+   new maintainer/era). `band_item_id()`, `release_item_id()`, and
+   `metadata_item_id()` all derive from that one constant, so every *new*
+   publish - new bands, the metadata backup, everything - picks up the
+   new prefix automatically from that one-line change.
+
+3. **Existing bands/releases don't need to move immediately.** Their
+   items stay live under the old prefix, permanently and publicly
+   downloadable, exactly as today - that's not a stopgap, it's the same
+   guarantee every other item on archive.org already relies on. Only
+   touch one if you actually need to change it (fix a file, add a missing
+   track): download the current files from the existing (still-public)
+   item, publish them under the new prefix, then update that band's/
+   release's `sameAs` in its YAML to add the new URLs (the old ones can
+   stay too, as history - they still resolve).
+
+4. **New bands just publish normally** under the new prefix from the
+   start - no legacy item to reconcile at all.
+
+In short: an inaccessible account can't destroy anything already
+published, but it does permanently freeze *that* account's ability to
+add to it - continuing forward means adopting a new account and a new id
+prefix going forward, not recovering write access to old items you can't
+regain the login for.
+
 ## Tooling usage
 
 ```bash
