@@ -34,6 +34,13 @@ class ValidSubmissionTest(ReviewAppTestCase):
         self.assertEqual(json.loads(row["proposed_value"]), "Corrected biography text.")
         self.assertIsNone(row["submitted_by_approver_id"])
 
+    def test_scalar_field_normalizes_browser_crlf_line_endings(self):
+        response = self.submit(proposed_value="Line one.\r\nLine two.\r\nLine three.")
+        self.assertEqual(response.status_code, 201)
+
+        rows = self.fetch_proposals()
+        self.assertEqual(json.loads(rows[0]["proposed_value"]), "Line one.\nLine two.\nLine three.")
+
     def test_list_field_round_trips_between_form_lines_and_stored_list(self):
         response = self.submit(
             target="band", field="genre", proposed_value="post-punk\ncoldwave\n\n  \n"

@@ -214,7 +214,12 @@ def create_proposal():
     target = request.form.get("target", "")
     field = request.form.get("field", "")
     list_index = _parse_list_index(request.form.get("list_index", ""))
-    proposed_raw = request.form.get("proposed_value", "")
+    # Browsers submit <textarea> content with \r\n line endings regardless
+    # of the file's own convention - normalize to \n (matching every YAML
+    # file's own newlines) before it becomes original_value/proposed_value,
+    # otherwise a scalar field's stored diff carries literal \r bytes that
+    # weren't part of what the submitter actually typed.
+    proposed_raw = request.form.get("proposed_value", "").replace("\r\n", "\n").replace("\r", "\n")
     submitter_name = request.form.get("submitter_name", "").strip() or None
     submitter_contact = request.form.get("submitter_contact", "").strip() or None
 
