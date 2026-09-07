@@ -22,6 +22,15 @@ def release_item_id(band_slug: str, release_slug: str) -> str:
     return f"{ITEM_PREFIX}-{band_slug}-{release_slug}"
 
 
+def metadata_item_id() -> str:
+    """The one archive.org item holding a full backup of every
+    band.yaml/release.yaml (see tools/publish_to_archive_org.py). Recovering
+    the Archive's metadata from archive.org alone should mean going to one
+    documented, guessable place - not deriving a separate item id per
+    band/release from the slug-naming convention above."""
+    return f"{ITEM_PREFIX}-metadata"
+
+
 def archive_org_url(item_id: str, content_url: str) -> str:
     """The public URL for one file within an archive.org item. content_url
     is used as-is as the file's path within the item, so it matches the

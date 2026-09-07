@@ -9,9 +9,13 @@ of this repo, this maintainer's machine, or any single host - the same goal
 CONTEXT.md's "Archive Release" concept describes, implemented via
 archive.org instead of a hand-rolled torrent bundle.
 
-Each item also gets a copy of its own band.yaml/release.yaml alongside the
-media - a metadata backup independent of GitHub, since right now GitHub is
-the only place the descriptions/tracklists/bios actually live.
+A full backup of every band.yaml/release.yaml is also uploaded, as one
+final step, to a single dedicated item (metadata_item_id() in
+archive_org.py) - one documented, guessable place to recover the whole
+Archive's metadata from archive.org alone, independent of GitHub. Earlier
+this repeated the metadata inside every band/release's own item instead;
+that meant guessing (or already knowing) every band/release's item id just
+to reassemble the metadata, which isn't actually recoverable-from-scratch.
 
 Requires an authenticated `ia` (internetarchive) config on this machine -
 run `ia configure` once, using the project's archive.org account, before
@@ -31,7 +35,7 @@ from pathlib import Path
 
 import yaml
 
-from archive_org import archive_org_url, band_item_id, item_page_url, item_torrent_url, release_item_id
+from archive_org import archive_org_url, band_item_id, item_page_url, item_torrent_url, metadata_item_id, release_item_id
 from models import MusicAlbum, MusicGroup
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -87,37 +91,64 @@ def publish_item(
     dry_run: bool,
     yaml_path: Path,
 ) -> None:
-    """Uploads `files` (this band/release's media) plus its own
-    band.yaml/release.yaml as one more file in the same item - a backup copy
-    of the metadata that isn't only on GitHub (see MAINTENANCE.md's "Что
-    будет, если этим станет некому заниматься"). `checksum=True` means a
-    metadata edit gets picked up and re-uploaded on the next publish run,
-    same as a changed media file would be."""
     if not files:
         print(f"  {item_id}: nothing to publish, skipping")
         return
 
-    print(f"  {item_id}: {len(files)} file(s) + {yaml_path.name} (metadata backup)")
+    print(f"  {item_id}: {len(files)} file(s)")
     for content_url in sorted(files):
         print(f"    {content_url} -> {archive_org_url(item_id, content_url)}")
-    print(f"    {yaml_path.name} -> {archive_org_url(item_id, yaml_path.name)}")
 
     if dry_run:
         return
 
     import internetarchive as ia
 
-    # Record archive.org's own URLs into the metadata file *before* uploading
-    # it, so the backup copy already includes them - otherwise it would omit
-    # its own location until whatever the next publish run happens to be.
-    record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
-
-    upload_files = {**files, yaml_path.name: yaml_path}
     ia.upload(
         item_id,
-        files={content_url: str(path) for content_url, path in upload_files.items()},
+        files={content_url: str(path) for content_url, path in files.items()},
         metadata=metadata,
         checksum=True,  # skip files whose remote MD5 already matches
+        verbose=True,
+    )
+
+    record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
+
+
+def publish_metadata_bundle(bands_dir: Path, dry_run: bool) -> None:
+    """Uploads every band.yaml/release.yaml under bands_dir into one
+    dedicated archive.org item (metadata_item_id()), each at its path
+    relative to bands_dir (e.g. "m-spirit/band.yaml",
+    "m-spirit/1995-.../release.yaml"). Run last, after the per-band/release
+    loop, so every file's sameAs (recorded by publish_item above) is already
+    in its final state before this upload. checksum=True means only files
+    that actually changed get re-uploaded."""
+    yaml_files = sorted(p for p in bands_dir.rglob("*.yaml") if p.name in ("band.yaml", "release.yaml"))
+    files = {p.relative_to(bands_dir).as_posix(): p for p in yaml_files}
+    item_id = metadata_item_id()
+
+    print(f"\n{item_id}: metadata backup ({len(files)} file(s))")
+    for rel_path in sorted(files):
+        print(f"    {rel_path} -> {archive_org_url(item_id, rel_path)}")
+
+    if dry_run:
+        return
+
+    import internetarchive as ia
+
+    ia.upload(
+        item_id,
+        files={rel_path: str(path) for rel_path, path in files.items()},
+        metadata={
+            "mediatype": "data",
+            "title": "Daugavpils Music Archive - metadata backup",
+            "description": (
+                "Full backup of every band.yaml/release.yaml from "
+                "https://github.com/svalevka/daugavpils.fans, independent of GitHub. "
+                "See that repo's MAINTENANCE.md for context."
+            ),
+        },
+        checksum=True,
         verbose=True,
     )
 
@@ -186,6 +217,8 @@ def main() -> int:
                 args.dry_run,
                 release_yaml,
             )
+
+    publish_metadata_bundle(bands_dir, args.dry_run)
 
     print("\nDry run: nothing was uploaded." if args.dry_run else "\nDone.")
     return 0

@@ -78,22 +78,29 @@ can't be silently renamed.
 the archive's actual distribution mechanism (see `README.md`) and the only
 place the website links to for media (see `webapp/build.py`).
 
-**How:** walks `bands/`, and for each band/release uploads its media plus
-its own `band.yaml`/`release.yaml` as one more file in the same item - a
-metadata backup independent of GitHub (see MAINTENANCE.md) - via
+**How:** walks `bands/`, and for each band/release uploads its media via
 `internetarchive.upload(..., checksum=True)`, which skips any file already
-present with a matching checksum, so an edited YAML gets re-uploaded next
-run just like a changed media file would. Uploads go to the item id
-computed by `archive_org.py`, with title/creator/date/license metadata
-drawn from the band/release YAML. Refuses to run over an archive that
-hasn't already passed `validate.py`. Before uploading, it records that
-item's archive.org details-page URL and auto-generated torrent URL into
-the band/release YAML's `sameAs` list (skipping any already present) - the
-same "compute once, record it" pattern `validate.py --write` uses for
-checksums - so the backed-up copy already includes its own `sameAs`, and
-`sameAs` itself reflects a confirmed publish rather than a by-hand-typed
-guess. Running it again is always safe: already-recorded URLs and
-already-matching files are just skipped.
+present with a matching checksum. Uploads go to the item id computed by
+`archive_org.py`, with title/creator/date/license metadata drawn from the
+band/release YAML. Refuses to run over an archive that hasn't already
+passed `validate.py`. After each successful upload, it records that item's
+archive.org details-page URL and auto-generated torrent URL into the
+band/release YAML's `sameAs` list (skipping any already present) - the same
+"compute once, record it" pattern `validate.py --write` uses for checksums,
+so `sameAs` reflects a confirmed publish rather than a by-hand-typed guess.
+Running it again is always safe: already-recorded URLs and already-matching
+files are just skipped.
+
+As a final step, it also uploads **every** `band.yaml`/`release.yaml` (by
+then holding their just-recorded `sameAs`) into one more, separate item -
+`archive_org.metadata_item_id()`, currently `daugavpils-fans-metadata` -
+each at its path relative to `bands/` (e.g. `m-spirit/band.yaml`). This is
+the Archive's full metadata backup, independent of GitHub (see
+MAINTENANCE.md): one documented, guessable location for the whole thing,
+not a copy scattered across every band/release's own item. (An earlier
+version did exactly that scattering - guessable only if you already knew
+every band/release's item id, which isn't actually recoverable-from-scratch
+- and was replaced with this single item after review.)
 
 **When you'd run it:**
 - `python tools/publish_to_archive_org.py` - publish anything new or
