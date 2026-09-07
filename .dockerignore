@@ -1,0 +1,23 @@
+# Keeps the review_app image build (webapp/deploy/docker-compose.yml,
+# context: ../..) from uploading the whole repo as build context - only
+# tools/ and review_app/ are ever actually COPYed in (see
+# review_app/Dockerfile), but without this, Docker still sends everything
+# else here to the daemon first, which matters when local media exists.
+.git/
+.venv/
+__pycache__/
+*.pyc
+bands/**/*.mp3
+bands/**/*.flac
+bands/**/*.wav
+bands/**/*.ogg
+bands/**/*.m4a
+bands/**/*.jpg
+bands/**/*.jpeg
+bands/**/*.png
+bands/**/*.webp
+bands/**/*.mp4
+bands/**/*.mov
+bands/**/*.mkv
+bands/**/*.flv
+webapp/dist/

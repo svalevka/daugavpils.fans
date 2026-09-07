@@ -23,6 +23,13 @@
 # target of an internal symlink, so nginx re-resolves it fresh on every
 # request, and `ln -sfn` is a single atomic syscall.
 #
+# `current-checkout` (see GitHub issue #14) is the same idea for
+# review_app: it needs read access to the live `bands/**/*.yaml` tree,
+# not the built HTML `current` points at, so it gets its own symlink,
+# pointing at the worktree root instead of webapp/dist - re-pointed
+# atomically in the same step, from the same successful build, so the two
+# symlinks can never disagree about which commit is "live."
+#
 # Redeploys on *any* change to main, not only approved-proposal ones -
 # this box has no local media tree (same limitation the GitHub Pages CI
 # mirror already has), so the build runs with SITE_SKIP_LOCAL_VALIDATION=1,
@@ -52,15 +59,18 @@ BRANCH="${BRANCH:-main}"
 # container's mount namespace at all.
 CHECKOUT_ROOT="${CHECKOUT_ROOT:-/opt/daugavpils-fans/site/checkouts}"
 CURRENT_LINK="${CURRENT_LINK:-/opt/daugavpils-fans/site/current}"
+CURRENT_CHECKOUT_LINK="${CURRENT_CHECKOUT_LINK:-/opt/daugavpils-fans/site/current-checkout}"
 STATE_FILE="${STATE_FILE:-/opt/daugavpils-fans/.last-deployed-sha}"
 LOCK_DIR="${LOCK_DIR:-/opt/daugavpils-fans/.sync-and-deploy.lock.d}"
 KEEP_CHECKOUTS="${KEEP_CHECKOUTS:-3}"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 
-if [ "$(dirname "$CURRENT_LINK")" != "$(dirname "$CHECKOUT_ROOT")" ]; then
-  echo "CURRENT_LINK and CHECKOUT_ROOT must be direct siblings under the same directory" >&2
-  exit 1
-fi
+for link in "$CURRENT_LINK" "$CURRENT_CHECKOUT_LINK"; do
+  if [ "$(dirname "$link")" != "$(dirname "$CHECKOUT_ROOT")" ]; then
+    echo "$link and CHECKOUT_ROOT must be direct siblings under the same directory" >&2
+    exit 1
+  fi
+done
 
 # Atomic, dependency-free overlap guard: `mkdir` either succeeds exactly
 # once or fails, with no race window, on every platform - unlike `flock`,
@@ -108,6 +118,7 @@ fi
 # checkout, never a half-written one. Relative target - see the
 # CHECKOUT_ROOT/CURRENT_LINK sibling contract above.
 ln -sfn "$(basename "$CHECKOUT_ROOT")/$LATEST_SHA/webapp/dist" "$CURRENT_LINK"
+ln -sfn "$(basename "$CHECKOUT_ROOT")/$LATEST_SHA" "$CURRENT_CHECKOUT_LINK"
 
 echo "$LATEST_SHA" > "$STATE_FILE"
 

@@ -102,6 +102,7 @@ class DeployHarness:
         self.site_dir = tmp_path / "site"
         self.checkout_root = self.site_dir / "checkouts"
         self.current_link = self.site_dir / "current"
+        self.current_checkout_link = self.site_dir / "current-checkout"
         self.state_file = tmp_path / "last-deployed-sha"
         self.lock_dir = tmp_path / "lock.d"
 
@@ -114,6 +115,7 @@ class DeployHarness:
             "REPO_DIR": str(self.repo_dir),
             "CHECKOUT_ROOT": str(self.checkout_root),
             "CURRENT_LINK": str(self.current_link),
+            "CURRENT_CHECKOUT_LINK": str(self.current_checkout_link),
             "STATE_FILE": str(self.state_file),
             "LOCK_DIR": str(self.lock_dir),
             "KEEP_CHECKOUTS": str(keep_checkouts),
@@ -139,6 +141,14 @@ class FirstAndRepeatDeployTest(unittest.TestCase):
             self.assertTrue(h.current_link.is_symlink())
             self.assertFalse(h.current_link.readlink().is_absolute())
             self.assertTrue(h.state_file.exists())
+
+            # current-checkout points at the worktree *root* (review_app's
+            # ARCHIVE_CHECKOUT_PATH - see GitHub issue #14), not webapp/dist
+            # like current does - proven by it containing webapp/build.py
+            # as a subpath, which webapp/dist itself never would.
+            self.assertTrue(h.current_checkout_link.is_symlink())
+            self.assertFalse(h.current_checkout_link.readlink().is_absolute())
+            self.assertTrue((h.current_checkout_link / "webapp" / "build.py").exists())
 
     def test_second_run_with_no_new_commits_is_a_noop(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -169,6 +179,8 @@ class FirstAndRepeatDeployTest(unittest.TestCase):
             self.assertEqual(h.current_index_html(), "v2")
             checkouts = sorted(p.name for p in h.checkout_root.iterdir())
             self.assertEqual(len(checkouts), 2)
+            # Both symlinks move together, to the same new commit.
+            self.assertEqual(h.current_link.resolve().parent.parent, h.current_checkout_link.resolve())
 
 
 class FailedBuildTest(unittest.TestCase):

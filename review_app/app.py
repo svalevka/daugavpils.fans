@@ -3,9 +3,9 @@ review_app's Flask application factory (see GitHub issue #8/#11): the
 self-hosted app that lets anyone propose a text edit to the archive and
 a curated group of approvers decide on it. create_app() takes an explicit
 Config rather than reading the environment itself, so tests can point
-each app instance at its own scratch database/checkout - a production
-entrypoint (reading Config.from_env(), run via gunicorn) is added by the
-deployment ticket (#14), once there's somewhere real to run it.
+each app instance at its own scratch database/checkout. The production
+entrypoint (reading Config.from_env(), run via gunicorn behind nginx) is
+wsgi.py - see GitHub issue #14.
 """
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -40,5 +41,15 @@ def create_app(config: Config) -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(api_bp)
+
+    # Behind nginx (see webapp/deploy/nginx/daugavpils.conf's `proxy_set_header
+    # X-Forwarded-*` lines), only one hop of forwarding headers is ever
+    # trusted - this is what makes url_for(..., _external=True) generate
+    # https://review.daugavpils.fans/... links (auth.py's magic links) and
+    # request.remote_addr reflect the real submitter's IP (submissions.py's
+    # rate limiting) instead of nginx's own address. A no-op when there's
+    # no reverse proxy in front (local dev, tests) - no X-Forwarded-* header
+    # ever arrives, so there's nothing to trust.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     return app

@@ -15,3 +15,33 @@ services:
       - ./site:/site:ro
       - ./nginx/daugavpils.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certbot/conf:/etc/letsencrypt:ro
+
+  review-app:
+    build:
+      context: ../..
+      dockerfile: review_app/Dockerfile
+    container_name: daugavpils-fans-review-app
+    restart: unless-stopped
+    # No `ports:` - unlike nginx, this is never reachable except through
+    # it (nginx proxy_passes to it by service name, see
+    # nginx/daugavpils.conf's review.daugavpils.fans server block; both
+    # containers share the default compose network, so that resolves
+    # without any published port here).
+    expose:
+      - "8000"
+    volumes:
+      # Same site/ this box's nginx also mounts (read-only here too) -
+      # ARCHIVE_CHECKOUT_PATH (in review-app.env) points at
+      # /site/current-checkout, the symlink sync-and-deploy.sh (#10)
+      # keeps atomically pointed at the latest deployed commit's checkout
+      # root - see that script's header comment for why an internal
+      # symlink, not the mount source itself, is what makes this safe to
+      # read while a deploy is landing.
+      - ./site:/site:ro
+      # The one thing this service writes: its SQLite database. Not
+      # backed up anywhere - what's at risk if it's lost is only pending
+      # proposals and the approver list, both small and re-creatable;
+      # approved content is already safely in git by the time it
+      # matters.
+      - ./review-app-data:/data
+    env_file: ./review-app.env

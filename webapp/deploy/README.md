@@ -16,10 +16,10 @@ history, or just re-derive it - it's all reissuable.
   certbot/
     conf/                # NOT committed - Let's Encrypt certs, regenerated on demand
     www/
-  site/                  # NOT committed - bind-mounted as a whole into the nginx
-                          # container (`./site:/site:ro`); nginx's `root` is
-                          # /site/current, so everything actually served lives
-                          # somewhere under here
+  site/                  # NOT committed - bind-mounted as a whole into BOTH
+                          # the nginx and review-app containers (`./site:/site:ro`);
+                          # nginx's `root` is /site/current, so everything
+                          # actually served lives somewhere under here
     checkouts/            # one directory per deployed commit - a git-worktree
                           # checkout for the automatic timer's deploys (pruned
                           # automatically), or `manual/` for a hand-run deploy
@@ -27,11 +27,19 @@ history, or just re-derive it - it's all reissuable.
     current                # symlink to whichever checkouts/<x>/webapp/dist was
                           # deployed most recently, by either path - atomically
                           # re-pointed on every deploy, manual or automatic
+    current-checkout       # symlink to the same commit's checkout *root* (not
+                          # webapp/dist) - what review-app reads bands/**/*.yaml
+                          # from (ARCHIVE_CHECKOUT_PATH, see "Deploying
+                          # review_app" below); re-pointed atomically alongside
+                          # current, by the same sync-and-deploy.sh run
   sync-and-deploy.sh     <- this file, installed here and made executable
   repo/                  # NOT committed - the timer's own persistent git clone
                           # (bootstrapped automatically on first run)
   .last-deployed-sha      # NOT committed - state file the timer uses to no-op
                           # when main hasn't moved
+  review-app.env          # NOT committed - review-app's secrets, chmod 600
+                          # (see "Deploying review_app" below)
+  review-app-data/         # NOT committed - review-app's SQLite database
 ```
 
 ## Rebuilding this from scratch on a fresh server
@@ -42,7 +50,10 @@ history, or just re-derive it - it's all reissuable.
    fill in a real Cloudflare API token (Zone:DNS:Edit, scoped to the
    `daugavpils.fans` zone), then `chmod 600` it.
 3. Issue the cert (DNS-01, so only port 443 needs to be open - see ADR-0001
-   for why):
+   for why). Includes `review.daugavpils.fans` in the same cert's SAN list
+   (see "Deploying review_app" below) - both containers' server blocks
+   already reference the same cert files, nothing else changes if you add
+   more subdomains here later:
    ```bash
    docker run --rm \
      -v /opt/daugavpils-fans/certbot/conf:/etc/letsencrypt \
@@ -51,7 +62,7 @@ history, or just re-derive it - it's all reissuable.
      --dns-cloudflare \
      --dns-cloudflare-credentials /cloudflare.ini \
      --dns-cloudflare-propagation-seconds 30 \
-     -d daugavpils.fans -d www.daugavpils.fans \
+     -d daugavpils.fans -d www.daugavpils.fans -d review.daugavpils.fans \
      --agree-tos --non-interactive --email daugavpils@gmail.com --no-eff-email
    ```
 4. Build and deploy the site itself, once, by hand - this remains the
@@ -130,9 +141,70 @@ systemctl status daugavpils-fans-sync.timer
 journalctl -u daugavpils-fans-sync.service -n 50
 ```
 
+## Deploying review_app
+
+`review_app` (see GitHub issue #8/#14) is the self-hosted app that lets
+anyone propose a text edit to the archive and a curated group of
+approvers decide on it. It runs as a second container next to nginx,
+reachable only through it - see `docker-compose.yml`'s `review-app`
+service (no `ports:`, only `expose:`) and
+`nginx/daugavpils.conf`'s `review.daugavpils.fans` server block
+(`proxy_pass http://review-app:8000`).
+
+1. **DNS**: add an `A` record for `review.daugavpils.fans` pointing at
+   this box's IP, in the same Cloudflare zone as `daugavpils.fans` -
+   DNS-only (grey cloud), matching the existing `daugavpils.fans`/`www`
+   records.
+2. **Cert**: add `-d review.daugavpils.fans` to the certbot command in
+   step 3 above (already shown that way) - one cert covers all three
+   names.
+3. **Secrets**: copy `review-app.env.example` to
+   `/opt/daugavpils-fans/review-app.env`, fill in real values, `chmod 600`
+   it - same pattern as `cloudflare.ini`. What each one is:
+
+   | Variable | What it is |
+   |---|---|
+   | `SECRET_KEY` | Flask session signing key - generate with `python3 -c "import secrets; print(secrets.token_hex(32))"` |
+   | `DATABASE_PATH` | `/data/review.db` (matches the `review-app-data:/data` volume) |
+   | `ARCHIVE_CHECKOUT_PATH` | `/site/current-checkout` (matches `sync-and-deploy.sh`'s symlink, see the layout tree above) |
+   | `MAINTAINER_EMAIL` | where new-submission notifications go |
+   | `SMTP_HOST`/`SMTP_PORT`/`SMTP_FROM`/`SMTP_USER`/`SMTP_PASSWORD` | an outbound mail relay's credentials - any real SMTP provider (leave `SMTP_USER`/`SMTP_PASSWORD` blank only for an unauthenticated local relay, not a real one) |
+   | `GITHUB_DISPATCH_TOKEN` | a fine-grained GitHub PAT, scoped to this repo only, `Actions: write` permission only - **not** `Contents` - generate at github.com/settings/personal-access-tokens |
+   | `GITHUB_REPO` | `svalevka/daugavpils.fans` |
+   | `REVIEW_APP_CALLBACK_KEY` | any long random string (e.g. `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`) - **also** set as a GitHub Actions repo secret of the same name (Settings > Secrets and variables > Actions > Secrets), same value in both places |
+   | `RATE_LIMIT_PER_IP_PER_HOUR` | optional, defaults to 5 |
+
+   Also set, as a GitHub Actions repo **variable** (not secret - Settings
+   > Secrets and variables > Actions > Variables), `REVIEW_APP_BASE_URL`
+   = `https://review.daugavpils.fans` -
+   `.github/workflows/apply-proposal.yml` reads it from there to know
+   where to call back.
+4. **First approver**: seed yourself once the container is running (step
+   5):
+   ```bash
+   docker compose exec review-app python manage.py add-approver you@example.com "Your Name"
+   ```
+5. **Start it**:
+   ```bash
+   cd /opt/daugavpils-fans && docker compose up -d --build review-app
+   ```
+6. **Verify**: `docker compose config` (from this directory, with
+   `review-app.env` in place) should validate cleanly before any of the
+   above; `curl -I https://review.daugavpils.fans/submit` should return
+   `200`. Then a real end-to-end pass: submit a proposal at
+   `/submit`, confirm the maintainer notification email arrives, log in
+   via the emailed magic link, approve it on `/dashboard`, watch the
+   triggered Action run in the repo's Actions tab, confirm the commit
+   lands on `main`, and confirm both the Pages mirror and (within one
+   timer interval) the primary domain pick it up.
+
 ## Cert renewal
 
-The cert expires 90 days after issuance and renewal is currently manual:
+The cert expires 90 days after issuance and renewal is currently manual.
+Its SAN list now includes `review.daugavpils.fans` too (see above), but
+only nginx ever reads the cert files - it terminates TLS and proxies
+plaintext to `review-app` internally (see its `proxy_pass` in
+`nginx/daugavpils.conf`) - so only nginx needs restarting:
 
 ```bash
 docker run --rm \
