@@ -321,6 +321,26 @@ example to copy from, look at an existing band - e.g.
 `bands/m-spirit/band.yaml` and
 `bands/m-spirit/1995-zadushevnie-pesenki-ms-pankukhina/release.yaml`.
 
+### Prerequisites
+
+- Python 3 + a venv, with `pip install -r tools/requirements.txt` (see
+  "Tooling usage" above). This is enough for steps 1-6 below - writing
+  metadata, validating it, and opening a PR needs no archive.org access
+  at all.
+- **`ffprobe`** (part of [ffmpeg](https://ffmpeg.org)) on your `PATH`.
+  `validate.py --write` shells out to it to read each audio/video file's
+  duration and bitrate. It's a system binary, not something
+  `pip install` provides.
+- **Only for step 7 (actually publishing to archive.org):** the `ia` CLI
+  (installed by that same `pip install -r tools/requirements.txt`, via
+  the `internetarchive` package) authenticated with `ia configure`. This
+  must be **the project's shared archive.org account, not a personal
+  one** (see `tools/TOOLS.md`) - every band/release item and the
+  metadata backup all need to live under one consistent account. If you
+  don't have those credentials, you can still do everything through
+  step 6 (write the metadata, validate it, open/merge the PR) - someone
+  with the project's archive.org access publishes it from there.
+
 1. **Create the band folder and `band.yaml`.** Pick a slug (see "Naming
    convention" above) and create `bands/<band-slug>/band.yaml`. Only
    `name` and `slug` are required - everything else (`member`,
