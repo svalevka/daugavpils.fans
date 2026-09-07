@@ -16,6 +16,18 @@ Default label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `read
 
 Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
+### Where documentation lives
+
+`README.md` and `MAINTENANCE.md` stay at the repo root - they're the two
+audience-facing entry points (technical contributors, and listeners/
+non-technical readers, respectively) and people expect to find them
+there. `CONTEXT.md` and `docs/adr/` also stay at the root, per "Domain
+docs" above - don't move those into `documentation/` either. Everything
+else documentation-shaped (runbooks, recovery procedures, and similar)
+goes under `documentation/` - e.g. `documentation/RECOVERY.md`. When
+adding a new doc, ask which of these three buckets it belongs to rather
+than defaulting to the root.
+
 ### Tools inventory
 
 `tools/TOOLS.md` describes, in plain English, what each file in `tools/`

@@ -127,6 +127,9 @@ tools/
 docs/agents/                    # config consumed by AI coding-agent skills
                                  # (issue tracker, triage labels, domain docs)
                                  # - not part of the archive itself
+docs/adr/                       # architecture decision records
+documentation/                  # runbooks and other docs (README/MAINTENANCE
+                                 # stay at the root - see CLAUDE.md)
 webapp/                          # public website built from the archive (ADR-0001)
   build.py                       # renders bands/**/*.yaml into static HTML,
                                   # linking media straight to archive.org
@@ -134,8 +137,14 @@ webapp/                          # public website built from the archive (ADR-00
   deploy/                        # docker-compose + nginx config run on the host
   dist/                          # generated output: HTML/CSS only, no media
                                   # (gitignored, not committed)
-.github/workflows/pages.yml      # builds + deploys the GitHub Pages mirror
+review_app/                      # public text-edit proposal + curated-approval
+                                  # app (see "Public text corrections" below,
+                                  # ADR-0003) - a live server, unlike webapp/
+.github/workflows/
+  pages.yml                      # builds + deploys the GitHub Pages mirror
                                   # on every push to main (ADR-0002)
+  apply-proposal.yml             # applies an approved review_app proposal and
+                                  # pushes the commit (ADR-0003)
 ```
 
 ### Naming convention
@@ -253,8 +262,29 @@ distribution instead of centralized paid hosting.
 A public website now exists (see `webapp/` and ADR-0001) - a static site
 built from the same archive, streaming media directly from archive.org
 rather than hosting a copy of it (see `tools/publish_to_archive_org.py`),
-not a replacement for the archive.org distribution model above. Still
-explicitly out of scope: inviting other contributors.
+not a replacement for the archive.org distribution model above. Adding a
+new band, release, or media still goes through a pull request and quorum
+review (see "Adding a new band, step by step" below) - what's now open to
+the public, with no account or git knowledge needed, is proposing a
+correction to an *existing* band's or release's text (see "Public text
+corrections" below).
+
+## Public text corrections (review app)
+
+Correcting or extending an *existing* band's or release's text fields -
+biography, member role/period, photo caption, genres, alternate names
+(see `tools/editable_fields.py` for the exact allowlist) - doesn't need a
+GitHub account or a pull request: anyone can propose an edit at
+**[review.daugavpils.fans](https://review.daugavpils.fans)**, and a
+curated approver (any one of them, no quorum) applies it. This is a
+deliberately lighter-weight, lower-rigor review path than the "Quorum
+review" PR flow above - appropriate for small text corrections, not for
+adding a new band, release, or media. See ADR-0003 for why this exists as
+a live server process alongside an otherwise fully static Site, and
+GitHub issue #8 for the full design.
+
+This feature only exists on the primary domain - the GitHub Pages mirror
+below has no such app; visiting it there won't find a proposal form.
 
 ## Resilience
 
@@ -266,11 +296,16 @@ maintainer's server - so it's deployed to two independent places (see
 ADR-0002), not one:
 
 - **daugavpils.fans** (primary) - a Hetzner server the maintainer
-  administers. Deploying here is manual: run `webapp/build.py`, then
-  rsync `webapp/dist/` to the server (see `webapp/deploy/README.md`).
-  This build re-validates every local media file's checksum for real,
-  every time (`tools/validate.py`), since the maintainer's machine
-  actually holds the local media tree.
+  administers. A systemd timer there pulls `main` every 5 minutes and
+  redeploys automatically on any change (see `webapp/deploy/README.md`'s
+  "Automatic redeploy" section) - since that box has no local media tree,
+  it builds with `SITE_SKIP_LOCAL_VALIDATION=1`, trusting archive.org's
+  already-published checksums instead of re-verifying local files. The
+  maintainer can still run `webapp/build.py` then rsync `webapp/dist/` by
+  hand for an on-demand deploy that *does* re-validate every local media
+  file's checksum for real (`tools/validate.py`) - the right thing to do
+  right after adding new media, since the timer's build never re-checks
+  local files at all.
 - **A live GitHub Pages mirror**, at this repo's default Pages URL
   (`https://<owner>.github.io/<repo-name>/`) - reachable right now,
   independently of daugavpils.fans. `.github/workflows/pages.yml`
@@ -310,9 +345,9 @@ ownership on archive.org belongs to whichever account created the item,
 and doesn't transfer on its own.
 
 **If you're picking this project up with no credentials for that
-account, see [`RECOVERY.md`](RECOVERY.md)** for the exact, runnable
-sequence - it needs nothing beyond this repo and archive.org, both
-already public.
+account, see [`documentation/RECOVERY.md`](documentation/RECOVERY.md)**
+for the exact, runnable sequence - it needs nothing beyond this repo and
+archive.org, both already public.
 
 ## Tooling usage
 
