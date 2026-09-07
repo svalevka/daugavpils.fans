@@ -1,0 +1,10 @@
+[Unit]
+Description=Run daugavpils-fans-sync.service every 5 minutes (see GitHub issue #10)
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
