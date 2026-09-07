@@ -21,6 +21,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 import archive_read  # noqa: E402
 import db  # noqa: E402
+import mail  # noqa: E402
 from editable_fields import EDITABLE_FIELDS, NESTED_LIST_ATTR, lookup  # noqa: E402
 from models import MusicAlbum, MusicGroup  # noqa: E402
 
@@ -238,7 +239,7 @@ def create_proposal():
         conn, session.get("approver_id"), submitter_contact
     )
 
-    conn.execute(
+    cur = conn.execute(
         """
         INSERT INTO proposals (
             band_slug, release_slug, target, list_index, field,
@@ -262,5 +263,23 @@ def create_proposal():
         ),
     )
     conn.commit()
+
+    scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
+    summary = (
+        f"New proposal #{cur.lastrowid} for {scope} ({target}.{field}):\n\n"
+        f"- {original_value!r}\n+ {proposed_value!r}\n\n"
+        "Log in to the dashboard to review it."
+    )
+    # The proposal is already durably committed above - a submitter
+    # should never see a failure just because the notification couldn't
+    # be sent (e.g. SMTP is down). The maintainer finds out some other
+    # way (checking the dashboard) rather than the submission itself
+    # erroring out.
+    try:
+        mail.send_submission_notification(
+            current_app.config["SMTP_CONFIG"], [current_app.config["MAINTAINER_EMAIL"]], summary
+        )
+    except OSError:
+        current_app.logger.exception("failed to send submission notification email")
 
     return render_template("submit_done.html"), 201

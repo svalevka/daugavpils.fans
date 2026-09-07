@@ -17,7 +17,9 @@ from flask import Flask
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
+from auth import bp as auth_bp  # noqa: E402
 from config import Config  # noqa: E402
+from dashboard import bp as dashboard_bp  # noqa: E402
 from submissions import bp as submissions_bp  # noqa: E402
 
 
@@ -27,8 +29,12 @@ def create_app(config: Config) -> Flask:
     app.config["DATABASE_PATH"] = config.database_path
     app.config["ARCHIVE_CHECKOUT_PATH"] = config.archive_checkout_path
     app.config["RATE_LIMIT_PER_IP_PER_HOUR"] = config.rate_limit_per_ip_per_hour
+    app.config["MAINTAINER_EMAIL"] = config.maintainer_email
+    app.config["SMTP_CONFIG"] = config.smtp
 
     db.init_app(app)
     app.register_blueprint(submissions_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
 
     return app
