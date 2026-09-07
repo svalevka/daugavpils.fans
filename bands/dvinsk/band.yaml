@@ -1,0 +1,95 @@
+'@type': MusicGroup
+name: Двинск
+slug: dvinsk
+alternateName: []
+foundingDate: '1992'
+location: Daugavpils, Latvia
+genre: []
+member:
+- name: Сергей Ермолаев
+  name_en: Sergei Ermolaev
+  role: ударные, клавишные
+  role_en: drums, keyboards
+  period: '1992'
+- name: Руслан Кондрусь (Годблин)
+  name_en: Ruslan Kondrus (Godblin)
+  role: гитара, вокал
+  role_en: guitar, vocals
+  period: '1992'
+- name: Олег Косчинский
+  name_en: Oleg Koschinsky
+  role: бас
+  role_en: bass
+  period: 1992-1994
+- name: Геннадий Кузьмин (Кузя)
+  name_en: Gennady Kuzmin (Kuzya)
+  role: гитара, вокал, клавишные
+  role_en: guitar, vocals, keyboards
+  period: '1992'
+- name: Вадим Неменущий (Вадер)
+  name_en: Vadim Nemenushchy (Vader)
+  role: бас
+  role_en: bass
+  period: '1994'
+description: 'При великом застое в городе Даугавпилсе на протяжении времен «перестройки»,
+  когда, грубо говоря, и сходить не куда было, послушать рок-музыку, молодые ребята
+  из «молодежного вокально-инструментального ансамбля Дома Пионеров»: Ермолаев Сергей
+  и Кондрусь (Годблин) Руслан в 92-ом году решили создать рок-группу под названием
+  Двинск. Позднее к ним присоединился бас-гитарист Касчинский Олег. Ребята начали
+  репетировать в 15-ой школе, где дали свой первый концерт. В конце 92-го года к команде
+  присоединился Кузьмин (Кузя) Геннадий. После этого группа переехала заниматься в
+  помещение старого аэропорта. Встал вопрос о проведении концертов своими силами,
+  т.к. в это время в Даугавпилсе никто не делал концерты местных рок-групп. Поступило
+  предложение от администрации РТУ, где в то время учились Сергей и Олег, с предоставлением
+  помещения под репетиции, а так же актовый зал под проведение концертов. Т.к. группа
+  хотела записать магнитоальбом, они приняли это предложение.
+
+  В 93-м году группа Двинск записала первый альбом под названием «Карманный Мир» и
+  сделала его презентацию в РТУ. Через некоторое время, т.к. на первый концерт пришло
+  много народа, решили сделать фестиваль с участием нескольких местных групп: Neisseria,
+  Imago и т.д.
+
+  В 94-ом году бас-гитарист Касчинский решил уехать на свою этническую родину. Его
+  место в группе занял Неменущий (Вадер) Вадим. В этом же году на студии ЦЛК (звукорежиссер
+  Прощенко Андрей) записывается второй альбом «Pease Waiting».
+
+  '
+description_en: 'During the great stagnation in the city of Daugavpils in the years
+  of "perestroika", when there was, put simply, nowhere to go to hear rock music,
+  young guys from the "youth vocal-instrumental ensemble of the Pioneers'' House"
+  - Sergei Ermolaev and Ruslan Kondrus (Godblin) - decided in 1992 to start a rock
+  band called Dvinsk. Bass guitarist Oleg Koschinsky joined them later. The guys started
+  rehearsing at School No. 15, where they gave their first concert. At the end of
+  1992 Gennady Kuzmin (Kuzya) joined the band. After that the group moved to rehearse
+  in the building of the old airport. The question of putting on concerts by themselves
+  came up, since at that time nobody in Daugavpils was organizing local rock band
+  concerts. An offer came from the administration of RTU, where Sergei and Oleg were
+  studying at the time, to provide a rehearsal space as well as an assembly hall for
+  concerts. Since the band wanted to record a tape album, they accepted the offer.
+
+  In 1993 the band Dvinsk recorded their first album, called "Карманный Мир" (Pocket
+  World), and held its presentation at RTU. Some time later, since a lot of people
+  had come to that first concert, they decided to put on a festival with several local
+  bands taking part: Neisseria, Imago, and others.
+
+  In 1994 bass guitarist Koschinsky decided to move back to his ethnic homeland. His
+  place in the band was taken by Vadim Nemenushchy (Vader). That same year, at the
+  TsLK studio (sound engineer Andrei Proshchenko), the band recorded their second
+  album, "Pease Waiting".
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-dvinsk
+- https://archive.org/download/daugavpils-fans-dvinsk/daugavpils-fans-dvinsk_archive.torrent
+image:
+- contentUrl: media/dvinsk-1994.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 04f297f9cdf5f0566fdfabaf7e0ca6b81f1c1debd13d5dfa806a667b58ef5841
+  '@type': ImageObject
+  caption: Двинск, 1994
+  caption_en: Dvinsk, 1994
+  depicts: []
+video: []

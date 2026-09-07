@@ -1,0 +1,191 @@
+'@type': MusicAlbum
+name: Карманный Мир
+slug: 1993-karmannyi-mir
+datePublished: '1993'
+byArtist: dvinsk
+genre: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Первый альбом группы, записанный в 1993 году и представленный в актовом
+  зале РТУ. Состав: Ермолаев Сергей (ударные, клавишные), Кондрусь (Годблин) Руслан
+  (гитара, вокал), Кузьмин (Кузя) Геннадий (гитара, вокал, клавишные), Косчинский
+  Олег (бас). Звукорежиссёр — Вострецов С. Оцифровано без потерь в FLAC.
+
+  '
+description_en: 'The band''s first album, recorded in 1993 and presented in RTU''s
+  assembly hall. Lineup: Sergei Ermolaev (drums, keyboards), Ruslan Kondrus (Godblin)
+  (guitar, vocals), Gennady Kuzmin (Kuzya) (guitar, vocals, keyboards), Oleg Koschinsky
+  (bass). Sound engineer - S. Vostretsov. Digitized losslessly to FLAC.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-dvinsk-1993-karmannyi-mir
+- https://archive.org/download/daugavpils-fans-dvinsk-1993-karmannyi-mir/daugavpils-fans-dvinsk-1993-karmannyi-mir_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Проснитесь люди
+  audio:
+    contentUrl: 01-prosnites-liudi.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7eddd605ea2eefd25835d89f1bd090e888b26d507ec5dbf09a0bf6e50d62055b
+    '@type': AudioObject
+    bitrate: 1732 kbps
+    duration: PT3M28S
+- '@type': MusicRecording
+  position: 2
+  name: Не понять
+  audio:
+    contentUrl: 02-ne-poniat.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 708c565f464e7549df33e90a8b7d41eeaaa315ef6ac1a0512926e285f8b1bce8
+    '@type': AudioObject
+    bitrate: 1629 kbps
+    duration: PT4M10S
+- '@type': MusicRecording
+  position: 3
+  name: Карманный мир
+  audio:
+    contentUrl: 03-karmannyi-mir.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 928cf0951e654bd45bcf6f27bf93973e629b835fbeb78185823808f1dc099291
+    '@type': AudioObject
+    bitrate: 1643 kbps
+    duration: PT3M25S
+- '@type': MusicRecording
+  position: 4
+  name: Зазеркалье
+  audio:
+    contentUrl: 04-zazerkale.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7347fd3af27da4d8fc34eaf0844f8ab8ffc97f5f5d41217bc563bce39d526a36
+    '@type': AudioObject
+    bitrate: 1624 kbps
+    duration: PT4M27S
+- '@type': MusicRecording
+  position: 5
+  name: Монолог о власти
+  audio:
+    contentUrl: 05-monolog-o-vlasti.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6640aad5f90aca38558b4025f9504996395a224571d0427f3c2280a8df29a8dd
+    '@type': AudioObject
+    bitrate: 1652 kbps
+    duration: PT3M0S
+- '@type': MusicRecording
+  position: 6
+  name: Ну и пусть
+  audio:
+    contentUrl: 06-nu-i-pust.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cf6a8ebdf947a68e3356284bb3d67a4b35c404bae31c8ff934b77579fca4c805
+    '@type': AudioObject
+    bitrate: 1688 kbps
+    duration: PT4M11S
+- '@type': MusicRecording
+  position: 7
+  name: Сон
+  audio:
+    contentUrl: 07-son.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 026654bf7fb860a24ecf725172b86a86e0e9dbb4db95b3e257a164814acc18a9
+    '@type': AudioObject
+    bitrate: 1590 kbps
+    duration: PT4M35S
+- '@type': MusicRecording
+  position: 8
+  name: Space Ranger
+  audio:
+    contentUrl: 08-space-ranger.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c13afed4184a7ed68063a5ba1320a7cc5bb8365a870eb7262741f41c0a1938ec
+    '@type': AudioObject
+    bitrate: 1614 kbps
+    duration: PT3M35S
+- '@type': MusicRecording
+  position: 9
+  name: Наливай
+  audio:
+    contentUrl: 09-nalivai.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8c2dbf8c18ff22072d5d7126f1e8a7cf7b4b19cd83484b3931377ca4f27591f5
+    '@type': AudioObject
+    bitrate: 1596 kbps
+    duration: PT4M15S
+- '@type': MusicRecording
+  position: 10
+  name: Mad Night
+  audio:
+    contentUrl: 10-mad-night.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 68249a4ea8f56a4a65173ac2c1a7ea8928384044993e0675568f734b3914e10e
+    '@type': AudioObject
+    bitrate: 1638 kbps
+    duration: PT2M50S
+- '@type': MusicRecording
+  position: 11
+  name: Как Бог
+  audio:
+    contentUrl: 11-kak-bog.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 31ab5fe2157be1c2262f8acbc22f7c29cacc75ad2cc7417f034dbe4398292055
+    '@type': AudioObject
+    bitrate: 1619 kbps
+    duration: PT2M41S
+- '@type': MusicRecording
+  position: 12
+  name: I Believe
+  audio:
+    contentUrl: 12-i-believe.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d48453a670b7370708983ce479fcd270db2bf280c7463b337da29c91fdcd2d20
+    '@type': AudioObject
+    bitrate: 1619 kbps
+    duration: PT5M2S
+image:
+- contentUrl: cover-back.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0f399733adccddee556649de67dbaffeed90e5e4a0f5e230ea229d51f9b80f22
+  '@type': ImageObject
+  caption: Обложка альбома (оборот)
+  caption_en: Album cover (back)
+  depicts: []
+video: []

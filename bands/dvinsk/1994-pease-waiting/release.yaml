@@ -1,0 +1,125 @@
+'@type': MusicAlbum
+name: Pease Waiting
+slug: 1994-pease-waiting
+datePublished: '1994'
+byArtist: dvinsk
+genre: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Второй альбом группы, записанный в 1994 году на студии ЦЛК (звукорежиссёр
+  — Прощенко Андрей). К этому моменту бас-гитариста Косчинского, уехавшего на этническую
+  родину, сменил Неменущий (Вадер) Вадим. Оцифровано без потерь в FLAC.
+
+  '
+description_en: 'The band''s second album, recorded in 1994 at the TsLK studio (sound
+  engineer - Andrei Proshchenko). By this point bass guitarist Koschinsky, who had
+  moved back to his ethnic homeland, had been replaced by Vadim Nemenushchy (Vader).
+  Digitized losslessly to FLAC.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-dvinsk-1994-pease-waiting
+- https://archive.org/download/daugavpils-fans-dvinsk-1994-pease-waiting/daugavpils-fans-dvinsk-1994-pease-waiting_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Intro
+  audio:
+    contentUrl: 01-intro.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ab86bf401fb20ef5be026419ca4ff3b5d30769ce7dd1315e03fb63efb04a13e5
+    '@type': AudioObject
+    bitrate: 1578 kbps
+    duration: PT4M51S
+- '@type': MusicRecording
+  position: 2
+  name: I Believe
+  audio:
+    contentUrl: 02-i-believe.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: beac0c7c6638f0530165cb21ac4378d761fe2255847fa43698a1508b7bb2eed6
+    '@type': AudioObject
+    bitrate: 1548 kbps
+    duration: PT4M54S
+- '@type': MusicRecording
+  position: 3
+  name: Наливай
+  audio:
+    contentUrl: 03-nalivai.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c95cc0d21011d0e28163ad5ef564e1c2ec98395fe38297cc48225c6d5e17c11a
+    '@type': AudioObject
+    bitrate: 1618 kbps
+    duration: PT4M9S
+- '@type': MusicRecording
+  position: 4
+  name: Pease Waiting
+  audio:
+    contentUrl: 04-pease-waiting.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b5211dd8e2ea2d91dfe00b2c2c48a8b0624c4695d8f620d4b5a2814f669bcc3c
+    '@type': AudioObject
+    bitrate: 1568 kbps
+    duration: PT5M59S
+- '@type': MusicRecording
+  position: 5
+  name: Space Ranger
+  audio:
+    contentUrl: 05-space-ranger.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9439d43ebaafb0693c7ff1600b2abf34ac8d5ae18f55c32a87a4a348b60d3801
+    '@type': AudioObject
+    bitrate: 1567 kbps
+    duration: PT3M44S
+- '@type': MusicRecording
+  position: 6
+  name: Suicide
+  audio:
+    contentUrl: 06-suicide.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 86187ef6c8a9ce05d4791c425bc559c86bd320e9b2070a41532a9dfb2a36d555
+    '@type': AudioObject
+    bitrate: 1521 kbps
+    duration: PT6M43S
+- '@type': MusicRecording
+  position: 7
+  name: Наёмная орда
+  audio:
+    contentUrl: 07-naiomnaia-orda.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 12aa2eaf5366db93bcf4523636924d8433358b32bcdbfef71182f0f689c0aab7
+    '@type': AudioObject
+    bitrate: 1571 kbps
+    duration: PT3M40S
+image:
+- contentUrl: cover.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 9cbe98c3597e87251695430a01d0f4d4a485f557e3abe24a0650aeda29f9c7a8
+  '@type': ImageObject
+  caption: Обложка альбома
+  caption_en: Album cover
+  depicts: []
+video: []
