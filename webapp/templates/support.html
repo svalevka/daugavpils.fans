@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ t.support_link }} — daugavpils.fans{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb"><a href="/">← daugavpils.fans</a></div>
+{% endblock %}
+{% block content %}
+<div class="support-content">
+{{ content | safe }}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: "dark" });</script>
+{% endblock %}

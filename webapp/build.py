@@ -18,13 +18,16 @@ Usage:
 """
 from __future__ import annotations
 
+import html
 import json
+import re
 import shutil
 import subprocess
 import sys
 from functools import partial
 from pathlib import Path
 
+import markdown
 import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -41,6 +44,11 @@ WEBAPP_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = WEBAPP_DIR / "templates"
 STATIC_DIR = WEBAPP_DIR / "static"
 DIST_DIR = WEBAPP_DIR / "dist"
+MAINTENANCE_MD = REPO_ROOT / "MAINTENANCE.md"
+
+MERMAID_FENCE_RE = re.compile(r"```mermaid\n(.*?)```", re.DOTALL)
+RELATIVE_MD_LINK_RE = re.compile(r"\]\((?!https?://)([^)]+\.md)\)")
+GITHUB_BLOB_BASE = "https://github.com/svalevka/daugavpils.fans/blob/main/"
 
 
 def format_duration(iso: str | None) -> str:
@@ -76,6 +84,37 @@ def license_label(url: str) -> str:
         version = parts[i + 2] if len(parts) > i + 2 else ""
         return f"CC {variant} {version}".strip()
     return url
+
+
+def render_maintenance_html() -> str:
+    """MAINTENANCE.md, rendered to HTML for the on-site /support/ page (see
+    README's Support section) - same content, so it stays reachable even to
+    people who'd never think to look on GitHub. Mermaid fences are pulled out
+    before the markdown pass and reinserted as <pre class="mermaid"> blocks
+    (HTML-escaped, so embedded diagram markup like `<br/>` survives as text
+    for mermaid.js to parse - see templates/support.html) rather than being
+    left for Python-Markdown's fenced-code handling, which would wrap them in
+    <code> and defeat mermaid.js's `.mermaid` selector. Relative links to
+    other repo files (e.g. `README.md`) are rewritten to GitHub blob URLs,
+    since they'd otherwise resolve relative to /support/ on the Site."""
+    text = MAINTENANCE_MD.read_text()
+    text = RELATIVE_MD_LINK_RE.sub(lambda m: f"]({GITHUB_BLOB_BASE}{m.group(1)})", text)
+
+    diagrams: list[str] = []
+
+    def stash_mermaid(match: re.Match[str]) -> str:
+        diagrams.append(match.group(1))
+        return f'\n<div class="mermaid-placeholder" data-index="{len(diagrams) - 1}"></div>\n'
+
+    text = MERMAID_FENCE_RE.sub(stash_mermaid, text)
+    body = markdown.markdown(text, extensions=["tables"])
+
+    for index, diagram in enumerate(diagrams):
+        placeholder = f'<div class="mermaid-placeholder" data-index="{index}"></div>'
+        block = f'<pre class="mermaid">\n{html.escape(diagram)}</pre>'
+        body = body.replace(f"<p>{placeholder}</p>", block).replace(placeholder, block)
+
+    return body
 
 
 def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
@@ -230,6 +269,22 @@ def build() -> None:
                 )
 
         print(f"  built [{lang}]: {len(bands)} band(s)")
+
+    support_tmpl = env.get_template("support.html")
+    support_out_dir = DIST_DIR / "support"
+    support_out_dir.mkdir(parents=True, exist_ok=True)
+    (support_out_dir / "index.html").write_text(
+        support_tmpl.render(
+            lang=DEFAULT_LANG,
+            t=STRINGS[DEFAULT_LANG],
+            lang_prefix=lang_prefix(DEFAULT_LANG),
+            ru_url="/support/",
+            en_url="/support/",
+            home_url=home_url(DEFAULT_LANG),
+            content=render_maintenance_html(),
+        )
+    )
+    print("  built: /support/ (from MAINTENANCE.md)")
 
     print(f"\nBuilt site into {DIST_DIR}")
 
