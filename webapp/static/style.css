@@ -202,6 +202,27 @@ table.tracklist audio {
   display: block;
 }
 
+.propose-edit {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.propose-edit a {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+}
+
+.propose-edit a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
 .lightbox {
   display: none;
   position: fixed;
