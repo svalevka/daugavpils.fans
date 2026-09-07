@@ -1,9 +1,12 @@
 name: Deploy Site mirror to GitHub Pages
 
-# Publishes a live mirror of the Site (see README.md/ADR-0001) at this
+# Publishes a live mirror of the Site (see README.md/ADR-0002) at this
 # repo's default GitHub Pages URL, independent of daugavpils.fans/Hetzner.
 # SITE_BASE_PATH accounts for GitHub Pages serving a project site from
-# /<repo-name>/ rather than the domain root (see webapp/build.py).
+# /<repo-name>/ rather than the domain root, and SITE_SKIP_LOCAL_VALIDATION
+# skips tools/validate.py's local-checksum recheck (this checkout has no
+# media - it's gitignored) in favor of the archive.org existence check
+# webapp/build.py already does. See webapp/build.py's module docstring.
 
 on:
   push:
@@ -37,6 +40,7 @@ jobs:
       - name: Build Site
         env:
           SITE_BASE_PATH: /${{ github.event.repository.name }}
+          SITE_SKIP_LOCAL_VALIDATION: "1"
         run: python webapp/build.py
 
       - uses: actions/upload-pages-artifact@v3

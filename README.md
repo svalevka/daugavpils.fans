@@ -246,8 +246,9 @@ It's deployed from two independent places (see ADR-0002): the primary,
 **daugavpils.fans**, manually rsynced to a Hetzner server; and a live
 mirror at this repo's GitHub Pages URL, rebuilt automatically by
 `.github/workflows/pages.yml` on every push to `main` - no local media
-tree required, since the Site Build only ever reads metadata and
-archive.org's public API.
+tree required there, since CI builds with `SITE_SKIP_LOCAL_VALIDATION=1`
+and leans on the archive.org existence check instead of a local
+checksum recheck (see ADR-0002 for why that's still a real guarantee).
 
 ## Tooling usage
 

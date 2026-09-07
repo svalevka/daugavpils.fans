@@ -21,6 +21,15 @@ its domain root (e.g. a GitHub Pages project site at
 https://<user>.github.io/<repo>/) - every site-internal link/asset path
 gets this prefix. Leave unset (root-relative "/...") for daugavpils.fans
 itself and for a GitHub Pages custom domain, both served at root.
+
+Set SITE_SKIP_LOCAL_VALIDATION on a checkout with no local media tree
+(e.g. CI - see .github/workflows/pages.yml and ADR-0002): it skips
+tools/validate.py's local checksum re-check, which would otherwise fail
+on every file (they're all gitignored - see README). The archive.org
+existence check below (require_media_published) still runs and is the
+real gate, since publish_to_archive_org.py never lets a file reach
+archive.org without having already passed validate.py for real, against
+the maintainer's actual local files, at publish time.
 """
 from __future__ import annotations
 
@@ -152,6 +161,13 @@ def release_media_url(band: MusicGroup, release: MusicAlbum, content_url: str) -
 
 
 def require_valid_archive() -> None:
+    if os.environ.get("SITE_SKIP_LOCAL_VALIDATION"):
+        print(
+            "Skipping tools/validate.py (SITE_SKIP_LOCAL_VALIDATION set - no local "
+            "media tree here). require_media_published() below is the integrity gate "
+            "instead - see this file's module docstring."
+        )
+        return
     print("Validating archive (tools/validate.py)...")
     result = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "validate.py")])
     if result.returncode != 0:
