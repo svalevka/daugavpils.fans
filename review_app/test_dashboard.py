@@ -63,6 +63,24 @@ class DecisionTest(ReviewAppTestCase):
         self.assertEqual(row["decided_by"], approver_id)
         self.assertIsNotNone(row["decided_at"])
 
+    def test_approving_dispatches_the_action_with_only_the_proposal_id(self):
+        approver_id = self.seed_approver("approver@example.com")
+        proposal_id = self._submit_and_get_id(proposed_value="something a bot must never see logged")
+        self.login_as(approver_id)
+
+        self.client.post(f"/proposals/{proposal_id}/approve")
+
+        self.mock_trigger_apply.assert_called_once_with(self.config.github, proposal_id)
+
+    def test_rejecting_does_not_dispatch_anything(self):
+        approver_id = self.seed_approver("approver@example.com")
+        proposal_id = self._submit_and_get_id()
+        self.login_as(approver_id)
+
+        self.client.post(f"/proposals/{proposal_id}/reject")
+
+        self.mock_trigger_apply.assert_not_called()
+
     def test_rejecting_silently_drops_it_with_no_further_action(self):
         approver_id = self.seed_approver("approver@example.com")
         proposal_id = self._submit_and_get_id()

@@ -6,9 +6,10 @@ an approver deactivated after logging in must lose access immediately,
 not just on their next login (same defensive stance submissions.py
 already takes toward a stale session when stamping a submission).
 
-Approving/rejecting is triggered from here, but does not itself talk to
-GitHub - that (the actual git-write pipeline) is #13's job, built on top
-of the status transition this file makes.
+Approving triggers the actual git-write pipeline (see GitHub issue #13):
+once the status transition below lands, it calls github_dispatch to start
+the apply-proposal.yml Action - passing only the proposal id, never the
+proposed text.
 """
 from __future__ import annotations
 
@@ -18,11 +19,12 @@ import sqlite3
 import sys
 from pathlib import Path
 
-from flask import Blueprint, abort, g, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, current_app, g, redirect, render_template, request, session, url_for
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
+import github_dispatch  # noqa: E402
 
 bp = Blueprint("dashboard", __name__)
 
@@ -123,6 +125,20 @@ def approve(proposal_id: int):
     ok, reason = _decide(proposal_id, "approved")
     if not ok:
         _abort_for_reason(reason)
+
+    # The decision itself already succeeded and is durably recorded - a
+    # dispatch failure (network blip, GitHub outage) shouldn't turn into
+    # a 500 for the approver. The proposal stays 'approved' either way;
+    # worst case it needs a manual re-trigger, which is not this ticket's
+    # concern to automate. Narrow on purpose (matches submissions.py's
+    # and auth.py's mail-sending guards): trigger_apply only ever raises
+    # via `requests` (a subclass of OSError), so this catches exactly
+    # network/HTTP failures, not e.g. a misconfigured GITHUB_CONFIG.
+    try:
+        github_dispatch.trigger_apply(current_app.config["GITHUB_CONFIG"], proposal_id)
+    except OSError:
+        current_app.logger.exception("failed to dispatch apply-proposal.yml for proposal %s", proposal_id)
+
     return redirect(url_for("dashboard.view_pending"))
 
 

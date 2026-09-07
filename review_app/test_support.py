@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 
 from app import create_app  # noqa: E402
 from archive_fixture import build_archive_with_nested_fields  # noqa: E402
-from config import Config, SmtpConfig  # noqa: E402
+from config import Config, GithubConfig, SmtpConfig  # noqa: E402
 
 
 class ReviewAppTestCase(unittest.TestCase):
@@ -32,26 +32,41 @@ class ReviewAppTestCase(unittest.TestCase):
         self.addCleanup(self._tmp.cleanup)
         tmp_path = Path(self._tmp.name)
 
+        checkout_path = self._build_checkout(tmp_path)
+        self.database_path = tmp_path / "review.db"
+        self._build_app(checkout_path)
+
+    def _build_checkout(self, tmp_path: Path) -> Path:
+        """Hook for subclasses that need a differently-shaped checkout -
+        e.g. test_apply_pipeline.py's git-backed one, needed to exercise
+        the commit-and-push half of the apply pipeline that a plain
+        directory can't. Default: a plain fixture directory, no git."""
         checkout_path = tmp_path / "checkout"
         self.fx = build_archive_with_nested_fields(checkout_path / "bands")
+        return checkout_path
 
-        self.database_path = tmp_path / "review.db"
+    def _build_app(self, checkout_path: Path) -> None:
         self.config = Config(
             database_path=self.database_path,
             archive_checkout_path=checkout_path,
             secret_key="test-secret",
             maintainer_email="maintainer@example.com",
             smtp=SmtpConfig(host="localhost", port=25, from_addr="noreply@example.com"),
+            github=GithubConfig(token="test-github-token", repo="svalevka/daugavpils.fans"),
+            callback_key="test-callback-key",
             rate_limit_per_ip_per_hour=5,
         )
         self.app = create_app(self.config)
         self.app.testing = True
         self.client = self.app.test_client()
 
-        # No test ever touches real SMTP - mocked at the exact boundary
-        # mail.py exposes (see mail.py's own docstring).
+        # No test ever touches real SMTP or the real GitHub API - both
+        # mocked at the exact boundaries mail.py/github_dispatch.py
+        # expose (the agreed seam - see the parent PRD's Testing
+        # Decisions).
         self.mock_send_notification = self._patch("submissions.mail.send_submission_notification")
         self.mock_send_magic_link = self._patch("auth.mail.send_magic_link")
+        self.mock_trigger_apply = self._patch("dashboard.github_dispatch.trigger_apply")
 
     def _patch(self, target: str) -> mock.MagicMock:
         patcher = mock.patch(target)
@@ -86,6 +101,11 @@ class ReviewAppTestCase(unittest.TestCase):
             return conn.execute("SELECT * FROM proposals ORDER BY id").fetchall()
         finally:
             conn.close()
+
+    def callback_headers(self) -> dict[str, str]:
+        """Auth header the GitHub Action uses against /api/* - see
+        api.py's _require_callback_key()."""
+        return {"Authorization": f"Bearer {self.config.callback_key}"}
 
     def submit(self, **form):
         base = {

@@ -17,6 +17,7 @@ from flask import Flask
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
+from api import bp as api_bp  # noqa: E402
 from auth import bp as auth_bp  # noqa: E402
 from config import Config  # noqa: E402
 from dashboard import bp as dashboard_bp  # noqa: E402
@@ -31,10 +32,13 @@ def create_app(config: Config) -> Flask:
     app.config["RATE_LIMIT_PER_IP_PER_HOUR"] = config.rate_limit_per_ip_per_hour
     app.config["MAINTAINER_EMAIL"] = config.maintainer_email
     app.config["SMTP_CONFIG"] = config.smtp
+    app.config["GITHUB_CONFIG"] = config.github
+    app.config["REVIEW_APP_CALLBACK_KEY"] = config.callback_key
 
     db.init_app(app)
     app.register_blueprint(submissions_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(api_bp)
 
     return app

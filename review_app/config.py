@@ -24,6 +24,20 @@ class SmtpConfig:
     password: str | None = None
 
 
+@dataclass(frozen=True)
+class GithubConfig:
+    """What github_dispatch.py needs to trigger apply-proposal.yml (see
+    GitHub issue #13). `token` is a fine-grained PAT scoped to
+    Actions: write only - it can start a workflow run, nothing more;
+    review_app never holds any credential that can push to git, only the
+    triggered Action's own per-run token does that."""
+
+    token: str
+    repo: str  # "owner/name"
+    workflow_file: str = "apply-proposal.yml"
+    ref: str = "main"
+
+
 @dataclass
 class Config:
     database_path: Path
@@ -31,6 +45,8 @@ class Config:
     secret_key: str
     maintainer_email: str
     smtp: SmtpConfig
+    github: GithubConfig
+    callback_key: str
     rate_limit_per_ip_per_hour: int = 5
 
     @classmethod
@@ -47,5 +63,12 @@ class Config:
                 user=os.environ.get("SMTP_USER"),
                 password=os.environ.get("SMTP_PASSWORD"),
             ),
+            github=GithubConfig(
+                token=os.environ["GITHUB_DISPATCH_TOKEN"],
+                repo=os.environ["GITHUB_REPO"],
+                workflow_file=os.environ.get("GITHUB_WORKFLOW_FILE", "apply-proposal.yml"),
+                ref=os.environ.get("GITHUB_REF", "main"),
+            ),
+            callback_key=os.environ["REVIEW_APP_CALLBACK_KEY"],
             rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "5")),
         )

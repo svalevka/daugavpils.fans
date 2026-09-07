@@ -1,0 +1,70 @@
+name: Apply approved proposal
+
+# Triggered by review_app (github_dispatch.py) when an approver approves
+# a proposal - see GitHub issue #13. Only the proposal id ever crosses
+# into this workflow; the actual content is fetched here, from
+# review_app's authenticated callback API, using a bearer key known only
+# to review_app and this workflow (secrets.REVIEW_APP_CALLBACK_KEY).
+#
+# This workflow's own auto-issued GITHUB_TOKEN (permissions: contents:
+# write, below) is the only credential anywhere in this pipeline that can
+# push to git - review_app itself never holds one.
+
+on:
+  workflow_dispatch:
+    inputs:
+      proposal_id:
+        description: "The approved proposal's id in review_app's database"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Fetch approved proposal content
+        run: |
+          curl -fsSL \
+            -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+            "${{ vars.REVIEW_APP_BASE_URL }}/api/proposals/${{ inputs.proposal_id }}" \
+            -o proposal.json
+
+      - name: Apply the proposal
+        run: python tools/apply_proposal.py --proposal-file proposal.json
+
+      - name: Validate the archive
+        run: python tools/validate.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "daugavpils-fans-bot"
+          git config user.email "daugavpils@gmail.com"
+          git add -A -- bands
+          git commit -m "Apply approved proposal #${{ inputs.proposal_id }}"
+          git push origin main
+
+      - name: Report result
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            PAYLOAD='{"success": true, "run_id": "${{ github.run_id }}"}'
+          else
+            PAYLOAD='{"success": false, "run_id": "${{ github.run_id }}", "error": "see the Action run logs"}'
+          fi
+          curl -fsSL -X POST \
+            -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            "${{ vars.REVIEW_APP_BASE_URL }}/api/proposals/${{ inputs.proposal_id }}/apply-result"
