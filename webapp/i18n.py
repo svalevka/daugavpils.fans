@@ -19,6 +19,7 @@ STRINGS = {
         "tracklist": "Треклист",
         "licensed_under": "Лицензия",
         "support_link": "Поддержка",
+        "propose_edit": "Предложить исправление",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -33,6 +34,7 @@ STRINGS = {
         "tracklist": "Tracklist",
         "licensed_under": "Licensed under",
         "support_link": "Support",
+        "propose_edit": "Propose an edit",
     },
 }
 
