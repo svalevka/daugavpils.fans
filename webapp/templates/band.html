@@ -70,5 +70,9 @@
 </ul>
 {% endif %}
 
+{% if not base_path %}
+<p class="meta"><a href="https://review.daugavpils.fans/submit/{{ band.slug }}">{{ t.propose_edit }}</a></p>
+{% endif %}
+
 <script type="application/ld+json">{{ jsonld.replace("</", "<\/") | safe }}</script>
 {% endblock %}
