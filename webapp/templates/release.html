@@ -3,7 +3,7 @@
 {% set media_url = partial(release_media_url, band, release) %}
 {% block title %}{{ release.name }} — {{ band.name }} — daugavpils.fans{% endblock %}
 {% block breadcrumb %}
-<div class="breadcrumb"><a href="/{{ lang_prefix }}">← {{ t.all_bands }}</a> / <a href="/{{ lang_prefix }}bands/{{ band.slug }}/">{{ band.name }}</a></div>
+<div class="breadcrumb"><a href="{{ base_path }}/{{ lang_prefix }}">← {{ t.all_bands }}</a> / <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ band.slug }}/">{{ band.name }}</a></div>
 {% endblock %}
 {% block content %}
 <h1>{{ release.name }}</h1>

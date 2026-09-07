@@ -134,6 +134,8 @@ webapp/                          # public website built from the archive (ADR-00
   deploy/                        # docker-compose + nginx config run on the host
   dist/                          # generated output: HTML/CSS only, no media
                                   # (gitignored, not committed)
+.github/workflows/pages.yml      # builds + deploys the GitHub Pages mirror
+                                  # on every push to main (ADR-0002)
 ```
 
 ### Naming convention
@@ -239,6 +241,13 @@ built from the same archive, streaming media directly from archive.org
 rather than hosting a copy of it (see `tools/publish_to_archive_org.py`),
 not a replacement for the archive.org distribution model above. Still
 explicitly out of scope: inviting other contributors.
+
+It's deployed from two independent places (see ADR-0002): the primary,
+**daugavpils.fans**, manually rsynced to a Hetzner server; and a live
+mirror at this repo's GitHub Pages URL, rebuilt automatically by
+`.github/workflows/pages.yml` on every push to `main` - no local media
+tree required, since the Site Build only ever reads metadata and
+archive.org's public API.
 
 ## Tooling usage
 

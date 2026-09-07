@@ -44,13 +44,13 @@ def lang_prefix(lang: str) -> str:
     return "" if lang == DEFAULT_LANG else f"{lang}/"
 
 
-def home_url(lang: str) -> str:
-    return f"/{lang_prefix(lang)}"
+def home_url(lang: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}"
 
 
-def band_url(lang: str, band_slug: str) -> str:
-    return f"/{lang_prefix(lang)}bands/{band_slug}/"
+def band_url(lang: str, band_slug: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}bands/{band_slug}/"
 
 
-def release_url(lang: str, band_slug: str, release_slug: str) -> str:
-    return f"/{lang_prefix(lang)}bands/{band_slug}/{release_slug}/"
+def release_url(lang: str, band_slug: str, release_slug: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}bands/{band_slug}/{release_slug}/"

@@ -15,11 +15,18 @@ media the Site would otherwise link to a 404.
 
 Usage:
     python webapp/build.py
+
+Set SITE_BASE_PATH to build for a host that doesn't serve the Site from
+its domain root (e.g. a GitHub Pages project site at
+https://<user>.github.io/<repo>/) - every site-internal link/asset path
+gets this prefix. Leave unset (root-relative "/...") for daugavpils.fans
+itself and for a GitHub Pages custom domain, both served at root.
 """
 from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -45,6 +52,7 @@ TEMPLATES_DIR = WEBAPP_DIR / "templates"
 STATIC_DIR = WEBAPP_DIR / "static"
 DIST_DIR = WEBAPP_DIR / "dist"
 MAINTENANCE_MD = REPO_ROOT / "MAINTENANCE.md"
+BASE_PATH = os.environ.get("SITE_BASE_PATH", "").rstrip("/")
 
 MERMAID_FENCE_RE = re.compile(r"```mermaid\n(.*?)```", re.DOTALL)
 RELATIVE_MD_LINK_RE = re.compile(r"\]\((?!https?://)([^)]+\.md)\)")
@@ -224,14 +232,14 @@ def build() -> None:
     for lang in LANGS:
         lang_root = DIST_DIR if lang == DEFAULT_LANG else DIST_DIR / lang
         lang_root.mkdir(parents=True, exist_ok=True)
-        base_ctx = dict(lang=lang, t=STRINGS[lang], lang_prefix=lang_prefix(lang))
+        base_ctx = dict(lang=lang, t=STRINGS[lang], lang_prefix=lang_prefix(lang), base_path=BASE_PATH)
 
         (lang_root / "index.html").write_text(
             index_tmpl.render(
                 **base_ctx,
-                ru_url=home_url("ru"),
-                en_url=home_url("en"),
-                home_url=home_url(lang),
+                ru_url=home_url("ru", BASE_PATH),
+                en_url=home_url("en", BASE_PATH),
+                home_url=home_url(lang, BASE_PATH),
                 bands=bands,
             )
         )
@@ -244,9 +252,9 @@ def build() -> None:
             (band_out_dir / "index.html").write_text(
                 band_tmpl.render(
                     **base_ctx,
-                    ru_url=band_url("ru", band.slug),
-                    en_url=band_url("en", band.slug),
-                    home_url=home_url(lang),
+                    ru_url=band_url("ru", band.slug, BASE_PATH),
+                    en_url=band_url("en", band.slug, BASE_PATH),
+                    home_url=home_url(lang, BASE_PATH),
                     band=band,
                     releases=releases,
                     jsonld=to_jsonld(band),
@@ -259,9 +267,9 @@ def build() -> None:
                 (release_out_dir / "index.html").write_text(
                     release_tmpl.render(
                         **base_ctx,
-                        ru_url=release_url("ru", band.slug, release.slug),
-                        en_url=release_url("en", band.slug, release.slug),
-                        home_url=home_url(lang),
+                        ru_url=release_url("ru", band.slug, release.slug, BASE_PATH),
+                        en_url=release_url("en", band.slug, release.slug, BASE_PATH),
+                        home_url=home_url(lang, BASE_PATH),
                         band=band,
                         release=release,
                         jsonld=to_jsonld(release),
@@ -278,9 +286,10 @@ def build() -> None:
             lang=DEFAULT_LANG,
             t=STRINGS[DEFAULT_LANG],
             lang_prefix=lang_prefix(DEFAULT_LANG),
-            ru_url="/support/",
-            en_url="/support/",
-            home_url=home_url(DEFAULT_LANG),
+            base_path=BASE_PATH,
+            ru_url=f"{BASE_PATH}/support/",
+            en_url=f"{BASE_PATH}/support/",
+            home_url=home_url(DEFAULT_LANG, BASE_PATH),
             content=render_maintenance_html(),
         )
     )

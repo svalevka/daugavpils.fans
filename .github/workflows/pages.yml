@@ -1,0 +1,54 @@
+name: Deploy Site mirror to GitHub Pages
+
+# Publishes a live mirror of the Site (see README.md/ADR-0001) at this
+# repo's default GitHub Pages URL, independent of daugavpils.fans/Hetzner.
+# SITE_BASE_PATH accounts for GitHub Pages serving a project site from
+# /<repo-name>/ rather than the domain root (see webapp/build.py).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r tools/requirements.txt
+          pip install -r webapp/requirements.txt
+
+      - name: Build Site
+        env:
+          SITE_BASE_PATH: /${{ github.event.repository.name }}
+        run: python webapp/build.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: webapp/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

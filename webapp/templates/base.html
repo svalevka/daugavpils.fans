@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}daugavpils.fans{% endblock %}</title>
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="{{ base_path }}/static/style.css">
 </head>
 <body class="lang-{{ lang }}">
 <header class="site-header">
   <a class="site-title" href="{{ home_url }}">daugavpils.fans</a>
   <div class="header-right">
-    <a class="support-link" href="/support/">{{ t.support_link }}</a>
+    <a class="support-link" href="{{ base_path }}/support/">{{ t.support_link }}</a>
     <nav class="lang-switch">
       <a href="{{ ru_url }}"{% if lang == "ru" %} class="active" aria-current="true"{% endif %}>RU</a>
       <a href="{{ en_url }}"{% if lang == "en" %} class="active" aria-current="true"{% endif %}>EN</a>

@@ -17,5 +17,5 @@ The public website that lets listeners browse bands, read bios, view photos, and
 _Avoid_: "webapp" when talking about the concept (fine as the folder name); "the frontend"
 
 **Site Build**:
-The static HTML produced by `webapp/build.py` from a local, fully-validated Archive tree whose media is already published to archive.org — no media is copied into it. Deployed by copying it to the hosting server. Distinct from an Archive Release: a Site Build is disposable/regenerable output for the Site, not a distribution artifact of the Archive itself.
+The static HTML produced by `webapp/build.py` from a fully-validated Archive tree whose media is already published to archive.org — no media is copied into it, and no local media files are read (only metadata + archive.org's public API), so it can be produced anywhere, including CI. Deployed two independent ways (see ADR-0002): manually rsynced to the primary Hetzner server (daugavpils.fans), and automatically to a GitHub Pages mirror by `.github/workflows/pages.yml`. Distinct from an Archive Release: a Site Build is disposable/regenerable output for the Site, not a distribution artifact of the Archive itself.
 _Avoid_: "release", "deploy" on their own — say Site Build for the artifact, and be explicit ("push the Site Build to the server") for the act of publishing it
