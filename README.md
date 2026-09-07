@@ -259,3 +259,21 @@ python tools/validate.py --bands-dir path/to/dir   # validate a different direct
 python tools/publish_to_archive_org.py             # publish anything new or changed
 python tools/publish_to_archive_org.py --dry-run   # preview without uploading
 ```
+
+## Running the Site locally
+
+The Site Build is plain static HTML/CSS, so once it's built, any static
+file server can serve it - no framework dev server required. Media still
+streams live from archive.org (see above), so you'll need network access
+for photos/audio/video to load; everything else works offline.
+
+```bash
+pip install -r webapp/requirements.txt
+
+python webapp/build.py                              # renders bands/**/*.yaml into webapp/dist/
+python -m http.server 8000 --directory webapp/dist   # then open http://localhost:8000/
+```
+
+`webapp/dist/` is disposable, generated output (gitignored) - re-run
+`webapp/build.py` and refresh the browser after editing a `band.yaml`/
+`release.yaml` or anything under `webapp/templates/`/`webapp/static/`.
