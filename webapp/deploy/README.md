@@ -184,8 +184,15 @@ service (no `ports:`, only `expose:`) and
    ```bash
    docker compose exec review-app python manage.py add-approver you@example.com "Your Name"
    ```
-5. **Start it**:
+5. **Start it** - only once `site/current-checkout` exists (i.e. after
+   "Automatic redeploy" above has been installed and has run at least
+   once): its build context *is* that symlink (see
+   `docker-compose.yml`'s comment on the `review-app` service), so there's
+   nothing to build from before then. Trigger a run by hand rather than
+   waiting up to 5 minutes for the timer:
    ```bash
+   sudo systemctl start daugavpils-fans-sync.service
+   ls -la /opt/daugavpils-fans/site/current-checkout   # confirm it now exists
    cd /opt/daugavpils-fans && docker compose up -d --build review-app
    ```
 6. **Verify**: `docker compose config` (from this directory, with

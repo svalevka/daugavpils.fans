@@ -18,7 +18,17 @@ services:
 
   review-app:
     build:
-      context: ../..
+      # /opt/daugavpils-fans/ on the real server is a standalone directory
+      # holding just the deploy files (this file, nginx/, certbot/, site/)
+      # - NOT a full git checkout - so a context of `../..` would resolve
+      # to /opt/, which has no tools/ or review_app/ at all. site/current-
+      # checkout (see the volumes comment below) always IS a full repo
+      # checkout of whatever commit is currently live, kept that way by
+      # sync-and-deploy.sh - so it doubles as the build context. Rebuilds
+      # (`docker compose build review-app`) pick up whatever that symlink
+      # currently points at; this doesn't happen automatically on every
+      # deploy, only when explicitly rebuilt.
+      context: ./site/current-checkout
       dockerfile: review_app/Dockerfile
     container_name: daugavpils-fans-review-app
     restart: unless-stopped
