@@ -13,7 +13,10 @@
 </div>
 
 {% if release.image %}
-{{ macros.gallery(release.image, "release-photo", release.name, media_url) }}
+{{ macros.gallery(release.image[:photo_teaser_limit], "release-photo", release.name, media_url) }}
+{% if release.image | length > photo_teaser_limit %}
+<p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_photos.format(n=release.image | length) }}</a></p>
+{% endif %}
 {% endif %}
 
 {% if release.description %}
@@ -41,12 +44,10 @@
 
 {% if release.video %}
 <h2>{{ t.video }}</h2>
-{% for vid in release.video %}
-<video controls preload="none" style="max-width: 100%;">
-  <source src="{{ media_url(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
-</video>
-{% if vid.name %}<p class="meta">{{ vid.name }}</p>{% endif %}
-{% endfor %}
+{{ macros.video_gallery(release.video[:video_teaser_limit], "release-video", release.name, media_url, t.play_video) }}
+{% if release.video | length > video_teaser_limit %}
+<p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_videos.format(n=release.video | length) }}</a></p>
+{% endif %}
 {% endif %}
 
 <p class="license">{{ t.licensed_under }}: <a href="{{ release.license }}">{{ release.license | license_label }}</a>.</p>

@@ -36,17 +36,18 @@
 
 {% if band.image %}
 <h2>{{ t.photos }}</h2>
-{{ macros.gallery(band.image, "band-photo", band.name, media_url) }}
+{{ macros.gallery(band.image[:photo_teaser_limit], "band-photo", band.name, media_url) }}
+{% if band.image | length > photo_teaser_limit %}
+<p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_photos.format(n=band.image | length) }}</a></p>
+{% endif %}
 {% endif %}
 
 {% if band.video %}
 <h2>{{ t.video }}</h2>
-{% for vid in band.video %}
-<video controls preload="none" style="max-width: 100%;">
-  <source src="{{ media_url(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
-</video>
-{% if vid.name %}<p class="meta">{{ vid.name }}</p>{% endif %}
-{% endfor %}
+{{ macros.video_gallery(band.video[:video_teaser_limit], "band-video", band.name, media_url, t.play_video) }}
+{% if band.video | length > video_teaser_limit %}
+<p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_videos.format(n=band.video | length) }}</a></p>
+{% endif %}
 {% endif %}
 
 {% if releases %}

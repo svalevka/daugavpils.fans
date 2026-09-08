@@ -252,11 +252,33 @@ table.tracklist audio {
   background: rgba(0, 0, 0, 0.92);
 }
 
-.lightbox img {
+.lightbox img,
+.lightbox video {
   position: relative;
   max-width: 92vw;
   max-height: 92vh;
   border-radius: 4px;
+}
+
+.video-placeholder {
+  width: 14rem;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-placeholder .play-icon {
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+.view-all {
+  font-size: 0.9rem;
 }
 
 .lightbox-close {

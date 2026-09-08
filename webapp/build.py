@@ -53,7 +53,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from archive_org import archive_org_url, band_item_id, release_item_id  # noqa: E402
 from models import MusicAlbum, MusicGroup  # noqa: E402
-from i18n import STRINGS, LANGS, DEFAULT_LANG, home_url, band_url, release_url, lang_prefix  # noqa: E402
+from i18n import (  # noqa: E402
+    STRINGS,
+    LANGS,
+    DEFAULT_LANG,
+    home_url,
+    band_url,
+    release_url,
+    band_media_page_url as band_media_page_url_fn,
+    release_media_page_url as release_media_page_url_fn,
+    lang_prefix,
+)
 
 BANDS_DIR = REPO_ROOT / "bands"
 WEBAPP_DIR = Path(__file__).resolve().parent
@@ -62,6 +72,14 @@ STATIC_DIR = WEBAPP_DIR / "static"
 DIST_DIR = WEBAPP_DIR / "dist"
 MAINTENANCE_MD = REPO_ROOT / "MAINTENANCE.md"
 BASE_PATH = os.environ.get("SITE_BASE_PATH", "").rstrip("/")
+
+# How much media a band/release page shows inline before linking out to its
+# own /media/ page (see issue #27) - kept as constants shared between the
+# build script (which decides whether to build a /media/ page at all) and
+# the band/release templates (which decide whether to show the "view all"
+# link), so the two can't drift apart.
+PHOTO_TEASER_LIMIT = 6
+VIDEO_TEASER_LIMIT = 2
 
 MERMAID_FENCE_RE = re.compile(r"```mermaid\n(.*?)```", re.DOTALL)
 RELATIVE_MD_LINK_RE = re.compile(r"\]\((?!https?://)([^)]+\.md)\)")
@@ -160,6 +178,10 @@ def release_media_url(band: MusicGroup, release: MusicAlbum, content_url: str) -
     return archive_org_url(release_item_id(band.slug, release.slug), content_url)
 
 
+def needs_media_page(images: list, videos: list) -> bool:
+    return len(images) > PHOTO_TEASER_LIMIT or len(videos) > VIDEO_TEASER_LIMIT
+
+
 def require_valid_archive() -> None:
     if os.environ.get("SITE_SKIP_LOCAL_VALIDATION"):
         print(
@@ -244,6 +266,7 @@ def build() -> None:
     index_tmpl = env.get_template("index.html")
     band_tmpl = env.get_template("band.html")
     release_tmpl = env.get_template("release.html")
+    media_tmpl = env.get_template("media.html")
 
     for lang in LANGS:
         lang_root = DIST_DIR if lang == DEFAULT_LANG else DIST_DIR / lang
@@ -265,6 +288,11 @@ def build() -> None:
             band_out_dir.mkdir(parents=True, exist_ok=True)
             releases = releases_by_band[band.slug]
 
+            band_has_media_page = needs_media_page(band.image, band.video)
+            band_media_page_url = (
+                band_media_page_url_fn(lang, band.slug, BASE_PATH) if band_has_media_page else None
+            )
+
             (band_out_dir / "index.html").write_text(
                 band_tmpl.render(
                     **base_ctx,
@@ -274,12 +302,41 @@ def build() -> None:
                     band=band,
                     releases=releases,
                     jsonld=to_jsonld(band),
+                    photo_teaser_limit=PHOTO_TEASER_LIMIT,
+                    video_teaser_limit=VIDEO_TEASER_LIMIT,
+                    media_page_url=band_media_page_url,
                 )
             )
+
+            if band_has_media_page:
+                band_media_out_dir = band_out_dir / "media"
+                band_media_out_dir.mkdir(parents=True, exist_ok=True)
+                (band_media_out_dir / "index.html").write_text(
+                    media_tmpl.render(
+                        **base_ctx,
+                        ru_url=band_media_page_url_fn("ru", band.slug, BASE_PATH),
+                        en_url=band_media_page_url_fn("en", band.slug, BASE_PATH),
+                        home_url=home_url(lang, BASE_PATH),
+                        heading=band.name,
+                        back_url=band_url(lang, band.slug, BASE_PATH),
+                        back_label=band.name,
+                        images=band.image,
+                        videos=band.video,
+                        media_url=partial(band_media_url, band),
+                    )
+                )
 
             for release in releases:
                 release_out_dir = band_out_dir / release.slug
                 release_out_dir.mkdir(parents=True, exist_ok=True)
+
+                release_has_media_page = needs_media_page(release.image, release.video)
+                release_media_page_url = (
+                    release_media_page_url_fn(lang, band.slug, release.slug, BASE_PATH)
+                    if release_has_media_page
+                    else None
+                )
+
                 (release_out_dir / "index.html").write_text(
                     release_tmpl.render(
                         **base_ctx,
@@ -289,8 +346,29 @@ def build() -> None:
                         band=band,
                         release=release,
                         jsonld=to_jsonld(release),
+                        photo_teaser_limit=PHOTO_TEASER_LIMIT,
+                        video_teaser_limit=VIDEO_TEASER_LIMIT,
+                        media_page_url=release_media_page_url,
                     )
                 )
+
+                if release_has_media_page:
+                    release_media_out_dir = release_out_dir / "media"
+                    release_media_out_dir.mkdir(parents=True, exist_ok=True)
+                    (release_media_out_dir / "index.html").write_text(
+                        media_tmpl.render(
+                            **base_ctx,
+                            ru_url=release_media_page_url_fn("ru", band.slug, release.slug, BASE_PATH),
+                            en_url=release_media_page_url_fn("en", band.slug, release.slug, BASE_PATH),
+                            home_url=home_url(lang, BASE_PATH),
+                            heading=release.name,
+                            back_url=release_url(lang, band.slug, release.slug, BASE_PATH),
+                            back_label=release.name,
+                            images=release.image,
+                            videos=release.video,
+                            media_url=partial(release_media_url, band, release),
+                        )
+                    )
 
         print(f"  built [{lang}]: {len(bands)} band(s)")
 

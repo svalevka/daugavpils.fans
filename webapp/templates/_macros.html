@@ -20,6 +20,30 @@
 {% endfor %}
 {% endmacro %}
 
+{% macro video_gallery(videos, prefix, fallback_alt, url_fn, play_label) %}
+<div class="gallery video-gallery">
+  {% for vid in videos %}
+  <a href="#{{ prefix }}-{{ loop.index }}" class="gallery-item video-tile">
+    <figure>
+      <div class="video-placeholder" role="img" aria-label="{{ play_label }}: {{ vid.name or fallback_alt }}">
+        <span class="play-icon" aria-hidden="true">&#9654;</span>
+      </div>
+      {% if vid.name %}<figcaption>{{ vid.name }}</figcaption>{% endif %}
+    </figure>
+  </a>
+  {% endfor %}
+</div>
+{% for vid in videos %}
+<div class="lightbox" id="{{ prefix }}-{{ loop.index }}">
+  <a href="#" class="lightbox-backdrop" aria-label="Close"></a>
+  <a href="#" class="lightbox-close" aria-label="Close">&times;</a>
+  <video controls preload="none">
+    <source src="{{ url_fn(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
+  </video>
+</div>
+{% endfor %}
+{% endmacro %}
+
 {% macro bio(text) %}
 {% set paras = text.split('\n') | select | list %}
 <div class="bio">

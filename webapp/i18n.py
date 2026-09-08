@@ -21,6 +21,9 @@ STRINGS = {
         "support_link": "Поддержка",
         "propose_edit": "Предложить исправление",
         "autoplay_toggle": "Проигрывать треки подряд",
+        "view_all_photos": "Смотреть все фото ({n})",
+        "view_all_videos": "Смотреть все видео ({n})",
+        "play_video": "Воспроизвести видео",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -37,6 +40,9 @@ STRINGS = {
         "support_link": "Support",
         "propose_edit": "Propose an edit",
         "autoplay_toggle": "Play tracks back-to-back",
+        "view_all_photos": "View all photos ({n})",
+        "view_all_videos": "View all videos ({n})",
+        "play_video": "Play video",
     },
 }
 
@@ -58,3 +64,11 @@ def band_url(lang: str, band_slug: str, base_path: str = "") -> str:
 
 def release_url(lang: str, band_slug: str, release_slug: str, base_path: str = "") -> str:
     return f"{base_path}/{lang_prefix(lang)}bands/{band_slug}/{release_slug}/"
+
+
+def band_media_page_url(lang: str, band_slug: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}bands/{band_slug}/media/"
+
+
+def release_media_page_url(lang: str, band_slug: str, release_slug: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}bands/{band_slug}/{release_slug}/media/"
