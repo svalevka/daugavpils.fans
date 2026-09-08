@@ -19,8 +19,17 @@ permissions:
   id-token: write
 
 concurrency:
+  # `false`, not `true`: matches GitHub's own Pages starter template. A
+  # deploy already in flight must be allowed to finish - killing it
+  # mid-way is what produced a visibly "cancelled" run whenever two
+  # apply-proposal.yml runs landed close together and each dispatched
+  # this workflow (see the run at
+  # github.com/svalevka/daugavpils.fans/actions/runs/34236237464). With
+  # `false`, only a run still queued behind the in-progress one can get
+  # superseded by a newer dispatch - the in-progress deploy itself never
+  # gets cut off.
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
