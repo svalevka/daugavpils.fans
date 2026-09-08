@@ -185,7 +185,7 @@ class DashboardListingTest(ReviewAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"pending.jpg", response.data)
         self.assertIn(b"toapprove.jpg", response.data)
-        self.assertIn(b"Approved, awaiting publish", response.data)
+        self.assertIn(b"Ready to publish", response.data)
 
     def test_unauthenticated_media_decisions_are_blocked(self):
         self.submit_media()

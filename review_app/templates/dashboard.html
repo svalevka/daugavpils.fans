@@ -36,12 +36,13 @@
 </article>
 {% endfor %}
 
-<h2>Pending media</h2>
+<h2>Pending media ({{ media_pending | length }})</h2>
 {% if not media_pending %}
 <p>Nothing pending.</p>
 {% endif %}
 {% for m in media_pending %}
 <article class="proposal">
+  <span class="status-badge status-pending">Pending review</span>
   <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
   <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
   {% if m.submitter_name or m.submitter_contact %}
@@ -70,13 +71,14 @@
 </article>
 {% endfor %}
 
-<h2>Approved, awaiting publish</h2>
+<h2>Ready to publish ({{ media_awaiting_publish | length }})</h2>
 <p class="meta">Grab these with scp/rsync from review-app-data/uploads/ on the server, then publish and commit them the usual way. "Mark published" removes the file here once you're done.</p>
 {% if not media_awaiting_publish %}
-<p>Nothing awaiting publish.</p>
+<p>Nothing ready to publish.</p>
 {% endif %}
 {% for m in media_awaiting_publish %}
 <article class="proposal">
+  <span class="status-badge status-approved">Approved — awaiting publish</span>
   <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
   <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
   {% if m.caption %}<p>{{ m.caption }}</p>{% endif %}
