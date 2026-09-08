@@ -124,6 +124,7 @@ tools/
   validate.py                   # validates bands/ against the schema
   archive_org.py                # archive.org item-id/URL conventions
   publish_to_archive_org.py     # publishes bands/**/*.yaml's media to archive.org
+  download_archive.py           # downloads bands/**/*.yaml's media from archive.org
 docs/agents/                    # config consumed by AI coding-agent skills
                                  # (issue tracker, triage labels, domain docs)
                                  # - not part of the archive itself
@@ -367,6 +368,10 @@ python tools/validate.py --bands-dir path/to/dir   # validate a different direct
 # project's archive.org account - see tools/TOOLS.md):
 python tools/publish_to_archive_org.py             # publish anything new or changed
 python tools/publish_to_archive_org.py --dry-run   # preview without uploading
+
+# fill in a repo clone's gitignored media from archive.org (no account/API
+# key needed - see documentation/BACKUP.md):
+python tools/download_archive.py
 ```
 
 ## Adding a new band, step by step

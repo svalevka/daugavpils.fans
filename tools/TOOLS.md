@@ -168,6 +168,36 @@ every band/release's item id, which isn't actually recoverable-from-scratch
   configure`, once, using the project's archive.org account - not a
   personal one).
 
+## `download_archive.py`
+
+**Problem it solves:** the inverse of `publish_to_archive_org.py` - someone
+with a clone of this repo has metadata but no media (audio/image/video is
+gitignored, see `README.md`), and today the only way to fill that in is
+going band-by-band, release-by-release on archive.org by hand. This is the
+tool behind `documentation/BACKUP.md`'s "get your own full copy of the
+Archive" instructions.
+
+**How:** walks `bands/`, and for each band/release downloads every media
+file it references from that band/release's archive.org item (id computed
+by `archive_org.py`) via a plain, unauthenticated HTTPS GET - no
+`internetarchive` package or archive.org account needed, since that's only
+an upload-time concern. Verifies each downloaded file against the `sha256`
+already recorded in its YAML. A file already on disk whose checksum
+already matches is left alone rather than re-downloaded, so re-running is
+always safe. Never fetches metadata from anywhere - `bands/**/*.yaml`
+already on disk (from cloning this repo) is the sole source of truth for
+which bands/releases/files exist. A missing item or a checksum mismatch on
+one file doesn't stop the run: it's collected and reported in a summary at
+the end, with a non-zero exit if anything failed.
+
+**When you'd run it:**
+- `python tools/download_archive.py` - fill in every missing/incorrect
+  media file under the repo's own `bands/`.
+- `python tools/download_archive.py --bands-dir PATH` - point it at a
+  directory other than the repo's own `bands/`. This is what the test
+  suite uses to validate temporary fixture trees without touching real
+  archive data.
+
 ## `archive_fixture.py`
 
 **Problem it solves:** every test that exercises `validate.py` needs a
@@ -272,6 +302,24 @@ that a maintainer can fix it without reverse-engineering the schema.
 the audio file, corrupts its checksum, strips duration/bitrate, mismatches
 a slug, breaks schema validation) and asserts both a nonzero exit code
 and that the reported message names the actual problem.
+
+## `test_download_archive.py`
+
+**Problem it solves:** `download_archive.py` needs to actually verify what
+it downloads, skip what's already correct without touching the network,
+and keep going (not abort the whole run) past a single bad file - offline
+and deterministically, without hitting real archive.org.
+
+**How:** builds a fixture via `archive_fixture.build_valid_archive()`,
+then deletes its audio file to simulate a fresh clone's gitignored media,
+and calls `download_archive.py`'s functions directly (not via subprocess)
+with `urllib.request.urlretrieve` patched to write fixed bytes or raise -
+so no real network call ever happens. Covers: downloading and verifying a
+missing file, skipping an already-correct one, reporting (without
+aborting) a post-download checksum mismatch and a fetch error, and `main()`
+still processing every band and exiting non-zero after one band's fetch
+fails while the other's already-verified file needed no network call at
+all.
 
 ## `requirements.txt`
 
