@@ -281,7 +281,7 @@ video:
     propertyID: sha256
     value: 25934671a64b8f963ea63cd419fa65b979bd5a358431a0a319f59711aaa35446
   '@type': VideoObject
-  name: Ни слова о любви (концерт)
+  name: Ни слова о любви (видеопродукт 1994)
   bitrate: 991 kbps
   duration: PT4M28S
 - contentUrl: media/kvazimodo-pronikni-v-moi-sad-live.mp4
