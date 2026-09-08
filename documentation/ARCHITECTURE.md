@@ -1,8 +1,9 @@
 # Site deployment architecture
 
-This is the map: what runs where, and how a change (a merged PR, or an
-approved review-app proposal) ends up live. It's deliberately a
-**current-state overview, not a decision record and not a runbook**:
+This is the map: where metadata and media actually live, and how a
+change (a merged PR, or an approved review-app proposal) ends up live.
+It's deliberately a **current-state overview, not a decision record and
+not a runbook**:
 
 - For *why* it's built this way, see `docs/adr/0001-static-site-build-for-public-website.md`,
   `docs/adr/0002-github-pages-mirror-via-ci.md`, and
@@ -17,10 +18,27 @@ organized internally.
 
 ```mermaid
 flowchart TD
-    CONTRIBUTOR["Contributor merges a PR<br/>(new/edited band.yaml or release.yaml)"] --> MAIN
+    subgraph archiveorg["archive.org — media<br/>(audio/image/video - see README.md's<br/>diagram for how it gets published here)"]
+        MEDIA[("Published band/release items")]
+    end
 
-    SUBMITTER["Anyone proposes a text edit<br/>review.daugavpils.fans/submit"] --> REVIEWAPP
-    APPROVER["A curated approver decides<br/>on /dashboard"] --> REVIEWAPP
+    subgraph github["github.com — metadata (git) + CI"]
+        CONTRIBUTOR["Contributor opens a PR<br/>(new/edited band.yaml or release.yaml)"] -->|"quorum review,<br/>then merged"| MAIN[("main branch<br/>bands/**/*.yaml")]
+
+        subgraph gha["GitHub Actions"]
+            APPLY["apply-proposal.yml<br/>fetch proposal → commit → push"]
+            PAGES["pages.yml<br/>build → deploy"]
+        end
+
+        APPLY -->|"push"| MAIN
+        APPLY -->|"explicit workflow_dispatch<br/>(a workflow's own commit can't<br/>trigger another's on: push)"| PAGES
+        MAIN -->|"on: push"| PAGES
+    end
+
+    PUBLISH["tools/publish_to_archive_org.py<br/>run locally by whoever holds<br/>archive.org credentials, after the PR merges<br/>- never runs in CI (needs real media files)"]
+    MAIN -.->|"merged band.yaml/release.yaml<br/>declares what should exist"| PUBLISH
+    PUBLISH --> MEDIA
+    PUBLISH -.->|"writes archive.org + torrent<br/>URLs back (sameAs), a follow-up commit"| MAIN
 
     subgraph vps["Linux VPS server — docker compose"]
         NGINX["nginx<br/>TLS termination for both subdomains"]
@@ -29,21 +47,16 @@ flowchart TD
         SITE["Site Build<br/>(webapp/dist, served by nginx)"]
     end
 
+    SUBMITTER["Anyone proposes a text edit<br/>review.daugavpils.fans/submit"] --> REVIEWAPP
+    APPROVER["A curated approver decides<br/>on /dashboard"] --> REVIEWAPP
     REVIEWAPP -->|"workflow_dispatch<br/>(proposal id only)"| APPLY
 
-    subgraph gha["GitHub Actions"]
-        APPLY["apply-proposal.yml<br/>fetch proposal → commit → push"]
-        PAGES["pages.yml<br/>build → deploy"]
-    end
-
-    APPLY -->|"push"| MAIN[("main branch")]
-    APPLY -->|"explicit workflow_dispatch<br/>(a workflow's own commit can't<br/>trigger another's on: push)"| PAGES
-
-    MAIN -->|"on: push"| PAGES
     MAIN -.->|"polled, not pushed -<br/>the VPS has no inbound GitHub access"| TIMER
-    TIMER --> SITE
-    SITE --> NGINX
+    TIMER --> SITE --> NGINX
     PAGES --> GHPAGES["GitHub Pages mirror<br/>&lt;owner&gt;.github.io/&lt;repo&gt;"]
+
+    SITE -.->|"rendered pages link/stream<br/>media directly - never copied"| MEDIA
+    GHPAGES -.->|"same"| MEDIA
 
     NGINX -->|"daugavpils.fans<br/>(primary, custom domain)"| READER1["Reader"]
     GHPAGES -->|"independent mirror -<br/>no review_app here"| READER2["Reader"]
@@ -91,13 +104,34 @@ Both `apply-proposal.yml` and `pages.yml` use a `concurrency:` group
 seconds apart apply one at a time instead of racing, and a Pages
 deploy already in flight is never killed mid-way by a newer one.
 
-## Media and certificates (brief - see elsewhere for detail)
+## Adding a new band, release, or media
 
-- **Media itself never touches this deploy pipeline.** Audio/image/video
-  live on archive.org, not on the VPS or in git - see README.md's "How
-  this works, at a glance" diagram for that story; it's the Archive's
-  distribution model, not the Site's deployment.
-- **TLS terminates at nginx on the VPS**, one Let's Encrypt cert (DNS-01
-  via Cloudflare) covering `daugavpils.fans`, `www`, and
-  `review.daugavpils.fans`. Issuance and renewal steps: see
-  `webapp/deploy/README.md`'s "Cert renewal" section.
+This is a separate story from *redeploying* the Site (everything above),
+and doesn't touch this deploy pipeline at all - it's how content gets
+into the two homes the pipeline then serves from:
+
+- **Metadata (git)**: a contributor opens a PR with a new/edited
+  `band.yaml`/`release.yaml`; quorum review merges it to `main` like any
+  other PR. `review_app`'s lighter-weight `/submit` flow (above) only
+  covers *correcting* an existing field, never adding a new band/release.
+- **Media (archive.org)**: after the PR is merged, whoever holds the
+  project's archive.org credentials runs `tools/publish_to_archive_org.py`
+  **locally** - it needs the real audio/image/video files, which are
+  gitignored and never reach GitHub, so this step can't run in CI. It
+  uploads the media as its own archive.org item, then writes the
+  resulting archive.org/torrent URLs back into `sameAs` as a follow-up
+  commit.
+
+Until that publish step runs, a merged PR's media won't resolve on
+either Site Build - `webapp/build.py` refuses to build if it references
+media that isn't confirmed to exist yet (see `require_media_published`,
+ADR-0002). See README.md's "How this works, at a glance" diagram for the
+full reasoning, and "Adding a new band, step by step" for the exact
+commands.
+
+## Certificates
+
+TLS terminates at nginx on the VPS, one Let's Encrypt cert (DNS-01 via
+Cloudflare) covering `daugavpils.fans`, `www`, and
+`review.daugavpils.fans`. Issuance and renewal steps: see
+`webapp/deploy/README.md`'s "Cert renewal" section.
