@@ -22,7 +22,7 @@ flowchart TD
     SUBMITTER["Anyone proposes a text edit<br/>review.daugavpils.fans/submit"] --> REVIEWAPP
     APPROVER["A curated approver decides<br/>on /dashboard"] --> REVIEWAPP
 
-    subgraph cherry["Hetzner server 'cherry' — docker compose"]
+    subgraph vps["Linux VPS server — docker compose"]
         NGINX["nginx<br/>TLS termination for both subdomains"]
         REVIEWAPP["review_app container<br/>submit + dashboard, SQLite<br/>(ADR-0003)"]
         TIMER["sync-and-deploy.sh<br/>systemd timer - polls main every 5 min"]
@@ -40,7 +40,7 @@ flowchart TD
     APPLY -->|"explicit workflow_dispatch<br/>(a workflow's own commit can't<br/>trigger another's on: push)"| PAGES
 
     MAIN -->|"on: push"| PAGES
-    MAIN -.->|"polled, not pushed -<br/>cherry has no inbound GitHub access"| TIMER
+    MAIN -.->|"polled, not pushed -<br/>the VPS has no inbound GitHub access"| TIMER
     TIMER --> SITE
     SITE --> NGINX
     PAGES --> GHPAGES["GitHub Pages mirror<br/>&lt;owner&gt;.github.io/&lt;repo&gt;"]
@@ -55,7 +55,7 @@ The same `webapp/build.py`, run twice, two different ways - either one
 being unreachable doesn't take the Site down (see ADR-0002, and
 README.md's "Resilience" section for the reasoning):
 
-- **`cherry` (primary, custom domain).** A `systemd` timer
+- **The Linux VPS server (primary, custom domain).** A `systemd` timer
   (`sync-and-deploy.sh`) polls `main` every 5 minutes and, if it's moved,
   builds a fresh Site Build and atomically re-points nginx's `current`
   symlink at it. GitHub never gets inbound access to this box - it pulls,
@@ -72,7 +72,7 @@ README.md's "Resilience" section for the reasoning):
 ## `review_app` and the approval pipeline
 
 `review_app` (ADR-0003) is the one live server process in an otherwise
-static-site system - a second container on `cherry`, reachable only
+static-site system - a second container on the same VPS, reachable only
 through nginx (`review.daugavpils.fans`), with its own SQLite database
 (not backed up - see ADR-0003's Consequences). It never holds any
 credential that can push to git.
@@ -83,7 +83,7 @@ That Action fetches the actual content from `review_app`'s authenticated
 callback API, commits it, and pushes to `main`. Because a workflow's own
 commit can't trigger another workflow's `on: push` (a GitHub
 anti-recursion rule), `apply-proposal.yml` explicitly dispatches
-`pages.yml` itself right after pushing - the `cherry` timer picks the
+`pages.yml` itself right after pushing - the VPS's timer picks the
 same push up on its own next poll, no dispatch needed there.
 
 Both `apply-proposal.yml` and `pages.yml` use a `concurrency:` group
@@ -94,10 +94,10 @@ deploy already in flight is never killed mid-way by a newer one.
 ## Media and certificates (brief - see elsewhere for detail)
 
 - **Media itself never touches this deploy pipeline.** Audio/image/video
-  live on archive.org, not on `cherry` or in git - see README.md's "How
+  live on archive.org, not on the VPS or in git - see README.md's "How
   this works, at a glance" diagram for that story; it's the Archive's
   distribution model, not the Site's deployment.
-- **TLS terminates at nginx on `cherry`**, one Let's Encrypt cert (DNS-01
+- **TLS terminates at nginx on the VPS**, one Let's Encrypt cert (DNS-01
   via Cloudflare) covering `daugavpils.fans`, `www`, and
   `review.daugavpils.fans`. Issuance and renewal steps: see
   `webapp/deploy/README.md`'s "Cert renewal" section.
