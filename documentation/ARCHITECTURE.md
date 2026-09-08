@@ -18,8 +18,8 @@ organized internally.
 
 ```mermaid
 flowchart TD
-    subgraph archiveorg["archive.org — media<br/>(audio/image/video - see README.md's<br/>diagram for how it gets published here)"]
-        MEDIA["Published band/release items"]
+    subgraph archiveorg["archive.org — media"]
+        MEDIA["Published band/release items<br/>(audio/image/video)"]
     end
 
     subgraph github["github.com — metadata (git) + CI"]
