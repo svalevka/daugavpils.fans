@@ -11,11 +11,17 @@ code with push power and review_app is the code exposed to the public
 internet.
 
 Deliberately excluded, even though they're free text on the underlying
-Pydantic models: `name` on a band or member (canonical identity, not safe
-to swap out from under a slug/relationship), and `slug`/`byArtist`/`sameAs`/
+Pydantic models: `name` on a band (canonical identity, drives the band's
+slug, not safe to swap out from under it), and `slug`/`byArtist`/`sameAs`/
 anything under MediaObjectBase (contentUrl, encodingFormat, identifier,
 bitrate, duration) - those are structural identity or machine-computed by
 validate.py --write / publish_to_archive_org.py.
+
+`member.name` is NOT excluded: members are matched by list_index (not by
+name) throughout review_app/ and apply_proposal.py, so it carries no
+structural identity - it's just the person's real-script name, which is
+exactly what public correction proposals are for (e.g. fixing a misspelt
+Russian name).
 """
 from __future__ import annotations
 
@@ -66,6 +72,7 @@ EDITABLE_FIELDS: tuple[EditableField, ...] = (
     EditableField("band", "location", "scalar", "Location"),
     EditableField("band", "alternateName", "list", "Alternate names"),
     EditableField("band", "genre", "list", "Genres"),
+    EditableField("member", "name", "scalar", "Member name"),
     EditableField("member", "name_en", "scalar", "Member name (transliteration)"),
     EditableField("member", "role", "scalar", "Member role"),
     EditableField("member", "role_en", "scalar", "Member role (English translation)"),
