@@ -1,4 +1,6 @@
-<!doctype html>
-<title>Link not valid</title>
+{% extends "base.html" %}
+{% block title %}Link not valid — daugavpils.fans{% endblock %}
+{% block content %}
 <h1>This login link isn't valid</h1>
 <p>It may have already been used, or have expired (links work once, for 15 minutes). <a href="/login">Request a new one</a>.</p>
+{% endblock %}

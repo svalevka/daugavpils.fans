@@ -1,8 +1,9 @@
-<!doctype html>
-<title>Propose an edit</title>
+{% extends "base.html" %}
+{% block title %}{{ label }} — daugavpils.fans{% endblock %}
+{% block content %}
 <h1>{{ label }}</h1>
 
-<h2>Current text</h2>
+<h3>Current text</h3>
 <pre>{{ current_text }}</pre>
 
 <form method="post" action="/submit">
@@ -12,25 +13,26 @@
   <input type="hidden" name="field" value="{{ field }}">
   {% if list_index is not none %}<input type="hidden" name="list_index" value="{{ list_index }}">{% endif %}
 
-  <p>
-    <label for="proposed_value">Your replacement text</label><br>
-    <textarea id="proposed_value" name="proposed_value" rows="6" cols="60">{{ current_text }}</textarea>
-  </p>
+  <div class="field">
+    <label for="proposed_value">Your replacement text</label>
+    <textarea id="proposed_value" name="proposed_value" rows="6">{{ current_text }}</textarea>
+  </div>
 
-  <p>
-    <label for="submitter_name">Your name (optional)</label><br>
+  <div class="field">
+    <label for="submitter_name">Your name (optional)</label>
     <input type="text" id="submitter_name" name="submitter_name">
-  </p>
-  <p>
-    <label for="submitter_contact">Your email, if you'd like to be reachable (optional)</label><br>
+  </div>
+  <div class="field">
+    <label for="submitter_contact">Your email, if you'd like to be reachable (optional)</label>
     <input type="text" id="submitter_contact" name="submitter_contact">
-  </p>
+  </div>
 
   <!-- honeypot: hidden from real visitors via CSS, never filled by a human -->
-  <p style="position:absolute; left:-9999px;" aria-hidden="true">
+  <div class="field honeypot" aria-hidden="true">
     <label for="website">Leave this field blank</label>
     <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-  </p>
+  </div>
 
   <button type="submit">Submit for review</button>
 </form>
+{% endblock %}

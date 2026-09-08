@@ -1,17 +1,19 @@
-<!doctype html>
-<title>Pending proposals</title>
+{% extends "base.html" %}
+{% block title %}Pending proposals — daugavpils.fans{% endblock %}
+{% block main_class %}main-wide{% endblock %}
+{% block content %}
 <h1>Pending proposals</h1>
-<p>Logged in as {{ approver.display_name }} ({{ approver.email }})</p>
+<p class="meta">Logged in as {{ approver.display_name }} ({{ approver.email }})</p>
 
 {% if not proposals %}
 <p>Nothing pending.</p>
 {% endif %}
 
 {% for p in proposals %}
-<article>
+<article class="proposal">
   <h2>#{{ p.id }} — {{ p.band_slug }}{% if p.release_slug %}/{{ p.release_slug }}{% endif %} — {{ p.target }}.{{ p.field }}{% if p.list_index is not none %}[{{ p.list_index }}]{% endif %}</h2>
   {% if p.submitter_name or p.submitter_contact %}
-  <p>Submitted by {{ p.submitter_name or "(no name given)" }}{% if p.submitter_contact %} &lt;{{ p.submitter_contact }}&gt;{% endif %}</p>
+  <p class="meta">Submitted by {{ p.submitter_name or "(no name given)" }}{% if p.submitter_contact %} &lt;{{ p.submitter_contact }}&gt;{% endif %}</p>
   {% endif %}
 
   <h3>Current</h3>
@@ -20,14 +22,17 @@
   <pre>{{ p.proposed_value }}</pre>
 
   {% if p.is_own_submission %}
-  <p><em>You submitted this proposal - another approver must decide on it.</em></p>
+  <p class="note"><em>You submitted this proposal - another approver must decide on it.</em></p>
   {% else %}
-  <form method="post" action="/proposals/{{ p.id }}/approve" style="display:inline">
-    <button type="submit">Approve</button>
-  </form>
-  <form method="post" action="/proposals/{{ p.id }}/reject" style="display:inline">
-    <button type="submit">Reject</button>
-  </form>
+  <div class="actions">
+    <form method="post" action="/proposals/{{ p.id }}/approve">
+      <button type="submit">Approve</button>
+    </form>
+    <form method="post" action="/proposals/{{ p.id }}/reject">
+      <button type="submit">Reject</button>
+    </form>
+  </div>
   {% endif %}
 </article>
 {% endfor %}
+{% endblock %}
