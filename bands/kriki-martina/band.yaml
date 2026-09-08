@@ -35,6 +35,66 @@ image:
   caption: Крики Мартина
   caption_en: Kriki Martina
   depicts: []
+- contentUrl: media/kriki-martina-koncert.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: cf873eb3e0d0ea6431f402580917f7cb06c06c814c7229b1d572de75ba4d0c50
+  '@type': ImageObject
+  caption: Крики Мартина на концерте
+  caption_en: Kriki Martina performing live
+  depicts: []
+- contentUrl: media/kriki-martina-guitarist.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: cd189734638020bc8b5b004531939bdebf2eff6705bee94234bcc7014ae722cf
+  '@type': ImageObject
+  caption: Гитарист группы
+  caption_en: The band's guitarist
+  depicts: []
+- contentUrl: media/kriki-martina-members-1.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: fd39c0b8345dacafef99fb6fbb2552e3b4324e6ca39e4853392634d50f08af32
+  '@type': ImageObject
+  caption: Участники группы
+  caption_en: Band members
+  depicts: []
+- contentUrl: media/kriki-martina-members-2.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 678d57b6d6a54b19f5e35324c2ee29549c2a9f03a9614d7649b13f6e9a37f955
+  '@type': ImageObject
+  caption: Участники группы
+  caption_en: Band members
+  depicts: []
+- contentUrl: media/kriki-martina-park.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: f04eb4b820fa216e82ea7da3285aa1cbb3dcd9293a05c16b4b8bba40f1915683
+  '@type': ImageObject
+  caption: Крики Мартина и друзья
+  caption_en: Kriki Martina and friends
+  depicts: []
+- contentUrl: media/kriki-martina-jurmala.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 667f234be4183433e3b7f10770f438aba55c1b982a5754194f99615926a426da
+  '@type': ImageObject
+  caption: Крики Мартина, Юрмала
+  caption_en: Kriki Martina, Jurmala
+  depicts: []
 video:
 - contentUrl: media/chemical-reaction-2003-leti.mp4
   encodingFormat: video/mp4
