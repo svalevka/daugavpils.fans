@@ -22,6 +22,16 @@ permissions:
   contents: write
   actions: write
 
+concurrency:
+  # Approvals can land within seconds of each other; without this, two
+  # runs checkout main at the same commit and one's `git push` gets
+  # rejected as non-fast-forward (see the incident this fixed: proposals
+  # #8 and #9 both failed to apply on 2026-09-08 because they raced #7).
+  # `queued` (not `cancel-in-progress`) so every approved proposal still
+  # gets applied, just one at a time.
+  group: apply-proposal
+  cancel-in-progress: false
+
 jobs:
   apply:
     runs-on: ubuntu-latest
