@@ -11,10 +11,16 @@
 
   <div class="field">
     <label for="files">Photos or videos</label>
-    <input type="file" id="files" name="files" multiple accept="image/*,video/*" data-media-files required>
+    <!-- Hidden: the visible trigger is the button below, so repeated
+         picks can be accumulated in JS instead of each one replacing
+         the last (a plain <input multiple> only keeps files chosen in
+         a single dialog open - see media_upload.js). No `required` -
+         validity is enforced by the submit button starting disabled
+         below, not by this input's own state. -->
+    <input type="file" id="files" name="files" multiple accept="image/*,video/*" data-media-files hidden>
+    <button type="button" class="btn" data-media-add>+ Add photos or videos</button>
+    <div data-media-file-list class="media-file-list"></div>
   </div>
-
-  <div data-media-caption-list></div>
 
   <div class="field">
     <label for="submitter_name">Your name (optional)</label>
@@ -31,7 +37,7 @@
     <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
   </div>
 
-  <button type="submit">Submit for review</button>
+  <button type="submit" data-media-submit disabled>Submit for review</button>
 </form>
 {% endblock %}
 {% block scripts %}
