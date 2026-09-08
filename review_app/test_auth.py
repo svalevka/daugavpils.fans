@@ -54,6 +54,26 @@ class LoginRequestTest(ReviewAppTestCase):
 
         self.mock_send_magic_link.assert_not_called()
 
+    def test_exceeding_rate_limit_rejects_further_requests(self):
+        self.seed_approver("ryb@example.com")
+
+        for _ in range(self.config.login_rate_limit_per_ip_per_hour):
+            response = self.client.post("/login", data={"email": "ryb@example.com"})
+            self.assertEqual(response.status_code, 200)
+
+        response = self.client.post("/login", data={"email": "ryb@example.com"})
+        self.assertEqual(response.status_code, 429)
+
+    def test_unregistered_email_attempts_still_count_toward_the_rate_limit(self):
+        # An attacker probing for valid approver emails must be throttled
+        # just as hard as a flood of real login attempts.
+        for _ in range(self.config.login_rate_limit_per_ip_per_hour):
+            response = self.client.post("/login", data={"email": "nobody@example.com"})
+            self.assertEqual(response.status_code, 200)
+
+        response = self.client.post("/login", data={"email": "nobody@example.com"})
+        self.assertEqual(response.status_code, 429)
+
 
 class MagicLinkVerificationTest(ReviewAppTestCase):
     def _request_link(self, email: str) -> str:

@@ -32,6 +32,7 @@ def create_app(config: Config) -> Flask:
     app.config["DATABASE_PATH"] = config.database_path
     app.config["ARCHIVE_CHECKOUT_PATH"] = config.archive_checkout_path
     app.config["RATE_LIMIT_PER_IP_PER_HOUR"] = config.rate_limit_per_ip_per_hour
+    app.config["LOGIN_RATE_LIMIT_PER_IP_PER_HOUR"] = config.login_rate_limit_per_ip_per_hour
     app.config["MAINTAINER_EMAIL"] = config.maintainer_email
     app.config["SMTP_CONFIG"] = config.smtp
     app.config["GITHUB_CONFIG"] = config.github

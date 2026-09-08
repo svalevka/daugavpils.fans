@@ -51,6 +51,17 @@ CREATE TABLE IF NOT EXISTS submission_log (
     submitted_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Same per-IP-per-hour pattern as submission_log above, but for /login:
+-- every request POSTed there (not just ones matching an active approver -
+-- an attacker probing emails must be throttled too), so a flood can't be
+-- used to spam an inbox with magic links or brute-force approver
+-- enumeration via timing.
+CREATE TABLE IF NOT EXISTS login_request_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ip TEXT NOT NULL,
+    requested_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 -- New photo/video proposals (GitHub issue #21) - deliberately not the
 -- `proposals` table above: unlike a text edit, approving one of these
 -- never touches git or archive.org (see the issue's "curated queue,

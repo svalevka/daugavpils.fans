@@ -64,6 +64,7 @@ class ReviewAppTestCase(unittest.TestCase):
             github=GithubConfig(token="test-github-token", repo="svalevka/daugavpils.fans"),
             callback_key="test-callback-key",
             rate_limit_per_ip_per_hour=5,
+            login_rate_limit_per_ip_per_hour=5,
         )
         self.app = create_app(self.config)
         self.app.testing = True

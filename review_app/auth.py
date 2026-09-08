@@ -10,7 +10,7 @@ import secrets
 import sys
 from pathlib import Path
 
-from flask import Blueprint, current_app, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, current_app, redirect, render_template, request, session, url_for
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -31,8 +31,26 @@ def login_form():
 
 @bp.post("/login")
 def login_request():
-    email = request.form.get("email", "").strip()
     conn = db.get_connection()
+    ip = request.remote_addr or "unknown"
+
+    # Same per-IP-per-hour pattern as submissions.py's create_proposal():
+    # the check comes before the log INSERT below, and the INSERT happens
+    # unconditionally afterwards (even for an email with no matching
+    # approver) - a flood of guesses must be throttled exactly like a
+    # flood of real login attempts, not exempted from it.
+    limit = current_app.config["LOGIN_RATE_LIMIT_PER_IP_PER_HOUR"]
+    recent = conn.execute(
+        "SELECT COUNT(*) FROM login_request_log WHERE ip = ? AND requested_at > datetime('now', '-1 hour')",
+        (ip,),
+    ).fetchone()[0]
+    if recent >= limit:
+        abort(429)
+
+    conn.execute("INSERT INTO login_request_log (ip) VALUES (?)", (ip,))
+    conn.commit()
+
+    email = request.form.get("email", "").strip()
     row = conn.execute(
         "SELECT id FROM approvers WHERE is_active = 1 AND LOWER(email) = LOWER(?)", (email,)
     ).fetchone()

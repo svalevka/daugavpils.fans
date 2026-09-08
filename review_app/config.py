@@ -56,6 +56,12 @@ class Config:
     # tolerance is still the goal here, just not so tight it blocks a
     # genuine multi-field editing session.
     rate_limit_per_ip_per_hour: int = 20
+    # Deliberately tighter than the /submit limit above: unlike a text
+    # proposal, each /login POST that matches an active approver sends a
+    # real email, so a flood here is both an inbox-spam vector and (via
+    # response timing/side effects) an approver-enumeration one. No
+    # legitimate user needs more than a handful of login attempts an hour.
+    login_rate_limit_per_ip_per_hour: int = 5
     # Where uploaded photos/videos wait for a maintainer to scp/rsync them
     # off before publishing (see GitHub issue #21 - "curated queue, manual
     # finish": review_app never uploads to archive.org itself). Defaults
@@ -92,6 +98,7 @@ class Config:
             ),
             callback_key=os.environ["REVIEW_APP_CALLBACK_KEY"],
             rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "5")),
+            login_rate_limit_per_ip_per_hour=int(os.environ.get("LOGIN_RATE_LIMIT_PER_IP_PER_HOUR", "5")),
             media_uploads_path=(
                 Path(os.environ["MEDIA_UPLOADS_PATH"]) if "MEDIA_UPLOADS_PATH" in os.environ else None
             ),
