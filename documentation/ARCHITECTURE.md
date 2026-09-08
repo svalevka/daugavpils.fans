@@ -19,11 +19,11 @@ organized internally.
 ```mermaid
 flowchart TD
     subgraph archiveorg["archive.org — media<br/>(audio/image/video - see README.md's<br/>diagram for how it gets published here)"]
-        MEDIA[("Published band/release items")]
+        MEDIA["Published band/release items"]
     end
 
     subgraph github["github.com — metadata (git) + CI"]
-        CONTRIBUTOR["Contributor opens a PR<br/>(new/edited band.yaml or release.yaml)"] -->|"quorum review,<br/>then merged"| MAIN[("main branch<br/>bands/**/*.yaml")]
+        CONTRIBUTOR["Contributor opens a PR<br/>(new/edited band.yaml or release.yaml)"] -->|"quorum review,<br/>then merged"| MAIN["main branch<br/>bands/**/*.yaml"]
 
         subgraph gha["GitHub Actions"]
             APPLY["apply-proposal.yml<br/>fetch proposal → commit → push"]
