@@ -275,7 +275,7 @@ Correcting or extending an *existing* band's or release's text fields -
 biography, member role/period, photo caption, genres, alternate names
 (see `tools/editable_fields.py` for the exact allowlist) - doesn't need a
 GitHub account or a pull request: anyone can propose an edit at
-**[review.daugavpils.fans](https://review.daugavpils.fans)**, and a
+**[review.daugavpils.fans/submit](https://review.daugavpils.fans/submit)**, and a
 curated approver (any one of them, no quorum) applies it. This is a
 deliberately lighter-weight, lower-rigor review path than the "Quorum
 review" PR flow above - appropriate for small text corrections, not for
