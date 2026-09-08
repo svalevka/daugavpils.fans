@@ -21,6 +21,10 @@
 {% endif %}
 
 <h2>{{ t.tracklist }}</h2>
+<label class="autoplay-control">
+  <input type="checkbox" data-autoplay-toggle>
+  {{ t.autoplay_toggle }}
+</label>
 <table class="tracklist">
   {% for track in release.track %}
   <tr>

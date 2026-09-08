@@ -164,6 +164,16 @@ body.lang-ru .bio-more[open] summary::before {
   content: "Свернуть ↑";
 }
 
+.autoplay-control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
 table.tracklist {
   width: 100%;
   border-collapse: collapse;

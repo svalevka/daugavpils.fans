@@ -20,6 +20,7 @@ STRINGS = {
         "licensed_under": "Лицензия",
         "support_link": "Поддержка",
         "propose_edit": "Предложить исправление",
+        "autoplay_toggle": "Проигрывать треки подряд",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -35,6 +36,7 @@ STRINGS = {
         "licensed_under": "Licensed under",
         "support_link": "Support",
         "propose_edit": "Propose an edit",
+        "autoplay_toggle": "Play tracks back-to-back",
     },
 }
 
