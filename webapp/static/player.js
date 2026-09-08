@@ -47,15 +47,20 @@
     });
   });
 
-  // Lightboxes (see _macros.html) are pure CSS (:target show/hide, no JS)
-  // so closing one only changes the URL hash - it never touches the
-  // <video> inside, which otherwise keeps playing invisibly. Pause every
-  // lightbox video whenever the hash changes (closing, or jumping straight
-  // to a different lightbox item).
-  window.addEventListener("hashchange", function () {
-    var players = document.querySelectorAll(".lightbox video");
-    for (var i = 0; i < players.length; i++) {
-      players[i].pause();
-    }
-  });
+  // Only one <audio>/<video> plays at a time site-wide - starting one
+  // pauses every other, so playing a gallery video while a track (or
+  // another video) is already going doesn't leave both audible at once.
+  // 'play' doesn't bubble, so this has to listen on the capture phase.
+  document.addEventListener(
+    "play",
+    function (event) {
+      var target = event.target;
+      if (target.tagName !== "AUDIO" && target.tagName !== "VIDEO") return;
+      var players = document.querySelectorAll("audio, video");
+      for (var i = 0; i < players.length; i++) {
+        if (players[i] !== target) players[i].pause();
+      }
+    },
+    true
+  );
 })();

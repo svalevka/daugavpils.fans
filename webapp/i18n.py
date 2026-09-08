@@ -23,7 +23,6 @@ STRINGS = {
         "autoplay_toggle": "Проигрывать треки подряд",
         "view_all_photos": "Смотреть все фото ({n})",
         "view_all_videos": "Смотреть все видео ({n})",
-        "play_video": "Воспроизвести видео",
         "photos_and_video": "Фото и видео",
     },
     "en": {
@@ -43,7 +42,6 @@ STRINGS = {
         "autoplay_toggle": "Play tracks back-to-back",
         "view_all_photos": "View all photos ({n})",
         "view_all_videos": "View all videos ({n})",
-        "play_video": "Play video",
         "photos_and_video": "Photos & Video",
     },
 }

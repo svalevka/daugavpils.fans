@@ -44,7 +44,7 @@
 
 {% if band.video %}
 <h2>{{ t.video }}</h2>
-{{ macros.video_gallery(band.video[:video_teaser_limit], "band-video", band.name, media_url, t.play_video) }}
+{{ macros.video_gallery(band.video[:video_teaser_limit], band.name, media_url) }}
 {% if band.video | length > video_teaser_limit %}
 <p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_videos.format(n=band.video | length) }}</a></p>
 {% endif %}
