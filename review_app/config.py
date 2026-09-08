@@ -56,12 +56,16 @@ class Config:
     # tolerance is still the goal here, just not so tight it blocks a
     # genuine multi-field editing session.
     rate_limit_per_ip_per_hour: int = 20
-    # Deliberately tighter than the /submit limit above: unlike a text
-    # proposal, each /login POST that matches an active approver sends a
-    # real email, so a flood here is both an inbox-spam vector and (via
-    # response timing/side effects) an approver-enumeration one. No
-    # legitimate user needs more than a handful of login attempts an hour.
-    login_rate_limit_per_ip_per_hour: int = 5
+    # 5 (the original value here) hit the same problem issue #26 already
+    # found for rate_limit_per_ip_per_hour above: a real approver testing
+    # or re-requesting a link a few times in a row (wrong email, expired
+    # link, a dev session, ...) got locked out with a 429. Matched to the
+    # /submit limit rather than left tighter - a flood here is still only
+    # an inbox-spam/probing vector, not a credential-stuffing one (there's
+    # no password to brute-force), and login_request_log counts every
+    # attempt including non-matching emails, so this still bounds it well
+    # under real spam-bot volume.
+    login_rate_limit_per_ip_per_hour: int = 20
     # Where uploaded photos/videos wait for a maintainer to scp/rsync them
     # off before publishing (see GitHub issue #21 - "curated queue, manual
     # finish": review_app never uploads to archive.org itself). Defaults
@@ -98,7 +102,7 @@ class Config:
             ),
             callback_key=os.environ["REVIEW_APP_CALLBACK_KEY"],
             rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "5")),
-            login_rate_limit_per_ip_per_hour=int(os.environ.get("LOGIN_RATE_LIMIT_PER_IP_PER_HOUR", "5")),
+            login_rate_limit_per_ip_per_hour=int(os.environ.get("LOGIN_RATE_LIMIT_PER_IP_PER_HOUR", "20")),
             media_uploads_path=(
                 Path(os.environ["MEDIA_UPLOADS_PATH"]) if "MEDIA_UPLOADS_PATH" in os.environ else None
             ),

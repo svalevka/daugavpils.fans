@@ -174,7 +174,7 @@ service (no `ports:`, only `expose:`) and
    | `GITHUB_REPO` | `svalevka/daugavpils.fans` |
    | `REVIEW_APP_CALLBACK_KEY` | any long random string (e.g. `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`) - **also** set as a GitHub Actions repo secret of the same name (Settings > Secrets and variables > Actions > Secrets), same value in both places |
    | `RATE_LIMIT_PER_IP_PER_HOUR` | optional, defaults to 20 |
-   | `LOGIN_RATE_LIMIT_PER_IP_PER_HOUR` | optional, defaults to 5 - tighter than the submit limit above since a match sends a real email |
+   | `LOGIN_RATE_LIMIT_PER_IP_PER_HOUR` | optional, defaults to 20 - same as the submit limit above |
 
    Also set, as a GitHub Actions repo **variable** (not secret - Settings
    > Secrets and variables > Actions > Variables), `REVIEW_APP_BASE_URL`
