@@ -291,7 +291,7 @@ video:
     propertyID: sha256
     value: 91efc9c4eb88d3966ae4d2141333b5bca391f36eab46d942d20d01e7b6478022
   '@type': VideoObject
-  name: Проникни в мой сад (концерт)
+  name: Проникни в мой сад (видеопродукт 1994)
   bitrate: 944 kbps
   duration: PT5M10S
 - contentUrl: media/kvazimodo-tvoe-radio-lzhet-live.mp4
