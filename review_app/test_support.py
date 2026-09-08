@@ -9,6 +9,7 @@ discover -p 'test_*.py'` skips it, same as archive_fixture.py.
 """
 from __future__ import annotations
 
+import io
 import sqlite3
 import sys
 import tempfile
@@ -22,6 +23,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 from app import create_app  # noqa: E402
 from archive_fixture import build_archive_with_nested_fields  # noqa: E402
 from config import Config, GithubConfig, SmtpConfig  # noqa: E402
+
+# Minimal byte fixtures for media_uploads.py's header-sniffing - only the
+# leading signature bytes matter (see media_uploads.py's _sniff()), so
+# these are padded with filler, not real decodable images/video.
+JPEG_BYTES = b"\xff\xd8\xff\xe0" + b"\x00" * 128
+PNG_BYTES = b"\x89PNG\r\n\x1a\n" + b"\x00" * 128
+MP4_BYTES = b"\x00\x00\x00\x18ftypmp42" + b"\x00" * 128
+UNRECOGNIZED_BYTES = b"this is not an image or video file" * 4
 
 
 class ReviewAppTestCase(unittest.TestCase):
@@ -64,9 +73,18 @@ class ReviewAppTestCase(unittest.TestCase):
         # mocked at the exact boundaries mail.py/github_dispatch.py
         # expose (the agreed seam - see the parent PRD's Testing
         # Decisions).
+        # submissions.mail and media_submissions.mail are the *same*
+        # cached module object (both just `import mail`), so patching
+        # send_submission_notification under one import path also
+        # affects the other - one patch, one mock, shared by both flows'
+        # tests (patching it a second time under the other path would
+        # silently clobber this one instead of adding independent
+        # coverage).
         self.mock_send_notification = self._patch("submissions.mail.send_submission_notification")
+        self.mock_send_media_notification = self.mock_send_notification
         self.mock_send_magic_link = self._patch("auth.mail.send_magic_link")
         self.mock_trigger_apply = self._patch("dashboard.github_dispatch.trigger_apply")
+        self.mock_send_media_approved = self._patch("dashboard.mail.send_media_approved_notification")
 
     def _patch(self, target: str) -> mock.MagicMock:
         patcher = mock.patch(target)
@@ -102,6 +120,14 @@ class ReviewAppTestCase(unittest.TestCase):
         finally:
             conn.close()
 
+    def fetch_media_proposals(self) -> list[sqlite3.Row]:
+        conn = sqlite3.connect(self.database_path)
+        conn.row_factory = sqlite3.Row
+        try:
+            return conn.execute("SELECT * FROM media_proposals ORDER BY id").fetchall()
+        finally:
+            conn.close()
+
     def callback_headers(self) -> dict[str, str]:
         """Auth header the GitHub Action uses against /api/* - see
         api.py's _require_callback_key()."""
@@ -121,3 +147,21 @@ class ReviewAppTestCase(unittest.TestCase):
         }
         base.update(form)
         return self.client.post("/submit", data=base)
+
+    def submit_media(self, file_tuples: list[tuple[str, bytes]] | None = None, **form):
+        """file_tuples: list of (filename, bytes) pairs - the bytes'
+        actual leading signature is what media_uploads.py sniffs, not
+        the filename or any guessed Content-Type (see JPEG_BYTES etc.
+        above). Defaults to a single JPEG."""
+        if file_tuples is None:
+            file_tuples = [("photo.jpg", JPEG_BYTES)]
+        base = {
+            "band_slug": self.fx.band_slug,
+            "release_slug": "",
+            "submitter_name": "",
+            "submitter_contact": "",
+            "website": "",
+        }
+        base.update(form)
+        base["files"] = [(io.BytesIO(data), filename) for filename, data in file_tuples]
+        return self.client.post("/submit-media", data=base, content_type="multipart/form-data")

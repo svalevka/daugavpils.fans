@@ -56,6 +56,19 @@ class Config:
     # tolerance is still the goal here, just not so tight it blocks a
     # genuine multi-field editing session.
     rate_limit_per_ip_per_hour: int = 20
+    # Where uploaded photos/videos wait for a maintainer to scp/rsync them
+    # off before publishing (see GitHub issue #21 - "curated queue, manual
+    # finish": review_app never uploads to archive.org itself). Defaults
+    # to a sibling of the SQLite database's own directory, so a fresh
+    # deploy needs no extra env var: it lands in the same bind-mounted
+    # volume DATABASE_PATH already uses (review-app-data/, per
+    # webapp/deploy/docker-compose.yml) without any compose change.
+    media_uploads_path: Path | None = None
+    max_photo_upload_bytes: int = 25 * 1024 * 1024
+    max_video_upload_bytes: int = 500 * 1024 * 1024
+
+    def resolved_media_uploads_path(self) -> Path:
+        return self.media_uploads_path or (self.database_path.parent / "uploads")
 
     @classmethod
     def from_env(cls) -> "Config":
@@ -79,4 +92,9 @@ class Config:
             ),
             callback_key=os.environ["REVIEW_APP_CALLBACK_KEY"],
             rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "5")),
+            media_uploads_path=(
+                Path(os.environ["MEDIA_UPLOADS_PATH"]) if "MEDIA_UPLOADS_PATH" in os.environ else None
+            ),
+            max_photo_upload_bytes=int(os.environ.get("MAX_PHOTO_UPLOAD_BYTES", str(25 * 1024 * 1024))),
+            max_video_upload_bytes=int(os.environ.get("MAX_VIDEO_UPLOAD_BYTES", str(500 * 1024 * 1024))),
         )

@@ -35,4 +35,63 @@
   {% endif %}
 </article>
 {% endfor %}
+
+<h2>Pending media</h2>
+{% if not media_pending %}
+<p>Nothing pending.</p>
+{% endif %}
+{% for m in media_pending %}
+<article class="proposal">
+  <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
+  <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
+  {% if m.submitter_name or m.submitter_contact %}
+  <p class="meta">Submitted by {{ m.submitter_name or "(no name given)" }}{% if m.submitter_contact %} &lt;{{ m.submitter_contact }}&gt;{% endif %}</p>
+  {% endif %}
+  {% if m.caption %}<p>{{ m.caption }}</p>{% endif %}
+
+  {% if m.media_type == "image" %}
+  <img src="/media-proposals/{{ m.id }}/file" alt="{{ m.original_filename }}" style="max-width: 100%; border-radius: 4px;">
+  {% else %}
+  <video src="/media-proposals/{{ m.id }}/file" controls preload="none" style="max-width: 100%; border-radius: 4px;"></video>
+  {% endif %}
+
+  {% if m.is_own_submission %}
+  <p class="note"><em>You submitted this - another approver must decide on it.</em></p>
+  {% else %}
+  <div class="actions">
+    <form method="post" action="/media-proposals/{{ m.id }}/approve">
+      <button type="submit">Approve</button>
+    </form>
+    <form method="post" action="/media-proposals/{{ m.id }}/reject">
+      <button type="submit">Reject</button>
+    </form>
+  </div>
+  {% endif %}
+</article>
+{% endfor %}
+
+<h2>Approved, awaiting publish</h2>
+<p class="meta">Grab these with scp/rsync from review-app-data/uploads/ on the server, then publish and commit them the usual way. "Mark published" removes the file here once you're done.</p>
+{% if not media_awaiting_publish %}
+<p>Nothing awaiting publish.</p>
+{% endif %}
+{% for m in media_awaiting_publish %}
+<article class="proposal">
+  <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
+  <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
+  {% if m.caption %}<p>{{ m.caption }}</p>{% endif %}
+
+  {% if m.media_type == "image" %}
+  <img src="/media-proposals/{{ m.id }}/file" alt="{{ m.original_filename }}" style="max-width: 100%; border-radius: 4px;">
+  {% else %}
+  <video src="/media-proposals/{{ m.id }}/file" controls preload="none" style="max-width: 100%; border-radius: 4px;"></video>
+  {% endif %}
+
+  <div class="actions">
+    <form method="post" action="/media-proposals/{{ m.id }}/publish">
+      <button type="submit">Mark published</button>
+    </form>
+  </div>
+</article>
+{% endfor %}
 {% endblock %}

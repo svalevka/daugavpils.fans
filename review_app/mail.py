@@ -1,10 +1,14 @@
 """
-Outbound email - the two things review_app ever sends: a magic login link
-to an approver, and a new-submission notification to the maintainer (see
-GitHub issue #12). Deliberately two small, separately-mockable functions
-rather than one generic "send_mail" - the agreed test seam (see the
-parent PRD's Testing Decisions) mocks real SMTP at exactly this boundary,
-so tests never touch the network.
+Outbound email - the three things review_app ever sends: a magic login
+link to an approver, a new-submission notification to the maintainer (see
+GitHub issue #12), and a your-photo-was-approved notification to a media
+submitter who left a contact email (see GitHub issue #21 - text-proposal
+submitters are deliberately never notified either way, but a media
+submitter waiting on you to physically publish their file benefits from
+knowing it was accepted). Deliberately small, separately-mockable
+functions rather than one generic "send_mail" - the agreed test seam (see
+the parent PRD's Testing Decisions) mocks real SMTP at exactly this
+boundary, so tests never touch the network.
 """
 from __future__ import annotations
 
@@ -52,3 +56,17 @@ def send_magic_link(smtp_config: SmtpConfig, to_addr: str, link_url: str) -> Non
 def send_submission_notification(smtp_config: SmtpConfig, recipients: list[str], summary: str) -> None:
     for to_addr in recipients:
         _send(smtp_config, to_addr, "New proposal to review on daugavpils.fans", summary)
+
+
+def send_media_approved_notification(smtp_config: SmtpConfig, to_addr: str, description: str) -> None:
+    """Sent once, when an approver approves a media proposal - not when
+    it's actually published (see GitHub issue #21's design: publishing
+    is a manual step that can take a while, so this is deliberately the
+    fast "yes, we want this" signal rather than a "it's live" one)."""
+    _send(
+        smtp_config,
+        to_addr,
+        "Your daugavpils.fans submission was approved",
+        f"Good news - {description} was approved and will be added to the archive soon.\n\n"
+        "Thank you for contributing!",
+    )

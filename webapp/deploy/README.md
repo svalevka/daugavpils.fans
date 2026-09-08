@@ -206,6 +206,28 @@ service (no `ports:`, only `expose:`) and
    lands on `main`, and confirm both the Pages mirror and (within one
    timer interval) the primary domain pick it up.
 
+### Photo/video proposals (GitHub issue #21)
+
+Unlike text proposals, approving a photo/video on `/dashboard` never
+touches git or archive.org - it's a "curated queue, manual finish"
+design: approving only moves it to the dashboard's "Approved, awaiting
+publish" list. To actually finish one:
+
+```bash
+scp <server>:/opt/daugavpils-fans/review-app-data/uploads/<stored-filename> .
+```
+
+(the dashboard names the file), then place it under the right
+`bands/<band-slug>/` (or `bands/<band-slug>/<release-slug>/`) directory
+in your own local checkout, add the `image:`/`video:` entry to
+`band.yaml`/`release.yaml` (the dashboard shows the submitter's suggested
+caption, if any), run `tools/validate.py --write`, then
+`tools/publish_to_archive_org.py`, commit, and push - exactly the same
+manual steps as adding media any other way. Once done, click "Mark
+published" on the dashboard - this deletes the file from
+`review-app-data/uploads/` (unbacked-up, so nothing should linger there
+once you're finished with it) and closes out the row.
+
 ## Cert renewal
 
 The cert expires 90 days after issuance and renewal is currently manual.

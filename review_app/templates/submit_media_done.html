@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Thank you — daugavpils.fans{% endblock %}
+{% block content %}
+<h1>Thank you</h1>
+{% if saved %}
+<p>{{ saved }} file{{ "s" if saved != 1 else "" }} submitted for review by a curated approver. Nothing goes live automatically - you'll only see the change if it's approved.</p>
+{% else %}
+<p>Nothing was submitted.</p>
+{% endif %}
+{% if skipped %}
+<p>The following couldn't be accepted:</p>
+<ul class="item-list compact">
+{% for reason in skipped %}
+  <li>{{ reason }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

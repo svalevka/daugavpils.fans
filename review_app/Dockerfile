@@ -17,4 +17,7 @@ COPY review_app/ review_app/
 
 WORKDIR /app/review_app
 EXPOSE 8000
-CMD ["gunicorn", "--workers", "2", "--bind", "0.0.0.0:8000", "wsgi:app"]
+# --timeout 600: gunicorn's 30s default would kill a worker mid-upload on
+# a large video, matching nginx's own client_body_timeout/proxy_read_timeout
+# (see webapp/deploy/nginx/daugavpils.conf) - see GitHub issue #21.
+CMD ["gunicorn", "--workers", "2", "--timeout", "600", "--bind", "0.0.0.0:8000", "wsgi:app"]

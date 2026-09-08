@@ -12,6 +12,11 @@
 </ul>
 {% endif %}
 
+<h2>Media</h2>
+<ul class="item-list compact">
+  <li><a href="{% if release_slug %}/submit/{{ band_slug }}/{{ release_slug }}/media{% else %}/submit/{{ band_slug }}/media{% endif %}">Add photos or videos</a></li>
+</ul>
+
 <h2>Fields</h2>
 <ul class="item-list compact">
 {% for opt in options %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Add photos or videos — daugavpils.fans{% endblock %}
+{% block content %}
+<h1>Add photos or videos</h1>
+<p class="meta">{{ scope_label }}</p>
+<p>You can select several files at once. Each one is reviewed on its own — nothing goes live automatically.</p>
+
+<form method="post" action="/submit-media" enctype="multipart/form-data">
+  <input type="hidden" name="band_slug" value="{{ band_slug }}">
+  {% if release_slug %}<input type="hidden" name="release_slug" value="{{ release_slug }}">{% endif %}
+
+  <div class="field">
+    <label for="files">Photos or videos</label>
+    <input type="file" id="files" name="files" multiple accept="image/*,video/*" data-media-files required>
+  </div>
+
+  <div data-media-caption-list></div>
+
+  <div class="field">
+    <label for="submitter_name">Your name (optional)</label>
+    <input type="text" id="submitter_name" name="submitter_name">
+  </div>
+  <div class="field">
+    <label for="submitter_contact">Your email, if you'd like us to let you know it was approved (optional)</label>
+    <input type="text" id="submitter_contact" name="submitter_contact">
+  </div>
+
+  <!-- honeypot: hidden from real visitors via CSS, never filled by a human -->
+  <div class="field honeypot" aria-hidden="true">
+    <label for="website">Leave this field blank</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+  </div>
+
+  <button type="submit">Submit for review</button>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='media_upload.js') }}"></script>
+{% endblock %}

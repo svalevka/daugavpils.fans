@@ -22,6 +22,7 @@ from api import bp as api_bp  # noqa: E402
 from auth import bp as auth_bp  # noqa: E402
 from config import Config  # noqa: E402
 from dashboard import bp as dashboard_bp  # noqa: E402
+from media_submissions import bp as media_submissions_bp  # noqa: E402
 from submissions import bp as submissions_bp  # noqa: E402
 
 
@@ -35,9 +36,22 @@ def create_app(config: Config) -> Flask:
     app.config["SMTP_CONFIG"] = config.smtp
     app.config["GITHUB_CONFIG"] = config.github
     app.config["REVIEW_APP_CALLBACK_KEY"] = config.callback_key
+    app.config["MEDIA_UPLOADS_PATH"] = config.resolved_media_uploads_path()
+    app.config["MAX_UPLOAD_BYTES"] = {
+        "image": config.max_photo_upload_bytes,
+        "video": config.max_video_upload_bytes,
+    }
+    # A blunt backstop, not the real per-file validation (media_uploads.py
+    # does that, with a proper per-file rejection message) - Werkzeug
+    # buffers a whole multipart request before our route code ever runs,
+    # so without this a request far larger than any single file's own cap
+    # could still be received in full first. Generous enough for a batch
+    # of several max-size videos in one submission.
+    app.config["MAX_CONTENT_LENGTH"] = 4 * config.max_video_upload_bytes
 
     db.init_app(app)
     app.register_blueprint(submissions_bp)
+    app.register_blueprint(media_submissions_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(api_bp)
