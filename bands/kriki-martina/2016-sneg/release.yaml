@@ -5,7 +5,9 @@ datePublished: '2016'
 byArtist: kriki-martina
 genre: []
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-kriki-martina-2016-sneg
+- https://archive.org/download/daugavpils-fans-kriki-martina-2016-sneg/daugavpils-fans-kriki-martina-2016-sneg_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1

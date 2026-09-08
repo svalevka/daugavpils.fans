@@ -37,7 +37,9 @@ description_en: 'Daugavpils. Latvia. 1999. Carefree youth..
   Avovka - rhythm and cymbals
 
   Gena Kuzya - solo licks and all the local prestige!'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-kriki-martina-1999-edinstvennyi
+- https://archive.org/download/daugavpils-fans-kriki-martina-1999-edinstvennyi/daugavpils-fans-kriki-martina-1999-edinstvennyi_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
