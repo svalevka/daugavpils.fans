@@ -204,5 +204,4 @@ flowchart TD
 
 ## Как связаться
 
-- [Issues на GitHub](https://github.com/svalevka/daugavpils.fans/issues) — открыто для всех, не требует личного знакомства
-- WhatsApp-группа проекта — для тех, кто уже в ней состоит  
+- Email: [daugavpils@gmail.com](mailto:daugavpils@gmail.com)  
