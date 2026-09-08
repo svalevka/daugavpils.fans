@@ -47,7 +47,15 @@ class Config:
     smtp: SmtpConfig
     github: GithubConfig
     callback_key: str
-    rate_limit_per_ip_per_hour: int = 5
+    # 5 (the previous default) turned out too low for legitimate use: the
+    # /submit flow is one field per POST (see submissions.py's module
+    # docstring - there's no batched multi-field submission), so a
+    # visitor correcting more than a handful of fields in one sitting hit
+    # this as an outright block (GitHub issue #26 - a real user got a 429
+    # after their 6th edit). Raised well above realistic spam-bot volume
+    # tolerance is still the goal here, just not so tight it blocks a
+    # genuine multi-field editing session.
+    rate_limit_per_ip_per_hour: int = 20
 
     @classmethod
     def from_env(cls) -> "Config":
