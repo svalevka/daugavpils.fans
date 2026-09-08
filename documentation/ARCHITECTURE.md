@@ -47,9 +47,12 @@ flowchart TD
         SITE["Site Build<br/>(webapp/dist, served by nginx)"]
     end
 
-    SUBMITTER["Anyone proposes a text edit<br/>review.daugavpils.fans/submit"] --> REVIEWAPP
+    SUBMITTER["Anyone proposes a text edit<br/>or a new photo/video<br/>review.daugavpils.fans/submit"] --> REVIEWAPP
     APPROVER["A curated approver decides<br/>on /dashboard"] --> REVIEWAPP
-    REVIEWAPP -->|"workflow_dispatch<br/>(proposal id only)"| APPLY
+    REVIEWAPP -->|"text proposal approved:<br/>workflow_dispatch (id only)"| APPLY
+    REVIEWAPP -->|"media proposal approved:<br/>no CI, no auto-publish"| MAINT["Maintainer scp/rsyncs the file,<br/>writes the YAML entry,<br/>publishes + commits by hand"]
+    MAINT --> PUBLISH
+    MAINT -.->|"commit"| MAIN
 
     MAIN -.->|"polled, not pushed -<br/>the VPS has no inbound GitHub access"| TIMER
     TIMER --> SITE --> NGINX
@@ -88,21 +91,42 @@ README.md's "Resilience" section for the reasoning):
 static-site system - a second container on the same VPS, reachable only
 through nginx (`review.daugavpils.fans`), with its own SQLite database
 (not backed up - see ADR-0003's Consequences). It never holds any
-credential that can push to git.
+credential that can push to git, and never holds archive.org credentials
+at all.
 
-Approving a proposal on `/dashboard` doesn't apply it directly - it
-dispatches `apply-proposal.yml` with just the proposal's id.
-That Action fetches the actual content from `review_app`'s authenticated
-callback API, commits it, and pushes to `main`. Because a workflow's own
-commit can't trigger another workflow's `on: push` (a GitHub
-anti-recursion rule), `apply-proposal.yml` explicitly dispatches
-`pages.yml` itself right after pushing - the VPS's timer picks the
-same push up on its own next poll, no dispatch needed there.
+It handles two kinds of proposal, decided the same way on the same
+`/dashboard` (one curated approver, no quorum, self-approval blocked -
+see ADR-0003's Consequences) but applied completely differently once
+approved:
+
+- **Text proposals** (issue #13) - approving dispatches
+  `apply-proposal.yml` with just the proposal's id. That Action fetches
+  the actual content from `review_app`'s authenticated callback API,
+  commits it, and pushes to `main`. Because a workflow's own commit can't
+  trigger another workflow's `on: push` (a GitHub anti-recursion rule),
+  `apply-proposal.yml` explicitly dispatches `pages.yml` itself right
+  after pushing - the VPS's timer picks the same push up on its own next
+  poll, no dispatch needed there.
+- **Media proposals** (issue #21, "curated queue, manual finish") -
+  approving never dispatches anything. It moves the upload to a "ready to
+  publish" list on the dashboard; a maintainer retrieves the file
+  (`scp`/`rsync` from `review-app-data/uploads/` on the VPS - see
+  `webapp/deploy/README.md`), writes the `image`/`video` entry into
+  `band.yaml`/`release.yaml` by hand, runs `tools/validate.py --write`
+  then `tools/publish_to_archive_org.py`, and commits/pushes directly -
+  the same manual process as "Adding a new band, release, or media"
+  below, just sourced from a curated queue instead of an ad hoc message.
+  This was a deliberate choice, not a gap to fill later: giving CI (or
+  `review_app`) real archive.org write credentials to fully automate this
+  too would be a real trust escalation ADR-0003 was careful to avoid for
+  the text-proposal pipeline.
 
 Both `apply-proposal.yml` and `pages.yml` use a `concurrency:` group
 (`apply-proposal` and `pages` respectively) so that proposals approved
 seconds apart apply one at a time instead of racing, and a Pages
-deploy already in flight is never killed mid-way by a newer one.
+deploy already in flight is never killed mid-way by a newer one. Neither
+of this applies to media proposals - there's no Action in that path to
+race.
 
 ## Adding a new band, release, or media
 
@@ -112,10 +136,14 @@ into the two homes the pipeline then serves from:
 
 - **Metadata (git)**: a contributor opens a PR with a new/edited
   `band.yaml`/`release.yaml`; quorum review merges it to `main` like any
-  other PR. `review_app`'s lighter-weight `/submit` flow (above) only
-  covers *correcting* an existing field, never adding a new band/release.
-- **Media (archive.org)**: after the PR is merged, whoever holds the
-  project's archive.org credentials runs `tools/publish_to_archive_org.py`
+  other PR. `review_app`'s lighter-weight `/submit` flow (above) covers
+  *correcting* an existing field or contributing a new photo/video to an
+  *existing* band/release, never adding a whole new band or release -
+  that still needs a PR.
+- **Media (archive.org)**: after the PR is merged (or, for a `review_app`
+  media proposal, after a maintainer's picked it up from the "ready to
+  publish" queue - same step either way), whoever holds the project's
+  archive.org credentials runs `tools/publish_to_archive_org.py`
   **locally** - it needs the real audio/image/video files, which are
   gitignored and never reach GitHub, so this step can't run in CI. It
   uploads the media as its own archive.org item, then writes the

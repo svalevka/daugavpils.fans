@@ -138,9 +138,10 @@ webapp/                          # public website built from the archive (ADR-00
   deploy/                        # docker-compose + nginx config run on the host
   dist/                          # generated output: HTML/CSS only, no media
                                   # (gitignored, not committed)
-review_app/                      # public text-edit proposal + curated-approval
-                                  # app (see "Public text corrections" below,
-                                  # ADR-0003) - a live server, unlike webapp/
+review_app/                      # public proposal + curated-approval app -
+                                  # text corrections and new media (see
+                                  # "Public proposals" below, ADR-0003) -
+                                  # a live server, unlike webapp/
 .github/workflows/
   pages.yml                      # builds + deploys the GitHub Pages mirror
                                   # on every push to main (ADR-0002)
@@ -264,25 +265,41 @@ A public website now exists (see `webapp/` and ADR-0001) - a static site
 built from the same archive, streaming media directly from archive.org
 rather than hosting a copy of it (see `tools/publish_to_archive_org.py`),
 not a replacement for the archive.org distribution model above. Adding a
-new band, release, or media still goes through a pull request and quorum
+whole new band or release still goes through a pull request and quorum
 review (see "Adding a new band, step by step" below) - what's now open to
 the public, with no account or git knowledge needed, is proposing a
-correction to an *existing* band's or release's text (see "Public text
-corrections" below).
+correction to an *existing* band's or release's text, or contributing a
+new photo/video to one (see "Public proposals" below).
 
-## Public text corrections (review app)
+## Public proposals (review app)
 
-Correcting or extending an *existing* band's or release's text fields -
-biography, member role/period, photo caption, genres, alternate names
-(see `tools/editable_fields.py` for the exact allowlist) - doesn't need a
-GitHub account or a pull request: anyone can propose an edit at
-**[review.daugavpils.fans/submit](https://review.daugavpils.fans/submit)**, and a
-curated approver (any one of them, no quorum) applies it. This is a
-deliberately lighter-weight, lower-rigor review path than the "Quorum
-review" PR flow above - appropriate for small text corrections, not for
-adding a new band, release, or media. See ADR-0003 for why this exists as
-a live server process alongside an otherwise fully static Site, and
-GitHub issue #8 for the full design.
+Anyone can propose a change to an *existing* band or release at
+**[review.daugavpils.fans/submit](https://review.daugavpils.fans/submit)**, no
+GitHub account or pull request needed - a curated approver (any one of
+them, no quorum) decides on it. This is a deliberately lighter-weight,
+lower-rigor review path than the "Quorum review" PR flow above -
+appropriate for corrections and contributed media, not for adding a
+whole new band or release (that still needs a PR). See ADR-0003 for why
+this exists as a live server process alongside an otherwise fully static
+Site, and GitHub issue #8 for the original design.
+
+Two kinds of proposal, with genuinely different mechanics behind them:
+
+- **Text corrections** - biography, member role/period, photo caption,
+  genres, alternate names (see `tools/editable_fields.py` for the exact
+  allowlist). Approving one dispatches `apply-proposal.yml` (GitHub issue
+  #13), which fetches the content, commits it, and pushes to `main` -
+  live within one Site Build cycle of approval, no further action from
+  anyone.
+- **New photos/videos** - contributing a new `image`/`video` entry to an
+  existing band or release (GitHub issue #21). Deliberately **not**
+  automated the same way: approving one never touches git or archive.org
+  - `apply-proposal.yml` only knows about text proposals. It just marks
+  the upload "ready to publish" on the dashboard; a maintainer still
+  retrieves the file (`scp`/`rsync` off the server) and publishes it by
+  hand, the same way as "Adding a new band, step by step" below. See
+  `webapp/deploy/README.md`'s "Photo/video proposals" section for the
+  exact steps.
 
 This feature only exists on the primary domain - the GitHub Pages mirror
 below has no such app; visiting it there won't find a proposal form.
