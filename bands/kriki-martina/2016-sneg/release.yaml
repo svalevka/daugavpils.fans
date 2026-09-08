@@ -1,0 +1,24 @@
+'@type': MusicAlbum
+name: Снег
+slug: 2016-sneg
+datePublished: '2016'
+byArtist: kriki-martina
+genre: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+sameAs: []
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Снег
+  audio:
+    contentUrl: 01-sneg.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0dac5c7e82b88157b9179f5bb8cb4135a0e73baf85c4e7e4309b60bb7019e240
+    '@type': AudioObject
+    bitrate: 251 kbps
+    duration: PT4M1S
+image: []
+video: []

@@ -1,0 +1,65 @@
+'@type': MusicGroup
+name: Крики Мартина
+slug: kriki-martina
+alternateName: []
+location: Daugavpils, Latvia
+genre: []
+member:
+- name: Валера Клещ
+  name_en: Valera Kleshch
+  role: вокал, гитара
+  role_en: vocals, guitar
+- name: Дерево
+  name_en: Derevo
+  role: бас-гитара
+  role_en: bass guitar
+- name: Серега
+  name_en: Serega
+  role: гитара
+  role_en: guitar
+- name: Вадим Сидоров
+  name_en: Vadim Sidorov
+  role: ударные
+  role_en: drums
+sameAs:
+- https://www.facebook.com/krikimartina/
+- https://soundcloud.com/krikimartina
+image:
+- contentUrl: media/kriki-martina.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e8a7ec2d2a0bca6898f60075b7dfafb449ddc8aca26401af9b965962b870a3ed
+  '@type': ImageObject
+  caption: Крики Мартина
+  caption_en: Kriki Martina
+  depicts: []
+video:
+- contentUrl: media/chemical-reaction-2003-leti.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d8908e3de8a9d670e1ba0d6aab242c33d7f97727b874975e952839310ed95c89
+  '@type': VideoObject
+  bitrate: 965 kbps
+  duration: PT3M13S
+- contentUrl: media/chemical-reaction-2003-my-tuda-khotim.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ebf31079e8d989dd942d3cad101aeca407c4822ba5fd26280bd81c2da3219a93
+  '@type': VideoObject
+  bitrate: 955 kbps
+  duration: PT4M7S
+- contentUrl: media/chemical-reaction-2003-sneg.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 07f9403c9481248ec2e58c8238c26557be62850b72fe63c0edc1730f1ee740ec
+  '@type': VideoObject
+  bitrate: 973 kbps
+  duration: PT3M57S

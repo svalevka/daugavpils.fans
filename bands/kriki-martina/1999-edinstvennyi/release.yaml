@@ -1,0 +1,173 @@
+'@type': MusicAlbum
+name: Единственный
+slug: 1999-edinstvennyi
+datePublished: '1999'
+byArtist: kriki-martina
+genre: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Даугавпилс. Латвия. 1999 год. Беззаботная юность..
+
+
+  Женя Дерива - Баc и подтанцовочки
+
+  Серёжа Хороший - соляга и подпевочки
+
+  Валера Радуга - голос, танцульки и гитарка
+
+  Стакан Комаров - ритмы и тарелочки
+
+  Толстый Пух - ритмы и тарелочки
+
+  Авовка - ритмы и тарелочки
+
+  Гена Кузя - соляга и весь местный престиж!'
+description_en: 'Daugavpils. Latvia. 1999. Carefree youth..
+
+
+  Zhenya Deriva - bass and backup dancing
+
+  Seryozha Khoroshy - solo licks and backing vocals
+
+  Valera Raduga - voice, dancing and guitar
+
+  Stakan Komarov - rhythm and cymbals
+
+  Tolstyi Pukh - rhythm and cymbals
+
+  Avovka - rhythm and cymbals
+
+  Gena Kuzya - solo licks and all the local prestige!'
+sameAs: []
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Intro
+  audio:
+    contentUrl: 01-intro.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3a19d121e3c05ae9c5c94523d524eab5d75ecec20164890100c8a353a608a4ae
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M53S
+- '@type': MusicRecording
+  position: 2
+  name: Лети
+  audio:
+    contentUrl: 02-leti.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7a20e48ff7673ffba11c501ce94ce72815cbce1b82a7e032803117e8a4810269
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M19S
+- '@type': MusicRecording
+  position: 3
+  name: Пыль
+  audio:
+    contentUrl: 03-pyl.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 991c7a46f5cbb0cfa0ddda720008b5815db920054ec557fc9fce39aefd1fd732
+    '@type': AudioObject
+    bitrate: 220 kbps
+    duration: PT3M32S
+- '@type': MusicRecording
+  position: 4
+  name: Война
+  audio:
+    contentUrl: 04-voina.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 91d784481dbf4213e4522b160dc9d8ae0ca5f83107263b90b051ba321904b73e
+    '@type': AudioObject
+    bitrate: 206 kbps
+    duration: PT3M46S
+- '@type': MusicRecording
+  position: 5
+  name: Карла
+  audio:
+    contentUrl: 05-karla.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f751fb52d2e352c02b0349f065388385e418989bd2bef0bfca0dbb3386e6f499
+    '@type': AudioObject
+    bitrate: 217 kbps
+    duration: PT2M14S
+- '@type': MusicRecording
+  position: 6
+  name: Девочка
+  audio:
+    contentUrl: 06-devochka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 39936ff7ac8718c9aeca9aea0f1d8a1f5d4da0e0fbe60eecc89f83c60a6afc5b
+    '@type': AudioObject
+    bitrate: 217 kbps
+    duration: PT4M39S
+- '@type': MusicRecording
+  position: 7
+  name: Si
+  audio:
+    contentUrl: 07-si.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1cb958b3c92b48d3779fb5f99904f9c80338c296216ae95f39ff92776d574ede
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M48S
+- '@type': MusicRecording
+  position: 8
+  name: Папа
+  audio:
+    contentUrl: 08-papa.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a5d28c12fb1a53959a3ef96666a3d09155501e7752fb5498a494c39f91ed7723
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M25S
+- '@type': MusicRecording
+  position: 9
+  name: Море
+  audio:
+    contentUrl: 09-more.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fb772a5f00e777fcf561860b5728c2b23fa1f110778d24359eb5de356b53d34f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M12S
+- '@type': MusicRecording
+  position: 10
+  name: Ночь (Рэдова ночь)
+  audio:
+    contentUrl: 10-noch.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: db145d1c85e271cb554f930d7bd63b0aa5fcc5157f576bedf0894bb7375f8aea
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M56S
+image: []
+video: []
