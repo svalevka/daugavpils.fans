@@ -289,6 +289,11 @@ below has no such app; visiting it there won't find a proposal form.
 
 ## Resilience
 
+For the full deploy topology as a diagram - both Site Build paths, plus
+how a review-app proposal becomes a live change - see
+[`documentation/ARCHITECTURE.md`](documentation/ARCHITECTURE.md). This
+section explains why it's built that way.
+
 The Archive layer (git + archive.org, "How this works, at a glance"
 above) already has no single point of failure - it doesn't depend on
 this repo, any one host, or the Site being online. The Site (`webapp/`)
