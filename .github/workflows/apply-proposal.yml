@@ -64,12 +64,32 @@ jobs:
       # Pydantic schema on write (see its module docstring).
 
       - name: Commit and push
+        # The `concurrency:` group above only serializes runs of *this*
+        # workflow against each other - it does nothing for a race against
+        # a manual push landing in the same window (see the incident this
+        # fixed: proposal #19 failed to apply on 2026-09-09, rejected as
+        # non-fast-forward, racing a manual `git push` made outside any
+        # workflow run). Retry with a rebase instead of failing outright -
+        # `bands/` edits from different proposals essentially never touch
+        # the same lines, so the rebase itself should never conflict; if
+        # it somehow does, the retry loop exits non-zero and this proposal
+        # is reported as failed exactly as before.
         run: |
           git config user.name "daugavpils-fans-bot"
           git config user.email "daugavpils@gmail.com"
           git add -A -- bands
           git commit -m "Apply approved proposal #${{ inputs.proposal_id }}"
-          git push origin main
+          for attempt in 1 2 3 4 5; do
+            if git push origin main; then
+              exit 0
+            fi
+            echo "push rejected (attempt $attempt/5) - fetching and rebasing before retrying"
+            git fetch origin main
+            git rebase origin/main
+            sleep $((RANDOM % 4 + 1))
+          done
+          echo "::error::git push kept getting rejected after 5 attempts - see the commits landed on main around this time"
+          exit 1
 
       # GitHub doesn't let a push made with this workflow's own
       # auto-issued GITHUB_TOKEN trigger another workflow's `on: push`
