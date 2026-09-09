@@ -262,7 +262,18 @@ description_en: 'In Ryb''s own words.
 sameAs:
 - https://archive.org/details/daugavpils-fans-kvazimodo
 - https://archive.org/download/daugavpils-fans-kvazimodo/daugavpils-fans-kvazimodo_archive.torrent
-image: []
+image:
+- contentUrl: media/kvazimodo-1993-first-concert.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d2e00bae3f669b83d89315bfd2dc55919dd3a074b9b5ea79efcc69d1d583aecc
+  '@type': ImageObject
+  caption: Первейший концерт "Квазимодо" в Торговом Училище, Даугавпилс. 22/12/1993
+  caption_en: The very first "Kvazimodo" concert at the Trade School, Daugavpils.
+    22/12/1993
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
