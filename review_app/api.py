@@ -65,6 +65,26 @@ def get_proposal(proposal_id: int):
     )
 
 
+@bp.get("/proposals/approved")
+def list_approved_proposals():
+    """Every proposal still sitting at 'approved' - i.e. never even
+    reached the fetch step, whether because no dispatch was made for it
+    yet or because a dispatch was made but GitHub's own concurrency-group
+    queue silently evicted it before it ever ran (only one *running* + one
+    *queued* run are kept per group; a burst of approvals can drop an
+    older queued dispatch entirely - see GitHub issue #28). Consumed by
+    apply-proposal.yml's `schedule`-triggered sweep as its worklist, so a
+    dropped dispatch still gets applied on the next sweep instead of
+    sitting stuck forever. Deliberately does *not* include 'apply_failed'
+    rows - those did run and failed for some other reason (bad content, a
+    push race that outlasted its retries), which needs a human look, not
+    an automatic retry loop."""
+    _require_callback_key()
+    conn = db.get_connection()
+    rows = conn.execute("SELECT id FROM proposals WHERE status = 'approved' ORDER BY id").fetchall()
+    return jsonify({"ids": [row["id"] for row in rows]})
+
+
 @bp.post("/proposals/<int:proposal_id>/apply-result")
 def apply_result(proposal_id: int):
     _require_callback_key()

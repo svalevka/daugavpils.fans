@@ -14,9 +14,28 @@ on:
   workflow_dispatch:
     inputs:
       proposal_id:
-        description: "The approved proposal's id in review_app's database"
-        required: true
+        description: >-
+          A specific approved proposal's id to apply. Leave blank to sweep
+          every currently-approved proposal instead - the same thing the
+          schedule trigger below does on its own; useful for manually
+          recovering one that was dropped by the concurrency queue (see
+          GitHub issue #28).
+        required: false
         type: string
+  schedule:
+    # Self-healing sweep for a GitHub concurrency-group limitation: only
+    # one *running* + one *queued* run are kept per group, so a burst of
+    # near-simultaneous approvals can silently evict an older *queued*
+    # dispatch before it ever runs - not a failure, a run that never
+    # started at all (confirmed in production: proposal #13 on
+    # 2026-09-09, see GitHub issue #28). A run triggered by one approval
+    # only ever handles its own one proposal_id, so a dropped dispatch has
+    # no other trigger to recover it. This sweep is that recovery: every
+    # 15 minutes, apply *every* currently-approved proposal (GET
+    # /api/proposals/approved), not just whatever single id (if any) this
+    # particular run was dispatched with - so anything dropped gets
+    # applied here within 15 minutes instead of sitting stuck forever.
+    - cron: "*/15 * * * *"
 
 permissions:
   contents: write
@@ -27,8 +46,11 @@ concurrency:
   # runs checkout main at the same commit and one's `git push` gets
   # rejected as non-fast-forward (see the incident this fixed: proposals
   # #8 and #9 both failed to apply on 2026-09-08 because they raced #7).
-  # `queued` (not `cancel-in-progress`) so every approved proposal still
-  # gets applied, just one at a time.
+  # `queued` (not `cancel-in-progress`) so a run already in flight is
+  # never killed mid-push - but see GitHub issue #28 for what this does
+  # *not* protect against (a third dispatch evicting an older *queued*
+  # one outright), which the schedule trigger above exists to recover
+  # from, and the retry loop below exists to reduce in the first place.
   group: apply-proposal
   cancel-in-progress: false
 
@@ -45,15 +67,19 @@ jobs:
       - name: Install dependencies
         run: pip install -r tools/requirements.txt
 
-      - name: Fetch approved proposal content
+      - name: Determine which proposal(s) to apply
+        id: targets
         run: |
-          curl -fsSL \
-            -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
-            "${{ vars.REVIEW_APP_BASE_URL }}/api/proposals/${{ inputs.proposal_id }}" \
-            -o proposal.json
-
-      - name: Apply the proposal
-        run: python tools/apply_proposal.py --proposal-file proposal.json
+          single_id="${{ github.event.inputs.proposal_id }}"
+          if [ -n "$single_id" ]; then
+            echo "ids=$single_id" >> "$GITHUB_OUTPUT"
+          else
+            ids=$(curl -fsSL \
+              -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+              "${{ vars.REVIEW_APP_BASE_URL }}/api/proposals/approved" \
+              | python3 -c "import json,sys; print(' '.join(str(i) for i in json.load(sys.stdin)['ids']))")
+            echo "ids=$ids" >> "$GITHUB_OUTPUT"
+          fi
 
       # No tools/validate.py step here: this runner has no local media
       # tree (same limitation as the Pages mirror and the sync timer -
@@ -62,56 +88,83 @@ jobs:
       # fail on every proposal regardless of content. apply_proposal.py
       # already re-validates the edited band/release against the
       # Pydantic schema on write (see its module docstring).
-
-      - name: Commit and push
-        # The `concurrency:` group above only serializes runs of *this*
-        # workflow against each other - it does nothing for a race against
-        # a manual push landing in the same window (see the incident this
-        # fixed: proposal #19 failed to apply on 2026-09-09, rejected as
-        # non-fast-forward, racing a manual `git push` made outside any
-        # workflow run). Retry with a rebase instead of failing outright -
-        # `bands/` edits from different proposals essentially never touch
-        # the same lines, so the rebase itself should never conflict; if
-        # it somehow does, the retry loop exits non-zero and this proposal
-        # is reported as failed exactly as before.
+      #
+      # Deliberately not `set -e`: one proposal's failure (bad content, a
+      # push race that outlasts its retries) must not abort the loop and
+      # skip reporting on, or applying, every other id in the batch - each
+      # iteration's own success/failure is tracked and reported
+      # individually via apply-result below instead.
+      - name: Apply each proposal
+        if: steps.targets.outputs.ids != ''
+        shell: bash --noprofile --norc -o pipefail {0}
         run: |
           git config user.name "daugavpils-fans-bot"
           git config user.email "daugavpils@gmail.com"
-          git add -A -- bands
-          git commit -m "Apply approved proposal #${{ inputs.proposal_id }}"
-          for attempt in 1 2 3 4 5; do
-            if git push origin main; then
-              exit 0
+          overall_failed=0
+          for id in ${{ steps.targets.outputs.ids }}; do
+            echo "::group::Proposal #$id"
+            success=0
+            error=""
+
+            if curl -fsSL \
+                 -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+                 "${{ vars.REVIEW_APP_BASE_URL }}/api/proposals/$id" \
+                 -o proposal.json \
+               && python tools/apply_proposal.py --proposal-file proposal.json; then
+              git add -A -- bands
+              if git diff --cached --quiet; then
+                # Nothing actually changed - e.g. an earlier id in this
+                # same sweep already achieved what this one wanted. Not a
+                # failure, just nothing to push.
+                success=1
+              else
+                git commit -m "Apply approved proposal #$id"
+                pushed=0
+                for attempt in 1 2 3 4 5; do
+                  if git push origin main; then
+                    pushed=1
+                    break
+                  fi
+                  echo "push rejected (attempt $attempt/5) - fetching and rebasing before retrying"
+                  git fetch origin main
+                  git rebase origin/main
+                  sleep $((RANDOM % 4 + 1))
+                done
+                if [ "$pushed" = "1" ]; then
+                  success=1
+                else
+                  error="git push kept getting rejected after 5 attempts"
+                fi
+              fi
+            else
+              error="see the Action run logs"
             fi
-            echo "push rejected (attempt $attempt/5) - fetching and rebasing before retrying"
-            git fetch origin main
-            git rebase origin/main
-            sleep $((RANDOM % 4 + 1))
+
+            if [ "$success" = "1" ]; then
+              payload="{\"success\": true, \"run_id\": \"${{ github.run_id }}\"}"
+            else
+              echo "::error::proposal #$id failed: $error"
+              payload="{\"success\": false, \"run_id\": \"${{ github.run_id }}\", \"error\": \"$error\"}"
+              overall_failed=1
+            fi
+            curl -fsSL -X POST \
+              -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d "$payload" \
+              "${{ vars.REVIEW_APP_BASE_URL }}/api/proposals/$id/apply-result"
+            echo "::endgroup::"
           done
-          echo "::error::git push kept getting rejected after 5 attempts - see the commits landed on main around this time"
-          exit 1
+          exit $overall_failed
 
       # GitHub doesn't let a push made with this workflow's own
       # auto-issued GITHUB_TOKEN trigger another workflow's `on: push`
       # (anti-recursion protection) - pages.yml would otherwise never
       # run for a commit landed this way. Its own `workflow_dispatch`
       # trigger sidesteps that; `actions: write` above is what lets this
-      # token call it.
+      # token call it. Only worth doing if there was actually something
+      # to apply - an empty sweep changes nothing.
       - name: Trigger Pages mirror rebuild
+        if: steps.targets.outputs.ids != ''
         run: gh workflow run pages.yml --ref main
         env:
           GH_TOKEN: ${{ github.token }}
-
-      - name: Report result
-        if: always()
-        run: |
-          if [ "${{ job.status }}" = "success" ]; then
-            PAYLOAD='{"success": true, "run_id": "${{ github.run_id }}"}'
-          else
-            PAYLOAD='{"success": false, "run_id": "${{ github.run_id }}", "error": "see the Action run logs"}'
-          fi
-          curl -fsSL -X POST \
-            -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "$PAYLOAD" \
-            "${{ vars.REVIEW_APP_BASE_URL }}/api/proposals/${{ inputs.proposal_id }}/apply-result"

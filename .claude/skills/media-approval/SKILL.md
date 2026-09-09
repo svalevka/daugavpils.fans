@@ -54,38 +54,42 @@ EOF"
 ### Also check text proposals while you're in there
 
 Approving a *text* proposal (the `proposals` table) dispatches
-`apply-proposal.yml` automatically, but that workflow's `concurrency:` group
-(`group: apply-proposal, cancel-in-progress: false`) only protects one
-*running* + one *queued* run - GitHub silently drops an older *queued* run
-when a newer dispatch arrives while it's still waiting, despite the
-workflow's own comment claiming "every approved proposal still gets
-applied". A burst of several approvals within seconds of each other (e.g.
-right after a submitter pings the maintainer) can leave one or two
-proposals stuck at `status = 'approved'` with `applied_at` still `NULL` and
-no successful run ever having mentioned their id - this has happened in
-practice, not just in theory. Cheap check while you're already looking at
-the DB:
+`apply-proposal.yml` with just its id - the fast path, applying it near
+instantly. As of GitHub issue #28 the same workflow also runs on a
+15-minute `schedule` as a self-healing sweep (it applies every proposal
+still at `status='approved'`, via `GET /api/proposals/approved`), so a
+dispatch that GitHub's concurrency-group queue evicts before it ever runs
+(only one *running* + one *queued* run are kept per group - a burst of
+approvals can silently drop an older queued one) now gets caught within
+15 minutes instead of sitting stuck forever. A proposal that genuinely
+*fails* to apply (bad content, a push race that outlasts its 5 retries)
+still lands at `status='apply_failed'` and is deliberately **not** swept
+- that needs a human look, not an automatic retry loop. Cheap check while
+you're already looking at the DB, for either case:
 
 ```bash
 ssh cherry "cd /opt/daugavpils-fans && sudo docker compose exec -T review-app python3 -c \"
 import sqlite3
 conn = sqlite3.connect('/data/review.db')
 conn.row_factory = sqlite3.Row
-for r in conn.execute(\\\"SELECT id, field, status, applied_at, github_run_id FROM proposals WHERE status='approved' AND applied_at IS NULL\\\"):
+for r in conn.execute(\\\"SELECT id, field, status, applied_at, github_run_id, apply_error FROM proposals WHERE status IN ('approved','apply_failed') AND applied_at IS NULL\\\"):
+    print(dict(r))
+for r in conn.execute(\\\"SELECT id, field, status, applied_at, apply_error FROM proposals WHERE status = 'apply_failed'\\\"):
     print(dict(r))
 \""
 ```
 
-For any row this returns, re-dispatch it by hand once the Action queue is
-idle (`gh run list --workflow=apply-proposal.yml --limit 5` to confirm
-nothing's currently running/queued), then wait for it and check the result
-landed for real (the "Report result" step's log always echoes both the
-success *and* failure `PAYLOAD=` lines regardless of which one executed -
-that's just Actions echoing the script source, not a signal - so verify
-against the DB, not the log text):
+An `apply_failed` row needs the underlying cause fixed first (or, if the
+failure really was just a transient race the retry loop didn't cover,
+reset it - `UPDATE proposals SET status='approved' WHERE id=<id> AND
+status='apply_failed'` - so either the next sweep or a manual dispatch can
+pick it back up). Either way, don't trust the Action log's "Report
+result" text as the signal - its script source always contains both the
+success *and* failure `PAYLOAD=` lines regardless of which branch
+actually ran, so verify against the DB instead:
 
 ```bash
-gh workflow run apply-proposal.yml -f proposal_id=<id> --ref main
+gh workflow run apply-proposal.yml -f proposal_id=<id> --ref main   # or leave -f blank to sweep everything approved
 # wait, then:
 gh run list --workflow=apply-proposal.yml --limit 1 --json databaseId --jq '.[0].databaseId'
 gh run watch <that id> --exit-status

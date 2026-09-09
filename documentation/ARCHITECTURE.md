@@ -128,6 +128,25 @@ deploy already in flight is never killed mid-way by a newer one. Neither
 of this applies to media proposals - there's no Action in that path to
 race.
 
+That concurrency group only protects one *running* + one *queued* run,
+though - GitHub silently evicts an older *queued* run when a third
+dispatch arrives while it's still waiting, rather than stacking it. A
+burst of three-plus approvals within seconds of each other can therefore
+drop a proposal's dispatch entirely - not a failed run, one that never
+started (see GitHub issue #28; confirmed in production with proposal #13
+on 2026-09-09). `apply-proposal.yml` also runs on a 15-minute `schedule`
+as a result: a schedule-triggered run (or a manual dispatch with
+`proposal_id` left blank) fetches every proposal still at
+`status='approved'` (`GET /api/proposals/approved`) and applies all of
+them in one run, so a dropped dispatch is caught by the next sweep
+instead of sitting stuck indefinitely. The approval-driven fast path
+(dispatch with a specific `proposal_id`) is unchanged for the common
+case; the sweep is purely the safety net. Separately, the same commit
+that added the sweep also made the "commit and push" step itself retry
+with `git fetch && git rebase` a few times on a rejected push, since a
+run can still race a *manual* push made outside any workflow run (which
+the concurrency group does nothing for either).
+
 ## Adding a new band, release, or media
 
 This is a separate story from *redeploying* the Site (everything above),

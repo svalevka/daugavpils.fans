@@ -104,6 +104,67 @@ class GetProposalTest(ReviewAppTestCase):
         return proposal_id
 
 
+class ListApprovedProposalsTest(ReviewAppTestCase):
+    """GitHub issue #28: the self-healing sweep's worklist - every
+    proposal still at 'approved', i.e. never even reached the fetch step
+    (whether no dispatch happened yet, or one did and GitHub's
+    concurrency-group queue silently evicted it before it ran)."""
+
+    def _approve_new_proposal(self, approver_id: int, **submit_form) -> int:
+        # Submit while logged out - a submission made while logged in is
+        # attributed to that approver (submitted_by_approver_id), which
+        # would then block them from approving it themselves (ADR-0003).
+        with self.client.session_transaction() as sess:
+            sess.clear()
+        before = {row["id"] for row in self.fetch_proposals()}
+        self.submit(**submit_form)
+        proposal_id = next(row["id"] for row in self.fetch_proposals() if row["id"] not in before)
+        self.login_as(approver_id)
+        self.client.post(f"/proposals/{proposal_id}/approve")
+        return proposal_id
+
+    def test_requires_the_callback_key(self):
+        response = self.client.get("/api/proposals/approved")
+        self.assertEqual(response.status_code, 401)
+
+    def test_empty_when_nothing_is_approved(self):
+        response = self.client.get("/api/proposals/approved", headers=self.callback_headers())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"ids": []})
+
+    def test_lists_every_approved_proposal_in_id_order(self):
+        approver_id = self.seed_approver("approver@example.com")
+        first = self._approve_new_proposal(approver_id, proposed_value="First edit.")
+        second = self._approve_new_proposal(approver_id, proposed_value="Second edit.")
+
+        response = self.client.get("/api/proposals/approved", headers=self.callback_headers())
+
+        self.assertEqual(response.get_json(), {"ids": sorted([first, second])})
+
+    def test_excludes_proposals_in_every_other_status(self):
+        approver_id = self.seed_approver("approver@example.com")
+
+        approved_id = self._approve_new_proposal(approver_id, proposed_value="Kept approved.")
+
+        self.submit(proposed_value="Still pending.")
+
+        with self.client.session_transaction() as sess:
+            sess.clear()
+        before = {row["id"] for row in self.fetch_proposals()}
+        self.submit(proposed_value="To be rejected.")
+        rejected_id = next(row["id"] for row in self.fetch_proposals() if row["id"] not in before)
+        self.login_as(approver_id)
+        self.client.post(f"/proposals/{rejected_id}/reject")
+
+        applying_id = self._approve_new_proposal(approver_id, proposed_value="Mid-apply.")
+        self.client.get(f"/api/proposals/{applying_id}", headers=self.callback_headers())
+
+        response = self.client.get("/api/proposals/approved", headers=self.callback_headers())
+
+        self.assertEqual(response.get_json(), {"ids": [approved_id]})
+
+
 class ApplyResultTest(ReviewAppTestCase):
     def _applying_proposal_id(self) -> int:
         approver_id = self.seed_approver("approver@example.com")
