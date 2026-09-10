@@ -246,6 +246,16 @@ image:
   caption_en: The very first "Kvazimodo" concert at the Trade School, Daugavpils.
     22/12/1993
   depicts: []
+- contentUrl: media/kvazimodo-pre-band-jamming.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: fe16e97d91026dc30cdcfa688b6c66eae3e465ddd92e68ee4982a6a0e84aaf32
+  '@type': ImageObject
+  caption: Квазимодо до самой группы
+  caption_en: Kvazimodo before the band itself
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
