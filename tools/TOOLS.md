@@ -209,6 +209,48 @@ the end, with a non-zero exit if anything failed.
   suite uses to validate temporary fixture trees without touching real
   archive data.
 
+## `verify_archive_org.py`
+
+**Problem it solves:** archive.org is eventually consistent, not
+immediately consistent - a `ia delete` can report success (HTTP 204)
+while the file keeps serving for hours afterward, and (until this was
+found and fixed) `publish_to_archive_org.py` had a real bug where a
+changed description/title never reached an item that already existed
+(`internetarchive.upload()`'s `metadata` argument is only applied when
+*creating* a new item - see its own docstring - so it silently did
+nothing on a re-publish). Both mean "the publish script ran with no
+errors" is not proof archive.org actually matches `bands/**/*.yaml`
+right now. This is the check that actually confirms it, on demand,
+instead of everyone assuming a publish "just worked" and finding out
+from a confused reader instead.
+
+**How:** for every band/release item, fetches its real file listing and
+metadata from archive.org's public API (no `ia configure` credentials
+needed - this only reads) and compares against what `bands/**/*.yaml`
+says should be there. Reports, per item: files referenced by the YAML
+but missing on archive.org, files present on archive.org but not
+referenced by any current YAML (a leftover from a rename/replace, like
+the stale tracks from an earlier digitization that a `--bands`-scoped
+`ia delete` hadn't finished propagating), a description/title/etc. that
+doesn't match, and - only when a full local media tree is present (a
+maintainer's checkout, not CI) - a byte-level MD5 mismatch against the
+actual file content. Archive.org's own derivative files (waveform
+`.png`/`.afpk`, `_meta.xml`, `.thumbs/`, etc.) are filtered out of the
+"orphan" check by a conservative, hardcoded pattern list - see
+`_is_ia_generated()` if a new derivative type ever needs adding there.
+
+**When you'd run it:**
+- `python tools/verify_archive_org.py` - audit everything. This is what
+  `.github/workflows/verify-archive-org.yml` runs every night, filing
+  (or commenting on, if one's already open) a GitHub issue labeled
+  `archive-org-audit` when it finds anything.
+- `python tools/verify_archive_org.py --bands <slug> [<slug> ...]` -
+  audit just these band(s), e.g. right after a `publish_to_archive_org.py
+  --bands <slug>` you want to confirm actually landed.
+- This makes real network calls (one archive.org fetch per band/release)
+  and is not fast - don't add it to a pre-commit hook or anything on the
+  local-edit path; it's a standing health check, not a validation gate.
+
 ## `archive_fixture.py`
 
 **Problem it solves:** every test that exercises `validate.py` needs a

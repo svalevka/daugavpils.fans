@@ -120,7 +120,25 @@ def publish_item(
         verbose=True,
     )
 
+    # ia.upload()'s `metadata` argument is only applied at item *creation*
+    # time (see its own docstring: "Metadata used to create a new item") -
+    # it is silently ignored for an item that already exists, which is the
+    # common case here (re-publishing after editing a description/title).
+    # Sync metadata explicitly and unconditionally so a changed
+    # description/title/genre/etc. actually reaches archive.org even when
+    # no files needed uploading. Safe to call on a freshly-created item too
+    # (the values are already correct there; this is a no-op write).
+    sync_metadata(item_id, metadata)
+
     record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
+
+
+def sync_metadata(item_id: str, metadata: dict[str, str]) -> None:
+    import internetarchive as ia
+
+    response = ia.modify_metadata(item_id, metadata=metadata)
+    if response.status_code >= 400:
+        print(f"    WARNING: metadata sync for {item_id} failed: {response.status_code} {response.text[:200]}")
 
 
 def publish_metadata_bundle(bands_dir: Path, dry_run: bool) -> None:

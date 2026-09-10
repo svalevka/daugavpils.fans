@@ -394,6 +394,13 @@ python tools/publish_to_archive_org.py --dry-run   # preview without uploading
 # fill in a repo clone's gitignored media from archive.org (no account/API
 # key needed - see documentation/BACKUP.md):
 python tools/download_archive.py
+
+# confirm archive.org actually matches bands/**/*.yaml right now - no
+# account/API key needed, this only reads. Runs automatically every
+# night (.github/workflows/verify-archive-org.yml); run by hand to
+# confirm one specific publish landed:
+python tools/verify_archive_org.py
+python tools/verify_archive_org.py --bands <band-slug>
 ```
 
 ## Adding a new band, step by step

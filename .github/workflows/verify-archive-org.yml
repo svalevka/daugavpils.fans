@@ -1,0 +1,88 @@
+name: Verify archive.org consistency
+
+# Nightly audit of archive.org against bands/**/*.yaml - the "bulletproof
+# mechanism" for catching the two failure modes found while replacing
+# Глазки Стекольщика's discography (see the tracking issue this was built
+# for): archive.org's own eventual consistency means a file deletion can
+# report success immediately while staying live for hours, and
+# tools/publish_to_archive_org.py had a real bug (fixed alongside this
+# workflow) where a changed description/title never reached an item that
+# already existed. Nothing here can make archive.org converge faster -
+# what this catches is drift that would otherwise only surface when a
+# reader notices, e.g. by clicking through to Bandcamp/archive.org and
+# finding a stale description or extra tracks (see CLAUDE.md's "Deleting
+# files from archive.org safely" and "syncing metadata to archive.org").
+#
+# Runs in CI, not on the `cherry` VPS: cherry has no local media tree
+# either (see webapp/deploy/README.md), so it gets no more out of running
+# this than CI does, and CI avoids needing a long-lived GitHub token
+# sitting in a file on a public-facing server - the auto-issued
+# GITHUB_TOKEN below is scoped to just this run.
+#
+# tools/verify_archive_org.py only reads public archive.org data (item
+# metadata + file listings), so no archive.org credentials are needed
+# here at all - only `ia configure` (a human's local `ia.ini`) can write.
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # midnight UTC
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Run archive.org audit
+        id: audit
+        run: |
+          set -o pipefail
+          python tools/verify_archive_org.py 2>&1 | tee audit-output.txt
+        continue-on-error: true
+
+      - name: Find an existing open audit issue
+        if: steps.audit.outcome == 'failure'
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number=$(gh issue list --label archive-org-audit --state open --limit 1 --json number --jq '.[0].number // empty')
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update the audit issue
+        if: steps.audit.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "Nightly archive.org consistency check found problem(s) - see the full run: $RUN_URL"
+            echo
+            echo '```'
+            cat audit-output.txt
+            echo '```'
+          } > issue-body.txt
+
+          if [ -n "${{ steps.existing.outputs.number }}" ]; then
+            gh issue comment "${{ steps.existing.outputs.number }}" --body-file issue-body.txt
+          else
+            gh issue create \
+              --title "archive.org consistency check failed ($(date -u +%F))" \
+              --label archive-org-audit --label needs-triage \
+              --body-file issue-body.txt
+          fi
+
+      - name: Fail the run if problems were found
+        if: steps.audit.outcome == 'failure'
+        run: exit 1

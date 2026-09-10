@@ -78,12 +78,18 @@ files." is **not proof the file is gone** from what a reader can
 actually fetch. The API call itself has been confirmed to genuinely
 succeed (HTTP 204 from `item.get_file(...).delete()`), but the deleted
 file kept serving `200 OK` from `archive.org/download/<item>/<file>` -
-and stayed that way through `ia list` and a second identical delete
-pass, both taken well over 20 minutes apart. This looks like slow
-propagation across archive.org's mirror/CDN layer rather than the
+and stayed that way through `ia list` and repeated identical delete
+passes, confirmed still incomplete **hours** later (not minutes - the
+first observation of "well over 20 minutes" understated it; the archive.org
+item page itself showed "currently being modified/updated by the task:
+archive" for the whole stretch). This looks like slow propagation across
+archive.org's mirror/CDN layer and its own internal task queue, not the
 delete actually failing - **re-running the same `ia delete` command
 again does not speed this up**, it's just a harmless no-op against an
-already-succeeded delete.
+already-succeeded delete. There's no known way to force it faster; the
+only honest response is to say so and keep the leftover tracked (see
+"Verifying archive.org actually matches the local archive" below) rather
+than claiming it's fixed.
 
 **Always verify with a real fetch, not just `ia list`** (which reads the
 same lagging metadata):
@@ -121,6 +127,40 @@ item:
   files, full delete vs. leave-orphaned) with the user before running
   any `ia delete`, the same as any other hard-to-reverse action on a
   public/shared system.
+
+### Syncing metadata (description/title/etc.) to archive.org
+
+`internetarchive.upload(item_id, files=..., metadata=..., checksum=True)`
+does **not** update an existing item's metadata, ever - its own docstring
+says the `metadata` param is "Metadata used to **create** a new item."
+For an item that already exists (the normal case when re-publishing
+after editing a `description`), that argument is silently ignored, no
+error, no warning. This was a real bug in `publish_to_archive_org.py`
+(fixed by adding an explicit `sync_metadata()` call using
+`internetarchive.modify_metadata()` after every upload, in
+`publish_item()`) - before that fix, every description/title edit made
+locally could run through `publish_to_archive_org.py` successfully,
+with `validate.py` green and no errors printed, while archive.org kept
+serving the old text indefinitely. If you're ever writing new code that
+calls `ia.upload()` directly (rather than going through
+`publish_to_archive_org.py`), remember metadata needs its own
+`ia.modify_metadata()` call - `upload()`'s `metadata=` argument is not
+enough on its own.
+
+### Verifying archive.org actually matches the local archive
+
+Neither of the two problems above (slow delete propagation, metadata
+that silently never synced) produces any error from
+`publish_to_archive_org.py` - a clean run is not proof archive.org
+actually matches `bands/**/*.yaml` right now. `tools/verify_archive_org.py`
+is the check that actually confirms it: run it (optionally `--bands
+<slug>`) after a publish you want to be sure landed, or whenever a
+description/track-count report from a reader seems off. It runs
+automatically every night against the whole archive via
+`.github/workflows/verify-archive-org.yml`, filing (or commenting on, if
+one's already open) a GitHub issue labeled `archive-org-audit` when it
+finds drift - that's the standing safety net; don't treat "no one's
+complained" as equivalent to "it's consistent."
 
 ### SSH to `cherry` - avoid rapid-fire connections
 
