@@ -248,6 +248,17 @@ image:
   caption_en: An evening walk around Daugavpils with friend and photographer Yu. Berdnikov.
     2
   depicts: []
+- contentUrl: media/glazki-stekolshchika-evening-walk-berdnikov-3.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: b0052f4a352a8e765a13b800eeee625607cb6b81e99ff3864b5df7735bbd43b0
+  '@type': ImageObject
+  caption: Прогулка по Депилсу вечерком с другом фотографом Ю.Бердниковым. 3
+  caption_en: An evening walk around Daugavpils with friend and photographer Yu. Berdnikov.
+    3
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
