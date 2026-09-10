@@ -12,9 +12,15 @@
 </div>
 {% for img in images %}
 {% set caption = localize(img, "caption", lang) %}
+{% set prev_index = loop.index - 1 if loop.index > 1 else images | length %}
+{% set next_index = loop.index + 1 if loop.index < images | length else 1 %}
 <div class="lightbox" id="{{ prefix }}-{{ loop.index }}">
   <a href="#" class="lightbox-backdrop" aria-label="Close"></a>
   <a href="#" class="lightbox-close" aria-label="Close">&times;</a>
+  {% if images | length > 1 %}
+  <a href="#{{ prefix }}-{{ prev_index }}" class="lightbox-prev" aria-label="Previous photo">&#10094;</a>
+  <a href="#{{ prefix }}-{{ next_index }}" class="lightbox-next" aria-label="Next photo">&#10095;</a>
+  {% endif %}
   <img src="{{ url_fn(img.contentUrl) }}" alt="{{ caption or fallback_alt }}">
 </div>
 {% endfor %}

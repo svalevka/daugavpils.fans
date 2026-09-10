@@ -282,6 +282,32 @@ table.tracklist audio {
   z-index: 1;
 }
 
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text);
+  font-size: 1.6rem;
+  line-height: 1;
+  z-index: 1;
+  padding: 0.75rem;
+  opacity: 0.75;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  opacity: 1;
+}
+
+.lightbox-prev {
+  left: 0.5rem;
+}
+
+.lightbox-next {
+  right: 0.5rem;
+}
+
 .support-content h1 { font-size: 1.6rem; }
 .support-content h2 { font-size: 1.15rem; }
 

@@ -47,6 +47,27 @@
     });
   });
 
+  // Keyboard navigation for the photo lightbox (see GitHub issue #29):
+  // left/right arrows move to the previous/next photo, Escape closes it.
+  // The lightbox itself is pure CSS (:target-based), so this only needs
+  // to click the already-present prev/next/close links for whichever
+  // lightbox is currently open.
+  document.addEventListener("keydown", function (event) {
+    var open = document.querySelector(".lightbox:target");
+    if (!open) return;
+
+    var selector = null;
+    if (event.key === "ArrowLeft") selector = ".lightbox-prev";
+    else if (event.key === "ArrowRight") selector = ".lightbox-next";
+    else if (event.key === "Escape") selector = ".lightbox-close";
+    if (!selector) return;
+
+    var link = open.querySelector(selector);
+    if (!link) return;
+    event.preventDefault();
+    link.click();
+  });
+
   // Only one <audio>/<video> plays at a time site-wide - starting one
   // pauses every other, so playing a gallery video while a track (or
   // another video) is already going doesn't leave both audible at once.
