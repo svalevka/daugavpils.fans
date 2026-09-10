@@ -215,6 +215,18 @@ image:
   caption_en: Glazki Stekolshchika air out raw new songs at the underground club Underground,
     tucked away in a corner while a rave goes on elsewhere.
   depicts: []
+- contentUrl: media/glazki-stekolshchika-soundtrack-debut-1997.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d7269bb4cace48f705a7aa343ea2148da0e877a7ace15ba80cf20e8b1b4853e9
+  '@type': ImageObject
+  caption: Впервые Глазки Стекольщика вышли на сцену в клубе Soundtrack ( Daugavpils)
+    с Джеком Хайрулином ( M-Spirit ) на барабанах .
+  caption_en: Glazki Stekolshchika's first-ever stage appearance, at club Soundtrack
+    (Daugavpils), with Jack Khairulin (M-Spirit) on drums.
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
