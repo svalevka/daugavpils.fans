@@ -312,6 +312,16 @@ image:
   caption_en: Kvazimodo at a friendly concert with the bands "Lom" and "Dvinsk" at
     the railway technical school.
   depicts: []
+- contentUrl: media/kvazimodo-photo-collage-2.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2c5967cb7cdb012beefbf590853f4b1de2ab63ff9cf2052a061cce2a6c5a675d
+  '@type': ImageObject
+  caption: фото попурри 2
+  caption_en: photo pot-pourri 2
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
