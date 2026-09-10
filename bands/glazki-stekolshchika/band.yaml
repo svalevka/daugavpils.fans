@@ -181,6 +181,16 @@ image:
   caption: Скриншот записи о группе в ЖЖ пользователя pamupe_cc, 18.02.2017
   caption_en: Screenshot of a 2017-02-18 LiveJournal post about the band by user pamupe_cc
   depicts: []
+- contentUrl: media/glazki-stekolshchika-bumerangs-70jos-1998.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2a960689ba7e9488d19897051d35a76e4a6799289e11fbcdd58823eec94048bb
+  '@type': ImageObject
+  caption: Центральный Дом Культуры 1998 . Bumerangs 70-jos 1998.
+  caption_en: Central House of Culture, 1998. "Bumerangs 70-jos", 1998.
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
