@@ -25,10 +25,10 @@ For every band and every release item on archive.org, `verify_archive_org.py`:
     digitization (see the propagation-lag section below for why these
     can take a while to clear even after a correct `ia delete`).
     Archive.org's own generated derivatives (waveform `.png`/`.afpk`,
-    `_meta.xml`, video `.thumbs/`, etc.) are filtered out of this check by
-    a conservative pattern list in `_is_ia_generated()` - a real orphan
-    always survives that filter, but a new kind of IA-generated file
-    might need adding to it someday.
+    VBR `.mp3` derived from FLAC, `_meta.xml`, video `.thumbs/`, etc.)
+    are filtered out of this check using archive.org's file `source`
+    property (`derivative`, `metadata`) and a conservative pattern list
+    in `_is_ia_generated()`.
   - **CONTENT MISMATCH** - present under the right name, but an MD5
     comparison against the actual local file shows different bytes. Only
     runs when a full local media tree exists (a maintainer's own
@@ -36,6 +36,9 @@ For every band and every release item on archive.org, `verify_archive_org.py`:
 - Compares `description`/`title`/etc. between the local YAML and what
   archive.org's metadata API actually returns for that item, flagging
   any **METADATA DRIFT**.
+- Audits the consolidated metadata backup bundle item (`daugavpils-fans-metadata`),
+  verifying that every `band.yaml` and `release.yaml` in the repository is
+  backed up with matching MD5 checksums.
 
 ## Why a clean publish isn't enough
 

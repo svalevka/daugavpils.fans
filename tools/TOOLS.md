@@ -175,9 +175,16 @@ every band/release's item id, which isn't actually recoverable-from-scratch
 - `python tools/publish_to_archive_org.py --dry-run` - show what would be
   published without uploading anything (combine with `--bands` to preview
   just those).
+- `python tools/publish_to_archive_org.py --metadata-only` - sync only metadata
+  (titles, descriptions, subjects, dates, licenses) to archive.org items and
+  update the metadata backup bundle (`daugavpils-fans-metadata`), without
+  requiring audio/video/image media files to exist locally. Used by CI
+  (`.github/workflows/sync-metadata.yml`) and maintainers when updating metadata
+  without a full local media tree.
 - Requires an authenticated `ia` config on the machine running it (`ia
   configure`, once, using the project's archive.org account - not a
-  personal one).
+  personal one), or `IA_ACCESS_KEY_ID` and `IA_SECRET_ACCESS_KEY` environment
+  variables.
 
 ## `download_archive.py`
 
@@ -236,8 +243,11 @@ doesn't match, and - only when a full local media tree is present (a
 maintainer's checkout, not CI) - a byte-level MD5 mismatch against the
 actual file content. Archive.org's own derivative files (waveform
 `.png`/`.afpk`, `_meta.xml`, `.thumbs/`, etc.) are filtered out of the
-"orphan" check by a conservative, hardcoded pattern list - see
-`_is_ia_generated()` if a new derivative type ever needs adding there.
+"orphan" check using archive.org's file `source` attribute (`derivative`,
+`metadata`) and a conservative pattern list - see `_is_ia_generated()`.
+Also audits the consolidated `daugavpils-fans-metadata` backup item,
+confirming that all `band.yaml` and `release.yaml` files exist in the bundle
+with matching MD5 checksums.
 
 **When you'd run it:**
 - `python tools/verify_archive_org.py` - audit everything. This is what

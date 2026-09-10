@@ -45,6 +45,7 @@ import yaml
 
 from archive_org import archive_org_url, band_item_id, item_page_url, item_torrent_url, metadata_item_id, release_item_id
 from models import MusicAlbum, MusicGroup
+from pydantic import ValidationError
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -56,6 +57,43 @@ def require_valid_archive(bands_dir: Path) -> None:
     )
     if result.returncode != 0:
         print("\nAborted: refusing to publish an unvalidated archive. Fix the errors above first.")
+        sys.exit(1)
+
+
+def validate_metadata_schemas(bands_dir: Path) -> None:
+    """Validate all YAML files against Pydantic models and slug consistency,
+    without requiring audio/image/video media files to exist locally."""
+    print("Validating metadata schemas...")
+    errors: list[str] = []
+    for band_dir in sorted(p for p in bands_dir.iterdir() if p.is_dir()):
+        band_yaml = band_dir / "band.yaml"
+        if not band_yaml.exists():
+            errors.append(f"{band_dir}: missing band.yaml")
+            continue
+        try:
+            band = MusicGroup.model_validate(yaml.safe_load(band_yaml.read_text()))
+        except ValidationError as e:
+            errors.append(f"{band_yaml}: schema validation failed:\n{e}")
+            continue
+        if band.slug != band_dir.name:
+            errors.append(f"{band_yaml}: slug={band.slug!r} does not match folder name {band_dir.name!r}")
+
+        for release_dir in sorted(p for p in band_dir.iterdir() if p.is_dir()):
+            release_yaml = release_dir / "release.yaml"
+            if not release_yaml.exists():
+                continue
+            try:
+                release = MusicAlbum.model_validate(yaml.safe_load(release_yaml.read_text()))
+            except ValidationError as e:
+                errors.append(f"{release_yaml}: schema validation failed:\n{e}")
+                continue
+            if release.byArtist != band.slug:
+                errors.append(
+                    f"{release_yaml}: byArtist={release.byArtist!r} does not match parent band slug {band.slug!r}"
+                )
+
+    if errors:
+        print("\nAborted: metadata schema validation failed:\n" + "\n".join(f"- {e}" for e in errors))
         sys.exit(1)
 
 
@@ -89,7 +127,11 @@ def record_same_as(yaml_path: Path, urls: list[str]) -> None:
         return
     data["sameAs"] = existing
     yaml_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False))
-    print(f"    recorded sameAs in {yaml_path.relative_to(REPO_ROOT)}")
+    try:
+        rel = yaml_path.relative_to(REPO_ROOT)
+    except ValueError:
+        rel = yaml_path
+    print(f"    recorded sameAs in {rel}")
 
 
 def publish_item(
@@ -98,17 +140,33 @@ def publish_item(
     metadata: dict[str, str],
     dry_run: bool,
     yaml_path: Path,
-) -> None:
+    metadata_only: bool = False,
+) -> bool:
+    if metadata_only:
+        print(f"  {item_id}: syncing metadata")
+        for k, v in sorted(metadata.items()):
+            preview = (v[:60] + "...") if len(v) > 60 else v
+            print(f"    {k}: {preview!r}")
+        if dry_run:
+            return True
+        ok = sync_metadata(item_id, metadata)
+        record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
+        return ok
+
     if not files:
-        print(f"  {item_id}: nothing to publish, skipping")
-        return
+        print(f"  {item_id}: no media files, syncing metadata")
+        if dry_run:
+            return True
+        ok = sync_metadata(item_id, metadata)
+        record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
+        return ok
 
     print(f"  {item_id}: {len(files)} file(s)")
     for content_url in sorted(files):
         print(f"    {content_url} -> {archive_org_url(item_id, content_url)}")
 
     if dry_run:
-        return
+        return True
 
     import internetarchive as ia
 
@@ -128,17 +186,22 @@ def publish_item(
     # description/title/genre/etc. actually reaches archive.org even when
     # no files needed uploading. Safe to call on a freshly-created item too
     # (the values are already correct there; this is a no-op write).
-    sync_metadata(item_id, metadata)
+    ok = sync_metadata(item_id, metadata)
 
     record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
+    return ok
 
 
-def sync_metadata(item_id: str, metadata: dict[str, str]) -> None:
+def sync_metadata(item_id: str, metadata: dict[str, str]) -> bool:
     import internetarchive as ia
 
     response = ia.modify_metadata(item_id, metadata=metadata)
     if response.status_code >= 400:
+        if "no changes to _meta.xml" in response.text:
+            return True  # Archive.org returns 400 if metadata is already identical
         print(f"    WARNING: metadata sync for {item_id} failed: {response.status_code} {response.text[:200]}")
+        return False
+    return True
 
 
 def publish_metadata_bundle(bands_dir: Path, dry_run: bool) -> None:
@@ -209,6 +272,12 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="show what would be published, without uploading")
     parser.add_argument(
+        "--metadata-only",
+        action="store_true",
+        help="only sync metadata (titles, descriptions, subjects, dates) to archive.org and "
+        "update the metadata bundle, without checking or uploading audio/video/image media files",
+    )
+    parser.add_argument(
         "--bands-dir",
         type=Path,
         default=REPO_ROOT / "bands",
@@ -225,10 +294,14 @@ def main() -> int:
     args = parser.parse_args()
 
     bands_dir: Path = args.bands_dir
-    require_valid_archive(bands_dir)
+    if args.metadata_only:
+        validate_metadata_schemas(bands_dir)
+    else:
+        require_valid_archive(bands_dir)
 
     requested = set(args.bands) if args.bands else None
     seen: set[str] = set()
+    all_ok = True
 
     for band_dir in sorted(p for p in bands_dir.iterdir() if p.is_dir()):
         if requested is not None and band_dir.name not in requested:
@@ -236,13 +309,16 @@ def main() -> int:
         seen.add(band_dir.name)
         band = load_band(band_dir)
         print(f"\n{band.name} ({band.slug})")
-        publish_item(
+        ok = publish_item(
             band_item_id(band.slug),
             media_files(band_dir, band.image + band.video),
             band_metadata(band),
             args.dry_run,
             band_dir / "band.yaml",
+            metadata_only=args.metadata_only,
         )
+        if not ok:
+            all_ok = False
 
         for release_dir in sorted(p for p in band_dir.iterdir() if p.is_dir()):
             release_yaml = release_dir / "release.yaml"
@@ -250,18 +326,25 @@ def main() -> int:
                 continue
             release = load_release(release_dir)
             files = media_files(release_dir, [t.audio for t in release.track] + release.image + release.video)
-            publish_item(
+            ok = publish_item(
                 release_item_id(band.slug, release.slug),
                 files,
                 release_metadata(release, band),
                 args.dry_run,
                 release_yaml,
+                metadata_only=args.metadata_only,
             )
+            if not ok:
+                all_ok = False
 
     if requested is not None and (unknown := requested - seen):
         print(f"\nWarning: --bands slug(s) not found under {bands_dir}: {', '.join(sorted(unknown))}")
 
     publish_metadata_bundle(bands_dir, args.dry_run)
+
+    if not all_ok:
+        print("\nFinished with errors.")
+        return 1
 
     print("\nDry run: nothing was uploaded." if args.dry_run else "\nDone.")
     return 0

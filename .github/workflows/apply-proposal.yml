@@ -168,3 +168,9 @@ jobs:
         run: gh workflow run pages.yml --ref main
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Trigger metadata sync to archive.org
+        if: steps.targets.outputs.ids != ''
+        run: gh workflow run sync-metadata.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

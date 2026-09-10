@@ -34,7 +34,7 @@ import re
 import sys
 from pathlib import Path
 
-from archive_org import band_item_id, item_page_url, release_item_id
+from archive_org import band_item_id, item_page_url, metadata_item_id, release_item_id
 from publish_to_archive_org import band_metadata, load_band, load_release, media_files, release_metadata
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -109,7 +109,11 @@ def audit_item(item_id: str, expected_files: dict[str, Path], expected_metadata:
         problems.append(f"MISSING: {name} is in the YAML but not on archive.org")
 
     extra = actual_names - expected_names
-    orphans = sorted(n for n in extra if not _is_ia_generated(n, actual_names))
+    orphans = sorted(
+        n for n in extra
+        if actual_by_name[n].get("source") not in ("derivative", "metadata")
+        and not _is_ia_generated(n, actual_names)
+    )
     for name in orphans:
         problems.append(f"ORPHAN: {name} is on archive.org but not referenced by any current YAML (run: ia delete {item_id} {name})")
 
@@ -132,6 +136,35 @@ def audit_item(item_id: str, expected_files: dict[str, Path], expected_metadata:
         # normalized text, not byte-for-byte, to avoid noise.
         if _normalize(expected_value) != _normalize(str(actual_value)):
             problems.append(f"METADATA DRIFT: '{key}' on archive.org doesn't match the local YAML")
+
+    return problems
+
+
+def audit_metadata_bundle(bands_dir: Path) -> list[str]:
+    """Audit the consolidated metadata backup item (daugavpils-fans-metadata)
+    to ensure every YAML file in bands/ is backed up with matching content."""
+    import internetarchive as ia
+
+    problems: list[str] = []
+    item_id = metadata_item_id()
+    item = ia.get_item(item_id)
+    if not item.exists:
+        problems.append(f"metadata backup item {item_id} does not exist on archive.org")
+        return problems
+
+    actual_by_name = {f["name"]: f for f in item.files}
+    yaml_files = sorted(p for p in bands_dir.rglob("*.yaml") if p.name in ("band.yaml", "release.yaml"))
+    for p in yaml_files:
+        rel_path = p.relative_to(bands_dir).as_posix()
+        if rel_path not in actual_by_name:
+            problems.append(f"MISSING in {item_id}: {rel_path} is not in metadata backup bundle")
+        else:
+            local_hash = local_md5(p)
+            remote_hash = actual_by_name[rel_path].get("md5")
+            if remote_hash and local_hash != remote_hash:
+                problems.append(
+                    f"CONTENT MISMATCH in {item_id}: {rel_path} in metadata backup bundle doesn't match local YAML"
+                )
 
     return problems
 
@@ -189,6 +222,17 @@ def main() -> int:
                     print(f"    {p}")
             else:
                 print("    OK")
+
+    if requested is None:
+        bundle_id = metadata_item_id()
+        print(f"\nMetadata backup bundle ({bundle_id})")
+        bundle_problems = audit_metadata_bundle(bands_dir)
+        if bundle_problems:
+            any_problems = True
+            for p in bundle_problems:
+                print(f"  {p}")
+        else:
+            print("  OK")
 
     if any_problems:
         print("\nProblems found - see item page(s) for context, e.g.:", item_page_url(item_id))

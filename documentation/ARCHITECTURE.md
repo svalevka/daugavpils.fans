@@ -28,12 +28,17 @@ flowchart TD
         subgraph gha["GitHub Actions"]
             APPLY["apply-proposal.yml<br/>fetch proposal → commit → push"]
             PAGES["pages.yml<br/>build → deploy"]
+            SYNCMD["sync-metadata.yml<br/>publish_to_archive_org.py --metadata-only"]
         end
 
         APPLY -->|"push"| MAIN
         APPLY -->|"explicit workflow_dispatch<br/>(a workflow's own commit can't<br/>trigger another's on: push)"| PAGES
+        APPLY -->|"explicit workflow_dispatch"| SYNCMD
         MAIN -->|"on: push"| PAGES
+        MAIN -->|"on: push (bands/**)"| SYNCMD
     end
+
+    SYNCMD -->|"syncs item metadata +<br/>daugavpils-fans-metadata bundle"| archiveorg
 
     PUBLISH["tools/publish_to_archive_org.py<br/>run locally by whoever holds<br/>archive.org credentials, after the PR merges<br/>- never runs in CI (needs real media files)"]
     MAIN -.->|"merged band.yaml/release.yaml<br/>declares what should exist"| PUBLISH
@@ -99,14 +104,17 @@ It handles two kinds of proposal, decided the same way on the same
 see ADR-0003's Consequences) but applied completely differently once
 approved:
 
-- **Text proposals** (issue #13) - approving dispatches
+- **Text proposals** (issue #13, #33) - approving dispatches
   `apply-proposal.yml` with just the proposal's id. That Action fetches
   the actual content from `review_app`'s authenticated callback API,
   commits it, and pushes to `main`. Because a workflow's own commit can't
   trigger another workflow's `on: push` (a GitHub anti-recursion rule),
-  `apply-proposal.yml` explicitly dispatches `pages.yml` itself right
-  after pushing - the VPS's timer picks the same push up on its own next
-  poll, no dispatch needed there.
+  `apply-proposal.yml` explicitly dispatches `pages.yml` and
+  `sync-metadata.yml` right after pushing. `sync-metadata.yml` runs
+  `publish_to_archive_org.py --metadata-only` to ensure archive.org's
+  item metadata and `daugavpils-fans-metadata` backup bundle immediately
+  reflect the updated golden source of truth in git. The VPS's timer
+  picks the same push up on its own next poll, no dispatch needed there.
 - **Media proposals** (issue #21, "curated queue, manual finish") -
   approving never dispatches anything. It moves the upload to a "ready to
   publish" list on the dashboard; a maintainer retrieves the file

@@ -1,0 +1,43 @@
+name: Sync metadata to archive.org
+
+# Syncs band/release metadata (titles, descriptions, subjects, dates, licenses)
+# and the consolidated metadata backup bundle (daugavpils-fans-metadata) to
+# archive.org whenever metadata changes on main (e.g. after an approved
+# proposal or a merged PR) - see GitHub issue #33.
+#
+# Only touches item metadata (ia.modify_metadata) and uploads the YAML files
+# into daugavpils-fans-metadata - does not require local media files, so it
+# can safely run in CI.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bands/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-metadata
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Sync metadata to archive.org
+        env:
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: python tools/publish_to_archive_org.py --metadata-only
