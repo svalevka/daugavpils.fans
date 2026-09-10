@@ -352,6 +352,20 @@ DNS gets sorted out. (See `MAINTENANCE.md`, or the on-site `/support/`
 page, for the plain-language version of this story aimed at listeners,
 not maintainers.)
 
+### Confirming archive.org actually matches the Archive
+
+A successful `tools/publish_to_archive_org.py` run is not, on its own,
+proof that archive.org currently matches `bands/**/*.yaml` - archive.org
+is eventually consistent (a delete can report success immediately and
+still take hours to actually clear), and a real bug once meant edited
+descriptions silently never reached an already-existing item at all (see
+issue #31 for the incident, `tools/verify_archive_org.py` for the fix).
+`.github/workflows/verify-archive-org.yml` runs that tool against the
+whole archive every night and files/updates a GitHub issue when it finds
+drift - see
+[`documentation/ARCHIVE_ORG_AUDIT.md`](documentation/ARCHIVE_ORG_AUDIT.md)
+for exactly how it works and why it runs in CI rather than on `cherry`.
+
 ### If the current archive.org account becomes inaccessible
 
 Publishing (`tools/publish_to_archive_org.py`) currently runs under one
