@@ -123,6 +123,18 @@ h2 { font-size: 1.3rem; margin: 2rem 0 0.75rem; border-top: 1px solid var(--bord
   margin-top: 0.25rem;
 }
 
+.expand-link {
+  margin-left: 0.4rem;
+  font-size: 1rem;
+  vertical-align: middle;
+  opacity: 0.8;
+}
+
+.expand-link:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
 .member-list, .release-list {
   list-style: none;
   padding: 0;
@@ -252,11 +264,16 @@ table.tracklist audio {
   background: rgba(0, 0, 0, 0.92);
 }
 
-.lightbox img {
+.lightbox img,
+.lightbox video {
   position: relative;
   max-width: 92vw;
   max-height: 92vh;
   border-radius: 4px;
+}
+
+.lightbox video {
+  background: #000;
 }
 
 .video-gallery video {
@@ -279,7 +296,7 @@ table.tracklist audio {
   color: var(--text);
   font-size: 2.2rem;
   line-height: 1;
-  z-index: 1;
+  z-index: 2;
 }
 
 .lightbox-prev,
@@ -290,7 +307,7 @@ table.tracklist audio {
   color: var(--text);
   font-size: 1.6rem;
   line-height: 1;
-  z-index: 1;
+  z-index: 2;
   padding: 0.75rem;
   opacity: 0.75;
 }

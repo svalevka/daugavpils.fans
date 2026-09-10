@@ -47,14 +47,25 @@
     });
   });
 
-  // Keyboard navigation for the photo lightbox (see GitHub issue #29):
-  // left/right arrows move to the previous/next photo, Escape closes it.
-  // The lightbox itself is pure CSS (:target-based), so this only needs
-  // to click the already-present prev/next/close links for whichever
-  // lightbox is currently open.
+  // Keyboard navigation for the photo and video lightboxes (see GitHub
+  // issues #29 and #30): left/right arrows move to the previous/next
+  // item, Escape closes it. The lightboxes themselves are pure CSS
+  // (:target-based), so this only needs to click the already-present
+  // prev/next/close links for whichever lightbox is currently open.
   document.addEventListener("keydown", function (event) {
     var open = document.querySelector(".lightbox:target");
     if (!open) return;
+
+    // In a video lightbox, let left/right arrows seek within the video
+    // when the <video> player itself has focus, rather than paging to
+    // the previous/next video.
+    if (
+      (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+      event.target &&
+      event.target.tagName === "VIDEO"
+    ) {
+      return;
+    }
 
     var selector = null;
     if (event.key === "ArrowLeft") selector = ".lightbox-prev";
@@ -68,6 +79,76 @@
     link.click();
   });
 
+  // Track and coordinate video playback in the lightbox (see GitHub issue #30):
+  // 1. When a video lightbox is closed or navigated away from, pause its video
+  //    so audio doesn't keep playing invisibly in the background (CSS :target
+  //    only hides the old lightbox with display:none).
+  // 2. When navigating between videos in the lightbox, if the outgoing video
+  //    was actively playing, start playing the incoming video to maintain
+  //    playlist flow.
+  // 3. When opening a video lightbox, pause any other media playing on the page;
+  //    if the corresponding inline gallery video was playing, sync position
+  //    and continue in the lightbox.
+  var activeLightboxVideo = null;
+
+  window.addEventListener("hashchange", function () {
+    var hash = location.hash.slice(1);
+    var target = hash ? document.getElementById(hash) : null;
+    var targetIsVideoLightbox = !!(
+      target && target.classList.contains("video-lightbox")
+    );
+    var targetVideo = targetIsVideoLightbox
+      ? target.querySelector("video")
+      : null;
+
+    var wasPlaying = false;
+    if (activeLightboxVideo) {
+      wasPlaying = !activeLightboxVideo.paused;
+      activeLightboxVideo.pause();
+      activeLightboxVideo = null;
+    }
+
+    var allLightboxVideos = document.querySelectorAll(".video-lightbox video");
+    for (var i = 0; i < allLightboxVideos.length; i++) {
+      if (allLightboxVideos[i] !== targetVideo && !allLightboxVideos[i].paused) {
+        wasPlaying = true;
+        allLightboxVideos[i].pause();
+      }
+    }
+
+    if (targetIsVideoLightbox && targetVideo) {
+      activeLightboxVideo = targetVideo;
+
+      // Pause any audio track or inline gallery video playing outside this lightbox
+      var allMedia = document.querySelectorAll("audio, video");
+      for (var j = 0; j < allMedia.length; j++) {
+        var el = allMedia[j];
+        if (el !== targetVideo && !el.paused) {
+          if (
+            el.tagName === "VIDEO" &&
+            !el.closest(".video-lightbox") &&
+            el.currentSrc &&
+            targetVideo.currentSrc &&
+            el.currentSrc === targetVideo.currentSrc
+          ) {
+            targetVideo.currentTime = el.currentTime;
+            wasPlaying = true;
+          }
+          el.pause();
+        }
+      }
+
+      if (wasPlaying) {
+        var promise = targetVideo.play();
+        if (promise && promise.catch) {
+          promise.catch(function () {
+            // Autoplay policy prevented playback; remains paused.
+          });
+        }
+      }
+    }
+  });
+
   // Only one <audio>/<video> plays at a time site-wide - starting one
   // pauses every other, so playing a gallery video while a track (or
   // another video) is already going doesn't leave both audible at once.
@@ -77,6 +158,9 @@
     function (event) {
       var target = event.target;
       if (target.tagName !== "AUDIO" && target.tagName !== "VIDEO") return;
+      if (target.closest && target.closest(".video-lightbox")) {
+        activeLightboxVideo = target;
+      }
       var players = document.querySelectorAll("audio, video");
       for (var i = 0; i < players.length; i++) {
         if (players[i] !== target) players[i].pause();
