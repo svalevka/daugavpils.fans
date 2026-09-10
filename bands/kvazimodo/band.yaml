@@ -301,6 +301,17 @@ image:
   caption_en: Kvazimodo at a friendly concert with the bands "Lom" and "Dvinsk" at
     the railway technical school. Lyokha at the mic.
   depicts: []
+- contentUrl: media/kvazimodo-concert-with-lom-dvinsk-group-photo.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 760606a32ae484b7af0b1067fc1ff72f63291c6b2b6212c04f8ff0485662cd74
+  '@type': ImageObject
+  caption: '"Квазимодо" на товарищеском концерте у гр. "Лом" и гр. "Двинск" в жд техникуме.'
+  caption_en: Kvazimodo at a friendly concert with the bands "Lom" and "Dvinsk" at
+    the railway technical school.
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
