@@ -237,6 +237,17 @@ image:
   caption: Прогулка по Депилсу вечерком с другом фотографом Ю.Бердниковым.
   caption_en: An evening walk around Daugavpils with friend and photographer Yu. Berdnikov.
   depicts: []
+- contentUrl: media/glazki-stekolshchika-evening-walk-berdnikov-2.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: b1243637261ed29562aedab54769583b6db8eea589c155b2ec44c7625b400412
+  '@type': ImageObject
+  caption: Прогулка по Депилсу вечерком с другом фотографом Ю.Бердниковым. 2
+  caption_en: An evening walk around Daugavpils with friend and photographer Yu. Berdnikov.
+    2
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
