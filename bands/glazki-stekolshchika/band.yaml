@@ -259,6 +259,18 @@ image:
   caption_en: An evening walk around Daugavpils with friend and photographer Yu. Berdnikov.
     3
   depicts: []
+- contentUrl: media/glazki-stekolshchika-ryb-vaida-sapelkin.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 74b04c201ad376c8a44bab15192d608b9eb51e610555adeb6c847f17b01b378b
+  '@type': ImageObject
+  caption: Триявление дружбы Рыба, Вайды и Сапелкина ( гр. Рыба-мечь Сволочь Обыкновенная
+    )
+  caption_en: 'A three-way show of friendship: Ryb, Vaida, and Sapelkin (of the band
+    "Ryba-mech Svoloch Obyknovennaya").'
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
