@@ -191,6 +191,18 @@ image:
   caption: Центральный Дом Культуры 1998 . Bumerangs 70-jos 1998.
   caption_en: Central House of Culture, 1998. "Bumerangs 70-jos", 1998.
   depicts: []
+- contentUrl: media/glazki-stekolshchika-bumerangs-70jos-1998-2.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 340c236818caf89fb8a2f662f2bef1c06b2867a86d9319f30c422100e4c08b5a
+  '@type': ImageObject
+  caption: Глазки Стекольщика на модной экспозиции  Bumerangs 70-jos. Центральный
+    Дом Культуры 1998
+  caption_en: Glazki Stekolshchika at the "Bumerangs 70-jos" fashion exhibition. Central
+    House of Culture, 1998.
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
