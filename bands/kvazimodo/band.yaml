@@ -268,6 +268,16 @@ image:
   caption_en: First concert at the Trade School. Group photo with photographer Yu.
     Berdnikov and a sweetheart.
   depicts: []
+- contentUrl: media/kvazimodo-photo-collage-1.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 872a026fb1437e03e49b38947c263e8cc472283e6ada91ad25f3c353d58d1799
+  '@type': ImageObject
+  caption: фотографическое попурри
+  caption_en: photographic pot-pourri
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
