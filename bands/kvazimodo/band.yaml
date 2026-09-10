@@ -322,6 +322,16 @@ image:
   caption: фото попурри 2
   caption_en: photo pot-pourri 2
   depicts: []
+- contentUrl: media/kvazimodo-first-rock-concert-varpa.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e203225b6fe8b2c11f8d5406ab4ceb385490054d5d8ffc92f95d09daa8a1f57d
+  '@type': ImageObject
+  caption: Первый РОК-концерт в "Варпе" с Янсоном на барабанах.
+  caption_en: First ROCK concert at "Varpa", with Janson on drums.
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
