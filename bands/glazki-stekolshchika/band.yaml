@@ -203,6 +203,18 @@ image:
   caption_en: Glazki Stekolshchika at the "Bumerangs 70-jos" fashion exhibition. Central
     House of Culture, 1998.
   depicts: []
+- contentUrl: media/glazki-stekolshchika-underground-club-1998.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3882e4fb21e615cb57a10f30019513fc89625cb40bd96db658b241c9862eb974
+  '@type': ImageObject
+  caption: Глазки Стекольщика выставляют сырые песни в подпольном клубе Underground
+    . Где - то в закутке пока идет Рэйв.
+  caption_en: Glazki Stekolshchika air out raw new songs at the underground club Underground,
+    tucked away in a corner while a rave goes on elsewhere.
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
