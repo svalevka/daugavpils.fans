@@ -278,6 +278,17 @@ image:
   caption: фотографическое попурри
   caption_en: photographic pot-pourri
   depicts: []
+- contentUrl: media/kvazimodo-rehearsal-yauniba-slavik.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 123fdbf77f54ce23b7c420cef6e5c6d3c2c2e3633891621dad2d4451d0730ce1
+  '@type': ImageObject
+  caption: Репетиция в "Яунибе" у Янсона, куда зашел его друг Славик.
+  caption_en: Rehearsal at "Yauniba", at Janson's place, where his friend Slavik dropped
+    by.
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
