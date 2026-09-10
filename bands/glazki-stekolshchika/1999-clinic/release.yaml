@@ -6,28 +6,32 @@ byArtist: glazki-stekolshchika
 genre:
 - Post-punk
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
-description: 'Второй магнитоальбом группы, записанный на дом-студии "Кикос Воскрес"
+description: 'Второй магнитоальбом группы, записанный на дом-студии «Кикос Воскрес»
   при участии Вайды, Рыба, Рубрехта и Вантуза (звук/сведение), а также друзей группы:
   Стакана, Кузи, Толика, Петухова, Еремея и Некрофила. Вайда не дожил до завершения
-  альбома - умер в Риге, в общежитии, - и альбом досводили без него. Известна более
-  полная версия трек-листа: архивная копия сайта "Черный Понедельник" 2008 года документирует
-  21 трек с полными данными об участниках, а на Bandcamp-странице группы альбом представлен
-  как 24 трека (включая четыре инструментальные интерлюдии "Драпировка"). В этой оцифровке
-  сохранилась более короткая 17-трековая версия. Известное авторство песен из этой
-  версии: Вайда - 2, 6, 8, 9, 11, 12, 16; Рыб - 3, 4, 7, 10, 13, 15. Авторство остальных
-  треков (1, 5, 14, 17) не зафиксировано. Оцифровано в MP3 (320 kbps CBR).
-
-  '
+  альбома — умер в Риге, в общежитии, — и альбом досводили без него. Здесь представлена
+  официальная 24-трековая версия альбома с Bandcamp-страницы группы (включая четыре
+  инструментальные интерлюдии «Драпировка»); архивная копия сайта «Черный Понедельник»
+  2008 года документирует более раннюю, 21-трековую версию с полными данными об участниках
+  сессий. Известное по более ранней оцифровке авторство песен: Вайда написал и спел
+  «Машинное сало», «Дверка», «16-17», «Бал», «Обои», «Ужасный сон» и «Чудище»; Рыб
+  — «Воздух», «Надо», «Что сказал Deadfly», «Черный тополиный», «Черный орган» и «Самый
+  черный». Авторство остальных треков («Мистификасион», «Номер раз», «Латгальская
+  прощальная», «Белая дорога», четырёх «Драпировка», «Don''t worry be crazy», «Новые
+  пути», «Братья пустоты», «Былые») не зафиксировано. Оцифровано в MP3 320 kbps.'
 description_en: 'The band''s second tape album, recorded at the "Кикос Воскрес" home
   studio with Vaida, Ryb, Rubrekht and Vantuz (sound/mixing), plus contributions from
   several friends of the band. Vaida died before the album was finished and it was
-  mixed to completion without him. A fuller tracklist is documented elsewhere: a 2008
-  archived snapshot of the old "Черный Понедельник" site lists 21 tracks with full
-  session credits (see sameAs), and the band''s Bandcamp page lists the album as 24
-  tracks (including four instrumental "Драпировка" interludes). This digitization
-  preserves a shorter, 17-track version. Digitized to MP3 (320 kbps CBR).
-
-  '
+  mixed to completion without him. This is the official 24-track version of the album
+  from the band''s Bandcamp page (including four instrumental "Драпировка" interludes);
+  a 2008 archived snapshot of the old "Черный Понедельник" site documents an earlier,
+  21-track version with full session credits. Songwriting/vocals known from that earlier
+  digitization: Vaida wrote and sang "Машинное сало", "Дверка", "16-17", "Бал", "Обои",
+  "Ужасный сон" and "Чудище"; Ryb wrote and sang "Воздух", "Надо", "Что сказал Deadfly",
+  "Черный тополиный", "Черный орган" and "Самый черный". Authorship of the remaining
+  tracks ("Мистификасион", "Номер раз", "Латгальская прощальная", "Белая дорога",
+  the four "Драпировка" interludes, "Don''t worry be crazy", "Новые пути", "Братья
+  пустоты", "Былые") is not documented. Digitized to MP3 320 kbps.'
 sameAs:
 - https://glazkistekolschika.bandcamp.com/album/clinic
 - http://web.archive.org/web/20080227002753/http://chepe.lv/group.php?group=1999_2
@@ -36,17 +40,17 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Mistifikasion
+  name: Мистификасион
   audio:
     contentUrl: 01-mistifikasion.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 0280ff61b898e0b301aea00a84060360058ac8c7068006c329b4b6df98cdd118
+      value: 60f8dbc13a3f6371f5e285bdbf0035fabec3e35b4ee5f3c25276c517422044dc
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT4M11S
+    bitrate: 325 kbps
+    duration: PT4M38S
 - '@type': MusicRecording
   position: 2
   name: Машинное сало
@@ -56,10 +60,10 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: d46b57dc34ba8a7df4a78c66997694509661ee29d0cb3f4eadce6af8c28f5d17
+      value: c548771d40e32ad881f1d5bff0a18cb107bac42f4fd9f46597b26065cc2102d7
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT4M4S
+    bitrate: 325 kbps
+    duration: PT4M34S
 - '@type': MusicRecording
   position: 3
   name: Воздух
@@ -69,199 +73,290 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: f41530a933e496f60111a0037a1aa722b0b21f35e813ab63a6b050c76de3b2d4
+      value: ae04924e44fd8368db1c0c2ab5159c0a53dab36b109e170ecbb896f6311619e1
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT2M17S
+    bitrate: 328 kbps
+    duration: PT2M38S
 - '@type': MusicRecording
   position: 4
-  name: Надо
+  name: Don't worry be crazy
   audio:
-    contentUrl: 04-nado.mp3
+    contentUrl: 04-don-t-worry-be-crazy.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: cbf4629d013748ed7467a179684bab10da3eb69f5744a50ac03c0b2cc83caaf6
+      value: bf77f5e973e475a8af6ed48c203a80352d0eea98a068cc38d21eb56f68dc60e6
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT4M49S
+    bitrate: 329 kbps
+    duration: PT2M25S
 - '@type': MusicRecording
   position: 5
-  name: Номер раз
+  name: Надо
   audio:
-    contentUrl: 05-nomer-raz.mp3
+    contentUrl: 05-nado.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 6fff161e3eadbbcbb2f6fde340c1577e1920f6dfeef85bfe02bbf63e037a11e9
+      value: 8547608d839f964c4bb53a5f1c1e86556c6230cd16480339bac5ee5005cc6150
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT3M7S
+    bitrate: 324 kbps
+    duration: PT5M12S
 - '@type': MusicRecording
   position: 6
-  name: Дверка
+  name: Драпировка 1
   audio:
-    contentUrl: 06-dverka.mp3
+    contentUrl: 06-drapirovka-1.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 552105d95aa98824918e8aeaea88156952b2c8ab162b24e4ff6da044d1b22a54
+      value: d7a549d366cde630746b82eb9687a17a02987637ffdbd2811accae2103f9f834
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT2M55S
+    bitrate: 344 kbps
+    duration: PT51S
 - '@type': MusicRecording
   position: 7
-  name: Что сказал Dead Fly
+  name: Номер раз
   audio:
-    contentUrl: 07-chto-skazal-dead-fly.mp3
+    contentUrl: 07-nomer-raz.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: a89d27d6f0fd4be9ffc2b99c61b6058183a4e86d0874c4f7678cfcb509a948ea
+      value: 4e7ad0068e17a4e70f45504e7805dc17a91e288d2f6e5f42bd604cdc87bc6311
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT3M8S
+    bitrate: 326 kbps
+    duration: PT3M27S
 - '@type': MusicRecording
   position: 8
-  name: '...16, 17...'
+  name: Дверка
   audio:
-    contentUrl: 08-16-17.mp3
+    contentUrl: 08-dverka.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: cb3a72fe0f4ee06a080b6139b5dfdd52cab26466cc93e7da9dc93f27767b1735
+      value: 3125be802b7f40d3619fc4aa4e31dcfd88432e3a4f3e0886bc522c81b676ac6b
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT1M25S
+    bitrate: 327 kbps
+    duration: PT3M6S
 - '@type': MusicRecording
   position: 9
-  name: Бал на дороге
+  name: Что сказал Deadfly
   audio:
-    contentUrl: 09-bal-na-doroge.mp3
+    contentUrl: 09-chto-skazal-deadfly.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 8d014a96336d52a478b7d9b0c2cb2ad1a37dd5953c6c34a12d2f0ad0691a4921
+      value: bb234184e99d6fbf5e188124f381974735a5c5d76206c5a4287f5b4edffb20c8
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT2M37S
+    bitrate: 326 kbps
+    duration: PT3M24S
 - '@type': MusicRecording
   position: 10
-  name: Чёрный тополиный
+  name: Драпировка 2
   audio:
-    contentUrl: 10-chiornyi-topolinyi.mp3
+    contentUrl: 10-drapirovka-2.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 2d827ef63dc8da8f534836f3b8fe24cdac411a6014bf8a4c613c676772d93d74
+      value: b5669e009af3ae5b5c917b6038bd164f00e7093d3db6d6344532f453ad3e0ddf
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT4M20S
+    bitrate: 334 kbps
+    duration: PT1M28S
 - '@type': MusicRecording
   position: 11
-  name: Обои
+  name: Бал
   audio:
-    contentUrl: 11-oboi.mp3
+    contentUrl: 11-bal.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 90ee448c923d91265994256339b2357e1818c42d82951fae1df03906c3a370de
+      value: f1b151504646b6c798e626735efd0f913c40af53d4b6a878b3126552a866bebb
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT4M28S
+    bitrate: 328 kbps
+    duration: PT2M49S
 - '@type': MusicRecording
   position: 12
-  name: Ужасный сон
+  name: Драпировка 3
   audio:
-    contentUrl: 12-uzhasnyi-son.mp3
+    contentUrl: 12-drapirovka-3.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 1c1b5169c8ae7cfff8770108764658377aedf44a8708959c57e32d0be0ecb84c
+      value: a40b3b0829fcb8fa9a2b1c8659fc06ec93db78fb2d00179f18c67a7d2175f515
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT4M25S
+    bitrate: 342 kbps
+    duration: PT55S
 - '@type': MusicRecording
   position: 13
-  name: Чёрный орган
+  name: Черный тополиный
   audio:
-    contentUrl: 13-chiornyi-organ.mp3
+    contentUrl: 13-chernyi-topolinyi.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: a09aa49e8d4c6ba1e671e0101fdc4a9ad50c8435b2467f924d05542c853c6ff9
+      value: 93e382b8dfe539a62771b143ddcddb4a0158b435e442fd18ce63e107037266b5
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT3M38S
+    bitrate: 325 kbps
+    duration: PT4M44S
 - '@type': MusicRecording
   position: 14
-  name: Латгальская прощальная
+  name: Новые пути
   audio:
-    contentUrl: 14-latgal-skaia-proshchal-naia.mp3
+    contentUrl: 14-novye-puti.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 8e4f082772f001dc8acfb187a1978bd959b9f4d7a2741e9a65aa9115ccbc1401
+      value: 472755d3b4b786785dc9433c49c5f4182287345e3b30b8afce821a2ceb348ce0
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT2M29S
+    bitrate: 326 kbps
+    duration: PT3M34S
 - '@type': MusicRecording
   position: 15
-  name: Самый чёрный
+  name: Драпировка 4
   audio:
-    contentUrl: 15-samyi-chiornyi.mp3
+    contentUrl: 15-drapirovka-4.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 4edf058678121fb17bf8475aa6039a4790f6d4bcb6cdfdd6d6fd1bdab1ba99b3
+      value: 327987fa2f269e19cb194fdf771215380748428994af1f9a46999e05c376fc0e
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT5M1S
+    bitrate: 329 kbps
+    duration: PT2M18S
 - '@type': MusicRecording
   position: 16
-  name: Чудище
+  name: Обои
   audio:
-    contentUrl: 16-chudishche.mp3
+    contentUrl: 16-oboi.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 04c37acec53bde9c820992c07d889c9affeafd826ac433f567518e0a36457acb
+      value: 72bec05b70de158925f220bf2aec8b3bf665baeae313821a6bc76bac9a9d630e
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT2M23S
+    bitrate: 325 kbps
+    duration: PT4M36S
 - '@type': MusicRecording
   position: 17
-  name: Белая дорога
+  name: Братья пустоты
   audio:
-    contentUrl: 17-belaia-doroga.mp3
+    contentUrl: 17-brat-ia-pustoty.mp3
     encodingFormat: audio/mpeg
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 7b68d3fed4f9ab8c38865afa4c96565a1e9a67028dae771e8e8b463e4b015145
+      value: f97e62ba2dda5365a646d85417aa888c8033c12f61d78fb4151b6132c5de7157
     '@type': AudioObject
-    bitrate: 320 kbps
-    duration: PT13M2S
+    bitrate: 326 kbps
+    duration: PT3M29S
+- '@type': MusicRecording
+  position: 18
+  name: Ужасный сон
+  audio:
+    contentUrl: 18-uzhasnyi-son.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: aac75c74e93e9cf34c78deb1fbc09f264396216f2688dba00ab471ed71cc9f2b
+    '@type': AudioObject
+    bitrate: 324 kbps
+    duration: PT5M5S
+- '@type': MusicRecording
+  position: 19
+  name: Черный орган
+  audio:
+    contentUrl: 19-chernyi-organ.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0c0aa671a5b6dad31831b7e1be91b6f4aa760561ab19c8f4d5c10eb18b3f6999
+    '@type': AudioObject
+    bitrate: 325 kbps
+    duration: PT3M57S
+- '@type': MusicRecording
+  position: 20
+  name: Латгальская прощальная
+  audio:
+    contentUrl: 20-latgal-skaia-proshchal-naia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 63d01e2e3af67c560117dbb20c4df690e37d0961e1429e234bd67f7da85b3329
+    '@type': AudioObject
+    bitrate: 328 kbps
+    duration: PT2M45S
+- '@type': MusicRecording
+  position: 21
+  name: Самый черный
+  audio:
+    contentUrl: 21-samyi-chernyi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 998626290f89883633ac11960dffd0ad3f5c889377dac21c2e2fed3b8cdd4272
+    '@type': AudioObject
+    bitrate: 324 kbps
+    duration: PT5M34S
+- '@type': MusicRecording
+  position: 22
+  name: Былые
+  audio:
+    contentUrl: 22-bylye.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 92983a2a2fb7e174dea8b016ce76121c4298dc87b5bb366da710d0c0978dac08
+    '@type': AudioObject
+    bitrate: 330 kbps
+    duration: PT2M11S
+- '@type': MusicRecording
+  position: 23
+  name: Чудище
+  audio:
+    contentUrl: 23-chudishche.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b7f9721a86b89b57f1caf85dfde7107918d6240bba8800ad0eb0194e0f3b817b
+    '@type': AudioObject
+    bitrate: 328 kbps
+    duration: PT2M40S
+- '@type': MusicRecording
+  position: 24
+  name: Белая дорога
+  audio:
+    contentUrl: 24-belaia-doroga.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d94c05c453a8cb951a1d845a8c6df5fc92c9553b82b0130d22f3630cf317903c
+    '@type': AudioObject
+    bitrate: 322 kbps
+    duration: PT13M39S
 image:
-- contentUrl: cover.webp
-  encodingFormat: image/webp
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
   identifier:
   - '@type': PropertyValue
     propertyID: sha256
-    value: 380b5a2f10b6cd1bd418e81e676a659049560790bef6e7a955a1a7a0aa42b2b0
+    value: f7f890d357bb66cbebb4330ee60247c78b3c3f7315bf5a88c12fb7cd57c59cf8
   '@type': ImageObject
   caption: Обложка альбома (Bandcamp)
   caption_en: Album cover (Bandcamp)

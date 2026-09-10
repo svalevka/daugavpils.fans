@@ -7,23 +7,19 @@ genre:
 - Post-punk
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
 description: 'Более поздний сборник 2007 года, изданный на Bandcamp-странице группы
-  - не то же самое, что дуэтный альбом Рыба и Вайды "Из-за птиц" (1997), хотя частично
-  пересекается с ним по песням (в других вариантах записи и/или названиях: "Гадюкин"
-  здесь "Г-н Гадюкин", "Из-за птиц" здесь "Изоптиц", "Вагон" здесь "Последний вагон"),
-  и добавляет два новых трека, включая короткий набросок "А завтра". Аудио взято напрямую
-  с Bandcamp-стрима (мастер-записи на 320 kbps не найдены) - в отличие от остальных
-  релизов в этом архиве, это не оцифровка оригинальной плёнки, а копия 128 kbps MP3
-  потока с Bandcamp.
-
-  '
-description_en: 'A later, 2007 compilation released on the band''s Bandcamp page -
+  — не то же самое, что дуэтный альбом Рыба и Вайды «Из-за птиц» (1997), хотя частично
+  пересекается с ним по песням (в других вариантах записи и/или названиях: «Гадюкин»
+  здесь «Г-н Гадюкин», «Из-за птиц» здесь «Изоптиц», «Вагон» здесь «Последний вагон»),
+  и добавляет два новых трека, включая короткий набросок «А завтра». Аудио получено
+  через официальную Bandcamp-загрузку (контейнер MP3 320 kbps); истинное качество
+  исходной мастер-записи до её загрузки на Bandcamp неизвестно.'
+description_en: 'A later, 2007 compilation released on the band''s Bandcamp page —
   not the same thing as Ryb and Vaida''s 1997 duo album "Из-за птиц", though it partially
-  overlaps with it in songs (in different takes and/or titles), and adds two new tracks,
-  including a short 15-second sketch, "А завтра". Unlike the rest of this archive,
-  this release''s audio was sourced directly from the Bandcamp stream (no higher-quality
-  320 kbps master was available) rather than digitized from an original tape.
-
-  '
+  overlaps with it in songs (in different takes and/or titles: "Гадюкин" here "Г-н
+  Гадюкин", "Из-за птиц" here "Изоптиц", "Вагон" here "Последний вагон"), and adds
+  two new tracks, including a short sketch, "А завтра". Audio obtained via the official
+  Bandcamp download (MP3 320 kbps container); the true quality of the master prior
+  to its upload to Bandcamp is unknown.'
 sameAs:
 - https://glazkistekolschika.bandcamp.com/album/--2
 - https://archive.org/details/daugavpils-fans-glazki-stekolshchika-2007-chernoviaki
@@ -38,9 +34,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 790830a8103342c8a4993ca21cec33464129e6504c288a4d033aa08a67f4a681
+      value: d0d1d1d402f0482cc664cf46b6580d33d9d6c150bcd29126f2c0dca32b6dc877
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 326 kbps
     duration: PT3M29S
 - '@type': MusicRecording
   position: 2
@@ -51,9 +47,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: b2be9f7e659d508db92b6bce58d501d443cee6699e9f118e10f3195902325aed
+      value: e5b4c18171dc6bd2d2658ab72d5f7386a12475d101b1c977fb51c7a2b2601b6d
     '@type': AudioObject
-    bitrate: 129 kbps
+    bitrate: 395 kbps
     duration: PT15S
 - '@type': MusicRecording
   position: 3
@@ -64,9 +60,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 9ae18538e61f65dc9ba47b8898055aa180f51fa664e97b49ec0bee603102a5c9
+      value: ea75fbae8d03e6be85872ecf0427f82b0dfe615e52976f5aaf48d92eef3e38f7
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 325 kbps
     duration: PT3M50S
 - '@type': MusicRecording
   position: 4
@@ -77,9 +73,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 9be87e7dc9d18557ef0124445af2b2224a38613e56e185db5cffb8d92f3481b0
+      value: 76b469b52371bde39ce46f0735a838a3a4c9f3e3817edc7a8ebd28a94a02e9d9
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 323 kbps
     duration: PT7M14S
 - '@type': MusicRecording
   position: 5
@@ -90,9 +86,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: bf220a2f815e5e388d79c95c1a333a3c08c828b535c78f5199d899db64be2c95
+      value: aba3402daae5479037c4187e4085622e0e6c9fbd320b23996dd8f93ed702d4ca
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 326 kbps
     duration: PT3M2S
 - '@type': MusicRecording
   position: 6
@@ -103,9 +99,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 7e73b72eabc8a824089d6a6319eb62b2983df29d2a7a684fa8dd79047fc5b770
+      value: 2a2c5e8eb59084dd8f75f99af915579a247104c348a728bb290268cdbe16cc0b
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 326 kbps
     duration: PT3M17S
 - '@type': MusicRecording
   position: 7
@@ -116,9 +112,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 8e33409f49be5e2d5df6ef2fa94698012e01757cf98aee41d5e87ceeeefc4f0a
+      value: d9005ad3b17d668f67eabfdbf092e168d5f30531e341ae10a0ecae2606809f19
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 324 kbps
     duration: PT4M57S
 - '@type': MusicRecording
   position: 8
@@ -129,9 +125,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: a5b6b9e90f95116c3bf736a78e23ea651513d21191f6fa4a277cc04b4a76ad16
+      value: e6204b03eb8cee001dd2d127b7fd73d437c3bacaee4119d1395fa4ce8b13ad93
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 323 kbps
     duration: PT6M53S
 - '@type': MusicRecording
   position: 9
@@ -142,9 +138,9 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: da1d14b0e66a57fde5e83d39005b2c60f273cd0e00accc2b7d42440c583fc3f9
+      value: fcede5130c09b6624501a08d1c6105b63521ee531d9e8974a3bd326f5d149df8
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 323 kbps
     duration: PT8M20S
 - '@type': MusicRecording
   position: 10
@@ -155,17 +151,17 @@ track:
     identifier:
     - '@type': PropertyValue
       propertyID: sha256
-      value: 2ebd47e1372af265ceb2cfd6d6432077d81c9847fededf4299f908c5138416a4
+      value: 4036426b495f3b205cc2c4ebb6c2490734ae63c4b89bb37df076d7e7ca014885
     '@type': AudioObject
-    bitrate: 128 kbps
+    bitrate: 327 kbps
     duration: PT2M53S
 image:
-- contentUrl: cover.webp
-  encodingFormat: image/webp
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
   identifier:
   - '@type': PropertyValue
     propertyID: sha256
-    value: 7ff0f1af2628460b1bf6fb04faf2809c7c947800728d487fbe5c42074651dc2f
+    value: 0fe9a862de356ef98dda4f9ad08ff4dd643e00dbac901210b8a5c7afe6cc4467
   '@type': ImageObject
   caption: Обложка альбома (Bandcamp)
   caption_en: Album cover (Bandcamp)
