@@ -289,6 +289,18 @@ image:
   caption_en: Rehearsal at "Yauniba", at Janson's place, where his friend Slavik dropped
     by.
   depicts: []
+- contentUrl: media/kvazimodo-concert-with-lom-dvinsk-1.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 67556e4e4052c900f31ca2fd1563f8a65f84781ac9abda1ebc4efbc5c9ab8806
+  '@type': ImageObject
+  caption: '"Квазимодо" на товарищеском концерте у гр. "Лом" и гр. "Двинск" в ж/д
+    техникуме. У микрофона Леха.'
+  caption_en: Kvazimodo at a friendly concert with the bands "Lom" and "Dvinsk" at
+    the railway technical school. Lyokha at the mic.
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
