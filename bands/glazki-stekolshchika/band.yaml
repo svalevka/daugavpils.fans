@@ -227,6 +227,16 @@ image:
   caption_en: Glazki Stekolshchika's first-ever stage appearance, at club Soundtrack
     (Daugavpils), with Jack Khairulin (M-Spirit) on drums.
   depicts: []
+- contentUrl: media/glazki-stekolshchika-evening-walk-berdnikov-1.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 877f5cc7ec2243e5b2bb22c9e2a786869a3fa022d2693bd2cb83439c1b4c8155
+  '@type': ImageObject
+  caption: Прогулка по Депилсу вечерком с другом фотографом Ю.Бердниковым.
+  caption_en: An evening walk around Daugavpils with friend and photographer Yu. Berdnikov.
+  depicts: []
 video:
 - contentUrl: media/glazki-stekolshchika-belaia-doroga-krabis-1998.mp4
   encodingFormat: video/mp4
