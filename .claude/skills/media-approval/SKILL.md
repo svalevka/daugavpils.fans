@@ -1,6 +1,6 @@
 ---
 name: media-approval
-description: Find approved photo/video submissions waiting in the review-app queue and finish publishing them by hand (the repo's media pipeline is deliberately manual, not CI-driven) - retrieve the file, add the YAML entry, validate, upload to archive.org, commit/push, mark it published, redeploy, and confirm it's live. Use when the user says "publish this photo/video", "process pending media", "check media submissions", or invokes /media-approval.
+description: Find approved photo/video submissions waiting in the review-app queue and finish publishing them by hand (the repo's media pipeline is deliberately manual, not CI-driven) - retrieve the file, add the YAML entry, validate, upload to archive.org, commit/push, force-redeploy and confirm it's actually live on the site, then mark it published. Use when the user says "publish this photo/video", "process pending media", "check media submissions", or invokes /media-approval.
 ---
 
 Approving a photo/video on `review.daugavpils.fans/dashboard` never touches
@@ -183,41 +183,10 @@ If the push is rejected (non-fast-forward - likely if a text proposal
 landed via CI while you were working), `git fetch && git rebase
 origin/main` and push again; don't force-push.
 
-## 7. Mark it published in the queue
+## 7. Redeploy and verify it's actually live - before doing anything else below
 
-This is bookkeeping, not a curation decision - it's what the dashboard's
-"Mark published" button does, replicated directly since that button also
-requires a logged-in approver session:
-
-```bash
-ssh cherry "cd /opt/daugavpils-fans && sudo docker compose exec -T review-app python3 - <<'EOF'
-import sqlite3
-conn = sqlite3.connect('/data/review.db')
-cur = conn.execute(
-    \"UPDATE media_proposals SET status = 'published', published_at = datetime('now') \"
-    \"WHERE id = <id> AND status = 'approved'\"
-)
-conn.commit()
-print('rows updated:', cur.rowcount)   # must be 1
-EOF"
-```
-
-Then delete the original upload (`review-app-data/uploads/` isn't backed
-up, and the dashboard's own button deletes it at this point too):
-
-```bash
-ssh cherry "sudo rm -fv /opt/daugavpils-fans/review-app-data/uploads/<stored_filename>"
-```
-
-**Confirm with the user before running that delete** - it's a destructive,
-irreversible action on the only copy of the original upload, and the
-permission system will likely ask anyway.
-
-## 8. Redeploy and verify it's actually live
-
-The VPS's `daugavpils-fans-sync.timer` polls `main` every 5 minutes and
-redeploys on its own - no action is strictly required. To confirm sooner
-instead of waiting:
+Don't wait for the VPS's `daugavpils-fans-sync.timer` (polls `main` every
+5 minutes) - force it immediately after pushing:
 
 ```bash
 ssh cherry "sudo systemctl start daugavpils-fans-sync.service"
@@ -239,3 +208,42 @@ curl -s --compressed "https://daugavpils.fans/bands/<band-slug>/" | grep -F "<fi
 archive.org can lag a minute or two after upload before the file resolves
 - retry rather than concluding failure immediately. Report the live
 URL(s) back to the user once confirmed.
+
+**Do this before step 8, not after.** Marking a proposal published and
+offering to delete its only-copy original is irreversible bookkeeping -
+do it only once you've actually confirmed the photo/video is live on the
+site, not on the assumption that publish+push+deploy will just work out.
+
+## 8. Mark it published in the queue
+
+Only after step 7 has confirmed the file is actually live. This is
+bookkeeping, not a curation decision - it's what the dashboard's "Mark
+published" button does, replicated directly since that button also
+requires a logged-in approver session:
+
+```bash
+ssh cherry "cd /opt/daugavpils-fans && sudo docker compose exec -T review-app python3 - <<'EOF'
+import sqlite3
+conn = sqlite3.connect('/data/review.db')
+cur = conn.execute(
+    \"UPDATE media_proposals SET status = 'published', published_at = datetime('now') \"
+    \"WHERE id = <id> AND status = 'approved'\"
+)
+conn.commit()
+print('rows updated:', cur.rowcount)   # must be 1
+EOF"
+```
+
+Then, only once the file is confirmed live (step 7) and marked published
+above, offer to delete the original upload (`review-app-data/uploads/`
+isn't backed up, and the dashboard's own button deletes it at this same
+point too):
+
+```bash
+ssh cherry "sudo rm -fv /opt/daugavpils-fans/review-app-data/uploads/<stored_filename>"
+```
+
+**Confirm with the user before running that delete** - it's a destructive,
+irreversible action on the only copy of the original upload, and the
+permission system will likely ask anyway. Don't even raise the question
+of deleting it until step 7's live check has actually passed.
