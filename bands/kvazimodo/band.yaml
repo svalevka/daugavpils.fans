@@ -332,6 +332,18 @@ image:
   caption: Первый РОК-концерт в "Варпе" с Янсоном на барабанах.
   caption_en: First ROCK concert at "Varpa", with Janson on drums.
   depicts: []
+- contentUrl: media/kvazimodo-second-album-era-lineup.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: fbda352cc33fc5efc60a8d31c257280d1403bc08cf3fbd1ec8c38121323fdb5e
+  '@type': ImageObject
+  caption: 'Квазимодо времён второго альбома. Сверху вниз: Варик (бас), Зелч (друмс),
+    Рыб (ритм гитара), Кузя (соло гитара), Некрофил (вокал).'
+  caption_en: 'Kvazimodo from the second-album era. Top to bottom: Varik (bass), Zelch
+    (drums), Ryb (rhythm guitar), Kuzya (lead guitar), Nekrofil (vocals).'
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
