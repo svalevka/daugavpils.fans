@@ -502,15 +502,17 @@ example to copy from, look at an existing band - e.g.
 7. **Publish the media to archive.org.**
 
    ```bash
-   python tools/publish_to_archive_org.py --dry-run   # preview first
-   python tools/publish_to_archive_org.py             # actually upload
+   python tools/publish_to_archive_org.py --bands <band-slug> --dry-run   # preview first
+   python tools/publish_to_archive_org.py --bands <band-slug>             # actually upload
    ```
 
    This uploads the band's/release's audio/image/video files as their own
    archive.org item, writes the resulting archive.org + torrent URLs back
    into `sameAs` in the YAML, and backs up every `band.yaml`/`release.yaml`
    to the consolidated `daugavpils-fans-metadata` item (see "Metadata
-   schema" above) - all in one run.
+   schema" above) - all in one run. `--bands` scopes the walk to just the
+   band(s) you named instead of every band in the archive (see
+   `tools/TOOLS.md`); omit it to publish everything.
 
 ### Updating an existing band or release later
 

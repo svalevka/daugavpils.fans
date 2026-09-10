@@ -25,6 +25,14 @@ Usage:
     python publish_to_archive_org.py                  # publish everything
     python publish_to_archive_org.py --dry-run         # show what would happen
     python publish_to_archive_org.py --bands-dir PATH  # publish a different tree
+    python publish_to_archive_org.py --bands SLUG [SLUG ...]
+                                                        # only walk these bands -
+                                                        # skips the per-file archive.org
+                                                        # checksum check for every other
+                                                        # band/release. The metadata
+                                                        # backup upload still runs
+                                                        # regardless (it's cheap - just
+                                                        # the YAML files).
 """
 from __future__ import annotations
 
@@ -188,12 +196,26 @@ def main() -> int:
         default=REPO_ROOT / "bands",
         help="directory to publish from (default: this repo's bands/)",
     )
+    parser.add_argument(
+        "--bands",
+        nargs="+",
+        metavar="SLUG",
+        help="only publish these band(s), by slug (matching bands/<slug>/) - "
+        "skips the archive.org checksum walk over every other band/release. "
+        "Default: all bands. The metadata backup upload still runs regardless.",
+    )
     args = parser.parse_args()
 
     bands_dir: Path = args.bands_dir
     require_valid_archive(bands_dir)
 
+    requested = set(args.bands) if args.bands else None
+    seen: set[str] = set()
+
     for band_dir in sorted(p for p in bands_dir.iterdir() if p.is_dir()):
+        if requested is not None and band_dir.name not in requested:
+            continue
+        seen.add(band_dir.name)
         band = load_band(band_dir)
         print(f"\n{band.name} ({band.slug})")
         publish_item(
@@ -217,6 +239,9 @@ def main() -> int:
                 args.dry_run,
                 release_yaml,
             )
+
+    if requested is not None and (unknown := requested - seen):
+        print(f"\nWarning: --bands slug(s) not found under {bands_dir}: {', '.join(sorted(unknown))}")
 
     publish_metadata_bundle(bands_dir, args.dry_run)
 

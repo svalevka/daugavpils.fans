@@ -162,8 +162,19 @@ every band/release's item id, which isn't actually recoverable-from-scratch
 - `python tools/publish_to_archive_org.py` - publish anything new or
   changed. Run this after adding a new band/release's media, before the
   next `webapp/build.py`.
+- `python tools/publish_to_archive_org.py --bands <slug> [<slug> ...]` -
+  same, but only walk the given band(s)/their releases. Since media files
+  are gitignored, this script has no other way to know what's already on
+  archive.org besides asking it (a checksum check per file), so an
+  unscoped run touches every band/release in the archive - one API
+  round-trip per existing file - even when only one band changed. Prefer
+  this flag whenever you know which band(s) you touched (e.g. after
+  `/media-approval` or adding one new release); the metadata backup
+  upload still covers every band.yaml/release.yaml regardless of this
+  flag.
 - `python tools/publish_to_archive_org.py --dry-run` - show what would be
-  published without uploading anything.
+  published without uploading anything (combine with `--bands` to preview
+  just those).
 - Requires an authenticated `ia` config on the machine running it (`ia
   configure`, once, using the project's archive.org account - not a
   personal one).

@@ -145,13 +145,17 @@ permanent archive.org upload; a wrong photo is not cheaply undone.
 ## 5. Publish to archive.org - run this exactly once
 
 ```bash
-.venv/bin/python tools/publish_to_archive_org.py
+.venv/bin/python tools/publish_to_archive_org.py --bands <band-slug> [<band-slug> ...]
 ```
 
-This walks the *entire* `bands/` tree every time (no per-band flag exists)
-and re-verifies every already-published file's checksum, so it always
-takes a few minutes even for one new photo - that's inherent, not a bug.
-**Do not re-run it "to check" or because a `tail`/timeout hid the output.**
+Scope it to the band(s) this run actually touched with `--bands` - it
+skips the archive.org checksum walk over every other band/release, which
+is the expensive part (one API round-trip per existing file). Omit
+`--bands` only when you genuinely mean to publish everything (e.g.
+verifying nothing else drifted); that walks the *entire* `bands/` tree
+and re-verifies every already-published file's checksum, so it takes a
+few minutes even for one new photo. Either way, **do not re-run it "to
+check" or because a `tail`/timeout hid the output.**
 Two back-to-back runs have been observed to make the *second* one
 re-upload files that had just been uploaded seconds earlier, because
 archive.org's own item metadata hadn't finished settling yet when the
