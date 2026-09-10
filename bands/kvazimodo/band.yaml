@@ -256,6 +256,18 @@ image:
   caption: Квазимодо до самой группы
   caption_en: Kvazimodo before the band itself
   depicts: []
+- contentUrl: media/kvazimodo-1993-first-concert-group-photo.webp
+  encodingFormat: image/webp
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 85531f6a73dcba0a671a112efc89dc48687a597edfcfde9b24507c3f84629ab4
+  '@type': ImageObject
+  caption: Первый концерт в Торговом училище. Общее фото с фотографом Ю.Бердниковым
+    и зазнобой.
+  caption_en: First concert at the Trade School. Group photo with photographer Yu.
+    Berdnikov and a sweetheart.
+  depicts: []
 video:
 - contentUrl: media/kvazimodo-1994-repa.mp4
   encodingFormat: video/mp4
