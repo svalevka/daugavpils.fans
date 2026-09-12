@@ -62,10 +62,10 @@
 </ul>
 {% endif %}
 
-{% if band.sameAs %}
+{% if visible_same_as %}
 <h2>{{ t.elsewhere }}</h2>
 <ul class="member-list">
-  {% for url in band.sameAs %}
+  {% for url in visible_same_as %}
   <li><a href="{{ url }}">{{ url }}</a></li>
   {% endfor %}
 </ul>

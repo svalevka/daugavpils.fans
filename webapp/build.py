@@ -152,6 +152,13 @@ def render_maintenance_html() -> str:
     return body
 
 
+def visible_same_as(model: MusicGroup | MusicAlbum) -> list[str]:
+    """sameAs URLs worth showing a human in the "Ещё" list - torrent links
+    stay in band.yaml/release.yaml metadata (and the JSON-LD) but aren't
+    surfaced on the page itself."""
+    return [url for url in model.sameAs if not url.endswith(".torrent")]
+
+
 def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
     """Pretty-printed schema.org JSON-LD for a band or release, straight from
     the same model that backs its band.yaml/release.yaml - embedded as a
@@ -321,6 +328,7 @@ def build() -> None:
                     band=band,
                     releases=releases,
                     jsonld=to_jsonld(band),
+                    visible_same_as=visible_same_as(band),
                     photo_teaser_limit=PHOTO_TEASER_LIMIT,
                     video_teaser_limit=VIDEO_TEASER_LIMIT,
                     media_page_url=band_media_page_url,
@@ -365,6 +373,7 @@ def build() -> None:
                         band=band,
                         release=release,
                         jsonld=to_jsonld(release),
+                        visible_same_as=visible_same_as(release),
                         photo_teaser_limit=PHOTO_TEASER_LIMIT,
                         video_teaser_limit=VIDEO_TEASER_LIMIT,
                         media_page_url=release_media_page_url,

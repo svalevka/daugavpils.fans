@@ -52,10 +52,10 @@
 
 <p class="license">{{ t.licensed_under }}: <a href="{{ release.license }}">{{ release.license | license_label }}</a>.</p>
 
-{% if release.sameAs %}
+{% if visible_same_as %}
 <h2>{{ t.elsewhere }}</h2>
 <ul class="member-list">
-  {% for url in release.sameAs %}
+  {% for url in visible_same_as %}
   <li><a href="{{ url }}">{{ url }}</a></li>
   {% endfor %}
 </ul>
