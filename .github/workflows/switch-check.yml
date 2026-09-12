@@ -78,31 +78,33 @@ jobs:
             fi
 
             timestamp=$(date -u '+%Y-%m-%d %H:%M UTC')
-            content=$(cat <<EOF
-# archive.org (ia tool) access credential
-
-Delivered: $timestamp
-Requested by: @$requester via daugavpils.fans#$number
-
-\`\`\`
-IA_ACCESS_KEY_ID=$IA_ACCESS_KEY_ID
-IA_SECRET_ACCESS_KEY=$IA_SECRET_ACCESS_KEY
-\`\`\`
-
-## What this is
-
-This is the S3-style access key pair for the project's archive.org
-account, used by the \`ia\` CLI / \`internetarchive\` Python
-library to upload and manage items. See
-\`documentation/DEAD_MANS_SWITCH.md\` and \`README.md\` in
-\`svalevka/daugavpils.fans\` for how to use it and what to do next
-(including recovering or replacing the archive.org account if
-needed).
-
-Once you no longer need collaborator access to this vault repo,
-feel free to leave it.
-EOF
-)
+            # A heredoc body would need to be indented to stay inside this YAML
+            # "run: |" block, but a plain <<EOF terminator must sit at column 0
+            # to be recognized - those two requirements conflict, so this is
+            # built line-by-line with printf instead of a heredoc.
+            content=$(printf '%s\n' \
+              "# archive.org (ia tool) access credential" \
+              "" \
+              "Delivered: $timestamp" \
+              "Requested by: @$requester via daugavpils.fans#$number" \
+              "" \
+              '```' \
+              "IA_ACCESS_KEY_ID=$IA_ACCESS_KEY_ID" \
+              "IA_SECRET_ACCESS_KEY=$IA_SECRET_ACCESS_KEY" \
+              '```' \
+              "" \
+              "## What this is" \
+              "" \
+              "This is the S3-style access key pair for the project's archive.org" \
+              "account, used by the \`ia\` CLI / \`internetarchive\` Python" \
+              "library to upload and manage items. See" \
+              "\`documentation/DEAD_MANS_SWITCH.md\` and \`README.md\` in" \
+              "\`svalevka/daugavpils.fans\` for how to use it and what to do next" \
+              "(including recovering or replacing the archive.org account if" \
+              "needed)." \
+              "" \
+              "Once you no longer need collaborator access to this vault repo," \
+              "feel free to leave it.")
 
             b64=$(echo "$content" | base64 | tr -d '\n')
             existing_sha=$(GH_TOKEN="$VAULT_TOKEN" gh api \
