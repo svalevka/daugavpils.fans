@@ -16,6 +16,9 @@ COPY tools/ tools/
 COPY review_app/ review_app/
 
 WORKDIR /app/review_app
+# Offline GeoIP database for visitor country resolution (GitHub issue #34)
+RUN python3 -c "import urllib.request; urllib.request.urlretrieve('https://raw.githubusercontent.com/P3TERX/GeoLite.mmdb/download/GeoLite2-Country.mmdb', '/app/review_app/country.mmdb')" || true
+
 EXPOSE 8000
 # --timeout 600: gunicorn's 30s default would kill a worker mid-upload on
 # a large video, matching nginx's own client_body_timeout/proxy_read_timeout

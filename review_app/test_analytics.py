@@ -47,6 +47,14 @@ class AnalyticsHelpersTest(unittest.TestCase):
         self.assertEqual(detect_country({"X-GeoIP-Country": "US"}), "US")
         self.assertIsNone(detect_country({"CF-IPCountry": "INVALID"}))
 
+        # Test offline reader fallback when headers are absent
+        from unittest import mock
+
+        mock_reader = mock.MagicMock()
+        mock_reader.get.return_value = {"country": {"iso_code": "LV"}}
+        self.assertEqual(detect_country({}, ip="195.13.128.1", reader=mock_reader), "LV")
+        mock_reader.get.assert_called_with("195.13.128.1")
+
     def test_parse_referrer(self):
         self.assertEqual(parse_referrer(None), "Direct")
         self.assertEqual(parse_referrer(""), "Direct")

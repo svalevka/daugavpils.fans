@@ -85,13 +85,67 @@ def detect_device(user_agent: str | None) -> str:
     return "desktop"
 
 
-def detect_country(headers: dict | None, ip: str | None = None) -> str | None:
-    if not headers:
+_GEOIP_READER = None
+_GEOIP_INITIALIZED = False
+
+
+def get_geoip_reader(custom_path: Path | str | None = None):
+    global _GEOIP_READER, _GEOIP_INITIALIZED
+    if custom_path is not None:
+        try:
+            import maxminddb
+
+            return maxminddb.open_database(str(custom_path))
+        except Exception:
+            return None
+
+    if _GEOIP_INITIALIZED:
+        return _GEOIP_READER
+
+    _GEOIP_INITIALIZED = True
+    try:
+        import maxminddb
+    except ImportError:
         return None
-    for header in ("CF-IPCountry", "X-Country", "X-GeoIP-Country"):
-        val = headers.get(header)
-        if val and len(val.strip()) == 2:
-            return val.strip().upper()
+
+    candidates = [
+        Path("/data/country.mmdb"),
+        Path("/app/review_app/country.mmdb"),
+        Path(__file__).resolve().parent / "country.mmdb",
+        Path(__file__).resolve().parent.parent / "review-app-data" / "country.mmdb",
+    ]
+    for p in candidates:
+        if p.is_file():
+            try:
+                _GEOIP_READER = maxminddb.open_database(str(p))
+                return _GEOIP_READER
+            except Exception:
+                pass
+    return None
+
+
+def detect_country(headers: dict | None, ip: str | None = None, reader=None) -> str | None:
+    # 1. Reverse proxy headers first (Cloudflare, etc.)
+    if headers:
+        for header in ("CF-IPCountry", "X-Country", "X-GeoIP-Country"):
+            val = headers.get(header)
+            if val and len(val.strip()) == 2:
+                return val.strip().upper()
+
+    # 2. Offline MaxMind MMDB lookup
+    if ip:
+        clean_ip = ip.split(":")[0] if ":" in ip and "." in ip else ip
+        geoip = reader if reader is not None else get_geoip_reader()
+        if geoip is not None:
+            try:
+                record = geoip.get(clean_ip)
+                if record and isinstance(record, dict):
+                    iso_code = record.get("country", {}).get("iso_code")
+                    if iso_code and len(iso_code) == 2:
+                        return iso_code.upper()
+            except Exception:
+                pass
+
     return None
 
 
