@@ -55,7 +55,9 @@ flowchart TD
     SUBMITTER["Anyone proposes a text edit<br/>or a new photo/video<br/>review.daugavpils.fans/submit"] --> REVIEWAPP
     APPROVER["A curated approver decides<br/>on /dashboard"] --> REVIEWAPP
     REVIEWAPP -->|"text proposal approved:<br/>workflow_dispatch (id only)"| APPLY
-    REVIEWAPP -->|"media proposal approved:<br/>no CI, no auto-publish"| MAINT["Maintainer scp/rsyncs the file,<br/>writes the YAML entry,<br/>publishes + commits by hand"]
+    REVIEWAPP -->|"media proposal, curator clicks Upload:<br/>workflow_dispatch (id only)"| APPLYMEDIA["apply-media-proposal.yml<br/>fetches file, computes checksum,<br/>uploads to archive.org,<br/>writes YAML, commits + pushes"]
+    APPLYMEDIA -.->|"commit"| MAIN
+    REVIEWAPP -->|"media proposal, manual fallback:<br/>'Mark published manually'"| MAINT["Maintainer scp/rsyncs the file,<br/>writes the YAML entry,<br/>publishes + commits by hand"]
     MAINT --> PUBLISH
     MAINT -.->|"commit"| MAIN
 
@@ -115,26 +117,31 @@ approved:
   item metadata and `daugavpils-fans-metadata` backup bundle immediately
   reflect the updated golden source of truth in git. The VPS's timer
   picks the same push up on its own next poll, no dispatch needed there.
-- **Media proposals** (issue #21, "curated queue, manual finish") -
-  approving never dispatches anything. It moves the upload to a "ready to
-  publish" list on the dashboard; a maintainer retrieves the file
-  (`scp`/`rsync` from `review-app-data/uploads/` on the VPS - see
-  `webapp/deploy/README.md`), writes the `image`/`video` entry into
-  `band.yaml`/`release.yaml` by hand, runs `tools/validate.py --write`
-  then `tools/publish_to_archive_org.py`, and commits/pushes directly -
-  the same manual process as "Adding a new band, release, or media"
-  below, just sourced from a curated queue instead of an ad hoc message.
-  This was a deliberate choice, not a gap to fill later: giving CI (or
-  `review_app`) real archive.org write credentials to fully automate this
-  too would be a real trust escalation ADR-0003 was careful to avoid for
-  the text-proposal pipeline.
+- **Media proposals** (issue #21, automated in issue #36) - approving
+  itself never dispatches anything; it only moves the upload to a "ready
+  to publish" list on the dashboard. From there a curator normally
+  clicks "Upload", which dispatches `apply-media-proposal.yml` with the
+  proposal's id, the same `workflow_dispatch (id only)` shape as the
+  text-proposal path. That Action fetches the file and metadata from
+  `review_app`'s callback API, runs `tools/apply_media_proposal.py` to
+  derive a filename, compute its checksum (and, for video,
+  duration/bitrate via `ffprobe`), write the `image`/`video` entry into
+  `band.yaml`/`release.yaml`, upload the file to the item on
+  archive.org, sync metadata, and commit/push to `main` - then reports
+  success/failure back so the dashboard can show "published" or "upload
+  failed". A "Mark published manually" fallback still exists for a
+  curator who'd rather do it by hand: retrieve the file (`scp`/`rsync`
+  from `review-app-data/uploads/` on the VPS - see
+  `webapp/deploy/README.md`), write the YAML entry, run
+  `tools/validate.py --write` then `tools/publish_to_archive_org.py`,
+  and commit/push directly - the same manual process as "Adding a new
+  band, release, or media" below.
 
-Both `apply-proposal.yml` and `pages.yml` use a `concurrency:` group
-(`apply-proposal` and `pages` respectively) so that proposals approved
-seconds apart apply one at a time instead of racing, and a Pages
-deploy already in flight is never killed mid-way by a newer one. Neither
-of this applies to media proposals - there's no Action in that path to
-race.
+`apply-proposal.yml`, `apply-media-proposal.yml`, and `pages.yml` each
+use their own `concurrency:` group (`apply-proposal`,
+`apply-media-proposal`, and `pages` respectively) so that proposals
+approved seconds apart apply one at a time instead of racing, and a
+Pages deploy already in flight is never killed mid-way by a newer one.
 
 That concurrency group only protects one *running* + one *queued* run,
 though - GitHub silently evicts an older *queued* run when a third
@@ -142,13 +149,14 @@ dispatch arrives while it's still waiting, rather than stacking it. A
 burst of three-plus approvals within seconds of each other can therefore
 drop a proposal's dispatch entirely - not a failed run, one that never
 started (see GitHub issue #28; confirmed in production with proposal #13
-on 2026-09-09). `apply-proposal.yml` also runs on a 15-minute `schedule`
-as a result: a schedule-triggered run (or a manual dispatch with
-`proposal_id` left blank) fetches every proposal still at
-`status='approved'` (`GET /api/proposals/approved`) and applies all of
-them in one run, so a dropped dispatch is caught by the next sweep
-instead of sitting stuck indefinitely. The approval-driven fast path
-(dispatch with a specific `proposal_id`) is unchanged for the common
+on 2026-09-09). Both `apply-proposal.yml` and `apply-media-proposal.yml`
+also run on a 15-minute `schedule` as a result: a schedule-triggered run
+(or a manual dispatch with `proposal_id` left blank) fetches every
+proposal still at `status='approved'` (`GET /api/proposals/approved` or
+`/api/media-proposals/approved`) and applies all of them in one run, so
+a dropped dispatch is caught by the next sweep instead of sitting stuck
+indefinitely. The approval-driven fast path (dispatch with a specific
+`proposal_id`) is unchanged for the common
 case; the sweep is purely the safety net. Separately, the same commit
 that added the sweep also made the "commit and push" step itself retry
 with `git fetch && git rebase` a few times on a rejected push, since a

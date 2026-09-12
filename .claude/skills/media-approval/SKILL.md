@@ -1,15 +1,20 @@
 ---
 name: media-approval
-description: Find approved photo/video submissions waiting in the review-app queue and finish publishing them by hand (the repo's media pipeline is deliberately manual, not CI-driven) - retrieve the file, add the YAML entry, validate, upload to archive.org, commit/push, force-redeploy and confirm it's actually live on the site, then mark it published. Use when the user says "publish this photo/video", "process pending media", "check media submissions", or invokes /media-approval.
+description: Find approved photo/video submissions waiting in the review-app queue and finish publishing them - dispatch the automated upload pipeline (apply-media-proposal.yml), verify it actually landed, and fall back to a manual publish only if that Action fails. Use when the user says "publish this photo/video", "process pending media", "check media submissions", or invokes /media-approval.
 ---
 
 Approving a photo/video on `review.daugavpils.fans/dashboard` never touches
-git or archive.org (GitHub issue #21) - it only moves the row to "approved,
-awaiting publish". Finishing it is a manual job normally done by hand
-by whoever holds archive.org credentials; this skill does that job.
-See `documentation/ARCHITECTURE.md` and `webapp/deploy/README.md`'s
-"Photo/video proposals" section for the authoritative description - if
-either has changed since this skill was written, trust them over this file.
+git or archive.org by itself (GitHub issue #21) - it only moves the row to
+"approved, ready to publish". Finishing it normally means dispatching
+`apply-media-proposal.yml` (GitHub issue #36), the same automated pipeline
+the dashboard's own "Upload" button triggers: it fetches the file and
+metadata, uploads to archive.org, writes the YAML entry, and commits/pushes
+to `main` on its own. This skill does that, verifies it actually landed,
+and only falls back to the old by-hand process (steps 2-8 below) if the
+Action itself fails. See `documentation/ARCHITECTURE.md` and
+`webapp/deploy/README.md`'s "Photo/video proposals" section for the
+authoritative description - if either has changed since this skill was
+written, trust them over this file.
 
 Two separate proposal queues live in the same `review.db`: `media_proposals`
 (this skill's job) and `proposals` (text edits, applied automatically by
@@ -18,28 +23,28 @@ but see "Also check text proposals" below for why it's worth a glance).
 
 ## 0. Prerequisites (check once, not per run)
 
-- `ssh cherry` works (see `~/.ssh/config`).
-- `.venv/bin/python` in the repo root has `tools/requirements.txt` installed
-  (`internetarchive`, `pyyaml`, `pydantic`).
-- `~/.config/internetarchive/ia.ini` holds the project's (not personal)
-  archive.org credentials.
-- `cwebp` is on PATH (`brew install webp`) - every existing `image:` entry
-  in this repo is `.webp`; convert new photos to match, don't leave them
-  as the submitted jpg/png.
-- Current branch is `main`, clean, up to date (`git fetch && git status`).
+- `ssh cherry` works (see `~/.ssh/config`) - needed to read the queue
+  directly from `review.db` (logging into `/dashboard` needs a magic-link
+  email, which isn't automatable).
+- `gh` is authenticated for this repo (`gh auth status`) - needed to
+  dispatch and watch `apply-media-proposal.yml`.
+- Current branch is `main`, clean, up to date (`git fetch && git status`)
+  - mainly so a manual fallback (step 2b) starts from the right place.
+- Only needed for the manual fallback (step 2b), not the normal path:
+  `.venv/bin/python` with `tools/requirements.txt` installed, project
+  archive.org credentials in `~/.config/internetarchive/ia.ini`, and
+  `cwebp` on PATH (`brew install webp`).
 
 ## 1. Find the work
 
-Query the DB directly over SSH - logging into `/dashboard` as an approver
-needs a magic-link email, which isn't automatable, but reading/writing
-`review.db` via `docker compose exec` is the same data the dashboard reads:
+Query the DB directly over SSH:
 
 ```bash
 ssh cherry "cd /opt/daugavpils-fans && sudo docker compose exec -T review-app python3 - <<'EOF'
 import sqlite3
 conn = sqlite3.connect('/data/review.db')
 conn.row_factory = sqlite3.Row
-rows = conn.execute(\"SELECT * FROM media_proposals WHERE status IN ('pending','approved') ORDER BY created_at\").fetchall()
+rows = conn.execute(\"SELECT * FROM media_proposals WHERE status IN ('pending','approved','publish_failed') ORDER BY created_at\").fetchall()
 for r in rows:
     print(dict(r))
 EOF"
@@ -49,7 +54,8 @@ EOF"
   approve/reject is an editorial judgment call (is this really the band,
   is the photo appropriate, does the caption make sense) that belongs to
   a human on the dashboard. List these for the user; don't auto-approve.
-- **`status = 'approved'`**: ready to finish. Process each with steps 2-8.
+- **`status = 'approved'` or `'publish_failed'`**: ready to (re-)publish.
+  Process each with step 2.
 
 ### Also check text proposals while you're in there
 
@@ -101,7 +107,64 @@ print(dict(conn.execute('SELECT status, applied_at, apply_error FROM proposals W
 
 `status = 'applied'` and `apply_error IS NULL` is the only real confirmation.
 
-## 2. Retrieve and sanity-check the file
+## 2. Dispatch the automated upload pipeline (the normal path)
+
+For each `approved`/`publish_failed` media proposal, this is the same
+action as clicking "Upload" on the dashboard:
+
+```bash
+gh workflow run apply-media-proposal.yml -f proposal_id=<id> --ref main   # or leave -f blank to sweep everything approved
+gh run list --workflow=apply-media-proposal.yml --limit 1 --json databaseId --jq '.[0].databaseId'
+gh run watch <that id> --exit-status
+```
+
+`tools/apply_media_proposal.py` (run by that Action) fetches the file and
+metadata from `review_app`'s callback API, derives a clean filename,
+computes its `sha256` (and, for video, `duration`/`bitrate` via `ffprobe`),
+appends the `image`/`video` entry to `band.yaml`/`release.yaml`, uploads
+the file to the band/release's archive.org item, syncs metadata, and
+commits/pushes to `main` - then reports success/failure back to
+`review_app`. Verify against the DB, not just the Action's exit status
+(same reasoning as the text-proposal check above):
+
+```bash
+ssh cherry "cd /opt/daugavpils-fans && sudo docker compose exec -T review-app python3 -c \"
+import sqlite3; conn = sqlite3.connect('/data/review.db'); conn.row_factory = sqlite3.Row
+print(dict(conn.execute('SELECT status, published_at, publish_error, github_run_id FROM media_proposals WHERE id = <id>').fetchone()))
+\""
+```
+
+`status = 'published'` with `publish_error IS NULL` is the only real
+confirmation - the Action having reported "Upload complete" or exited 0
+is not, since it explicitly reports its own failures back too. On
+success, `review_app` has already deleted the original from
+`review-app-data/uploads/` and closed the row - there's nothing left to
+do. Confirm the file is actually live before telling the user it's done:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -L "https://archive.org/download/daugavpils-fans-<band-slug>/media/<filename>"   # expect 200
+curl -s --compressed "https://daugavpils.fans/bands/<band-slug>/" | grep -F "<filename>"   # expect a hit
+```
+
+(the filename `apply_media_proposal.py` chose is in the commit it pushed -
+`git log --oneline -- bands/<band-slug>/` - or in the YAML entry itself.)
+
+If `status` came back `publish_failed` (or the Action run failed outright),
+read `publish_error`/the Action log to understand why before falling back
+to step 2b - a bad submission (corrupt file, unsupported format) should be
+rejected on the dashboard instead of force-published by hand, whereas a
+transient failure (network flake, archive.org rate limit) is usually worth
+just re-running step 2 once rather than jumping to a manual publish.
+
+## 2b. Manual fallback - only if step 2's Action genuinely can't do it
+
+Everything below is the pre-#36 by-hand process, kept for the cases the
+automated pipeline can't handle itself (e.g. a format `ffprobe`/the MIME
+allowlist rejects, or archive.org access from Actions is unavailable).
+This is also what the dashboard's own "Mark published manually" button
+assumes a curator has already done by hand.
+
+### Retrieve and sanity-check the file
 
 ```bash
 ssh cherry "sudo cat /opt/daugavpils-fans/review-app-data/uploads/<stored_filename>" > /tmp/<stored_filename>
@@ -113,7 +176,7 @@ the existing ssh session is the practical equivalent.)
 actually matches the submitted caption and band. This is a public,
 permanent archive.org upload; a wrong photo is not cheaply undone.
 
-## 3. Place it and write the YAML entry
+### Place it and write the YAML entry
 
 - Band-level media (no `release_slug`): `bands/<band_slug>/media/`.
 - Release-level media (`release_slug` set): the equivalent `media/`
@@ -135,14 +198,14 @@ permanent archive.org upload; a wrong photo is not cheaply undone.
 - `caption_en`: your own faithful translation. If the submitter left no
   caption at all, don't invent one - ask the user for one instead.
 
-## 4. Validate
+### Validate
 
 ```bash
 .venv/bin/python tools/validate.py --write
 .venv/bin/python tools/validate.py   # confirm clean
 ```
 
-## 5. Publish to archive.org - run this exactly once
+### Publish to archive.org - run this exactly once
 
 ```bash
 .venv/bin/python tools/publish_to_archive_org.py --bands <band-slug> [<band-slug> ...]
@@ -169,7 +232,7 @@ a log file) rather than trying it in the foreground first - large existing
 audio/video already in an item can push a single run past a couple of
 minutes even when nothing meaningful changed.
 
-## 6. Commit and push directly to `main`
+### Commit and push directly to `main`
 
 No PR/merge step for this repo (standing preference) - commit and push
 straight to `main`, one commit per proposal, in the same descriptive style
@@ -183,7 +246,7 @@ If the push is rejected (non-fast-forward - likely if a text proposal
 landed via CI while you were working), `git fetch && git rebase
 origin/main` and push again; don't force-push.
 
-## 7. Redeploy and verify it's actually live - before doing anything else below
+### Redeploy and verify it's actually live - before doing anything else below
 
 Don't wait for the VPS's `daugavpils-fans-sync.timer` (polls `main` every
 5 minutes) - force it immediately after pushing:
@@ -209,17 +272,18 @@ archive.org can lag a minute or two after upload before the file resolves
 - retry rather than concluding failure immediately. Report the live
 URL(s) back to the user once confirmed.
 
-**Do this before step 8, not after.** Marking a proposal published and
-offering to delete its only-copy original is irreversible bookkeeping -
-do it only once you've actually confirmed the photo/video is live on the
-site, not on the assumption that publish+push+deploy will just work out.
+**Do this before marking it published, not after.** Marking a proposal
+published and offering to delete its only-copy original is irreversible
+bookkeeping - do it only once you've actually confirmed the photo/video is
+live on the site, not on the assumption that publish+push+deploy will just
+work out.
 
-## 8. Mark it published in the queue
+### Mark it published in the queue
 
-Only after step 7 has confirmed the file is actually live. This is
-bookkeeping, not a curation decision - it's what the dashboard's "Mark
-published" button does, replicated directly since that button also
-requires a logged-in approver session:
+Only after the live check above. This is bookkeeping, not a curation
+decision - it's what the dashboard's "Mark published manually" button
+does, replicated directly since that button also requires a logged-in
+approver session:
 
 ```bash
 ssh cherry "cd /opt/daugavpils-fans && sudo docker compose exec -T review-app python3 - <<'EOF'
@@ -227,17 +291,17 @@ import sqlite3
 conn = sqlite3.connect('/data/review.db')
 cur = conn.execute(
     \"UPDATE media_proposals SET status = 'published', published_at = datetime('now') \"
-    \"WHERE id = <id> AND status = 'approved'\"
+    \"WHERE id = <id> AND status IN ('approved', 'publish_failed')\"
 )
 conn.commit()
 print('rows updated:', cur.rowcount)   # must be 1
 EOF"
 ```
 
-Then, only once the file is confirmed live (step 7) and marked published
-above, offer to delete the original upload (`review-app-data/uploads/`
-isn't backed up, and the dashboard's own button deletes it at this same
-point too):
+Then, only once the file is confirmed live and marked published above,
+offer to delete the original upload (`review-app-data/uploads/` isn't
+backed up, and the dashboard's own button deletes it at this same point
+too):
 
 ```bash
 ssh cherry "sudo rm -fv /opt/daugavpils-fans/review-app-data/uploads/<stored_filename>"
@@ -246,4 +310,4 @@ ssh cherry "sudo rm -fv /opt/daugavpils-fans/review-app-data/uploads/<stored_fil
 **Confirm with the user before running that delete** - it's a destructive,
 irreversible action on the only copy of the original upload, and the
 permission system will likely ask anyway. Don't even raise the question
-of deleting it until step 7's live check has actually passed.
+of deleting it until the live check above has actually passed.

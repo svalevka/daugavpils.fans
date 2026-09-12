@@ -292,14 +292,18 @@ Two kinds of proposal, with genuinely different mechanics behind them:
   live within one Site Build cycle of approval, no further action from
   anyone.
 - **New photos/videos** - contributing a new `image`/`video` entry to an
-  existing band or release (GitHub issue #21). Deliberately **not**
-  automated the same way: approving one never touches git or archive.org
-  - `apply-proposal.yml` only knows about text proposals. It just marks
-  the upload "ready to publish" on the dashboard; a maintainer still
-  retrieves the file (`scp`/`rsync` off the server) and publishes it by
-  hand, the same way as "Adding a new band, step by step" below. See
-  `webapp/deploy/README.md`'s "Photo/video proposals" section for the
-  exact steps.
+  existing band or release (GitHub issue #21, automated in #36).
+  Approving just moves the upload to a "ready to publish" list on the
+  dashboard; from there a curator clicks "Upload" to dispatch
+  `apply-media-proposal.yml` (GitHub issue #36), which fetches the file,
+  computes its checksum and (for video) duration/bitrate, appends the
+  `image`/`video` entry to `band.yaml`/`release.yaml`, uploads the file
+  to archive.org, and commits/pushes to `main` - no maintainer machine
+  or local media tree involved. A "Mark published manually" fallback
+  button still exists on the dashboard for a curator who publishes the
+  file by hand instead (`scp`/`rsync` off the server, the same way as
+  "Adding a new band, step by step" below). See `webapp/deploy/README.md`'s
+  "Photo/video proposals" section for both paths.
 
 This feature only exists on the primary domain - the GitHub Pages mirror
 below has no such app; visiting it there won't find a proposal form.

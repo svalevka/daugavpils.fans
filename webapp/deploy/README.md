@@ -207,27 +207,41 @@ service (no `ports:`, only `expose:`) and
    lands on `main`, and confirm both the Pages mirror and (within one
    timer interval) the primary domain pick it up.
 
-### Photo/video proposals (GitHub issue #21)
+### Photo/video proposals (GitHub issue #21, automated in #36)
 
-Unlike text proposals, approving a photo/video on `/dashboard` never
-touches git or archive.org - it's a "curated queue, manual finish"
-design: approving only moves it to the dashboard's "Approved, awaiting
-publish" list. To actually finish one:
+Approving a photo/video on `/dashboard` never touches git or
+archive.org by itself - it only moves the upload to the dashboard's
+"Ready to publish" list. From there, two ways to actually finish it:
 
-```bash
-scp <server>:/opt/daugavpils-fans/review-app-data/uploads/<stored-filename> .
-```
+- **Click "Upload" (the normal path).** This dispatches
+  `apply-media-proposal.yml`, which fetches the proposal's metadata and
+  file from `review_app`'s callback API, runs
+  `tools/apply_media_proposal.py` to derive a clean filename, compute
+  its `sha256` (and, for video, `duration`/`bitrate` via `ffprobe`),
+  append the `image`/`video` entry to `band.yaml`/`release.yaml`, upload
+  the file to the band/release's archive.org item, sync metadata, and
+  commit/push the result to `main` - then reports back to `review_app`,
+  which marks the row `published` and deletes the file from
+  `review-app-data/uploads/`. No maintainer machine or local media tree
+  needed; the dashboard shows "Uploading to archive.org..." while the
+  Action runs, and "Upload failed" with a retry button if it doesn't.
+- **"Mark published manually" (fallback).** For when you'd rather (or
+  need to) do it by hand:
 
-(the dashboard names the file), then place it under the right
-`bands/<band-slug>/` (or `bands/<band-slug>/<release-slug>/`) directory
-in your own local checkout, add the `image:`/`video:` entry to
-`band.yaml`/`release.yaml` (the dashboard shows the submitter's suggested
-caption, if any), run `tools/validate.py --write`, then
-`tools/publish_to_archive_org.py`, commit, and push - exactly the same
-manual steps as adding media any other way. Once done, click "Mark
-published" on the dashboard - this deletes the file from
-`review-app-data/uploads/` (unbacked-up, so nothing should linger there
-once you're finished with it) and closes out the row.
+  ```bash
+  scp <server>:/opt/daugavpils-fans/review-app-data/uploads/<stored-filename> .
+  ```
+
+  (the dashboard names the file), then place it under the right
+  `bands/<band-slug>/` (or `bands/<band-slug>/<release-slug>/`)
+  directory in your own local checkout, add the `image:`/`video:` entry
+  to `band.yaml`/`release.yaml` (the dashboard shows the submitter's
+  suggested caption, if any), run `tools/validate.py --write`, then
+  `tools/publish_to_archive_org.py`, commit, and push - exactly the same
+  manual steps as adding media any other way. Once done, click "Mark
+  published manually" on the dashboard - this deletes the file from
+  `review-app-data/uploads/` (unbacked-up, so nothing should linger
+  there once you're finished with it) and closes out the row.
 
 ## Cert renewal
 

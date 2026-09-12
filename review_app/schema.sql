@@ -73,12 +73,15 @@ CREATE TABLE IF NOT EXISTS login_request_log (
     requested_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- New photo/video proposals (GitHub issue #21) - deliberately not the
--- `proposals` table above: unlike a text edit, approving one of these
--- never touches git or archive.org (see the issue's "curated queue,
--- manual finish" design). status has its own terminal state
--- ('published') the maintainer sets by hand once they've actually
--- published the file and committed the YAML entry themselves.
+-- New photo/video proposals (GitHub issue #21, upload automated in #36)
+-- - deliberately not the `proposals` table above: approving one never
+-- touches git or archive.org by itself, it only queues the upload as
+-- "ready to publish". From there status normally moves through
+-- 'publishing' (a curator clicked "Upload", dispatching
+-- apply-media-proposal.yml) to 'published' once that Action's
+-- apply_media_proposal.py has uploaded the file and committed the YAML
+-- entry - or a curator can instead publish the file by hand and set
+-- 'published' directly via the dashboard's manual-fallback route.
 CREATE TABLE IF NOT EXISTS media_proposals (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
