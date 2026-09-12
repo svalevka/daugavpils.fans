@@ -1,0 +1,112 @@
+name: Dead-man's-switch - self-test
+
+# Monthly health check for the dead-man's-switch mechanism itself. A
+# switch that only gets exercised once, at an unpredictable time, is
+# worthless if it silently rotted (e.g. SWITCH_VAULT_PAT expired -
+# fine-grained PATs cap out at 1 year, they don't renew themselves).
+# This mirrors the existing verify-archive-org.yml pattern: catch drift
+# via CI, file/update an issue, rather than assuming "no complaints"
+# means "still working". See documentation/DEAD_MANS_SWITCH.md.
+#
+# Consecutive-failure count is tracked in a committed state file
+# (.github/switch-selftest-state.json) since Actions has no other
+# durable cross-run storage that's this simple/boring. After
+# FAILURE_ESCALATION_THRESHOLD consecutive unfixed failures, the trusted
+# contacts are also notified - not just the owner - so nobody trusts a
+# switch that's quietly broken.
+
+on:
+  schedule:
+    - cron: "0 6 1 * *" # 06:00 UTC on the 1st of each month
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  contents: write
+
+env:
+  VAULT_OWNER: svalevka
+  VAULT_REPO: daugavpils-fans-recovery-vault
+  STATE_FILE: .github/switch-selftest-state.json
+  FAILURE_ESCALATION_THRESHOLD: 3
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check trusted-contacts allowlist parses
+        id: contacts
+        env:
+          TRUSTED_CONTACTS_JSON: ${{ secrets.SWITCH_TRUSTED_CONTACTS }}
+        run: |
+          if echo "$TRUSTED_CONTACTS_JSON" | jq -e 'type == "array" and length > 0 and all(.[]; .github and .email and .name)' >/dev/null 2>&1; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check vault PAT still has admin access to the vault repo
+        id: vault
+        env:
+          VAULT_TOKEN: ${{ secrets.SWITCH_VAULT_PAT }}
+        run: |
+          admin=$(GH_TOKEN="$VAULT_TOKEN" gh api "repos/$VAULT_OWNER/$VAULT_REPO" --jq '.permissions.admin' 2>/dev/null || echo "false")
+          echo "ok=$admin" >> "$GITHUB_OUTPUT"
+
+      - name: Record result and act on it
+        env:
+          TRUSTED_CONTACTS_JSON: ${{ secrets.SWITCH_TRUSTED_CONTACTS }}
+          CONTACTS_OK: ${{ steps.contacts.outputs.ok }}
+          VAULT_OK: ${{ steps.vault.outputs.ok }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          mkdir -p "$(dirname "$STATE_FILE")"
+          [ -f "$STATE_FILE" ] || echo '{"consecutive_failures": 0}' > "$STATE_FILE"
+          failures=$(jq -r '.consecutive_failures // 0' "$STATE_FILE")
+
+          if [ "$CONTACTS_OK" = "true" ] && [ "$VAULT_OK" = "true" ]; then
+            if [ "$failures" -gt 0 ]; then
+              echo '{"consecutive_failures": 0}' > "$STATE_FILE"
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git add "$STATE_FILE"
+              git commit -m "Dead-man's-switch self-test: recovered"
+              git push
+            fi
+            exit 0
+          fi
+
+          failures=$((failures + 1))
+          echo "{\"consecutive_failures\": $failures}" > "$STATE_FILE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$STATE_FILE"
+          git commit -m "Dead-man's-switch self-test: failure #$failures"
+          git push
+
+          body="Dead-man's-switch self-test failed (consecutive failures: $failures).
+
+          - Trusted-contacts allowlist parses OK: $CONTACTS_OK
+          - Vault PAT has admin access to $VAULT_OWNER/$VAULT_REPO: $VAULT_OK
+
+          Likely cause if the PAT check failed: SWITCH_VAULT_PAT expired (fine-grained PATs cap at 1 year) or was revoked - mint a new one and update the secret. See documentation/DEAD_MANS_SWITCH.md.
+
+          Full run: $RUN_URL"
+
+          existing=$(gh issue list --label switch-selftest --state open --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+            issue_number="$existing"
+          else
+            issue_url=$(gh issue create --title "Dead-man's-switch self-test failing" --label switch-selftest --label needs-triage --body "$body")
+            issue_number=$(echo "$issue_url" | grep -oE '[0-9]+$')
+          fi
+
+          if [ "$failures" -ge "$FAILURE_ESCALATION_THRESHOLD" ]; then
+            others=$(echo "$TRUSTED_CONTACTS_JSON" | jq -r '[.[] | "@" + .github] | join(" ")')
+            gh issue comment "$issue_number" --body "$others - this dead-man's-switch mechanism has been broken for $failures consecutive monthly checks. If you're relying on it and haven't heard from the maintainer, automated credential delivery may not currently work - this is worth flagging to whoever can still fix it, or treating as a reason to reach the maintainer directly first."
+          fi

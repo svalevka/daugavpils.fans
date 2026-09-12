@@ -1,0 +1,39 @@
+name: "Dead-man's-switch: request archive.org access"
+description: >-
+  Only use this if the maintainer is unreachable/deceased and you need the
+  archive.org (ia tool) credential to keep the archive alive. Opening this
+  starts a 7-day countdown - see documentation/DEAD_MANS_SWITCH.md.
+title: "[dead-mans-switch] access request"
+labels:
+  - dead-mans-switch
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This opens a request under the daugavpils.fans dead-man's-switch
+        (see `documentation/DEAD_MANS_SWITCH.md` for the full mechanism).
+
+        **What happens next:**
+        1. A workflow checks whether your GitHub account is on the
+           pre-registered trusted-contacts list. If it isn't, this issue
+           will be closed automatically with no further action.
+        2. If it is, the maintainer is notified and has **7 days** to
+           cancel this request by closing this issue themselves. The other
+           trusted contacts are also notified as witnesses.
+        3. If nobody cancels within 7 days, you will be invited as a
+           collaborator on a private vault repository containing the
+           current archive.org access credential.
+
+        Only open this if you genuinely believe the maintainer is gone or
+        permanently unreachable - not as a test, and not because they're
+        just slow to reply.
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: >-
+            I believe the maintainer is deceased or permanently
+            unreachable, and I am requesting the archive.org credential
+            under the process described in documentation/DEAD_MANS_SWITCH.md.
+          required: true

@@ -1,0 +1,128 @@
+name: Dead-man's-switch - check and trip
+
+# Runs daily. Finds open issues labelled switch-pending (armed by
+# switch-request.yml) whose age exceeds SWITCH_DELAY_DAYS. For each one
+# past the deadline: re-verifies the requester is still on the trusted
+# list, writes the *live* IA_ACCESS_KEY_ID/IA_SECRET_ACCESS_KEY into the
+# private vault repo (svalevka/daugavpils-fans-recovery-vault) fresh -
+# never a pre-copied/stale value - and invites the requester as a
+# collaborator there using SWITCH_VAULT_PAT (a fine-grained PAT scoped
+# only to that repo). Then closes and relabels the original issue.
+#
+# SWITCH_DELAY_DAYS is deliberately a plain env var, not a secret, so it
+# can be dropped low for an end-to-end test run via workflow_dispatch
+# without touching any credential.
+#
+# See documentation/DEAD_MANS_SWITCH.md for the full mechanism.
+
+on:
+  schedule:
+    - cron: "17 3 * * *" # daily, off-the-hour to avoid GitHub's cron pile-up
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+
+env:
+  VAULT_OWNER: svalevka
+  VAULT_REPO: daugavpils-fans-recovery-vault
+  SWITCH_DELAY_DAYS: 7
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Find pending switch issues past their deadline
+        id: pending
+        run: |
+          now=$(date -u +%s)
+          threshold=$((SWITCH_DELAY_DAYS * 86400))
+          gh issue list --label switch-pending --state open --json number,createdAt --jq '.[]' | \
+          jq -c . | while read -r issue; do
+            number=$(echo "$issue" | jq -r '.number')
+            created=$(echo "$issue" | jq -r '.createdAt')
+            created_epoch=$(date -u -d "$created" +%s 2>/dev/null || date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$created" +%s)
+            age=$((now - created_epoch))
+            if [ "$age" -ge "$threshold" ]; then
+              echo "$number" >> tripped.txt
+            fi
+          done
+          if [ -f tripped.txt ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trip each due issue
+        if: steps.pending.outputs.found == 'true'
+        env:
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+          TRUSTED_CONTACTS_JSON: ${{ secrets.SWITCH_TRUSTED_CONTACTS }}
+          VAULT_TOKEN: ${{ secrets.SWITCH_VAULT_PAT }}
+        run: |
+          while read -r number; do
+            requester=$(gh issue view "$number" --json author --jq '.author.login')
+
+            # Re-verify: the allowlist may have changed since the issue was opened.
+            still_listed=$(echo "$TRUSTED_CONTACTS_JSON" | jq -r --arg login "$requester" '[.[] | select(.github == $login)] | length')
+            if [ "$still_listed" -eq 0 ]; then
+              gh issue comment "$number" --body "@$requester is no longer on the trusted-contacts list. This request will not be fulfilled; closing."
+              gh issue edit "$number" --remove-label switch-pending --add-label switch-rejected
+              gh issue close "$number" --reason "not planned"
+              continue
+            fi
+
+            timestamp=$(date -u '+%Y-%m-%d %H:%M UTC')
+            content=$(cat <<EOF
+# archive.org (ia tool) access credential
+
+Delivered: $timestamp
+Requested by: @$requester via daugavpils.fans#$number
+
+\`\`\`
+IA_ACCESS_KEY_ID=$IA_ACCESS_KEY_ID
+IA_SECRET_ACCESS_KEY=$IA_SECRET_ACCESS_KEY
+\`\`\`
+
+## What this is
+
+This is the S3-style access key pair for the project's archive.org
+account, used by the \`ia\` CLI / \`internetarchive\` Python
+library to upload and manage items. See
+\`documentation/DEAD_MANS_SWITCH.md\` and \`README.md\` in
+\`svalevka/daugavpils.fans\` for how to use it and what to do next
+(including recovering or replacing the archive.org account if
+needed).
+
+Once you no longer need collaborator access to this vault repo,
+feel free to leave it.
+EOF
+)
+
+            b64=$(echo "$content" | base64 | tr -d '\n')
+            existing_sha=$(GH_TOKEN="$VAULT_TOKEN" gh api \
+              "repos/$VAULT_OWNER/$VAULT_REPO/contents/CREDENTIAL.md" --jq '.sha' 2>/dev/null || true)
+
+            if [ -n "$existing_sha" ]; then
+              GH_TOKEN="$VAULT_TOKEN" gh api -X PUT \
+                "repos/$VAULT_OWNER/$VAULT_REPO/contents/CREDENTIAL.md" \
+                -f message="Deliver credential for #$number ($timestamp)" \
+                -f content="$b64" -f sha="$existing_sha" >/dev/null
+            else
+              GH_TOKEN="$VAULT_TOKEN" gh api -X PUT \
+                "repos/$VAULT_OWNER/$VAULT_REPO/contents/CREDENTIAL.md" \
+                -f message="Deliver credential for #$number ($timestamp)" \
+                -f content="$b64" >/dev/null
+            fi
+
+            GH_TOKEN="$VAULT_TOKEN" gh api -X PUT \
+              "repos/$VAULT_OWNER/$VAULT_REPO/collaborators/$requester" \
+              -f permission=pull >/dev/null
+
+            gh issue comment "$number" --body "The 7-day window has passed with no cancellation. @$requester has been invited as a collaborator on the private vault repo (check your GitHub notifications) - the current archive.org credential is there. Closing this issue."
+            gh issue edit "$number" --remove-label switch-pending --add-label switch-tripped
+            gh issue close "$number" --reason completed
+          done < tripped.txt

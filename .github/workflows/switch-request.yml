@@ -1,0 +1,69 @@
+name: Dead-man's-switch - handle request
+
+# Fires when someone opens an issue via the "dead-mans-switch" issue
+# template. Verifies the opener's GitHub login against the
+# SWITCH_TRUSTED_CONTACTS allowlist secret (a JSON array of
+# {github, email, name}) - unlisted openers get the issue closed
+# immediately with no further action. Listed openers get the issue
+# labelled switch-pending, the owner assigned (-> native GitHub email
+# notification), and the rest of the trusted list @mentioned as
+# witnesses. See documentation/DEAD_MANS_SWITCH.md for the full
+# mechanism; switch-check.yml does the actual 7-day wait + delivery.
+#
+# The "7 days" in the comment text below is not read from anywhere - if
+# switch-check.yml's SWITCH_DELAY_DAYS is ever changed, update it here too.
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  handle-request:
+    if: contains(github.event.issue.labels.*.name, 'dead-mans-switch')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      REQUESTER: ${{ github.event.issue.user.login }}
+      OWNER: svalevka
+    steps:
+      - name: Look up requester in trusted-contacts allowlist
+        id: lookup
+        env:
+          TRUSTED_CONTACTS_JSON: ${{ secrets.SWITCH_TRUSTED_CONTACTS }}
+        run: |
+          entry=$(echo "$TRUSTED_CONTACTS_JSON" | jq -c --arg login "$REQUESTER" '[.[] | select(.github == $login)][0] // empty')
+          if [ -z "$entry" ]; then
+            echo "matched=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "matched=true" >> "$GITHUB_OUTPUT"
+          echo "name=$(echo "$entry" | jq -r '.name')" >> "$GITHUB_OUTPUT"
+
+          # Everyone else on the list, as @mentions, so they witness the request.
+          others=$(echo "$TRUSTED_CONTACTS_JSON" | jq -r --arg login "$REQUESTER" '[.[] | select(.github != $login) | "@" + .github] | join(" ")')
+          echo "others=$others" >> "$GITHUB_OUTPUT"
+
+      - name: Reject unlisted requester
+        if: steps.lookup.outputs.matched != 'true'
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --body "@$REQUESTER is not on the trusted-contacts list for this dead-man's-switch. Closing with no action taken."
+          gh issue close "$ISSUE_NUMBER" --reason "not planned"
+          gh issue edit "$ISSUE_NUMBER" --add-label switch-rejected
+
+      - name: Arm the switch
+        if: steps.lookup.outputs.matched == 'true'
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --add-label switch-pending --add-assignee "$OWNER"
+          deadline=$(date -u -d '+7 days' '+%Y-%m-%d %H:%M UTC' 2>/dev/null || date -u -v+7d '+%Y-%m-%d %H:%M UTC')
+          body="@$OWNER - a dead-man's-switch request was opened by @$REQUESTER (${{ steps.lookup.outputs.name }}).
+
+          If this is not expected, **close this issue to cancel it**. Nothing is disclosed until then.
+
+          If it stays open past **$deadline**, the daily check will deliver the current archive.org credential by inviting @$REQUESTER as a collaborator on the private vault repo.
+
+          ${{ steps.lookup.outputs.others }} - you're listed as a trusted contact too, so you're being notified as a witness to this request."
+          gh issue comment "$ISSUE_NUMBER" --body "$body"
