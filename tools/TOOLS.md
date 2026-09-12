@@ -111,6 +111,37 @@ this same navigation logic will later compare a proposal's
   what the test suite uses to validate temporary fixture trees without
   touching real archive data.
 
+## `apply_media_proposal.py`
+
+**Problem it solves:** turning an approved photo or video submission into a
+published archive.org media file and updating `band.yaml` or `release.yaml`
+automatically. Replaces the manual maintainer workflow (downloading from the
+server, computing sha256 and AV metadata, uploading to archive.org, updating
+YAML by hand) with an automated script running in GitHub Actions.
+
+**How:** given a proposal JSON (slugs, media type, original filename,
+content type, caption) and the downloaded media binary file:
+- Validates slugs and rejects invalid/path-traversal parameters.
+- Derives a clean filename (transliterating Cyrillic/non-ASCII via `unidecode`,
+  prefixing with band slug for band media, prefixing with `video-` for videos,
+  and handling collisions cleanly).
+- Copies the media file to `bands/<band_slug>/media/` or
+  `bands/<band_slug>/<release_slug>/`.
+- Computes the file's sha256 checksum and, for video files, extracts
+  `duration` (ISO 8601) and `bitrate` via `ffprobe`.
+- Appends the new `ImageObject` or `VideoObject` to `band.yaml` or
+  `release.yaml`, updating `sameAs` references.
+- Uploads the media file directly to the appropriate archive.org item
+  (`daugavpils-fans-<slug>`), syncs item metadata, and updates the consolidated
+  metadata backup bundle (`daugavpils-fans-metadata`).
+
+**When you'd run it:**
+- `python tools/apply_media_proposal.py --proposal-file proposal.json --media-file file.bin`
+  -- executed automatically by `.github/workflows/apply-media-proposal.yml`
+  when an approver clicks "Upload" in `review_app`.
+- `--bands-dir PATH` -- point it at a test fixture tree.
+- `--skip-upload` or `--dry-run` -- test without communicating with archive.org.
+
 ## `archive_org.py`
 
 **Problem it solves:** the publish tool and the website both need to agree

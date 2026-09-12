@@ -94,10 +94,12 @@ CREATE TABLE IF NOT EXISTS media_proposals (
     submitter_contact TEXT,
     submitter_ip TEXT NOT NULL,
     submitted_by_approver_id INTEGER REFERENCES approvers(id),
-    status TEXT NOT NULL DEFAULT 'pending',      -- pending | approved | rejected | published
+    status TEXT NOT NULL DEFAULT 'pending',      -- pending | approved | rejected | publishing | published | publish_failed
     decided_by INTEGER REFERENCES approvers(id),
     decided_at TEXT,
-    published_at TEXT
+    github_run_id TEXT,
+    published_at TEXT,
+    publish_error TEXT
 );
 
 -- Admin authentication for site maintainer statistics (/admin/):

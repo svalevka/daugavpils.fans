@@ -269,5 +269,94 @@ class ApplyResultTest(ReviewAppTestCase):
         self.assertEqual(self.fetch_proposals()[0]["status"], "applied")  # unchanged by the second report
 
 
+class MediaApiTest(ReviewAppTestCase):
+    def _approved_media_id(self) -> int:
+        approver_id = self.seed_approver("approver@example.com")
+        self.submit_media()
+        proposal_id = self.fetch_media_proposals()[-1]["id"]
+        self.login_as(approver_id)
+        self.client.post(f"/media-proposals/{proposal_id}/approve")
+        return proposal_id
+
+    def test_get_media_proposal_requires_callback_key(self):
+        proposal_id = self._approved_media_id()
+        response = self.client.get(f"/api/media-proposals/{proposal_id}")
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_media_proposal_returns_metadata_and_flips_to_publishing(self):
+        proposal_id = self._approved_media_id()
+        response = self.client.get(
+            f"/api/media-proposals/{proposal_id}", headers=self.callback_headers()
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data["id"], proposal_id)
+        self.assertEqual(data["band_slug"], self.fx.band_slug)
+        self.assertEqual(data["media_type"], "image")
+        self.assertEqual(data["original_filename"], "photo.jpg")
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "publishing")
+
+    def test_get_media_proposal_file(self):
+        proposal_id = self._approved_media_id()
+        response = self.client.get(
+            f"/api/media-proposals/{proposal_id}/file", headers=self.callback_headers()
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "image/jpeg")
+        self.assertTrue(len(response.data) > 0)
+
+    def test_list_approved_media_proposals(self):
+        proposal_id = self._approved_media_id()
+        response = self.client.get(
+            "/api/media-proposals/approved", headers=self.callback_headers()
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(proposal_id, response.get_json()["ids"])
+
+    def test_media_publish_result_success_unlinks_file(self):
+        proposal_id = self._approved_media_id()
+        self.client.get(f"/api/media-proposals/{proposal_id}", headers=self.callback_headers())
+        stored_file = (
+            self.config.resolved_media_uploads_path()
+            / self.fetch_media_proposals()[0]["stored_filename"]
+        )
+        self.assertTrue(stored_file.exists())
+
+        response = self.client.post(
+            f"/api/media-proposals/{proposal_id}/publish-result",
+            json={"success": True, "run_id": "run-99"},
+            headers=self.callback_headers(),
+        )
+        self.assertEqual(response.status_code, 200)
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "published")
+        self.assertEqual(row["github_run_id"], "run-99")
+        self.assertIsNotNone(row["published_at"])
+        self.assertFalse(stored_file.exists())
+
+    def test_media_publish_result_failure_records_error_and_keeps_file(self):
+        proposal_id = self._approved_media_id()
+        self.client.get(f"/api/media-proposals/{proposal_id}", headers=self.callback_headers())
+        stored_file = (
+            self.config.resolved_media_uploads_path()
+            / self.fetch_media_proposals()[0]["stored_filename"]
+        )
+        self.assertTrue(stored_file.exists())
+
+        response = self.client.post(
+            f"/api/media-proposals/{proposal_id}/publish-result",
+            json={"success": False, "run_id": "run-100", "error": "upload failed: connection timeout"},
+            headers=self.callback_headers(),
+        )
+        self.assertEqual(response.status_code, 200)
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "publish_failed")
+        self.assertEqual(row["github_run_id"], "run-100")
+        self.assertIn("connection timeout", row["publish_error"])
+        self.assertTrue(stored_file.exists())
+
+
 if __name__ == "__main__":
     unittest.main()

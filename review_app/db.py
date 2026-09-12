@@ -23,6 +23,14 @@ def init_schema(database_path: Path, maintainer_email: str | None = None) -> Non
     conn = sqlite3.connect(database_path)
     try:
         conn.executescript(SCHEMA_SQL)
+        try:
+            conn.execute("ALTER TABLE media_proposals ADD COLUMN github_run_id TEXT")
+        except sqlite3.OperationalError:
+            pass
+        try:
+            conn.execute("ALTER TABLE media_proposals ADD COLUMN publish_error TEXT")
+        except sqlite3.OperationalError:
+            pass
         conn.commit()
         roles.ensure_default_roles(conn, maintainer_email)
     finally:

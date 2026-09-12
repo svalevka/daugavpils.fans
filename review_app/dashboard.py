@@ -90,7 +90,7 @@ def view_pending():
     # hand", so it belongs on this dashboard as its own list, not treated
     # as done the way an approved text proposal is.
     media_rows = conn.execute(
-        "SELECT * FROM media_proposals WHERE status IN ('pending', 'approved') ORDER BY created_at"
+        "SELECT * FROM media_proposals WHERE status IN ('pending', 'approved', 'publishing', 'publish_failed') ORDER BY created_at"
     ).fetchall()
     media_pending = []
     media_awaiting_publish = []
@@ -107,6 +107,9 @@ def view_pending():
             "submitter_name": row["submitter_name"],
             "submitter_contact": row["submitter_contact"],
             "is_own_submission": row["submitted_by_approver_id"] == g.approver["id"],
+            "status": row["status"],
+            "github_run_id": row["github_run_id"] if "github_run_id" in row.keys() else None,
+            "publish_error": row["publish_error"] if "publish_error" in row.keys() else None,
         }
         (media_pending if row["status"] == "pending" else media_awaiting_publish).append(item)
 
@@ -278,6 +281,39 @@ def reject_media(proposal_id: int):
     return redirect(url_for("dashboard.view_pending"))
 
 
+@bp.post("/media-proposals/<int:proposal_id>/upload")
+@require_approver
+def upload_media(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT id, status FROM media_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None:
+        abort(404)
+    if row["status"] not in ("approved", "publishing", "publish_failed"):
+        abort(409)
+
+    conn.execute(
+        "UPDATE media_proposals SET status = 'publishing', publish_error = NULL WHERE id = ?",
+        (proposal_id,),
+    )
+    conn.commit()
+
+    try:
+        github_dispatch.trigger_media_apply(current_app.config["GITHUB_CONFIG"], proposal_id)
+    except OSError:
+        current_app.logger.exception(
+            "failed to dispatch apply-media-proposal.yml for proposal %s", proposal_id
+        )
+        conn.execute(
+            "UPDATE media_proposals SET status = 'publish_failed', publish_error = ? WHERE id = ?",
+            ("Failed to dispatch upload workflow to GitHub Actions", proposal_id),
+        )
+        conn.commit()
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
 @bp.post("/media-proposals/<int:proposal_id>/publish")
 @require_approver
 def publish_media(proposal_id: int):
@@ -287,7 +323,8 @@ def publish_media(proposal_id: int):
     self-approval the way approve/reject are."""
     conn = db.get_connection()
     row = conn.execute(
-        "SELECT stored_filename FROM media_proposals WHERE id = ? AND status = 'approved'", (proposal_id,)
+        "SELECT stored_filename FROM media_proposals WHERE id = ? AND status IN ('approved', 'publish_failed')",
+        (proposal_id,),
     ).fetchone()
     if row is None:
         existing = conn.execute("SELECT id FROM media_proposals WHERE id = ?", (proposal_id,)).fetchone()
@@ -295,7 +332,7 @@ def publish_media(proposal_id: int):
 
     cur = conn.execute(
         "UPDATE media_proposals SET status = 'published', published_at = datetime('now') "
-        "WHERE id = ? AND status = 'approved'",
+        "WHERE id = ? AND status IN ('approved', 'publish_failed')",
         (proposal_id,),
     )
     conn.commit()

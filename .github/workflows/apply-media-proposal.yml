@@ -1,0 +1,139 @@
+name: Apply approved media proposal
+
+# Triggered by review_app (github_dispatch.py) when an approver clicks "Upload"
+# on an approved media proposal (see GitHub issue #36).
+#
+# Only the proposal id crosses into this workflow; the metadata and media file
+# are fetched from review_app's authenticated callback API using
+# secrets.REVIEW_APP_CALLBACK_KEY.
+#
+# Media is uploaded directly to archive.org using secrets.IA_ACCESS_KEY_ID /
+# secrets.IA_SECRET_ACCESS_KEY, and YAML metadata changes are committed to main.
+
+on:
+  workflow_dispatch:
+    inputs:
+      proposal_id:
+        description: >-
+          A specific approved media proposal's id to apply. Leave blank to sweep
+          every currently-approved media proposal instead.
+        required: false
+        type: string
+  schedule:
+    # Self-healing sweep every 15 minutes for dropped dispatches
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: apply-media-proposal
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r tools/requirements.txt
+          which ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Determine which media proposal(s) to apply
+        id: targets
+        run: |
+          single_id="${{ github.event.inputs.proposal_id }}"
+          if [ -n "$single_id" ]; then
+            echo "ids=$single_id" >> "$GITHUB_OUTPUT"
+          else
+            ids=$(curl -fsSL \
+              -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+              "${{ vars.REVIEW_APP_BASE_URL }}/api/media-proposals/approved" \
+              | python3 -c "import json,sys; print(' '.join(str(i) for i in json.load(sys.stdin)['ids']))")
+            echo "ids=$ids" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply each media proposal
+        if: steps.targets.outputs.ids != ''
+        shell: bash --noprofile --norc -o pipefail {0}
+        env:
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: |
+          git config user.name "daugavpils-fans-bot"
+          git config user.email "daugavpils@gmail.com"
+          overall_failed=0
+          for id in ${{ steps.targets.outputs.ids }}; do
+            echo "::group::Media proposal #$id"
+            success=0
+            error=""
+
+            if curl -fsSL \
+                 -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+                 "${{ vars.REVIEW_APP_BASE_URL }}/api/media-proposals/$id" \
+                 -o proposal.json \
+               && curl -fsSL \
+                 -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+                 "${{ vars.REVIEW_APP_BASE_URL }}/api/media-proposals/$id/file" \
+                 -o media_file.bin \
+               && python tools/apply_media_proposal.py --proposal-file proposal.json --media-file media_file.bin; then
+              git add -A -- bands
+              if git diff --cached --quiet; then
+                success=1
+              else
+                git commit -m "Apply approved media proposal #$id"
+                pushed=0
+                for attempt in 1 2 3 4 5; do
+                  if git push origin main; then
+                    pushed=1
+                    break
+                  fi
+                  echo "push rejected (attempt $attempt/5) - fetching and rebasing before retrying"
+                  git fetch origin main
+                  git rebase origin/main
+                  sleep $((RANDOM % 4 + 1))
+                done
+                if [ "$pushed" = "1" ]; then
+                  success=1
+                else
+                  error="git push kept getting rejected after 5 attempts"
+                fi
+              fi
+            else
+              error="apply_media_proposal failed - see the Action run logs"
+            fi
+
+            if [ "$success" = "1" ]; then
+              payload="{\"success\": true, \"run_id\": \"${{ github.run_id }}\"}"
+            else
+              echo "::error::media proposal #$id failed: $error"
+              payload="{\"success\": false, \"run_id\": \"${{ github.run_id }}\", \"error\": \"$error\"}"
+              overall_failed=1
+            fi
+            curl -fsSL -X POST \
+              -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d "$payload" \
+              "${{ vars.REVIEW_APP_BASE_URL }}/api/media-proposals/$id/publish-result"
+            echo "::endgroup::"
+          done
+          exit $overall_failed
+
+      - name: Trigger Pages mirror rebuild
+        if: steps.targets.outputs.ids != ''
+        run: gh workflow run pages.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Trigger metadata sync to archive.org
+        if: steps.targets.outputs.ids != ''
+        run: gh workflow run sync-metadata.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

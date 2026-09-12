@@ -85,6 +85,7 @@ class ReviewAppTestCase(unittest.TestCase):
         self.mock_send_media_notification = self.mock_send_notification
         self.mock_send_magic_link = self._patch("auth.mail.send_magic_link")
         self.mock_trigger_apply = self._patch("dashboard.github_dispatch.trigger_apply")
+        self.mock_trigger_media_apply = self._patch("dashboard.github_dispatch.trigger_media_apply")
         self.mock_send_media_approved = self._patch("dashboard.mail.send_media_approved_notification")
 
     def _patch(self, target: str) -> mock.MagicMock:

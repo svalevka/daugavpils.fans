@@ -165,7 +165,7 @@
   var I18N = {
     ru: {
       title: "Сервера Internet Archive (archive.org) временно недоступны",
-      desc: "Воспроизведение аудио и видео сейчас может не работать из-за временного сбоя на стороне архива. Ваш компьютер и браузер в порядке.",
+      desc: "Воспроизведение аудио и видео, а также загрузка изображений сейчас могут не работать из-за временного сбоя на стороне архива. Ваш компьютер и браузер в порядке.",
       retry: "Попробовать снова",
       checking: "Проверка связи...",
       stillDown: "Сервера всё ещё недоступны",
@@ -174,7 +174,7 @@
     },
     en: {
       title: "Internet Archive (archive.org) servers are temporarily unavailable",
-      desc: "Audio and video playback may not work right now due to a temporary outage on archive.org. Your computer and browser are working properly.",
+      desc: "Audio and video playback, as well as images, may not work right now due to a temporary outage on archive.org. Your computer and browser are working properly.",
       retry: "Retry",
       checking: "Checking...",
       stillDown: "Servers are still unavailable",
@@ -381,6 +381,15 @@
         for (var k = 0; k < players.length; k++) {
           players[k].load();
         }
+
+        var images = document.querySelectorAll("img");
+        for (var m = 0; m < images.length; m++) {
+          if (images[m].src && images[m].src.indexOf("archive.org") !== -1) {
+            var origSrc = images[m].src;
+            images[m].src = "";
+            images[m].src = origSrc;
+          }
+        }
       } else {
         btn.textContent = t.stillDown;
         if (banner) {
@@ -400,7 +409,9 @@
     var mediaEl = target.tagName === "SOURCE" ? target.parentElement : target;
     if (
       !mediaEl ||
-      (mediaEl.tagName !== "AUDIO" && mediaEl.tagName !== "VIDEO")
+      (mediaEl.tagName !== "AUDIO" &&
+        mediaEl.tagName !== "VIDEO" &&
+        mediaEl.tagName !== "IMG")
     ) {
       return;
     }
@@ -447,6 +458,18 @@
           figure.appendChild(vidBadge);
         }
       }
+    } else if (mediaEl.tagName === "IMG") {
+      var fig = mediaEl.closest ? mediaEl.closest("figure") : null;
+      if (fig) {
+        fig.classList.add("media-outage-state");
+        if (!fig.querySelector(".media-outage-notice")) {
+          var imgBadge = document.createElement("div");
+          imgBadge.className = "media-outage-notice";
+          imgBadge.setAttribute("role", "alert");
+          imgBadge.textContent = "⚠️ " + t.trackError;
+          fig.appendChild(imgBadge);
+        }
+      }
     }
 
     setOutageCached(true);
@@ -477,7 +500,8 @@
         event.target &&
         (event.target.tagName === "AUDIO" ||
           event.target.tagName === "VIDEO" ||
-          event.target.tagName === "SOURCE")
+          event.target.tagName === "SOURCE" ||
+          event.target.tagName === "IMG")
       ) {
         handleMediaError(event.target);
       }
@@ -488,6 +512,20 @@
   document.addEventListener("DOMContentLoaded", function () {
     if (isOutageCached() && !isOutageDismissed()) {
       showOutageBanner();
+    }
+
+    // Check for images that already failed before player.js executed (e.g. script defer)
+    var imgs = document.querySelectorAll("img");
+    for (var i = 0; i < imgs.length; i++) {
+      var img = imgs[i];
+      if (
+        img.src &&
+        img.src.indexOf("archive.org") !== -1 &&
+        img.complete &&
+        img.naturalWidth === 0
+      ) {
+        handleMediaError(img);
+      }
     }
   });
 

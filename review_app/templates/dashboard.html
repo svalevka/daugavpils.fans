@@ -81,16 +81,36 @@
 {% endfor %}
 
 <h2>Ready to publish ({{ media_awaiting_publish | length }})</h2>
-<p class="meta">Grab these with scp/rsync from review-app-data/uploads/ on the server, then publish and commit them the usual way. "Mark published" removes the file here once you're done.</p>
+<p class="meta">Approved media ready for upload to archive.org and git commit. Click "Upload" to automatically publish via the server pipeline, or publish manually and click "Mark published".</p>
 {% if not media_awaiting_publish %}
 <p>Nothing ready to publish.</p>
 {% endif %}
 {% for m in media_awaiting_publish %}
 <article class="proposal">
-  <span class="status-badge status-approved">Approved — awaiting publish</span>
+  {% if m.status == 'approved' %}
+  <span class="status-badge status-approved">Approved — ready to upload</span>
+  {% elif m.status == 'publishing' %}
+  <span class="status-badge status-applying">Uploading to archive.org...</span>
+  {% elif m.status == 'publish_failed' %}
+  <span class="status-badge status-rejected">Upload failed</span>
+  {% else %}
+  <span class="status-badge">{{ m.status }}</span>
+  {% endif %}
+
   <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
   <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
+  {% if m.submitter_name or m.submitter_contact %}
+  <p class="meta">Submitted by {{ m.submitter_name or "(no name given)" }}{% if m.submitter_contact %} &lt;{{ m.submitter_contact }}&gt;{% endif %}</p>
+  {% endif %}
   {% if m.caption %}<p>{{ m.caption }}</p>{% endif %}
+
+  {% if m.publish_error %}
+  <p class="note" style="color: #dc3c3c;"><strong>Error:</strong> {{ m.publish_error }}</p>
+  {% endif %}
+
+  {% if m.github_run_id %}
+  <p class="meta">GitHub Action run ID: {{ m.github_run_id }}</p>
+  {% endif %}
 
   {% if m.media_type == "image" %}
   <img src="/media-proposals/{{ m.id }}/file" alt="{{ m.original_filename }}" style="max-width: 100%; border-radius: 4px;">
@@ -99,9 +119,16 @@
   {% endif %}
 
   <div class="actions">
-    <form method="post" action="/media-proposals/{{ m.id }}/publish">
-      <button type="submit">Mark published</button>
+    {% if m.status == 'publishing' %}
+    <p class="note"><em>Upload in progress...</em></p>
+    {% else %}
+    <form method="post" action="/media-proposals/{{ m.id }}/upload">
+      <button type="submit">{% if m.status == 'publish_failed' %}Retry upload{% else %}Upload{% endif %}</button>
     </form>
+    <form method="post" action="/media-proposals/{{ m.id }}/publish">
+      <button type="submit" class="button-secondary">Mark published manually</button>
+    </form>
+    {% endif %}
   </div>
 </article>
 {% endfor %}

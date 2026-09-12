@@ -343,3 +343,43 @@ test("player.js: retry clears outage and reloads media when probe succeeds", (t,
     done();
   }, 50);
 });
+
+test("player.js: handleMediaError marks image figure and shows outage banner", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    fetch: mockWindow.fetch,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+
+  vm.runInContext(playerJsCode, context);
+
+  // Setup mock gallery figure
+  const fig = mockDocument.createElement("figure");
+  const img = mockDocument.createElement("img");
+  img.src = "https://archive.org/download/daugavpils-fans-glazki-stekolshchika/photo1.webp";
+  img.dataset.band = "glazki-stekolshchika";
+  fig.appendChild(img);
+  mockDocument.body.appendChild(fig);
+
+  // Trigger error handler for image
+  context.window.DaugavpilsArchiveOutage.handleError(img);
+
+  // Assert figure received media-outage-state
+  assert.ok(fig.classList.contains("media-outage-state"));
+  const notice = fig.querySelector(".media-outage-notice");
+  assert.ok(notice);
+  assert.match(notice.textContent, /сбой archive\.org/);
+
+  // Assert banner is rendered
+  const banner = mockDocument.getElementById("archive-outage-banner");
+  assert.ok(banner);
+  assert.ok(context.window.DaugavpilsArchiveOutage.isOutageCached());
+});

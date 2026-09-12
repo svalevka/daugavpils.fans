@@ -187,6 +187,16 @@ button:hover, .btn:hover {
   color: #5ab478;
 }
 
+.status-applying {
+  background: rgba(80, 150, 230, 0.15);
+  color: #5096e6;
+}
+
+.status-rejected {
+  background: rgba(220, 60, 60, 0.15);
+  color: #dc3c3c;
+}
+
 .note {
   color: var(--text-dim);
   font-size: 0.85rem;

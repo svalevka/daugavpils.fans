@@ -199,5 +199,52 @@ class DashboardListingTest(ReviewAppTestCase):
         self.assertEqual(self.fetch_media_proposals()[0]["status"], "pending")
 
 
+class UploadMediaTest(ReviewAppTestCase):
+    def _approved_proposal_id(self) -> int:
+        approver_id = self.seed_approver("approver@example.com")
+        self.submit_media()
+        proposal_id = self.fetch_media_proposals()[-1]["id"]
+        self.login_as(approver_id)
+        self.client.post(f"/media-proposals/{proposal_id}/approve")
+        return proposal_id
+
+    def test_upload_triggers_dispatch_and_sets_publishing(self):
+        proposal_id = self._approved_proposal_id()
+        response = self.client.post(f"/media-proposals/{proposal_id}/upload")
+        self.assertEqual(response.status_code, 302)
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "publishing")
+        self.mock_trigger_media_apply.assert_called_once()
+        args = self.mock_trigger_media_apply.call_args.args
+        self.assertEqual(args[1], proposal_id)
+
+    def test_upload_handles_dispatch_error(self):
+        self.mock_trigger_media_apply.side_effect = OSError("network error")
+        proposal_id = self._approved_proposal_id()
+        response = self.client.post(f"/media-proposals/{proposal_id}/upload")
+        self.assertEqual(response.status_code, 302)
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "publish_failed")
+        self.assertIn("Failed to dispatch", row["publish_error"])
+
+    def test_upload_on_pending_proposal_is_rejected(self):
+        approver_id = self.seed_approver("approver@example.com")
+        self.submit_media()
+        proposal_id = self.fetch_media_proposals()[-1]["id"]
+        self.login_as(approver_id)
+
+        response = self.client.post(f"/media-proposals/{proposal_id}/upload")
+        self.assertEqual(response.status_code, 409)
+
+    def test_upload_unauthenticated_is_rejected(self):
+        proposal_id = self._approved_proposal_id()
+        with self.client.session_transaction() as sess:
+            sess.clear()
+        response = self.client.post(f"/media-proposals/{proposal_id}/upload")
+        self.assertEqual(response.status_code, 401)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -923,6 +923,18 @@ table.tracklist audio {
   opacity: 0.6;
 }
 
+figure.media-outage-state {
+  position: relative;
+  min-height: 80px;
+  background: rgba(255, 146, 43, 0.05);
+  border: 1px dashed rgba(255, 146, 43, 0.4);
+  border-radius: 4px;
+}
+
+figure.media-outage-state img {
+  opacity: 0.3;
+}
+
 .media-outage-notice {
   display: inline-block;
   color: #ff922b;

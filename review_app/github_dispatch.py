@@ -33,3 +33,25 @@ def trigger_apply(github_config: GithubConfig, proposal_id: int) -> None:
         timeout=10,
     )
     response.raise_for_status()
+
+
+def trigger_media_apply(
+    github_config: GithubConfig,
+    proposal_id: int,
+    workflow_file: str = "apply-media-proposal.yml",
+) -> None:
+    url = (
+        f"https://api.github.com/repos/{github_config.repo}/actions/"
+        f"workflows/{workflow_file}/dispatches"
+    )
+    response = requests.post(
+        url,
+        headers={
+            "Authorization": f"Bearer {github_config.token}",
+            "Accept": "application/vnd.github+json",
+        },
+        json={"ref": github_config.ref, "inputs": {"proposal_id": str(proposal_id)}},
+        timeout=10,
+    )
+    response.raise_for_status()
+
