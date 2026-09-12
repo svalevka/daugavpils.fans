@@ -1,0 +1,153 @@
+'@type': MusicAlbum
+name: Твоё радио лжёт
+slug: 1996-tvoe-radio-lzhet
+datePublished: '1996'
+byArtist: kvazimodo
+genre: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Второй альбом группы, записанный в 1996 году. Состав: Шура Некрофил
+  (вокал), Геннадий Кузьмин (Кузя) (соло-гитара), Александр Рыбаков (Рыб) (ритм-гитара),
+  Юрий Сивачев (Варик) (бас), Андрис Зелч (ударные). Оцифровано в MP3.
+
+  '
+description_en: 'The band''s second album, recorded in 1996. Lineup: Shura Nekrofil
+  (vocals), Gennady Kuzmin (Kuzya) (lead guitar), Alexander Rybakov (Ryb) (rhythm
+  guitar), Yuri Sivachev (Varik) (bass), Andris Zelch (drums). Digitized to MP3.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-kvazimodo-1996-tvoe-radio-lzhet
+- https://archive.org/download/daugavpils-fans-kvazimodo-1996-tvoe-radio-lzhet/daugavpils-fans-kvazimodo-1996-tvoe-radio-lzhet_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Твоё радио лжёт
+  audio:
+    contentUrl: 01-tvoe-radio-lzhet.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fd481357d06aafbedcb20bc6824d4e8640f56f34775f1d1409a650a7aa0bcf45
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M3S
+- '@type': MusicRecording
+  position: 2
+  name: Видения
+  audio:
+    contentUrl: 02-videniia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 50195a8c363d816d1afb64e889943d16a4621360e674d45d27b229ef54800629
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M23S
+- '@type': MusicRecording
+  position: 3
+  name: Звери мои
+  audio:
+    contentUrl: 03-zveri-moi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ec35ad6d0197ec521ed75d5678904a942b1753957d13b576a781d23daa5cbd25
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M21S
+- '@type': MusicRecording
+  position: 4
+  name: Джульетта
+  audio:
+    contentUrl: 04-dzhulietta.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 85fdec6aacac43768acd540f4d69a9b5a1e24cb7dc2beb7299b33fd0fbfffa68
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M59S
+- '@type': MusicRecording
+  position: 5
+  name: Воск на воск
+  audio:
+    contentUrl: 05-vosk-na-vosk.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 94e508e6058a069163e4725be19d24d252175a916d5fdfaed280fc963a1238ec
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M8S
+- '@type': MusicRecording
+  position: 6
+  name: Димедролл
+  audio:
+    contentUrl: 06-dimedroll.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0f9dbc8155d191ad28670f319ee19a405e8306ac384bdd8295cba01dbbe9bdda
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M58S
+- '@type': MusicRecording
+  position: 7
+  name: Грустная правда
+  audio:
+    contentUrl: 07-grustnaia-pravda.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7f04303f1603e3b7c51290d7dffec069f1633812b9daf2bce6abb63c18d306bc
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M22S
+- '@type': MusicRecording
+  position: 8
+  name: Балерина
+  audio:
+    contentUrl: 08-balerina.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fa306ae96f024f68ba2e0b9dd82daa5c02c68735cdf93590b1890ba91472e727
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT6M31S
+- '@type': MusicRecording
+  position: 9
+  name: Весна
+  audio:
+    contentUrl: 09-vesna.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6c9aadca6ba733855a03636405cf272e63f58a6493507ce9a51eafeee413562a
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT1M31S
+- '@type': MusicRecording
+  position: 10
+  name: Тучка
+  audio:
+    contentUrl: 10-tuchka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ea384c0ec78c2a1faeacb74e7271849b93eb69d05d706bef2e4600171c8be278
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M35S
+image: []
+video: []
