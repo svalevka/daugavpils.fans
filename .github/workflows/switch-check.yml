@@ -26,7 +26,7 @@ permissions:
 env:
   VAULT_OWNER: svalevka
   VAULT_REPO: daugavpils-fans-recovery-vault
-  SWITCH_DELAY_DAYS: 0 # TEMP: testing the trip path, reverting to 7 right after
+  SWITCH_DELAY_DAYS: 7
 
 jobs:
   check:
