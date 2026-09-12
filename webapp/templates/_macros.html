@@ -32,39 +32,39 @@
 {% macro video_gallery(videos, prefix, fallback_alt, url_fn) %}
 <div class="gallery video-gallery">
   {% for vid in videos %}
-  <figure>
-    <video controls preload="none" aria-label="{{ vid.name or fallback_alt }}">
-      <source src="{{ url_fn(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
-    </video>
-    {% if vid.name or videos | length > 1 %}
-    <figcaption>
-      {% if vid.name %}{{ vid.name }}{% endif %}
-      {% if videos | length > 1 %}
-      <a href="#{{ prefix }}-{{ loop.index }}" class="expand-link" title="Open in viewer with next/previous" aria-label="Open in viewer with next/previous">&#9974;</a>
-      {% endif %}
-    </figcaption>
-    {% endif %}
-  </figure>
+  {% set vid_name = localize(vid, "name", lang) or vid.name %}
+  <a href="#{{ prefix }}-{{ loop.index }}" class="gallery-item video-item"{% if vid_name %} aria-label="{{ vid_name }}"{% else %} aria-label="{{ fallback_alt }}"{% endif %}>
+    <figure>
+      <div class="video-thumb-wrap">
+        <video preload="metadata" muted playsinline tabindex="-1" aria-hidden="true">
+          <source src="{{ url_fn(vid.contentUrl) }}#t=0.001" type="{{ vid.encodingFormat }}">
+        </video>
+        <span class="video-play-badge" aria-hidden="true"></span>
+      </div>
+      {% if vid_name %}<figcaption>{{ vid_name }}</figcaption>{% endif %}
+    </figure>
+  </a>
   {% endfor %}
 </div>
-{% if videos | length > 1 %}
 {% for vid in videos %}
+{% set vid_name = localize(vid, "name", lang) or vid.name %}
 {% set prev_index = loop.index - 1 if loop.index > 1 else videos | length %}
 {% set next_index = loop.index + 1 if loop.index < videos | length else 1 %}
 <div class="lightbox video-lightbox" id="{{ prefix }}-{{ loop.index }}">
   <a href="#" class="lightbox-backdrop" aria-label="Close"></a>
   <a href="#" class="lightbox-close" aria-label="Close">&times;</a>
+  {% if videos | length > 1 %}
   <a href="#{{ prefix }}-{{ prev_index }}" class="lightbox-prev" aria-label="Previous video">&#10094;</a>
   <a href="#{{ prefix }}-{{ next_index }}" class="lightbox-next" aria-label="Next video">&#10095;</a>
+  {% endif %}
   <figure class="lightbox-figure">
-    <video controls preload="none" aria-label="{{ vid.name or fallback_alt }}">
+    <video controls preload="none" aria-label="{{ vid_name or fallback_alt }}">
       <source src="{{ url_fn(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
     </video>
-    {% if vid.name %}<figcaption class="lightbox-caption">{{ vid.name }}</figcaption>{% endif %}
+    {% if vid_name %}<figcaption class="lightbox-caption">{{ vid_name }}</figcaption>{% endif %}
   </figure>
 </div>
 {% endfor %}
-{% endif %}
 {% endmacro %}
 
 {% macro bio(text) %}

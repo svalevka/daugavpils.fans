@@ -60,6 +60,45 @@ class LightboxCaptionTest(unittest.TestCase):
         self.assertIn('<figcaption class="lightbox-caption">Концерт 1995</figcaption>', rendered)
         self.assertIn('<figcaption class="lightbox-caption">Репетиция 1996</figcaption>', rendered)
 
+    def test_video_gallery_renders_clickable_thumbnails_with_play_badge(self) -> None:
+        tmpl = self.env.from_string("""
+{% import "_macros.html" as macros with context %}
+{{ macros.video_gallery(videos, "band-video", "fallback", url_fn) }}
+""")
+        videos = [
+            {"contentUrl": "media/vid1.mp4", "encodingFormat": "video/mp4", "name": "Концерт 1995"},
+        ]
+        rendered = tmpl.render(lang="ru", videos=videos, url_fn=lambda u: f"https://archive.org/{u}")
+        # Thumbnail is an <a> link to the lightbox target
+        self.assertIn('<a href="#band-video-1" class="gallery-item video-item"', rendered)
+        # First frame preview via preload="metadata" and #t=0.001
+        self.assertIn('<div class="video-thumb-wrap">', rendered)
+        self.assertIn('<video preload="metadata" muted playsinline tabindex="-1" aria-hidden="true">', rendered)
+        self.assertIn('src="https://archive.org/media/vid1.mp4#t=0.001"', rendered)
+        # Play badge overlay is present
+        self.assertIn('<span class="video-play-badge" aria-hidden="true"></span>', rendered)
+        # Thumbnail caption
+        self.assertIn('<figcaption>Концерт 1995</figcaption>', rendered)
+        # No yellow box expand-link
+        self.assertNotIn("expand-link", rendered)
+        # Lightbox is generated even for a single video
+        self.assertIn('<div class="lightbox video-lightbox" id="band-video-1">', rendered)
+        self.assertNotIn("lightbox-prev", rendered)
+        self.assertNotIn("lightbox-next", rendered)
+
+    def test_video_gallery_multi_video_includes_navigation(self) -> None:
+        tmpl = self.env.from_string("""
+{% import "_macros.html" as macros with context %}
+{{ macros.video_gallery(videos, "band-video", "fallback", url_fn) }}
+""")
+        videos = [
+            {"contentUrl": "media/vid1.mp4", "encodingFormat": "video/mp4", "name": "Video 1"},
+            {"contentUrl": "media/vid2.mp4", "encodingFormat": "video/mp4", "name": "Video 2"},
+        ]
+        rendered = tmpl.render(lang="ru", videos=videos, url_fn=lambda u: f"https://archive.org/{u}")
+        self.assertIn('<a href="#band-video-2" class="lightbox-prev" aria-label="Previous video">&#10094;</a>', rendered)
+        self.assertIn('<a href="#band-video-2" class="lightbox-next" aria-label="Next video">&#10095;</a>', rendered)
+
 
 if __name__ == "__main__":
     unittest.main()

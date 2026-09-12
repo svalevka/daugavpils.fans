@@ -83,12 +83,10 @@
   // 1. When a video lightbox is closed or navigated away from, pause its video
   //    so audio doesn't keep playing invisibly in the background (CSS :target
   //    only hides the old lightbox with display:none).
-  // 2. When navigating between videos in the lightbox, if the outgoing video
-  //    was actively playing, start playing the incoming video to maintain
-  //    playlist flow.
-  // 3. When opening a video lightbox, pause any other media playing on the page;
-  //    if the corresponding inline gallery video was playing, sync position
-  //    and continue in the lightbox.
+  // 2. When opening a video lightbox (by clicking its thumbnail) or navigating
+  //    between videos in it, start playback automatically for a smooth viewer
+  //    experience.
+  // 3. When opening a video lightbox, pause any other media playing on the page.
   var activeLightboxVideo = null;
 
   window.addEventListener("hashchange", function () {
@@ -101,9 +99,7 @@
       ? target.querySelector("video")
       : null;
 
-    var wasPlaying = false;
     if (activeLightboxVideo) {
-      wasPlaying = !activeLightboxVideo.paused;
       activeLightboxVideo.pause();
       activeLightboxVideo = null;
     }
@@ -111,7 +107,6 @@
     var allLightboxVideos = document.querySelectorAll(".video-lightbox video");
     for (var i = 0; i < allLightboxVideos.length; i++) {
       if (allLightboxVideos[i] !== targetVideo && !allLightboxVideos[i].paused) {
-        wasPlaying = true;
         allLightboxVideos[i].pause();
       }
     }
@@ -119,32 +114,20 @@
     if (targetIsVideoLightbox && targetVideo) {
       activeLightboxVideo = targetVideo;
 
-      // Pause any audio track or inline gallery video playing outside this lightbox
+      // Pause any audio track playing outside this lightbox
       var allMedia = document.querySelectorAll("audio, video");
       for (var j = 0; j < allMedia.length; j++) {
         var el = allMedia[j];
         if (el !== targetVideo && !el.paused) {
-          if (
-            el.tagName === "VIDEO" &&
-            !el.closest(".video-lightbox") &&
-            el.currentSrc &&
-            targetVideo.currentSrc &&
-            el.currentSrc === targetVideo.currentSrc
-          ) {
-            targetVideo.currentTime = el.currentTime;
-            wasPlaying = true;
-          }
           el.pause();
         }
       }
 
-      if (wasPlaying) {
-        var promise = targetVideo.play();
-        if (promise && promise.catch) {
-          promise.catch(function () {
-            // Autoplay policy prevented playback; remains paused.
-          });
-        }
+      var promise = targetVideo.play();
+      if (promise && promise.catch) {
+        promise.catch(function () {
+          // Autoplay policy prevented playback; remains paused with controls ready.
+        });
       }
     }
   });
