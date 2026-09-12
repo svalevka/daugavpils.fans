@@ -201,6 +201,10 @@ def require_valid_archive() -> None:
         sys.exit(1)
 
 
+class ArchiveOrgUnavailableError(Exception):
+    pass
+
+
 def _missing_from_item(item_id: str, content_urls: list[str]) -> list[str]:
     import internetarchive as ia
 
@@ -210,7 +214,7 @@ def _missing_from_item(item_id: str, content_urls: list[str]) -> list[str]:
         present = {f["name"] for f in ia.get_item(item_id).files}
     except Exception as exc:
         print(f"  WARNING: unable to verify files on archive.org for {item_id} ({exc}); skipping archive check", file=sys.stderr)
-        return []
+        raise ArchiveOrgUnavailableError(f"archive.org metadata error on {item_id}: {exc}") from exc
     return [f"{item_id}/{c}" for c in content_urls if c not in present]
 
 
@@ -219,22 +223,25 @@ def require_media_published(bands: list[MusicGroup], releases_by_band: dict[str,
     linking to media that isn't there yet (see tools/publish_to_archive_org.py)."""
     import urllib.request
 
-    print("Checking media is published to archive.org...")
+    print("Checking media is published to archive.org...", flush=True)
     try:
-        urllib.request.urlopen("https://archive.org", timeout=3)
+        urllib.request.urlopen("https://archive.org/metadata/daugavpils-fans-dvinsk", timeout=3)
     except Exception as exc:
-        print(f"  WARNING: archive.org is unreachable ({exc}); skipping media publication check", file=sys.stderr)
+        print(f"  WARNING: archive.org is unreachable ({exc}); skipping media publication check", file=sys.stderr, flush=True)
         return
 
     missing: list[str] = []
-    for band in bands:
-        missing.extend(
-            _missing_from_item(band_item_id(band.slug), [m.contentUrl for m in band.image + band.video])
-        )
-        for release in releases_by_band[band.slug]:
-            content_urls = [t.audio.contentUrl for t in release.track]
-            content_urls += [m.contentUrl for m in release.image + release.video]
-            missing.extend(_missing_from_item(release_item_id(band.slug, release.slug), content_urls))
+    try:
+        for band in bands:
+            missing.extend(
+                _missing_from_item(band_item_id(band.slug), [m.contentUrl for m in band.image + band.video])
+            )
+            for release in releases_by_band[band.slug]:
+                content_urls = [t.audio.contentUrl for t in release.track]
+                content_urls += [m.contentUrl for m in release.image + release.video]
+                missing.extend(_missing_from_item(release_item_id(band.slug, release.slug), content_urls))
+    except ArchiveOrgUnavailableError:
+        return
 
     if missing:
         print("\nAborted: the following media isn't published to archive.org yet:\n")

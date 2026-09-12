@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS admin_login_request_log (
 -- no raw IP addresses or cookies are ever stored.
 CREATE TABLE IF NOT EXISTS analytics_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    event_type TEXT NOT NULL,           -- 'pageview' | 'track_play' | 'video_play'
+    event_type TEXT NOT NULL,           -- 'pageview' | 'track_play' | 'video_play' | 'media_error'
     path TEXT NOT NULL,
     band_slug TEXT,
     release_slug TEXT,

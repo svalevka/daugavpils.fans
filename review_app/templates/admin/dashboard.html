@@ -48,6 +48,10 @@
     <div class="stat-value">{{ video_views }}</div>
     <div class="stat-label">Video Views (≥5s)</div>
   </div>
+  <div class="stat-card{% if media_errors > 0 %} stat-card-warning{% endif %}">
+    <div class="stat-value">{{ media_errors }}</div>
+    <div class="stat-label">Media Errors (archive.org)</div>
+  </div>
 </div>
 
 <div class="admin-sections-grid">

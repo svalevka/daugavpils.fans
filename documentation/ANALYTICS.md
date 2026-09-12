@@ -110,6 +110,7 @@ The dashboard (`https://daugavpils.fans/admin/`) displays:
   - Total Pageviews
   - Audio Listens (≥ 5s)
   - Video Views (≥ 5s)
+  - Media Errors (archive.org outage detection events; see [`ARCHIVE_ORG_OUTAGES.md`](ARCHIVE_ORG_OUTAGES.md))
 - **Top Audio Tracks**: Ranked list of tracks with band, album, total listen count, and visual percentage bars.
 - **Top Videos**: Ranked list of watched videos and view counts.
 - **Top Pages**: Most visited band and album pages.

@@ -122,6 +122,10 @@ def dashboard():
         f"SELECT COUNT(*) FROM analytics_events WHERE {time_filter} AND event_type = 'video_play'"
     ).fetchone()[0]
 
+    media_errors = conn.execute(
+        f"SELECT COUNT(*) FROM analytics_events WHERE {time_filter} AND event_type = 'media_error'"
+    ).fetchone()[0]
+
     # Top tracks
     top_tracks_rows = conn.execute(
         f"""SELECT track_name, band_slug, release_slug, COUNT(*) as play_count
@@ -236,6 +240,7 @@ def dashboard():
         pageviews=pageviews,
         audio_plays=audio_plays,
         video_views=video_views,
+        media_errors=media_errors,
         top_tracks=top_tracks,
         top_videos=top_videos,
         top_pages=top_pages,

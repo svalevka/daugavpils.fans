@@ -96,6 +96,27 @@
         mediaPlayState.get(target).lastTime = Date.now();
       }
     },
-    true
-  );
+  // 3. Media error beacon (tracks archive.org playback failures)
+  var reportedErrors = new Set();
+  document.addEventListener("daugavpils:media-error", function (event) {
+    var d = event.detail || {};
+    var errorKey =
+      (d.band || "") +
+      ":" +
+      (d.release || "") +
+      ":" +
+      (d.track || d.video || "") +
+      ":" +
+      (d.code || "");
+    if (reportedErrors.has(errorKey)) return;
+    reportedErrors.add(errorKey);
+    sendEvent({
+      type: "media_error",
+      path: window.location.pathname,
+      track: d.track || "",
+      video: d.video || "",
+      band: d.band || "",
+      release: d.release || "",
+    });
+  });
 })();

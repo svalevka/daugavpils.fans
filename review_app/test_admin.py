@@ -162,10 +162,12 @@ class AdminDashboardTest(ReviewAppTestCase):
         self._seed_event("pageview", "/en/bands/dvinsk/", band_slug="dvinsk", visitor_hash="v2")
         self._seed_event("track_play", "/bands/dvinsk/1993-karmannyi-mir/", band_slug="dvinsk", release_slug="1993-karmannyi-mir", track_name="01-prosnites-liudi.flac", visitor_hash="v1")
         self._seed_event("video_play", "/bands/khoriniye-bega/", band_slug="khoriniye-bega", video_name="Га-га-га", visitor_hash="v1")
+        self._seed_event("media_error", "/bands/glazki-stekolshika/chernovyaki/", band_slug="glazki-stekolshika", release_slug="chernovyaki", track_name="05-ivanovo.mp3", visitor_hash="v1")
 
         response = self.client.get("/admin/?period=all")
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Unique Visitors", response.data)
+        self.assertIn(b"Media Errors (archive.org)", response.data)
         self.assertIn(b"01-prosnites-liudi.flac", response.data)
         self.assertIn("Га-га-га".encode("utf-8"), response.data)
         self.assertIn(b"/bands/dvinsk/", response.data)

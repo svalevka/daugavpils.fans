@@ -153,6 +153,32 @@ class AnalyticsApiTest(ReviewAppTestCase):
         self.assertEqual(rows[0]["event_type"], "video_play")
         self.assertEqual(rows[0]["video_name"], "Га-га-га")
 
+    def test_media_error_event_recorded(self):
+        response = self.client.post(
+            "/api/event",
+            json={
+                "type": "media_error",
+                "path": "/bands/glazki-stekolshika/chernovyaki/",
+                "track": "05-ivanovo.mp3",
+                "band": "glazki-stekolshika",
+                "release": "chernovyaki",
+            },
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+        )
+        self.assertEqual(response.status_code, 204)
+
+        conn = sqlite3.connect(self.database_path)
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute("SELECT * FROM analytics_events WHERE event_type = 'media_error'").fetchall()
+        conn.close()
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["event_type"], "media_error")
+        self.assertEqual(rows[0]["band_slug"], "glazki-stekolshika")
+        self.assertEqual(rows[0]["release_slug"], "chernovyaki")
+        self.assertEqual(rows[0]["track_name"], "05-ivanovo.mp3")
+
+
     def test_bot_requests_are_ignored(self):
         response = self.client.post(
             "/api/event",
