@@ -304,6 +304,18 @@ Two kinds of proposal, with genuinely different mechanics behind them:
 This feature only exists on the primary domain - the GitHub Pages mirror
 below has no such app; visiting it there won't find a proposal form.
 
+## Maintainer statistics & analytics (`/admin/`)
+
+The primary domain hosts a self-hosted, privacy-preserving statistics dashboard at
+[`https://daugavpils.fans/admin/`](https://daugavpils.fans/admin/), accessible
+only to the site maintainer via a secure email magic link. It tracks pageviews,
+unique daily visitors, and media engagement (audio track listens and video views
+streamed from archive.org, counted after ≥ 5 seconds of active playback) without
+any cookies, third-party SaaS trackers, or raw IP storage.
+
+See [`documentation/ANALYTICS.md`](documentation/ANALYTICS.md) for full details
+on the privacy architecture, bot filtering, media tracking, and dashboard metrics.
+
 ## Resilience
 
 For the full deploy topology as a diagram - both Site Build paths, plus

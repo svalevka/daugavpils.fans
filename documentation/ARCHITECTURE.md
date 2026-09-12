@@ -190,3 +190,13 @@ TLS terminates at nginx on the VPS, one Let's Encrypt cert (DNS-01 via
 Cloudflare) covering `daugavpils.fans`, `www`, and
 `review.daugavpils.fans`. Issuance and renewal steps: see
 `webapp/deploy/README.md`'s "Cert renewal" section.
+
+## Statistics and maintainer admin (`/admin/`)
+
+The primary domain (`daugavpils.fans`) proxies `/admin/` and `/api/event`
+to the `review-app` container, providing a self-hosted, privacy-preserving
+analytics system and statistics dashboard for the maintainer without
+exposing an external SaaS tracker or requiring cookies.
+
+See [`documentation/ANALYTICS.md`](ANALYTICS.md) for full architectural,
+privacy, and operational details.

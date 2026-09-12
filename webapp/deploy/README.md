@@ -168,13 +168,13 @@ service (no `ports:`, only `expose:`) and
    | `SECRET_KEY` | Flask session signing key - generate with `python3 -c "import secrets; print(secrets.token_hex(32))"` |
    | `DATABASE_PATH` | `/data/review.db` (matches the `review-app-data:/data` volume) |
    | `ARCHIVE_CHECKOUT_PATH` | `/site/current-checkout` (matches `sync-and-deploy.sh`'s symlink, see the layout tree above) |
-   | `MAINTAINER_EMAIL` | where new-submission notifications go |
+   | `MAINTAINER_EMAIL` | where new-submission notifications go, and the maintainer address permitted to log in to `/admin/` statistics |
    | `SMTP_HOST`/`SMTP_PORT`/`SMTP_FROM`/`SMTP_USER`/`SMTP_PASSWORD` | an outbound mail relay's credentials - any real SMTP provider (leave `SMTP_USER`/`SMTP_PASSWORD` blank only for an unauthenticated local relay, not a real one) |
    | `GITHUB_DISPATCH_TOKEN` | a fine-grained GitHub PAT, scoped to this repo only, `Actions: write` permission only - **not** `Contents` - generate at github.com/settings/personal-access-tokens |
    | `GITHUB_REPO` | `svalevka/daugavpils.fans` |
    | `REVIEW_APP_CALLBACK_KEY` | any long random string (e.g. `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`) - **also** set as a GitHub Actions repo secret of the same name (Settings > Secrets and variables > Actions > Secrets), same value in both places |
    | `RATE_LIMIT_PER_IP_PER_HOUR` | optional, defaults to 20 |
-   | `LOGIN_RATE_LIMIT_PER_IP_PER_HOUR` | optional, defaults to 20 - same as the submit limit above |
+   | `LOGIN_RATE_LIMIT_PER_IP_PER_HOUR` | optional, defaults to 20 - same as the submit limit above (covers both approver `/login` and maintainer `/admin/login`) |
 
    Also set, as a GitHub Actions repo **variable** (not secret - Settings
    > Secrets and variables > Actions > Variables), `REVIEW_APP_BASE_URL`
