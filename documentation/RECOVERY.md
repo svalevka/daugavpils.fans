@@ -2,12 +2,41 @@
 
 This document is for exactly one situation: you have this repo (cloned or
 forked), but you have no working `ia configure` for the archive.org
-account `tools/publish_to_archive_org.py` was built to publish under -
-whoever held it is gone, or the login is lost, and you want to keep the
-archive going. Nothing here needs help from anyone previously connected
-to the project - it only needs this repo and archive.org, both public.
-For the everyday, non-recovery workflow (adding a band, running the
-tooling normally), see `README.md`.
+account (screenname `daugavpils.fans`) `tools/publish_to_archive_org.py`
+was built to publish under - whoever held it is gone, or the login is
+lost, and you want to keep the archive going. For the everyday,
+non-recovery workflow (adding a band, running the tooling normally), see
+`README.md`.
+
+Before anything else: read "First: nothing published is actually lost"
+just below. Losing this credential is an inconvenience, not a disaster -
+it only ever blocks *adding new* material, never anything already
+published. There are two ways forward from there, and which one applies
+depends on whether a dead-man's-switch trusted contact is available:
+
+```mermaid
+flowchart TD
+    Start["ia configure doesn't work /\naccount access is lost"] --> Q{"Is a dead-man's-switch\ntrusted contact available\nand willing to act?\n(documentation/DEAD_MANS_SWITCH.md)"}
+    Q -->|Yes| DMS["Branch A: the dead-man's-switch\nSame account, same item ids -\nno migration needed.\nTakes up to 7 days."]
+    Q -->|"No (not set up yet,\nno one available, or\nalready exhausted)"| Manual["Branch B: manual recovery\n(this document, below)"]
+    Manual --> Try["1. Try to recover the old account\n(password reset / archive.org support)"]
+    Try -->|Recovered| Done["Done - nothing else needed"]
+    Try -->|"Still not recoverable"| New["2-5. New account + new ITEM_PREFIX,\nrestore media locally, republish everything"]
+```
+
+**Branch A** needs someone from a short pre-registered list to actually
+act, and only works if that mechanism was set up in advance - see
+`documentation/DEAD_MANS_SWITCH.md` for how it works and how to use it.
+It's the faster path when it's available, and the only one that keeps
+every existing item's id and URL unchanged.
+
+**Branch B**, below, is the self-serve fallback for *anyone*, with zero
+prior arrangement - it works even for a total stranger with no
+connection to branch A, but its fallback step (a brand-new account +
+`ITEM_PREFIX`) leaves old items owned by an account nobody can add to
+anymore. Nothing in this branch needs help from anyone previously
+connected to the project - it only needs this repo and archive.org, both
+public.
 
 ## First: nothing published is actually lost
 
@@ -24,7 +53,7 @@ files to an already-existing item, or publish new items under the
 ownership on archive.org belongs to whichever account created the item,
 and doesn't transfer on its own.
 
-## The recovery sequence
+## Branch B: the manual recovery sequence
 
 1. **Try to recover the old account first.** This is worth attempting
    before anything below, since it's the only path that keeps every

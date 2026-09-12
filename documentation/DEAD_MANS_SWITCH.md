@@ -1,5 +1,13 @@
 # Dead-man's-switch: getting the archive.org credential if the maintainer disappears
 
+Before anything below: losing access to this credential is an
+inconvenience, not a disaster. It only controls *adding new* material to
+archive.org (the account is `daugavpils.fans`) - everything already
+published stays public and downloadable forever regardless of who can or
+can't log in. See "First: nothing published is actually lost" in
+`RECOVERY.md` for the full explanation, and that document's decision
+diagram for how this mechanism and the manual fallback relate.
+
 This document describes a separate, narrower mechanism from
 `RECOVERY.md`. `RECOVERY.md` is the self-serve fallback for *anyone,
 with zero prior arrangement* - it works even for a total stranger, but
@@ -40,6 +48,37 @@ works independently of whether daugavpils.fans (the site/hosting) is up.
    to do that safely) and not because they're slow to reply.
 
 ## How it works, mechanically
+
+```mermaid
+sequenceDiagram
+    actor TC as Trusted contact
+    participant Issue as GitHub issue
+    participant Req as switch-request.yml
+    actor M as Maintainer
+    participant Chk as switch-check.yml (daily)
+    participant Vault as Private vault repo
+
+    TC->>Issue: Open dead-man's-switch request
+    Issue->>Req: issues: opened
+    alt requester not on trusted-contacts list
+        Req->>Issue: Comment + close, no further action
+    else requester on trusted-contacts list
+        Req->>Issue: Label switch-pending, assign maintainer
+        Req->>M: Notify (assignment + mention)
+        Req->>TC: Mention other trusted contacts, as witnesses
+        loop every day
+            Chk->>Issue: Still open? Older than 7 days?
+        end
+        alt maintainer closes the issue within 7 days
+            M->>Issue: Close (cancels the request)
+        else 7 days pass with the issue still open
+            Chk->>Vault: Write the current live IA credential
+            Chk->>Vault: Invite requester as a collaborator
+            Chk->>Issue: Comment, relabel switch-tripped, close
+            Vault-->>TC: GitHub collaborator-invite notification
+        end
+    end
+```
 
 Three workflows in `.github/workflows/`:
 
