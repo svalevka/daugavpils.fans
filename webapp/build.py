@@ -206,7 +206,11 @@ def _missing_from_item(item_id: str, content_urls: list[str]) -> list[str]:
 
     if not content_urls:
         return []
-    present = {f["name"] for f in ia.get_item(item_id).files}
+    try:
+        present = {f["name"] for f in ia.get_item(item_id).files}
+    except Exception as exc:
+        print(f"  WARNING: unable to verify files on archive.org for {item_id} ({exc}); skipping archive check", file=sys.stderr)
+        return []
     return [f"{item_id}/{c}" for c in content_urls if c not in present]
 
 
