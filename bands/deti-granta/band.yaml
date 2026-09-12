@@ -1,0 +1,62 @@
+'@type': MusicGroup
+name: Дети Гранта
+slug: deti-granta
+alternateName: []
+location: Daugavpils, Latvia
+genre:
+- Rock
+- Ska-Punk
+member:
+- name: Вантуз
+  name_en: Vantuz
+  role: вокал
+  role_en: vocals
+- name: Гоблин
+  name_en: Goblin
+  role: гитара
+  role_en: guitar
+- name: Чувен
+  name_en: Chuven
+  role: гитара
+  role_en: guitar
+- name: Константин Дзедзел
+  name_en: Konstantīns Dzedzelis
+  role: бас
+  role_en: bass
+- name: Стас
+  name_en: Stas
+  role: аккордеон, труба, скретч
+  role_en: accordion, trumpet, scratches
+- name: Олег Самсонов
+  name_en: Oleg Samsonov
+  role: ударные
+  role_en: drums
+description: 'Даугавпилсская группа «Дети Гранта» была активна в конце 1990-х и начале
+  2000-х годов. Музыкальный стиль сочетал рок, ска-панк, драйвовую духовую секцию
+  и ироничные русско- и украиноязычные кавер-версии и оригинальные темы. Состав группы:
+  Вантуз (вокал), Гоблин (гитара), Чувен (2-я гитара), Константин Дзедзел (бас), Стас
+  (аккордеон, труба, скретч), Олег Самсонов (ударные).
+
+  '
+description_en: 'Daugavpils band Deti Granta (''Grant''s Children'') was active in
+  the late 1990s and early 2000s, blending rock, ska-punk, horns, and energetic, satirical
+  covers and originals. Lineup: Vantuz (vocals), Goblin (guitar), Chuven (2nd guitar),
+  Konstantīns Dzedzelis (bass), Stas (accordion, trumpet, scratches), Oleg Samsonov
+  (drums).
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-deti-granta
+- https://archive.org/download/daugavpils-fans-deti-granta/daugavpils-fans-deti-granta_archive.torrent
+image:
+- contentUrl: media/deti-granta.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 29ccb875275caf656a37979f073de0861422224576b4c018981f20673d7133d1
+  '@type': ImageObject
+  caption: Дети Гранта
+  caption_en: Deti Granta
+  depicts: []
+video: []

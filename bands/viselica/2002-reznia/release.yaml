@@ -1,0 +1,188 @@
+'@type': MusicAlbum
+name: Резня
+slug: 2002-reznia
+datePublished: '2002'
+byArtist: viselica
+genre:
+- панк-рок
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Второй альбом группы, записан в 2002 году. Состав: Артур Петров (Будулай)
+  — вокал, гитара; Александр Гридасов (Гридас) — бас, бэк-вокал.
+
+  '
+description_en: 'Second album, recorded in 2002. Lineup: Artur Petrov (Budulai) —
+  vocals, guitar; Alexander Gridasov (Gridas) — bass, backing vocals.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-viselica-2002-reznia
+- https://archive.org/download/daugavpils-fans-viselica-2002-reznia/daugavpils-fans-viselica-2002-reznia_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Резня
+  audio:
+    contentUrl: 01-reznia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c5449c42d864d9f9b937c0bc16b191ea35b612b84a44c5bd215e5d6de4260a59
+    '@type': AudioObject
+    bitrate: 164 kbps
+    duration: PT2M37S
+- '@type': MusicRecording
+  position: 2
+  name: Не ссы!
+  audio:
+    contentUrl: 02-ne-ssy.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fe95bd3b24c52ced5ccee9fac0c82e74e9307917a0a1bfe02c51dc6653a14bb3
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT2M55S
+- '@type': MusicRecording
+  position: 3
+  name: Убивать
+  audio:
+    contentUrl: 03-ubivat.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8f22e20bb492d4e96a505fa223fdb581cf896938896f00128a6d2e33f94258e9
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT3M19S
+- '@type': MusicRecording
+  position: 4
+  name: Двинск
+  audio:
+    contentUrl: 04-dvinsk.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1a73c9237fd0ce5663bd7d7fab4e48022c7aca98cf4723d26bc53b053d5c5adc
+    '@type': AudioObject
+    bitrate: 164 kbps
+    duration: PT2M22S
+- '@type': MusicRecording
+  position: 5
+  name: Королю горы
+  audio:
+    contentUrl: 05-koroliu-gory.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cb94f1a947a7dd03e110113d99628aba18869d52379e964a66ad20747f07ceb1
+    '@type': AudioObject
+    bitrate: 167 kbps
+    duration: PT1M20S
+- '@type': MusicRecording
+  position: 6
+  name: Да, Смерть!
+  audio:
+    contentUrl: 06-da-smert.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8d444f28ac9fdb3cd7e2b04a5596e8cc3cb74218275e142c1e7a913e92ff6874
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT3M39S
+- '@type': MusicRecording
+  position: 7
+  name: Отрицалово
+  audio:
+    contentUrl: 07-otritsalovo.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 19b738332f4d5677539df81cc4a82cc8bad180edad946be6552d76bbe8b3f964
+    '@type': AudioObject
+    bitrate: 164 kbps
+    duration: PT2M20S
+- '@type': MusicRecording
+  position: 8
+  name: Про Отчизну
+  audio:
+    contentUrl: 08-pro-otchiznu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 49e1a3f52404e285a55c2e3842f405148749d85b9c1deda543097b47b692e4d1
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT2M52S
+- '@type': MusicRecording
+  position: 9
+  name: Krievu okupanti
+  audio:
+    contentUrl: 09-krievu-okupanti.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 499a90ff516ea3d6b4102e8297ba25bb15a6a278640a850a7fc7233a9ed05676
+    '@type': AudioObject
+    bitrate: 162 kbps
+    duration: PT4M9S
+- '@type': MusicRecording
+  position: 10
+  name: Революция
+  audio:
+    contentUrl: 10-revoliutsiia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bcb00f3bad1340f38e7d708dbb17c9347df3075c1dae73d72afab6baf45bf191
+    '@type': AudioObject
+    bitrate: 162 kbps
+    duration: PT4M10S
+- '@type': MusicRecording
+  position: 11
+  name: Гимн
+  audio:
+    contentUrl: 11-gimn.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7510a3433516f9b0d254e6617063d5994b8b515b51411b8bc25c8bc5e21c9745
+    '@type': AudioObject
+    bitrate: 165 kbps
+    duration: PT1M47S
+- '@type': MusicRecording
+  position: 12
+  name: Noise
+  audio:
+    contentUrl: 12-noise.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e4c04bf4dbef89fc5fdffd35367069c585bcb39b08ccf94bb10555dddb8868b7
+    '@type': AudioObject
+    bitrate: 171 kbps
+    duration: PT53S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d593e919d542ba4ec1566de3c19b3db14c9e38588fb4fb6b37856ee9b0c8d8c2
+  '@type': ImageObject
+  caption: Обложка альбома Резня
+  caption_en: Cover art for Reznia
+  depicts: []
+video: []

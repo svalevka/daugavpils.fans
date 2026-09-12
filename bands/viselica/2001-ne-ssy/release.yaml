@@ -1,0 +1,177 @@
+'@type': MusicAlbum
+name: Не ссы!
+slug: 2001-ne-ssy
+datePublished: '2001'
+byArtist: viselica
+genre:
+- панк-рок
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Первый альбом группы, записан живьем на репетиционной точке группы Disease
+  в конце 2000 года. Состав: Артур Петров (Будулай) — гитара, вокал; Александр Гридасов
+  (Гридас) — бас, бэк-вокал; Вадим Ветрин — ударные.
+
+  '
+description_en: 'Debut album, recorded live at the rehearsal studio of Disease in
+  late 2000. Lineup: Artur Petrov (Budulai) — guitar, vocals; Alexander Gridasov (Gridas)
+  — bass, backing vocals; Vadim Vetrin — drums.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-viselica-2001-ne-ssy
+- https://archive.org/download/daugavpils-fans-viselica-2001-ne-ssy/daugavpils-fans-viselica-2001-ne-ssy_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Виселица
+  audio:
+    contentUrl: 01-viselica.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d339c6be136a6cd796484a6d5ef8a8957f81442d606db3eca59043d2d65ab77f
+    '@type': AudioObject
+    bitrate: 166 kbps
+    duration: PT1M59S
+- '@type': MusicRecording
+  position: 2
+  name: И вновь продолжается бой
+  audio:
+    contentUrl: 02-i-vnov-prodolzhaetsia-boi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a7f2087a21d0a1d79a6a5b576d9896ae3a0d91fb3a6782114a9dd43348b81499
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT3M35S
+- '@type': MusicRecording
+  position: 3
+  name: Бей буржуев!
+  audio:
+    contentUrl: 03-bei-burzhuev.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: aba92f63bcf741faa16ffa74bb5126e9b512332f1af231c9bbe74c201f37f9ca
+    '@type': AudioObject
+    bitrate: 132 kbps
+    duration: PT2M40S
+- '@type': MusicRecording
+  position: 4
+  name: Убивать!
+  audio:
+    contentUrl: 04-ubivat.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3fa35b9fb11ac076c04de6adf7c01e1200bd76e5048c669eeebf4d90d123935d
+    '@type': AudioObject
+    bitrate: 164 kbps
+    duration: PT2M45S
+- '@type': MusicRecording
+  position: 5
+  name: Да, Смерть!
+  audio:
+    contentUrl: 05-da-smert.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b0a486554f4a10e1286f2576a979c1a0d54a8bbba1e220ddbb950d2b23cfe03c
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT3M31S
+- '@type': MusicRecording
+  position: 6
+  name: Винтовка
+  audio:
+    contentUrl: 06-vintovka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6451739f8ef61f235cc9271d172d621a6862ac916e165e7207c50f3a3d3e3062
+    '@type': AudioObject
+    bitrate: 166 kbps
+    duration: PT1M47S
+- '@type': MusicRecording
+  position: 7
+  name: Неврастения
+  audio:
+    contentUrl: 07-nevrasteniia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ac67522eee8719bbb15a082dd5f59854973a6c3d72804e2fb14d891fed005b59
+    '@type': AudioObject
+    bitrate: 164 kbps
+    duration: PT2M27S
+- '@type': MusicRecording
+  position: 8
+  name: Yankee, go home!
+  audio:
+    contentUrl: 08-yankee-go-home.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b983475c49afd6727006bb4478d4dd74c0ad00837db7bc4077245c0c3a36d296
+    '@type': AudioObject
+    bitrate: 165 kbps
+    duration: PT2M5S
+- '@type': MusicRecording
+  position: 9
+  name: Fuck off...
+  audio:
+    contentUrl: 09-fuck-off.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 33f631997ad3d3c8e84d40c25e429767f7f4eb34c8e1e9fbd721edbddca1790a
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT3M18S
+- '@type': MusicRecording
+  position: 10
+  name: Революция
+  audio:
+    contentUrl: 10-revoliutsiia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 60e116c549f334b13bce9c72822907c3ba24775321bf45b7faba9a48a43aa643
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT3M49S
+- '@type': MusicRecording
+  position: 11
+  name: Месть
+  audio:
+    contentUrl: 11-mest.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 737d4a4426300f24a4405ba3422c2b4c027101a754ce426762bee37b719066d8
+    '@type': AudioObject
+    bitrate: 163 kbps
+    duration: PT3M58S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0fd6e89fcbc8aaa7d962e83f6f8592ff699dea89dd8d4001a00c21696a4d60a8
+  '@type': ImageObject
+  caption: Обложка альбома Не ссы!
+  caption_en: Cover art for Ne ssy!
+  depicts: []
+video: []

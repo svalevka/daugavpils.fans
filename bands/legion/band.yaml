@@ -1,0 +1,51 @@
+'@type': MusicGroup
+name: Legion
+slug: legion
+alternateName: []
+location: Daugavpils, Latvia
+genre:
+- Heavy Metal
+member:
+- name: Ярослав Гаврилов
+  name_en: Jaroslav Gavrilov
+  role: гитара
+  role_en: guitar
+- name: Владислав Качановский
+  name_en: Vladislav Kachanovsky
+  role: ударные
+  role_en: drums
+- name: Дмитрий Денисов
+  name_en: Dmitry Denisov
+  role: бас
+  role_en: bass
+- name: Владлен Филимонов
+  name_en: Vladlen Filimonov
+  role: клавишные
+  role_en: keyboards
+description: 'Даугавпилсская хэви-метал группа Legion, активно выступавшая на местных
+  рок-фестивалях и концертах в Центре Латышской Культуры (ЦЛК) в первой половине 2000-х
+  годов. Состав: Владислав Качановский (ударные), Дмитрий Денисов (бас), Владлен Филимонов
+  (клавиши), Ярослав Гаврилов (гитара).
+
+  '
+description_en: 'Daugavpils heavy metal band Legion, performing actively across local
+  rock festivals and concerts at the Center of Latvian Culture (CLK) in the early
+  2000s. Lineup: Vladislav Kachanovsky (drums), Dmitry Denisov (bass), Vladlen Filimonov
+  (keyboards), Jaroslav Gavrilov (guitar).
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-legion
+- https://archive.org/download/daugavpils-fans-legion/daugavpils-fans-legion_archive.torrent
+image:
+- contentUrl: media/legion.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: bb0ea4afb77965c5bca26050728d2f09bbbfeb74a3a48af599836764a65cdf54
+  '@type': ImageObject
+  caption: Legion
+  caption_en: Legion
+  depicts: []
+video: []

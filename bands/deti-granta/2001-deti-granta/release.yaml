@@ -1,0 +1,152 @@
+'@type': MusicAlbum
+name: Дети Гранта
+slug: 2001-deti-granta
+datePublished: '2001'
+byArtist: deti-granta
+genre:
+- rock
+- ska-punk
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Дебютный студийный альбом даугавпилсской группы Дети Гранта (2001).
+  Состав: Вантуз (вокал), Гоблин (гитара), Чувен (2-я гитара), Константин Дзедзел
+  (бас), Стас (аккордеон, труба, скретч), Олег Самсонов (ударные).
+
+  '
+description_en: 'Debut album by Daugavpils band Deti Granta (2001). Lineup: Vantuz
+  (vocals), Goblin (guitar), Chuven (2nd guitar), Konstantīns Dzedzelis (bass), Stas
+  (accordion, trumpet, scratches), Oleg Samsonov (drums).
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-deti-granta-2001-deti-granta
+- https://archive.org/download/daugavpils-fans-deti-granta-2001-deti-granta/daugavpils-fans-deti-granta-2001-deti-granta_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: She's got to look
+  audio:
+    contentUrl: 01-she-s-got-to-look.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 481ca215a7e5ff9c9280e610c2c0c899e6981d484ef88d7fac7e2c4b45edba55
+    '@type': AudioObject
+    bitrate: 246 kbps
+    duration: PT5M8S
+- '@type': MusicRecording
+  position: 2
+  name: Космодром
+  audio:
+    contentUrl: 02-kosmodrom.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2b51ee938d12fa53e69fe75105fa644a26962eb042c8fb0002983b4259ed26e2
+    '@type': AudioObject
+    bitrate: 245 kbps
+    duration: PT5M33S
+- '@type': MusicRecording
+  position: 3
+  name: Take on me
+  audio:
+    contentUrl: 03-take-on-me.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6034ddb9f7dc0c9ce5113f88f0045d8f73cd3fb74172895fd17f79941060d646
+    '@type': AudioObject
+    bitrate: 242 kbps
+    duration: PT4M12S
+- '@type': MusicRecording
+  position: 4
+  name: Дунула
+  audio:
+    contentUrl: 04-dunula.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fa0aa1f5cd605f8ee1daa3eb4cdb115d6776502d7c8d6b19ca9c374325190d2c
+    '@type': AudioObject
+    bitrate: 260 kbps
+    duration: PT3M53S
+- '@type': MusicRecording
+  position: 5
+  name: Оставь телефон
+  audio:
+    contentUrl: 05-ostav-telefon.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1268c479116c12c519130509b950142e942d083112f6e3e500b640d39e8f7f0f
+    '@type': AudioObject
+    bitrate: 261 kbps
+    duration: PT3M23S
+- '@type': MusicRecording
+  position: 6
+  name: Ты ж мене пiдманула
+  audio:
+    contentUrl: 06-ty-zh-mene-pidmanula.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 94efd6909522d6b3cc39750641c693a2341c86b233527dc791f46bb86340ed97
+    '@type': AudioObject
+    bitrate: 238 kbps
+    duration: PT3M59S
+- '@type': MusicRecording
+  position: 7
+  name: Прекрасная маркиза
+  audio:
+    contentUrl: 07-prekrasnaia-markiza.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 198758e3d55dda920f8d2ad5300df834263415bd0a115ea4308148c66069fa88
+    '@type': AudioObject
+    bitrate: 240 kbps
+    duration: PT3M55S
+- '@type': MusicRecording
+  position: 8
+  name: Пуговицы в ряд
+  audio:
+    contentUrl: 08-pugovitsy-v-riad.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6bb1021d0cf2822884e52281aebaa998f4690472924f0dc0871e76e74e3b215f
+    '@type': AudioObject
+    bitrate: 236 kbps
+    duration: PT4M17S
+- '@type': MusicRecording
+  position: 9
+  name: Сон
+  audio:
+    contentUrl: 09-son.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fe3191afd2605853f1fb1a57aaefa9b0c07ddb41535238d0df39c59f9218b83c
+    '@type': AudioObject
+    bitrate: 229 kbps
+    duration: PT3M15S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 29ccb875275caf656a37979f073de0861422224576b4c018981f20673d7133d1
+  '@type': ImageObject
+  caption: Обложка альбома Дети Гранта
+  caption_en: Cover art for Deti Granta
+  depicts: []
+video: []

@@ -1,0 +1,177 @@
+'@type': MusicAlbum
+name: I Stay Here
+slug: 2006-i-stay-here
+datePublished: '2006'
+byArtist: disease
+genre:
+- instrumental sympho-metal
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Инструментальный симфо-метал альбом группы Disease (1996–2009). Состав:
+  Павел Степанов (Питон) — гитара, музыка, сведение; Вадим Ветрин — ударные; Роман
+  Максимов — бас-гитара; Тимур Озун — скрипка; Виктор Станкевич — альт.
+
+  '
+description_en: 'Instrumental symphonic metal album by Disease (1996–2009). Lineup:
+  Pavel Stepanov (Piton) — guitars, composer, sound; Vadim Vetrin — drums; Roman Maksimov
+  — bass guitar; Timur Ozun — violin; Viktor Stankevich — viola.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-disease-2006-i-stay-here
+- https://archive.org/download/daugavpils-fans-disease-2006-i-stay-here/daugavpils-fans-disease-2006-i-stay-here_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Brothers
+  audio:
+    contentUrl: 01-brothers.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e46d4a116d3f266af7169f7437dbda2785c02b88a166bed6f42b8811b9d28a35
+    '@type': AudioObject
+    bitrate: 266 kbps
+    duration: PT3M18S
+- '@type': MusicRecording
+  position: 2
+  name: Vihtur's Intension
+  audio:
+    contentUrl: 02-vihturs-intension.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9da67256b397b5e5e83ba70446695b71add999952748ed0b94351d86fa2489e5
+    '@type': AudioObject
+    bitrate: 265 kbps
+    duration: PT3M5S
+- '@type': MusicRecording
+  position: 3
+  name: March
+  audio:
+    contentUrl: 03-march.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ec9b8ecb84c2365dd57d9149fa64bc981b2ec994ea65741d72183ddbdb259b28
+    '@type': AudioObject
+    bitrate: 267 kbps
+    duration: PT3M20S
+- '@type': MusicRecording
+  position: 4
+  name: Sunlight
+  audio:
+    contentUrl: 04-sunlight.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4f8e7786ddc4e4bc2c26c6a8fc1ac10c8412c6511a3aeaa3058a8b385d48c28d
+    '@type': AudioObject
+    bitrate: 261 kbps
+    duration: PT3M14S
+- '@type': MusicRecording
+  position: 5
+  name: Intro
+  audio:
+    contentUrl: 05-intro.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 70b5666bebd5d87f27add9650ba5dea2637e7fb62f26e8a2831c9ea61446ea62
+    '@type': AudioObject
+    bitrate: 255 kbps
+    duration: PT1M47S
+- '@type': MusicRecording
+  position: 6
+  name: Abandoned By Life
+  audio:
+    contentUrl: 06-abandoned-by-life.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5c8bc59aae83bcbe77470f126367890fa7e4234dfd5b89397ed60e85dcd72326
+    '@type': AudioObject
+    bitrate: 260 kbps
+    duration: PT4M51S
+- '@type': MusicRecording
+  position: 7
+  name: I Stay Here
+  audio:
+    contentUrl: 07-i-stay-here.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b35db9b33e835a5eb35a12dd692cac002940ba6d3263642d4fef9f79da2107b2
+    '@type': AudioObject
+    bitrate: 271 kbps
+    duration: PT3M0S
+- '@type': MusicRecording
+  position: 8
+  name: Dead Young
+  audio:
+    contentUrl: 08-dead-young.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a9d62c35b63f4b55070082fa72a8ac5f1100f54a3851b721c631efb0cd09c6b9
+    '@type': AudioObject
+    bitrate: 267 kbps
+    duration: PT2M22S
+- '@type': MusicRecording
+  position: 9
+  name: Decision
+  audio:
+    contentUrl: 09-decision.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ac95608c4b4c76f8ccb4a355d1ece04b031e47a6147d1ad76a164fac7c2e4c67
+    '@type': AudioObject
+    bitrate: 266 kbps
+    duration: PT4M4S
+- '@type': MusicRecording
+  position: 10
+  name: At The Down
+  audio:
+    contentUrl: 10-at-the-down.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a107c12f162be2b3ae4c005bfb6a5fbef9c14ee4a7fb1ddb174c111d727c22f4
+    '@type': AudioObject
+    bitrate: 259 kbps
+    duration: PT4M23S
+- '@type': MusicRecording
+  position: 11
+  name: Row
+  audio:
+    contentUrl: 11-row.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 763b035084a2fab4ac1a4beddec67cb4eae793aa3d1ec326c1aefa0626826962
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT2M14S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 20226f9be504dd3d71238120ee06e7d3f89f2227abda7952b7f3381dc449cb19
+  '@type': ImageObject
+  caption: Обложка альбома I Stay Here
+  caption_en: Cover art for I Stay Here
+  depicts: []
+video: []

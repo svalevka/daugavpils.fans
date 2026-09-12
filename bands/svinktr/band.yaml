@@ -1,0 +1,64 @@
+'@type': MusicGroup
+name: Svinktr
+slug: svinktr
+alternateName: []
+location: Daugavpils, Latvia
+genre:
+- Porno Death Metal
+- Grindcore
+member:
+- name: Виктор «Абдула» Ринкевич
+  name_en: Viktor "Abdula" Rinkevich
+  role: бас, вокал
+  role_en: bass, vocals
+- name: Андрей «Перец» Паприкосов
+  name_en: Andrei "Perets" Paprikosov
+  role: ритм-гитара
+  role_en: rhythm guitar
+- name: Гена «Крид»
+  name_en: Gena "Kreed"
+  role: соло-гитара, сведение
+  role_en: lead guitar, mixing
+- name: Дмитрий (Дима)
+  name_en: Dmitry (Dima)
+  role: ударные
+  role_en: drums
+description: 'Группа «Svinktr» была основана в Даугавпилсе в 2006 году и прекратила
+  существование летом 2008 года. Стиль группы сочетал в себе элементы порно-дэт-метала,
+  трэша и грайндкора с русскоязычными пародийно-гротескными текстами. Состав: Виктор
+  «Абдула» Ринкевич (бас, вокал), Максим «Волк» Попов (гитара), Андрей «Перец» Паприкосов
+  (гитара), Артур «Портвейн» Соколов / Дмитрий (ударные).
+
+
+  Запись единственного официального релиза группы — мини-альбома «Поступательные движения»
+  — была произведена у звукорежиссера Константина Дзедзелиса в период с ноября 2006-го
+  по январь 2007 года.
+
+  '
+description_en: 'The band Svinktr was formed in Daugavpils in 2006 and disbanded in
+  the summer of 2008. The group''s sound blended porno death metal, thrash, and grindcore
+  with grotesque parody lyrics in Russian. Lineup: Viktor ''Abdula'' Rinkevich (bass,
+  vocals), Maxim ''Wolf'' Popov (guitar), Andrei ''Perets'' Paprikosov (guitar), Artur
+  ''Portwein'' Sokolov / Dmitry (drums).
+
+
+  The recording of the band''s sole official EP, ''Postupatelnye Dvizheniya'' (''Progressive
+  Movements''), was engineered by Konstantīns Dzedzelis between November 2006 and
+  January 2007.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-svinktr
+- https://archive.org/download/daugavpils-fans-svinktr/daugavpils-fans-svinktr_archive.torrent
+image:
+- contentUrl: media/svinktr.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 97f4bed339c96fd5ee43c4e46cec2553387f8b4a1364ab41d43b2b62ae27086f
+  '@type': ImageObject
+  caption: Svinktr
+  caption_en: Svinktr
+  depicts: []
+video: []

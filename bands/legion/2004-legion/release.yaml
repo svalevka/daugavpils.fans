@@ -1,0 +1,125 @@
+'@type': MusicAlbum
+name: Legion
+slug: 2004-legion
+datePublished: '2004'
+byArtist: legion
+genre:
+- heavy metal
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Запись группы Legion (Даугавпилс, 2004). Состав: Владислав Качановский
+  (ударные), Дмитрий Денисов (бас), Владлен Филимонов (клавиши), Ярослав Гаврилов
+  (гитара).
+
+  '
+description_en: 'Recording by Legion (Daugavpils, 2004). Lineup: Vladislav Kachanovsky
+  (drums), Dmitry Denisov (bass), Vladlen Filimonov (keyboards), Jaroslav Gavrilov
+  (guitar).
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-legion-2004-legion
+- https://archive.org/download/daugavpils-fans-legion-2004-legion/daugavpils-fans-legion-2004-legion_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Воскресение
+  audio:
+    contentUrl: 01-voskresenie.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4d40053fa80334437d266ce239f0c068fe909e515e9eaa2bd93ad3faf34b8365
+    '@type': AudioObject
+    bitrate: 204 kbps
+    duration: PT2M5S
+- '@type': MusicRecording
+  position: 2
+  name: Sacrifice
+  audio:
+    contentUrl: 02-sacrifice.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 771fccbeb2151964bfcfa12022333e5bbbc46bb0da9ef4626afbacb400d38941
+    '@type': AudioObject
+    bitrate: 197 kbps
+    duration: PT3M5S
+- '@type': MusicRecording
+  position: 3
+  name: Сон растомана
+  audio:
+    contentUrl: 03-son-rastomana.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a88165a457173e2f3a4b44e052bbaa8a2bac8e06f59bdc49d3779cfd55b70d47
+    '@type': AudioObject
+    bitrate: 199 kbps
+    duration: PT2M8S
+- '@type': MusicRecording
+  position: 4
+  name: №6
+  audio:
+    contentUrl: 04-no-6.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 099ffe61db3e49ed79cd41ea38041d424079263ab5fc96f77ff57586c8ccdfcc
+    '@type': AudioObject
+    bitrate: 194 kbps
+    duration: PT2M47S
+- '@type': MusicRecording
+  position: 5
+  name: Themes
+  audio:
+    contentUrl: 05-themes.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0df1d319213e9c236ee9e92bf8cc62514756c34e502a3409189f9e337f39e671
+    '@type': AudioObject
+    bitrate: 213 kbps
+    duration: PT7M7S
+- '@type': MusicRecording
+  position: 6
+  name: Memories
+  audio:
+    contentUrl: 06-memories.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3a7aae13cdf4d18f939b24572da99d23411318d362c15279c51f7d57f8af8269
+    '@type': AudioObject
+    bitrate: 194 kbps
+    duration: PT3M48S
+- '@type': MusicRecording
+  position: 7
+  name: Землетрясение
+  audio:
+    contentUrl: 07-zemletriasenie.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b9bc924488d2a0f90a16cd14866ba6ef5bf56c63ef2d571441b8455d6c5bf36c
+    '@type': AudioObject
+    bitrate: 241 kbps
+    duration: PT4M2S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: bb0ea4afb77965c5bca26050728d2f09bbbfeb74a3a48af599836764a65cdf54
+  '@type': ImageObject
+  caption: Обложка альбома Legion
+  caption_en: Cover art for Legion
+  depicts: []
+video: []

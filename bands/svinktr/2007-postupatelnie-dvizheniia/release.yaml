@@ -1,0 +1,89 @@
+'@type': MusicAlbum
+name: Поступательные Движения
+slug: 2007-postupatelnie-dvizheniia
+datePublished: '2007'
+byArtist: svinktr
+genre:
+- porno death metal
+- grindcore
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Единственный официальный релиз даугавпилсской группы Svinktr. Запись
+  произведена у Константина Дзедзелиса в период с ноября 2006-го по январь 2007-го
+  в составе: Андрей «Перец» (ритм-гитара), Гена «Крид» (соло-гитара, сведение, сэмплирование),
+  Виктор «Абдула» (бас, вокал), Дима (ударные).
+
+  '
+description_en: 'The sole official EP by Daugavpils band Svinktr. Recorded at Konstantīns
+  Dzedzelis''s studio between November 2006 and January 2007. Lineup: Andrei ''Perets''
+  (rhythm guitar), Gena ''Kreed'' (lead guitar, mixing, sampling), Viktor ''Abdula''
+  (bass, vocals), Dima (drums).
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-svinktr-2007-postupatelnie-dvizheniia
+- https://archive.org/download/daugavpils-fans-svinktr-2007-postupatelnie-dvizheniia/daugavpils-fans-svinktr-2007-postupatelnie-dvizheniia_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Ку (Интро)
+  audio:
+    contentUrl: 01-ku-intro.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 176dadccf643003a0cac46fb54d2a435d10abbf19e260c5be77877cbdc816d8f
+    '@type': AudioObject
+    bitrate: 231 kbps
+    duration: PT55S
+- '@type': MusicRecording
+  position: 2
+  name: Как Хорошо
+  audio:
+    contentUrl: 02-kak-khorosho.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b5403de328a5dcf12e9a1278459beeb7bdf7c20138b72f1439a2bf48634d2383
+    '@type': AudioObject
+    bitrate: 272 kbps
+    duration: PT1M5S
+- '@type': MusicRecording
+  position: 3
+  name: Ночь Прожорливых Клиторов
+  audio:
+    contentUrl: 03-noch-prozhorlivykh-klitorov.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c7fde9b0de62be2b59800a8573920b106b5719c9ff4f036fe4bd188a453c5a0c
+    '@type': AudioObject
+    bitrate: 244 kbps
+    duration: PT3M46S
+- '@type': MusicRecording
+  position: 4
+  name: Вставь И Проверни (Мой Первый Кулак)
+  audio:
+    contentUrl: 04-vstav-i-proverni.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4696f5303cafa861e9044c0471b88a4575a5fdf28975c89b423eacde639cbe89
+    '@type': AudioObject
+    bitrate: 258 kbps
+    duration: PT2M45S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 97f4bed339c96fd5ee43c4e46cec2553387f8b4a1364ab41d43b2b62ae27086f
+  '@type': ImageObject
+  caption: Обложка альбома Поступательные Движения
+  caption_en: Cover art for Postupatelnie Dvizheniia
+  depicts: []
+video: []

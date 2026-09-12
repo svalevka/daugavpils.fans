@@ -1,0 +1,122 @@
+'@type': MusicGroup
+name: Disease
+slug: disease
+alternateName: []
+location: Daugavpils, Latvia
+genre:
+- Symphonic Metal
+- Instrumental Symphonic Metal
+member:
+- name: Павел Степанов (Питон)
+  name_en: Pavel Stepanov (Piton)
+  role: гитара, музыка
+  role_en: guitar, composer
+- name: Вадим Ветрин
+  name_en: Vadim Vetrin
+  role: ударные
+  role_en: drums
+- name: Роман Максимов
+  name_en: Roman Maksimov
+  role: бас-гитара
+  role_en: bass guitar
+- name: Владимир Вайнюс
+  name_en: Vladimir Vainus
+  role: клавишные
+  role_en: keyboards
+- name: Тимур Озун
+  name_en: Timur Ozun
+  role: скрипка
+  role_en: violin
+- name: Виктор Станкевич
+  name_en: Viktor Stankevich
+  role: альт
+  role_en: viola
+description: 'Группа "Disease" образовалась в 1996 году. Эта идея пришла в голову
+  Питону (Павел Степанов). Были привлечены ещё несколько человек на роль басиста и
+  барабанщика, решено было играть панк-рок (потому что ничего другого не умели). Но
+  уже тогда стало понятно, что это временная проблема, так как Питон планировал играть
+  что-нибудь более серьезное по мере усовершенствования техники исполнения.
+
+
+  В последствии группа исполняла doom metal, потом sympho-black metal. С той поры
+  утекло много воды. Сменилось множество составов, из первоначального остался только
+  основатель - Питон.
+
+
+  Настоящее становление группы произошло в 2000 году. Состав более-менее стабилизировался,
+  и группа приняла участие в конкурсе Chemical reaction 2001 (Daugavpils) и заняла
+  первое место, что позволяет ей участвовать в региональном отборе на конкурс фестиваля
+  "Лиепаяс Дзинтарс". Но в тот раз группе не удалось пробиться...
+
+
+  Зато в следующем году (2002) "Disease" принимает участие в финале конкурса фестиваля
+  "Лиепаяс Дзинтарс", правда, не занимает призового места, зато барабанщик (Вадим
+  Ветрин) получает приз как лучший барабанщик фестиваля.
+
+
+  После "Лиепаяс Дзинтарс" группу замечают и приглашают принять участие в фестивале
+  "Bildes" (www.bildes.lv), который проходит каждый год в Риге, в доме конгрессов
+  и в котором принимают участие известные певцы и исполнители латвийской поп- и рок-эстрады.
+  Непременным условием было то, что нужно исполнить одну композицию с кем-нибудь из
+  уже известных исполнителей. "Disease" выступали с Евой Акуратере. В том же году
+  "Disease" выступают в качестве претендентов на участие в конкурсе фестиваля "Sinepes
+  un Medus" (Мадона, www.sinepes.times.lv). В 2003 году группа принимает участие в
+  конкурсе "Sinepes un Medus" и занимает первое место! За что им, в качестве приза,
+  предоставлялась возможность записи нескольких композиций на профессиональной студии,
+  чем они и воспользовались, записавшись на студии "SSS" (Сигулда).
+
+
+  В 2004 Году группа приглашена на фестиваль "Sinepes un Medus" уже в качестве почетных
+  гостей.
+
+
+  За время существования группы записано два альбома и один демо-диск: "The Four Seasons
+  Prophecy" (2001), "Abandoned By Life" (2002), "Demo 2003". Начиная с 2002 года группа
+  играет в стиле instrumental sympho-metal.
+
+  '
+description_en: 'The band Disease formed in 1996, the brainchild of Piton (Pavel Stepanov).
+  Several musicians were recruited for bass and drums, initially deciding to play
+  punk rock because they lacked the technique for anything else. But it was already
+  clear that this was only temporary, as Piton planned to pursue heavier and more
+  serious musical forms as the members'' instrumental technique progressed.
+
+
+  Over the ensuing years the group progressed through doom metal and symphonic black
+  metal. Many lineups changed; only founder Piton remained from the original cast.
+
+
+  The real breakthrough occurred in 2000 when the lineup stabilized. Disease competed
+  in the Chemical Reaction 2001 festival in Daugavpils and took 1st place, earning
+  a spot in the regional qualifying round for the legendary Liepājas Dzintars festival.
+  While they missed the finals that year, in 2002 Disease reached the grand finals
+  of Liepājas Dzintars, where drummer Vadim Vetrin won the award for Best Drummer
+  of the festival.
+
+
+  Following Liepājas Dzintars, the band was invited to the prestigious Bildes festival
+  in Riga''s Congress House, performing alongside renowned Latvian singer Ieva Akuratere.
+  In 2003, Disease won 1st place at the Sinepes un Medus festival in Madona, receiving
+  the grand prize of free recording time at the professional SSS Studio in Sigulda.
+  In 2004, they returned to Sinepes un Medus as honored guests.
+
+
+  By 2002, Disease evolved into an instrumental symphonic metal powerhouse, blending
+  heavy guitar riffs and drums with violins and violas.
+
+  '
+sameAs:
+- https://archive.org/details/daugavpils-fans-disease
+- https://archive.org/download/daugavpils-fans-disease/daugavpils-fans-disease_archive.torrent
+image:
+- contentUrl: media/disease.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 20226f9be504dd3d71238120ee06e7d3f89f2227abda7952b7f3381dc449cb19
+  '@type': ImageObject
+  caption: Disease
+  caption_en: Disease
+  depicts: []
+video: []

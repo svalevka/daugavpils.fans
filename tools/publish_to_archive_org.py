@@ -39,6 +39,7 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import yaml
@@ -170,13 +171,25 @@ def publish_item(
 
     import internetarchive as ia
 
-    ia.upload(
-        item_id,
-        files={content_url: str(path) for content_url, path in files.items()},
-        metadata=metadata,
-        checksum=True,  # skip files whose remote MD5 already matches
-        verbose=True,
-    )
+    max_retries = 4
+    for attempt in range(max_retries):
+        try:
+            ia.upload(
+                item_id,
+                files={content_url: str(path) for content_url, path in files.items()},
+                metadata=metadata,
+                checksum=True,  # skip files whose remote MD5 already matches
+                verbose=True,
+            )
+            break
+        except Exception as exc:
+            err = str(exc)
+            if ("503" in err or "Slow Down" in err or "reduce your request rate" in err) and attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 60
+                print(f"    Rate limit / 503 Slow Down hit. Waiting {wait_time}s before retrying (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait_time)
+            else:
+                raise
 
     # ia.upload()'s `metadata` argument is only applied at item *creation*
     # time (see its own docstring: "Metadata used to create a new item") -
@@ -195,7 +208,12 @@ def publish_item(
 def sync_metadata(item_id: str, metadata: dict[str, str]) -> bool:
     import internetarchive as ia
 
-    response = ia.modify_metadata(item_id, metadata=metadata)
+    try:
+        response = ia.modify_metadata(item_id, metadata=metadata)
+    except (ia.exceptions.ItemLocateError, KeyError):
+        # On freshly created items, ia.upload() already applied the metadata at
+        # creation time, but the catalog index takes time to recognize the new item.
+        return True
     if response.status_code >= 400:
         if "no changes to _meta.xml" in response.text:
             return True  # Archive.org returns 400 if metadata is already identical
