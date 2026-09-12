@@ -1,8 +1,5 @@
 name: "Dead-man's-switch: request archive.org access"
-description: >-
-  Only use this if the maintainer is unreachable/deceased and you need the
-  archive.org (ia tool) credential to keep the archive alive. Opening this
-  starts a 7-day countdown - see documentation/DEAD_MANS_SWITCH.md.
+description: "Only if the maintainer is unreachable/deceased - starts a 7-day countdown. See documentation/DEAD_MANS_SWITCH.md."
 title: "[dead-mans-switch] access request"
 labels:
   - dead-mans-switch
@@ -32,8 +29,5 @@ body:
     attributes:
       label: Confirmation
       options:
-        - label: >-
-            I believe the maintainer is deceased or permanently
-            unreachable, and I am requesting the archive.org credential
-            under the process described in documentation/DEAD_MANS_SWITCH.md.
+        - label: "I believe the maintainer is deceased or permanently unreachable, and I am requesting the archive.org credential under the process described in documentation/DEAD_MANS_SWITCH.md."
           required: true
