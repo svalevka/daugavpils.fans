@@ -6,16 +6,26 @@ byArtist: legion
 genre:
 - heavy metal
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
-description: 'Запись группы Legion (Даугавпилс, 2004). Состав: Владислав Качановский
-  (ударные), Дмитрий Денисов (бас), Владлен Филимонов (клавиши), Ярослав Гаврилов
-  (гитара).
+description: |-
+  Студийная запись даугавпилсской хэви-метал группы Legion, сделанная в 2004 году на студии звукозаписи Константина Дзедзелиса.
 
-  '
-description_en: 'Recording by Legion (Daugavpils, 2004). Lineup: Vladislav Kachanovsky
-  (drums), Dmitry Denisov (bass), Vladlen Filimonov (keyboards), Jaroslav Gavrilov
-  (guitar).
+  Релиз демонстрирует техничный, скоростной мелодик-метал с выразительными гитарными соло Ярослава Гаврилова, плотной ритм-секцией и клавишными аранжировками, сочетая инструментальные треки ("Themes", "Memories") и драйвовые номера с русско- и англоязычной лирикой ("Воскресение", "Sacrifice", "Сон растомана", "№6", "Землетрясение").
 
-  '
+  Состав записи:
+  Ярослав Гаврилов — гитара, музыка
+  Владислав Качановский — ударные
+  Дмитрий Денисов — бас-гитара
+  Владлен Филимонов — клавишные
+description_en: |-
+  Studio recording by Daugavpils heavy metal band Legion, produced in 2004 at the recording studio of Konstantīns Dzedzelis.
+
+  The album showcases technical, melodic metal featuring expressive guitar solos by Jaroslav Gavrilov, tight rhythm driving sections, and synth arrangements, alternating between evocative instrumental pieces ('Themes', 'Memories') and driving anthems in Russian and English ('Voskresenie', 'Sacrifice', 'Son rastomana', 'No. 6', 'Zemletriasenie').
+
+  Recording lineup:
+  Jaroslav Gavrilov — guitar, composition
+  Vladislav Kachanovsky — drums
+  Dmitry Denisov — bass guitar
+  Vladlen Filimonov — keyboards
 sameAs:
 - https://archive.org/details/daugavpils-fans-legion-2004-legion
 - https://archive.org/download/daugavpils-fans-legion-2004-legion/daugavpils-fans-legion-2004-legion_archive.torrent
