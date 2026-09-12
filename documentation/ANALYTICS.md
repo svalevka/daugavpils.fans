@@ -46,6 +46,7 @@ The analytics system is intentionally designed to be **100% cookie-free** and fu
    - The visitor's IP address cannot be reversed or reconstructed from the hash.
    - External parties cannot correlate visitor hashes without knowing `SECRET_KEY`.
 3. **Automated bot & crawler filtering**: Search engine spiders (Googlebot, Bingbot, Yandex), AI scrapers (Bytespider, GPTBot, ClaudeBot), and command-line tools (`curl`, `python-requests`) are automatically filtered out server-side using User-Agent pattern matching. Their requests are dropped with `204 No Content` and never pollute analytics counts.
+4. **Offline IP-to-Country geolocation**: Visitor countries are resolved using a local, offline MaxMind `.mmdb` database (`country.mmdb`) mounted inside the container. No visitor IP is ever forwarded to an external geolocation API, ensuring 100% data locality and zero latency overhead.
 
 ---
 
