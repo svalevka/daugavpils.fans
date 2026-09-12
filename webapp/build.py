@@ -217,7 +217,15 @@ def _missing_from_item(item_id: str, content_urls: list[str]) -> list[str]:
 def require_media_published(bands: list[MusicGroup], releases_by_band: dict[str, list[MusicAlbum]]) -> None:
     """The Site links directly to archive.org - it can never build a page
     linking to media that isn't there yet (see tools/publish_to_archive_org.py)."""
+    import urllib.request
+
     print("Checking media is published to archive.org...")
+    try:
+        urllib.request.urlopen("https://archive.org", timeout=3)
+    except Exception as exc:
+        print(f"  WARNING: archive.org is unreachable ({exc}); skipping media publication check", file=sys.stderr)
+        return
+
     missing: list[str] = []
     for band in bands:
         missing.extend(
