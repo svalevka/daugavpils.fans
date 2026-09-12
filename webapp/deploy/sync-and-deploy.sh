@@ -81,7 +81,7 @@ if ! mkdir "$LOCK_DIR" 2>/dev/null; then
   echo "another run is already in progress ($LOCK_DIR exists) - exiting"
   exit 0
 fi
-trap 'rmdir "$LOCK_DIR"' EXIT
+trap 'rmdir "$LOCK_DIR" 2>/dev/null || true' EXIT
 
 if [ -d "$REPO_DIR" ]; then
   git -C "$REPO_DIR" fetch "$REMOTE" "$BRANCH"
