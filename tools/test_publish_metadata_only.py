@@ -46,8 +46,31 @@ class PublishMetadataOnlyTest(unittest.TestCase):
             yaml_path = Path(tmp) / "band.yaml"
             yaml_path.write_text("name: Test\nsameAs: []\n")
 
-            with patch("internetarchive.modify_metadata", return_value=mock_response) as mock_modify:
-                with patch("internetarchive.upload") as mock_upload:
+            with patch("internetarchive.get_item") as mock_get_item:
+                mock_get_item.return_value.exists = True
+                with patch("internetarchive.modify_metadata", return_value=mock_response) as mock_modify:
+                    with patch("internetarchive.upload") as mock_upload:
+                        ok = publish_item(
+                            item_id="daugavpils-fans-test",
+                            files={},
+                            metadata={"title": "Test"},
+                            dry_run=False,
+                            yaml_path=yaml_path,
+                            metadata_only=True,
+                        )
+
+            self.assertTrue(ok)
+            mock_modify.assert_called_once_with("daugavpils-fans-test", metadata={"title": "Test"})
+            mock_upload.assert_not_called()
+
+    def test_publish_item_skips_when_no_media_and_item_not_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            yaml_path = Path(tmp) / "band.yaml"
+            yaml_path.write_text("name: Test\nsameAs: []\n")
+
+            with patch("internetarchive.get_item") as mock_get:
+                mock_get.return_value.exists = False
+                with patch("internetarchive.modify_metadata") as mock_modify:
                     ok = publish_item(
                         item_id="daugavpils-fans-test",
                         files={},
@@ -58,8 +81,7 @@ class PublishMetadataOnlyTest(unittest.TestCase):
                     )
 
             self.assertTrue(ok)
-            mock_modify.assert_called_once_with("daugavpils-fans-test", metadata={"title": "Test"})
-            mock_upload.assert_not_called()
+            mock_modify.assert_not_called()
 
     def test_sync_metadata_treats_no_changes_error_as_success(self):
         mock_response = MagicMock()

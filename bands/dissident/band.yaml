@@ -1,0 +1,115 @@
+'@type': MusicGroup
+name: Диссидент
+slug: dissident
+alternateName:
+- Dissident
+foundingDate: '1996'
+dissolutionDate: '1997'
+location: Daugavpils, Latvia
+genre:
+- Rock
+- Grunge
+- Underground Rock
+member:
+- name: Слоик
+  name_en: Sloik
+  role: вокал, ритм-гитара
+  role_en: vocals, rhythm guitar
+  period: 1996-1997
+- name: Эд
+  name_en: Ed
+  role: гитара, лидер-гитара
+  role_en: guitar, lead guitar
+  period: 1996-1997
+- name: Пабло / Павло
+  name_en: Pablo / Pavlo
+  role: бас
+  role_en: bass
+  period: 1996-1997
+- name: Билли / Билл
+  name_en: Billy / Bill
+  role: ударные
+  role_en: drums
+  period: 1996-1997
+description: 'Даугавпилсская рок-группа «Диссидент» (Dissident), активная в 1996–1997
+  годах.
+
+
+  Выступление на концерте в Башне Деда (конец 1996 года):
+
+  Слоик (вокал, гитара)
+
+  Эд (гитара)
+
+  Павло (бас)
+
+  Билл (ударные)
+
+
+  01. Dissident - Track 1
+
+  02. Dissident - Track 2
+
+  03. Dissident - Track 3
+
+
+  Студийная запись 1997 года (записано на студии "Egor Home Studio"):
+
+  Слоик (ритм-гитара, вокал)
+
+  Эд (лидер-гитара)
+
+  Пабло (бас)
+
+  Билли (ударные)
+
+
+  01. Эй, молчи
+
+  02. Ещё
+
+  03. Весенняя
+
+  04. Место для змей'
+description_en: 'Daugavpils rock band "Dissident", active in 1996–1997.
+
+
+  Live at the Bashnya Deda concert (late 1996):
+
+  Sloik (vocals, guitar)
+
+  Ed (guitar)
+
+  Pavlo (bass)
+
+  Bill (drums)
+
+
+  01. Dissident - Track 1
+
+  02. Dissident - Track 2
+
+  03. Dissident - Track 3
+
+
+  1997 Studio Demo (recorded at "Egor Home Studio"):
+
+  Sloik (rhythm guitar, vocals)
+
+  Ed (lead guitar)
+
+  Pablo (bass)
+
+  Billy (drums)
+
+
+  01. Ey, molchi (Hey, Hush)
+
+  02. Eshchyo (More)
+
+  03. Vesenyaya (Spring Song)
+
+  04. Mesto dlya zmey (A Place for Snakes)'
+sameAs: []
+image: []
+video: []

@@ -1,0 +1,91 @@
+'@type': MusicGroup
+name: Silversand
+slug: silversand
+alternateName: []
+foundingDate: '2004'
+dissolutionDate: null
+location: Daugavpils, Latvia
+genre:
+- Electronic Rock
+- Synth Rock
+- Alternative Rock
+member:
+- name: Владимир Д.
+  name_en: Vladimir D.
+  role: вокал, гитары
+  role_en: vocals, guitars
+  period: '2004'
+- name: Диана Д.
+  name_en: Diana D.
+  role: клавишные
+  role_en: keyboards
+  period: '2004'
+description: 'Даугавпилсский электронно-роковый проект Silversand.
+
+
+  Состав:
+
+  Владимир Д. (вокал, гитары)
+
+  Диана Д. (клавишные)
+
+
+  Альбом 2004 года:
+
+  01. Feelings Generator: On Line
+
+  02. Words And Actions
+
+  03. Resistant
+
+  04. Stunned
+
+  05. Five Zeros
+
+  06. Atomic Spit
+
+  07. Like A Sweet Filth
+
+  08. ... Main For Me
+
+  09. More Far, Too Strong
+
+  10. Invisible Denials
+
+  11. Falling Needles'
+description_en: 'Daugavpils electronic rock and synth rock project Silversand.
+
+
+  Lineup:
+
+  Vladimir D. (vocals, guitars)
+
+  Diana D. (keyboards)
+
+
+  2004 Album:
+
+  01. Feelings Generator: On Line
+
+  02. Words And Actions
+
+  03. Resistant
+
+  04. Stunned
+
+  05. Five Zeros
+
+  06. Atomic Spit
+
+  07. Like A Sweet Filth
+
+  08. ... Main For Me
+
+  09. More Far, Too Strong
+
+  10. Invisible Denials
+
+  11. Falling Needles'
+sameAs: []
+image: []
+video: []

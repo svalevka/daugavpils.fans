@@ -143,19 +143,24 @@ def publish_item(
     yaml_path: Path,
     metadata_only: bool = False,
 ) -> bool:
-    if metadata_only:
-        print(f"  {item_id}: syncing metadata")
-        for k, v in sorted(metadata.items()):
-            preview = (v[:60] + "...") if len(v) > 60 else v
-            print(f"    {k}: {preview!r}")
+    import internetarchive as ia
+
+    if not files:
+        if not ia.get_item(item_id).exists:
+            print(f"  {item_id}: no media files and item does not exist on archive.org, skipping individual item publish")
+            return True
+        print(f"  {item_id}: no media files, syncing metadata")
         if dry_run:
             return True
         ok = sync_metadata(item_id, metadata)
         record_same_as(yaml_path, [item_page_url(item_id), item_torrent_url(item_id)])
         return ok
 
-    if not files:
-        print(f"  {item_id}: no media files, syncing metadata")
+    if metadata_only:
+        print(f"  {item_id}: syncing metadata")
+        for k, v in sorted(metadata.items()):
+            preview = (v[:60] + "...") if len(v) > 60 else v
+            print(f"    {k}: {preview!r}")
         if dry_run:
             return True
         ok = sync_metadata(item_id, metadata)
@@ -168,8 +173,6 @@ def publish_item(
 
     if dry_run:
         return True
-
-    import internetarchive as ia
 
     max_retries = 4
     for attempt in range(max_retries):

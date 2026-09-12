@@ -1,0 +1,63 @@
+'@type': MusicGroup
+name: Parf & Company
+slug: parf-and-company
+alternateName: []
+foundingDate: '1995'
+dissolutionDate: null
+location: Daugavpils, Latvia
+genre:
+- Rock
+- Underground Rock
+member:
+- name: Юрий Перемот
+  name_en: Yuri Peremot
+  role: гитара
+  role_en: guitar
+  period: '1995'
+- name: Парф
+  name_en: Parf
+  role: бас
+  role_en: bass
+  period: '1995'
+- name: Геннадий «Кузя» Кузьмин
+  name_en: Gennady "Kuzya" Kuzmin
+  role: ударные
+  role_en: drums
+  period: '1995'
+description: 'Даугавпилсский рок-проект Parf & Company (1995 год).
+
+
+  Состав:
+
+  Юра Перемот (гитара)
+
+  Парф (бас)
+
+  Кузя (ударные)
+
+
+  Запись 1995 года:
+
+  01. Track 01
+
+  02. Track 02'
+description_en: 'Daugavpils rock project Parf & Company (1995).
+
+
+  Lineup:
+
+  Yuri Peremot (guitar)
+
+  Parf (bass)
+
+  Kuzya (drums)
+
+
+  1995 Recording:
+
+  01. Track 01
+
+  02. Track 02'
+sameAs: []
+image: []
+video: []

@@ -1,0 +1,63 @@
+'@type': MusicGroup
+name: Baily Button
+slug: baily-button
+alternateName: []
+foundingDate: '1997'
+dissolutionDate: null
+location: Daugavpils, Latvia
+genre:
+- Garage Punk
+- Garage Rock
+member:
+- name: Руслан «Гоблин» Кондрусь
+  name_en: Ruslan "Goblin" Kondrus
+  role: вокал, гитара
+  role_en: vocals, guitar
+  period: '1997'
+- name: Валерий «Варик»
+  name_en: Valery "Varik"
+  role: бас
+  role_en: bass
+  period: '1997'
+- name: Митрошин
+  name_en: Mitroshin
+  role: ударные
+  role_en: drums
+  period: '1997'
+description: 'Даугавпилсский гаражный панк-проект Baily Button (1997 год).
+
+
+  Состав:
+
+  Гоблин (вокал, гитара)
+
+  Варик (бас)
+
+  Митрошин (ударные)
+
+
+  Запись «(garage)» (1997 год):
+
+  01. Track 1
+
+  02. Track 2'
+description_en: 'Daugavpils garage punk project Baily Button (1997).
+
+
+  Lineup:
+
+  Goblin (vocals, guitar)
+
+  Varik (bass)
+
+  Mitroshin (drums)
+
+
+  1997 "(garage)" recording:
+
+  01. Track 1
+
+  02. Track 2'
+sameAs: []
+image: []
+video: []

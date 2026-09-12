@@ -1,0 +1,80 @@
+'@type': MusicGroup
+name: Black Vanilla
+slug: black-vanilla
+alternateName: []
+foundingDate: '2003'
+dissolutionDate: null
+location: Daugavpils, Latvia
+genre:
+- Rock
+- Alternative Rock
+member:
+- name: Олита Кузьмина
+  name_en: Olita Kuzmina
+  role: вокал
+  role_en: vocals
+  period: '2003'
+- name: Алвин
+  name_en: Alvin
+  role: гитара
+  role_en: guitar
+  period: '2003'
+- name: Костя
+  name_en: Kostya
+  role: бас
+  role_en: bass
+  period: '2003'
+- name: Олег
+  name_en: Oleg
+  role: ударные
+  role_en: drums
+  period: '2003'
+description: 'Даугавпилсская группа Black Vanilla (2003 год).
+
+
+  Состав:
+
+  Олита (вокал)
+
+  Алвин (гитара)
+
+  Костя (бас)
+
+  Олег (ударные)
+
+
+  Запись 2003 года:
+
+  01. Track 01
+
+  02. Track 02
+
+  03. Track 03
+
+  04. Track 04'
+description_en: 'Daugavpils rock band Black Vanilla (2003).
+
+
+  Lineup:
+
+  Olita (vocals)
+
+  Alvin (guitar)
+
+  Kostya (bass)
+
+  Oleg (drums)
+
+
+  2003 Recording:
+
+  01. Track 01
+
+  02. Track 02
+
+  03. Track 03
+
+  04. Track 04'
+sameAs: []
+image: []
+video: []

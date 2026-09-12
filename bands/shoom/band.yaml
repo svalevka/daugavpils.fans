@@ -1,0 +1,80 @@
+'@type': MusicGroup
+name: Shoom
+slug: shoom
+alternateName: []
+foundingDate: '2003'
+dissolutionDate: null
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Indie Rock
+member:
+- name: Эд
+  name_en: Ed
+  role: гитара, вокал
+  role_en: guitar, vocals
+  period: '2003'
+- name: Константин «Ко» Дзедзель
+  name_en: Konstantin "Ko" Dzedzel
+  role: бас
+  role_en: bass
+  period: '2003'
+- name: Вадим Сидоров
+  name_en: Vadim Sidorov
+  role: ударные
+  role_en: drums
+  period: '2003'
+- name: Олита Кузьмина
+  name_en: Olita Kuzmina
+  role: вокал (гостевое участие на треке 05)
+  role_en: vocals (guest on track 05)
+  period: '2003'
+description: 'Даугавпилсский рок-проект Shoom (2003 год).
+
+
+  Состав:
+
+  Эд (гитара, вокал)
+
+  Ко (бас)
+
+  Вадим Сидоров (ударные)
+
+
+  Запись 2003 года:
+
+  01. Track 01
+
+  02. Track 02
+
+  03. Track 03
+
+  04. Track 04
+
+  05. Track 05 (feat Olita)'
+description_en: 'Daugavpils rock project Shoom (2003).
+
+
+  Lineup:
+
+  Ed (guitar, vocals)
+
+  Ko (bass)
+
+  Vadim Sidorov (drums)
+
+
+  2003 Recording:
+
+  01. Track 01
+
+  02. Track 02
+
+  03. Track 03
+
+  04. Track 04
+
+  05. Track 05 (feat. Olita)'
+sameAs: []
+image: []
+video: []
