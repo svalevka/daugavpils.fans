@@ -264,16 +264,55 @@ table.tracklist audio {
   background: rgba(0, 0, 0, 0.92);
 }
 
+.lightbox-figure {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 92vw;
+  max-height: 92vh;
+  pointer-events: none;
+}
+
+.lightbox-figure img,
+.lightbox-figure video,
+.lightbox-caption {
+  pointer-events: auto;
+}
+
 .lightbox img,
 .lightbox video {
   position: relative;
   max-width: 92vw;
-  max-height: 92vh;
+  max-height: calc(92vh - 4rem);
   border-radius: 4px;
+  object-fit: contain;
+  flex-shrink: 1;
+  min-height: 0;
+}
+
+.lightbox-figure:not(:has(.lightbox-caption)) img,
+.lightbox-figure:not(:has(.lightbox-caption)) video {
+  max-height: 92vh;
 }
 
 .lightbox video {
   background: #000;
+}
+
+.lightbox-caption {
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: center;
+  margin-top: 0.6rem;
+  max-width: min(92vw, 42rem);
+  padding: 0 0.5rem;
+  word-break: break-word;
+  flex-shrink: 0;
 }
 
 .video-gallery video {

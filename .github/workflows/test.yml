@@ -29,10 +29,13 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
 
       - name: Install dependencies
-        run: pip install -r tools/requirements.txt -r review_app/requirements.txt
+        run: pip install -r tools/requirements.txt -r webapp/requirements.txt -r review_app/requirements.txt
 
       - name: Run tools/ test suite
         run: python -m unittest discover -s tools -p 'test_*.py' -v
+
+      - name: Run webapp/ test suite
+        run: python -m unittest discover -s webapp -p 'test_*.py' -v
 
       - name: Run webapp/deploy/ test suite
         run: python -m unittest discover -s webapp/deploy -p 'test_*.py' -v

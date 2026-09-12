@@ -21,7 +21,10 @@
   <a href="#{{ prefix }}-{{ prev_index }}" class="lightbox-prev" aria-label="Previous photo">&#10094;</a>
   <a href="#{{ prefix }}-{{ next_index }}" class="lightbox-next" aria-label="Next photo">&#10095;</a>
   {% endif %}
-  <img src="{{ url_fn(img.contentUrl) }}" alt="{{ caption or fallback_alt }}">
+  <figure class="lightbox-figure">
+    <img src="{{ url_fn(img.contentUrl) }}" alt="{{ caption or fallback_alt }}">
+    {% if caption %}<figcaption class="lightbox-caption">{{ caption }}</figcaption>{% endif %}
+  </figure>
 </div>
 {% endfor %}
 {% endmacro %}
@@ -53,9 +56,12 @@
   <a href="#" class="lightbox-close" aria-label="Close">&times;</a>
   <a href="#{{ prefix }}-{{ prev_index }}" class="lightbox-prev" aria-label="Previous video">&#10094;</a>
   <a href="#{{ prefix }}-{{ next_index }}" class="lightbox-next" aria-label="Next video">&#10095;</a>
-  <video controls preload="none" aria-label="{{ vid.name or fallback_alt }}">
-    <source src="{{ url_fn(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
-  </video>
+  <figure class="lightbox-figure">
+    <video controls preload="none" aria-label="{{ vid.name or fallback_alt }}">
+      <source src="{{ url_fn(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
+    </video>
+    {% if vid.name %}<figcaption class="lightbox-caption">{{ vid.name }}</figcaption>{% endif %}
+  </figure>
 </div>
 {% endfor %}
 {% endif %}
