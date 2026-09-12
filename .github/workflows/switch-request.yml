@@ -30,6 +30,8 @@ jobs:
       REQUESTER: ${{ github.event.issue.user.login }}
       OWNER: svalevka
     steps:
+      - uses: actions/checkout@v4
+
       - name: Look up requester in trusted-contacts allowlist
         id: lookup
         env:
