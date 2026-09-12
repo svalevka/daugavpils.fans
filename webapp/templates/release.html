@@ -36,7 +36,7 @@
       {{ track.name }}
       {% if track.alternateName %}<div class="meta">{{ track.alternateName }}</div>{% endif %}
     </td>
-    <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}"></audio></td>
+    <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
     <td class="track-duration">{{ track.audio.duration | duration }}</td>
   </tr>
   {% endfor %}

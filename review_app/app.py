@@ -18,6 +18,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
+from admin import bp as admin_bp  # noqa: E402
+from analytics import bp as analytics_bp  # noqa: E402
 from api import bp as api_bp  # noqa: E402
 from auth import bp as auth_bp  # noqa: E402
 from config import Config  # noqa: E402
@@ -56,6 +58,8 @@ def create_app(config: Config) -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(api_bp)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(analytics_bp)
 
     # Behind nginx (see webapp/deploy/nginx/daugavpils.conf's `proxy_set_header
     # X-Forwarded-*` lines), only one hop of forwarding headers is ever

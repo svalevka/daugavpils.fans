@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}Site Statistics — daugavpils.fans{% endblock %}
+{% block main_class %}main-wide{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <div>
+    <h1>Site Statistics</h1>
+    <p class="meta">Maintainer: {{ maintainer_email }}</p>
+  </div>
+  <form method="post" action="/admin/logout">
+    <button type="submit" class="button-secondary">Log out</button>
+  </form>
+</div>
+
+<nav class="period-nav" aria-label="Time period selection">
+  <a href="/admin/?period=today" class="period-btn{% if period == 'today' %} active{% endif %}">Today</a>
+  <a href="/admin/?period=7d" class="period-btn{% if period == '7d' %} active{% endif %}">Last 7 Days</a>
+  <a href="/admin/?period=30d" class="period-btn{% if period == '30d' %} active{% endif %}">Last 30 Days</a>
+  <a href="/admin/?period=all" class="period-btn{% if period == 'all' %} active{% endif %}">All Time</a>
+</nav>
+
+<div class="stats-overview-grid">
+  <div class="stat-card">
+    <div class="stat-value">{{ unique_visitors }}</div>
+    <div class="stat-label">Unique Visitors</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ pageviews }}</div>
+    <div class="stat-label">Pageviews</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ audio_plays }}</div>
+    <div class="stat-label">Audio Listens (≥5s)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ video_views }}</div>
+    <div class="stat-label">Video Views (≥5s)</div>
+  </div>
+</div>
+
+<div class="admin-sections-grid">
+  <section class="admin-section">
+    <h2>Top Tracks</h2>
+    {% if not top_tracks %}
+    <p class="meta">No audio plays recorded in this period.</p>
+    {% else %}
+    <ul class="stat-list">
+      {% for item in top_tracks %}
+      <li class="stat-item">
+        <div class="stat-item-header">
+          <span class="stat-item-title">{{ item.name }}</span>
+          <span class="stat-item-count">{{ item.count }}</span>
+        </div>
+        {% if item.band %}<div class="meta">{{ item.band }}{% if item.release %} · {{ item.release }}{% endif %}</div>{% endif %}
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: {{ item.pct }}%;"></div></div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  <section class="admin-section">
+    <h2>Top Videos</h2>
+    {% if not top_videos %}
+    <p class="meta">No video views recorded in this period.</p>
+    {% else %}
+    <ul class="stat-list">
+      {% for item in top_videos %}
+      <li class="stat-item">
+        <div class="stat-item-header">
+          <span class="stat-item-title">{{ item.name }}</span>
+          <span class="stat-item-count">{{ item.count }}</span>
+        </div>
+        {% if item.band %}<div class="meta">{{ item.band }}</div>{% endif %}
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: {{ item.pct }}%;"></div></div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  <section class="admin-section">
+    <h2>Top Pages</h2>
+    {% if not top_pages %}
+    <p class="meta">No page views recorded in this period.</p>
+    {% else %}
+    <ul class="stat-list">
+      {% for item in top_pages %}
+      <li class="stat-item">
+        <div class="stat-item-header">
+          <span class="stat-item-title">{{ item.path }}</span>
+          <span class="stat-item-count">{{ item.count }}</span>
+        </div>
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: {{ item.pct }}%;"></div></div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  <section class="admin-section">
+    <h2>Referrers & Demographics</h2>
+    
+    <h3>Top Referrers</h3>
+    {% if not top_referrers %}
+    <p class="meta">No external referrers recorded.</p>
+    {% else %}
+    <table class="admin-table">
+      <thead><tr><th>Domain</th><th class="num">Visits</th></tr></thead>
+      <tbody>
+        {% for r in top_referrers %}
+        <tr><td>{{ r.referrer_domain }}</td><td class="num">{{ r.count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <h3>Top Countries</h3>
+    {% if not top_countries %}
+    <p class="meta">No country data recorded.</p>
+    {% else %}
+    <table class="admin-table">
+      <thead><tr><th>Country</th><th class="num">Hits</th></tr></thead>
+      <tbody>
+        {% for c in top_countries %}
+        <tr><td>{{ c.country }}</td><td class="num">{{ c.count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <h3>Languages & Devices</h3>
+    <div class="meta-stats-row">
+      <div class="meta-stat-box">
+        <strong>Languages</strong>
+        <div>RU: {{ ru_views }}</div>
+        <div>EN: {{ en_views }}</div>
+      </div>
+      <div class="meta-stat-box">
+        <strong>Devices</strong>
+        <div>Desktop: {{ devices.get('desktop', 0) }}</div>
+        <div>Mobile: {{ devices.get('mobile', 0) }}</div>
+        <div>Tablet: {{ devices.get('tablet', 0) }}</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="admin-section recent-activity-section">
+  <h2>Recent Activity (Last 15 Events)</h2>
+  {% if not recent_activity %}
+  <p class="meta">No activity recorded yet.</p>
+  {% else %}
+  <table class="admin-table activity-table">
+    <thead>
+      <tr>
+        <th>Time (UTC)</th>
+        <th>Type</th>
+        <th>Details</th>
+        <th>Country</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in recent_activity %}
+      <tr>
+        <td class="meta">{{ event.created_at }}</td>
+        <td>
+          <span class="badge badge-{{ event.event_type }}">{{ event.event_type | upper }}</span>
+        </td>
+        <td>
+          {% if event.event_type == 'track_play' %}
+            <strong>{{ event.track_name }}</strong>{% if event.band_slug %} ({{ event.band_slug }}){% endif %}
+          {% elif event.event_type == 'video_play' %}
+            <strong>{{ event.video_name }}</strong>{% if event.band_slug %} ({{ event.band_slug }}){% endif %}
+          {% else %}
+            {{ event.path }}
+          {% endif %}
+        </td>
+        <td>{{ event.country_code or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</section>
+{% endblock %}

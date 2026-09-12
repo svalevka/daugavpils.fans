@@ -430,3 +430,225 @@ table.tracklist audio {
   padding: 0.1em 0.35em;
   font-size: 0.9em;
 }
+
+/* Admin Dashboard (GitHub issue #34) */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-header h1 {
+  margin: 0;
+}
+
+.button-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.button-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.period-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.period-btn {
+  display: inline-block;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.period-btn:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.period-btn.active {
+  background: var(--accent);
+  color: #111214;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.stats-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 0.3rem;
+}
+
+.admin-sections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.admin-section {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.25rem;
+}
+
+.admin-section h2 {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: none;
+  font-size: 1.15rem;
+}
+
+.admin-section h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.stat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stat-item {
+  margin-bottom: 0.75rem;
+}
+
+.stat-item:last-child {
+  margin-bottom: 0;
+}
+
+.stat-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  gap: 0.5rem;
+}
+
+.stat-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-item-count {
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.stat-bar-bg {
+  background: var(--border);
+  height: 6px;
+  border-radius: 3px;
+  margin-top: 0.3rem;
+  overflow: hidden;
+}
+
+.stat-bar {
+  background: var(--accent);
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-table th.num,
+.admin-table td.num {
+  text-align: right;
+}
+
+.meta-stats-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.meta-stat-box {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.recent-activity-section {
+  margin-top: 2rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  display: inline-block;
+  letter-spacing: 0.03em;
+}
+
+.badge-pageview {
+  background: #1b2d42;
+  color: #7bb8f0;
+}
+
+.badge-track_play {
+  background: #183b22;
+  color: #72e08e;
+}
+
+.badge-video_play {
+  background: #3d2c14;
+  color: #f5b958;
+}

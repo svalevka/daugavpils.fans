@@ -83,6 +83,7 @@ class LightboxCaptionTest(unittest.TestCase):
         self.assertNotIn("expand-link", rendered)
         # Lightbox is generated even for a single video
         self.assertIn('<div class="lightbox video-lightbox" id="band-video-1">', rendered)
+        self.assertIn('data-video="Концерт 1995"', rendered)
         self.assertNotIn("lightbox-prev", rendered)
         self.assertNotIn("lightbox-next", rendered)
 

@@ -58,7 +58,7 @@
   <a href="#{{ prefix }}-{{ next_index }}" class="lightbox-next" aria-label="Next video">&#10095;</a>
   {% endif %}
   <figure class="lightbox-figure">
-    <video controls preload="none" aria-label="{{ vid_name or fallback_alt }}">
+    <video controls preload="none" aria-label="{{ vid_name or fallback_alt }}"{% if vid_name %} data-video="{{ vid_name }}"{% endif %}{% if band is defined and band.slug %} data-band="{{ band.slug }}"{% endif %}>
       <source src="{{ url_fn(vid.contentUrl) }}" type="{{ vid.encodingFormat }}">
     </video>
     {% if vid_name %}<figcaption class="lightbox-caption">{{ vid_name }}</figcaption>{% endif %}

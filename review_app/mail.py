@@ -53,6 +53,16 @@ def send_magic_link(smtp_config: SmtpConfig, to_addr: str, link_url: str) -> Non
     )
 
 
+def send_admin_magic_link(smtp_config: SmtpConfig, to_addr: str, link_url: str) -> None:
+    _send(
+        smtp_config,
+        to_addr,
+        "Your daugavpils.fans admin statistics login link",
+        f"Click this link to log in to the admin statistics dashboard (expires in 15 minutes, works once):\n\n{link_url}\n\n"
+        "If you didn't request this, you can ignore this email.",
+    )
+
+
 def send_submission_notification(smtp_config: SmtpConfig, recipients: list[str], summary: str) -> None:
     for to_addr in recipients:
         _send(smtp_config, to_addr, "New proposal to review on daugavpils.fans", summary)
