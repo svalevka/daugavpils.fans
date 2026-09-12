@@ -5,12 +5,24 @@
 <div class="admin-header">
   <div>
     <h1>Site Statistics</h1>
-    <p class="meta">Maintainer: {{ maintainer_email }}</p>
+    <p class="meta">Logged in as: {{ user_email }}{% if is_admin %} (Admin){% endif %}</p>
   </div>
-  <form method="post" action="/admin/logout">
-    <button type="submit" class="button-secondary">Log out</button>
-  </form>
+  <div class="admin-header-actions">
+    {% if can_review %}
+    <a href="/dashboard" class="button-secondary">Review proposals</a>
+    {% endif %}
+    <form method="post" action="/admin/logout" style="display:inline; margin:0;">
+      <button type="submit" class="button-secondary">Log out</button>
+    </form>
+  </div>
 </div>
+
+{% if is_admin %}
+<nav class="admin-nav-tabs" aria-label="Admin navigation tabs">
+  <a href="/admin/" class="admin-tab active">Statistics</a>
+  <a href="/admin/users/" class="admin-tab">Users &amp; Roles</a>
+</nav>
+{% endif %}
 
 <nav class="period-nav" aria-label="Time period selection">
   <a href="/admin/?period=today" class="period-btn{% if period == 'today' %} active{% endif %}">Today</a>

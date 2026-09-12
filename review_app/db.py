@@ -11,10 +11,12 @@ from pathlib import Path
 
 import flask
 
+import roles  # noqa: E402
+
 SCHEMA_SQL = (Path(__file__).resolve().parent / "schema.sql").read_text()
 
 
-def init_schema(database_path: Path) -> None:
+def init_schema(database_path: Path, maintainer_email: str | None = None) -> None:
     """Idempotent: every CREATE TABLE in schema.sql is IF NOT EXISTS, so
     this is safe to run on every app startup, not just the first."""
     database_path.parent.mkdir(parents=True, exist_ok=True)
@@ -22,6 +24,7 @@ def init_schema(database_path: Path) -> None:
     try:
         conn.executescript(SCHEMA_SQL)
         conn.commit()
+        roles.ensure_default_roles(conn, maintainer_email)
     finally:
         conn.close()
 
@@ -42,5 +45,5 @@ def close_connection(_exception: BaseException | None = None) -> None:
 
 
 def init_app(app: flask.Flask) -> None:
-    init_schema(Path(app.config["DATABASE_PATH"]))
+    init_schema(Path(app.config["DATABASE_PATH"]), app.config.get("MAINTAINER_EMAIL"))
     app.teardown_appcontext(close_connection)

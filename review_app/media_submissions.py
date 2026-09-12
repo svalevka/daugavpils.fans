@@ -22,6 +22,7 @@ import archive_read  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
+import roles  # noqa: E402
 
 bp = Blueprint("media_submissions", __name__)
 
@@ -179,8 +180,9 @@ def create_media_proposal():
         # durably saved above - a submitter should never see a failure
         # just because the notification couldn't be sent.
         try:
+            recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
             mail.send_submission_notification(
-                current_app.config["SMTP_CONFIG"], [current_app.config["MAINTAINER_EMAIL"]], summary
+                current_app.config["SMTP_CONFIG"], recipients, summary
             )
         except OSError:
             current_app.logger.exception("failed to send submission notification email")

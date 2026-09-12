@@ -2,8 +2,17 @@
 {% block title %}Pending proposals — daugavpils.fans{% endblock %}
 {% block main_class %}main-wide{% endblock %}
 {% block content %}
-<h1>Pending proposals</h1>
-<p class="meta">Logged in as {{ approver.display_name }} ({{ approver.email }})</p>
+<div class="admin-header">
+  <div>
+    <h1>Pending proposals</h1>
+    <p class="meta">Logged in as {{ approver.display_name }} ({{ approver.email }})</p>
+  </div>
+  {% if can_view_stats %}
+  <div class="admin-header-actions">
+    <a href="/admin/" class="button-secondary">Site Statistics</a>
+  </div>
+  {% endif %}
+</div>
 
 {% if not proposals %}
 <p>Nothing pending.</p>

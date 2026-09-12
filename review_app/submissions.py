@@ -22,6 +22,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 import archive_read  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
+import roles  # noqa: E402
 from editable_fields import EDITABLE_FIELDS, NESTED_LIST_ATTR, lookup  # noqa: E402
 from models import MusicAlbum, MusicGroup  # noqa: E402
 
@@ -282,8 +283,9 @@ def create_proposal():
     # way (checking the dashboard) rather than the submission itself
     # erroring out.
     try:
+        recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
         mail.send_submission_notification(
-            current_app.config["SMTP_CONFIG"], [current_app.config["MAINTAINER_EMAIL"]], summary
+            current_app.config["SMTP_CONFIG"], recipients, summary
         )
     except OSError:
         current_app.logger.exception("failed to send submission notification email")

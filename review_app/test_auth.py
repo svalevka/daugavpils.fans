@@ -54,6 +54,16 @@ class LoginRequestTest(ReviewAppTestCase):
 
         self.mock_send_magic_link.assert_not_called()
 
+    def test_viewer_stats_only_does_not_send_link(self):
+        self.seed_approver("stats@example.com", roles=["viewer-stats"])
+        self.client.post("/login", data={"email": "stats@example.com"})
+        self.mock_send_magic_link.assert_not_called()
+
+    def test_admin_sends_link(self):
+        self.seed_approver("admin@example.com", roles=["admin"])
+        self.client.post("/login", data={"email": "admin@example.com"})
+        self.mock_send_magic_link.assert_called_once()
+
     def test_exceeding_rate_limit_rejects_further_requests(self):
         self.seed_approver("ryb@example.com")
 
@@ -91,6 +101,8 @@ class MagicLinkVerificationTest(ReviewAppTestCase):
         self.assertIn("/dashboard", response.headers["Location"])
         with self.client.session_transaction() as sess:
             self.assertIn("approver_id", sess)
+            self.assertIn("user_id", sess)
+            self.assertIn("changes-approver", sess.get("roles", []))
 
     def test_token_is_single_use(self):
         self.seed_approver("ryb@example.com")

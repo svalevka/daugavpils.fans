@@ -93,15 +93,29 @@ class ReviewAppTestCase(unittest.TestCase):
         self.addCleanup(patcher.stop)
         return mocked
 
-    def seed_approver(self, email: str, *, is_active: bool = True, display_name: str = "Test Approver") -> int:
+    def seed_approver(
+        self,
+        email: str,
+        *,
+        is_active: bool = True,
+        display_name: str = "Test Approver",
+        roles: list[str] | None = None,
+    ) -> int:
         conn = sqlite3.connect(self.database_path)
         try:
             cur = conn.execute(
                 "INSERT INTO approvers (email, display_name, is_active) VALUES (?, ?, ?)",
                 (email, display_name, 1 if is_active else 0),
             )
+            approver_id = cur.lastrowid
+            assigned_roles = roles if roles is not None else ["changes-approver"]
+            for r in assigned_roles:
+                conn.execute(
+                    "INSERT INTO user_roles (user_id, role) VALUES (?, ?)",
+                    (approver_id, r),
+                )
             conn.commit()
-            return cur.lastrowid
+            return approver_id
         finally:
             conn.close()
 
@@ -110,8 +124,17 @@ class ReviewAppTestCase(unittest.TestCase):
         auth.py's real /login/verify would set, without needing to send
         and click a real magic link for tests that aren't exercising the
         login flow itself."""
+        conn = sqlite3.connect(self.database_path)
+        try:
+            cur = conn.execute("SELECT role FROM user_roles WHERE user_id = ?", (approver_id,))
+            user_roles = [row[0] for row in cur.fetchall()]
+        finally:
+            conn.close()
         with self.client.session_transaction() as sess:
             sess["approver_id"] = approver_id
+            sess["user_id"] = approver_id
+            sess["roles"] = user_roles
+            sess["is_admin"] = "admin" in user_roles
 
     def fetch_proposals(self) -> list[sqlite3.Row]:
         conn = sqlite3.connect(self.database_path)

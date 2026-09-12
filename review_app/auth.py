@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
 import mail  # noqa: E402
+import roles  # noqa: E402
 
 bp = Blueprint("auth", __name__)
 
@@ -50,15 +51,35 @@ def login_request():
     conn.execute("INSERT INTO login_request_log (ip) VALUES (?)", (ip,))
     conn.commit()
 
-    email = request.form.get("email", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    maintainer_email = current_app.config.get("MAINTAINER_EMAIL", "").strip().lower()
+
     row = conn.execute(
-        "SELECT id FROM approvers WHERE is_active = 1 AND LOWER(email) = LOWER(?)", (email,)
+        "SELECT id, email FROM approvers WHERE is_active = 1 AND LOWER(email) = LOWER(?)", (email,)
     ).fetchone()
+
+    is_maintainer = bool(email and maintainer_email and email == maintainer_email)
+    is_authorized = False
+
+    if is_maintainer:
+        is_authorized = True
+        if row is None:
+            cur = conn.execute(
+                "INSERT INTO approvers (email, display_name, is_active) VALUES (?, 'Site Maintainer', 1)",
+                (email,),
+            )
+            row = {"id": cur.lastrowid, "email": email}
+            roles.set_user_roles(conn, row["id"], [roles.ROLE_ADMIN])
+            conn.commit()
+    elif row is not None:
+        user_roles = roles.get_user_roles(conn, row["id"])
+        if roles.ROLE_ADMIN in user_roles or roles.ROLE_APPROVER in user_roles:
+            is_authorized = True
 
     # The response is identical whether or not `email` matches an active
     # approver - no approver enumeration. Only a genuine match causes any
     # side effect (generating and emailing a token).
-    if row is not None:
+    if is_authorized and row is not None:
         token = secrets.token_urlsafe(32)
         conn.execute(
             "INSERT INTO magic_links (approver_id, token_hash, expires_at, requested_ip) "
@@ -103,5 +124,25 @@ def verify():
     row = conn.execute(
         "SELECT approver_id FROM magic_links WHERE token_hash = ?", (_hash_token(token),)
     ).fetchone()
-    session["approver_id"] = row["approver_id"]
-    return redirect(url_for("dashboard.view_pending"))
+    approver_id = row["approver_id"]
+
+    user = conn.execute(
+        "SELECT email FROM approvers WHERE id = ?", (approver_id,)
+    ).fetchone()
+    email = user["email"].lower() if user else ""
+    maintainer_email = current_app.config.get("MAINTAINER_EMAIL", "").strip().lower()
+    is_maintainer = bool(email and email == maintainer_email)
+
+    user_roles = roles.get_user_roles(conn, approver_id)
+    if is_maintainer:
+        user_roles.add(roles.ROLE_ADMIN)
+
+    session["approver_id"] = approver_id
+    session["user_id"] = approver_id
+    session["email"] = email
+    session["roles"] = list(user_roles)
+    session["is_admin"] = roles.ROLE_ADMIN in user_roles or is_maintainer
+
+    if roles.ROLE_ADMIN in user_roles or roles.ROLE_APPROVER in user_roles or is_maintainer:
+        return redirect(url_for("dashboard.view_pending"))
+    return redirect(url_for("admin.dashboard"))

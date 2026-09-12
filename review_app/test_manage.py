@@ -68,6 +68,38 @@ class ManageApproverCliTest(unittest.TestCase):
         result = run_manage(self.database_path, "deactivate-approver", "nobody@example.com")
         self.assertNotEqual(result.returncode, 0)
 
+    def test_add_user_with_roles_and_list_users(self):
+        add_result = run_manage(
+            self.database_path,
+            "add-user",
+            "admin@example.com",
+            "Admin User",
+            "--roles",
+            "admin",
+            "viewer-stats",
+        )
+        self.assertEqual(add_result.returncode, 0, msg=add_result.stdout + add_result.stderr)
+
+        list_result = run_manage(self.database_path, "list-users")
+        self.assertEqual(list_result.returncode, 0)
+        self.assertIn("admin@example.com", list_result.stdout)
+        self.assertIn("admin,viewer-stats", list_result.stdout)
+
+    def test_set_roles(self):
+        run_manage(self.database_path, "add-approver", "user@example.com", "User")
+        set_result = run_manage(self.database_path, "set-roles", "user@example.com", "viewer-stats", "admin")
+        self.assertEqual(set_result.returncode, 0)
+
+        conn = sqlite3.connect(self.database_path)
+        try:
+            cur = conn.execute(
+                "SELECT r.role FROM user_roles r JOIN approvers a ON a.id = r.user_id WHERE a.email = 'user@example.com'"
+            )
+            roles = {row[0] for row in cur.fetchall()}
+        finally:
+            conn.close()
+        self.assertEqual(roles, {"viewer-stats", "admin"})
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -26,6 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import db  # noqa: E402
 import github_dispatch  # noqa: E402
 import mail  # noqa: E402
+import roles  # noqa: E402
 
 bp = Blueprint("dashboard", __name__)
 
@@ -35,9 +36,16 @@ def _current_approver() -> sqlite3.Row | None:
     if approver_id is None:
         return None
     conn = db.get_connection()
-    return conn.execute(
+    row = conn.execute(
         "SELECT id, email, display_name FROM approvers WHERE id = ? AND is_active = 1", (approver_id,)
     ).fetchone()
+    if row is None:
+        return None
+    maintainer_email = current_app.config.get("MAINTAINER_EMAIL", "").strip().lower()
+    is_maintainer = bool(maintainer_email and row["email"].lower() == maintainer_email)
+    if not is_maintainer and not roles.user_has_role(conn, approver_id, roles.ROLE_APPROVER):
+        return None
+    return row
 
 
 def require_approver(view):
@@ -108,6 +116,7 @@ def view_pending():
         media_pending=media_pending,
         media_awaiting_publish=media_awaiting_publish,
         approver=g.approver,
+        can_view_stats=roles.user_has_role(conn, g.approver["id"], roles.ROLE_STATS),
     )
 
 

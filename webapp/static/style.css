@@ -441,6 +441,43 @@ table.tracklist audio {
   gap: 1rem;
 }
 
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Admin Tabs (GitHub issue #35) */
+.admin-nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.admin-tab {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  color: var(--text-dim);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s ease;
+}
+
+.admin-tab:hover {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom-color: var(--border);
+}
+
+.admin-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
 .admin-header h1 {
   margin: 0;
 }
@@ -651,4 +688,130 @@ table.tracklist audio {
 .badge-video_play {
   background: #3d2c14;
   color: #f5b958;
+}
+
+/* Role badges and user management (GitHub issue #35) */
+.badge-role-admin {
+  background: #3b1822;
+  color: #ff758f;
+  border: 1px solid rgba(255, 117, 143, 0.2);
+}
+
+.badge-role-approver {
+  background: #183b22;
+  color: #72e08e;
+  border: 1px solid rgba(114, 224, 142, 0.2);
+}
+
+.badge-role-stats {
+  background: #1b2d42;
+  color: #7bb8f0;
+  border: 1px solid rgba(123, 184, 240, 0.2);
+}
+
+.badge-status-active {
+  background: #14331e;
+  color: #52c41a;
+}
+
+.badge-status-inactive {
+  background: #2a2b30;
+  color: #8c8c8c;
+}
+
+.badge-meta {
+  background: #232429;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  font-size: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.user-role-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.user-name {
+  font-size: 0.95rem;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+}
+
+.user-inactive {
+  opacity: 0.6;
+}
+
+.users-table td {
+  vertical-align: middle;
+  padding: 0.75rem 0.5rem;
+}
+
+.role-checkboxes-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.user-roles-form {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.button-small {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.button-danger {
+  color: #ff758f;
+  border-color: rgba(255, 117, 143, 0.4);
+}
+
+.button-danger:hover {
+  border-color: #ff758f;
+  color: #fff;
+  background: #4a1c26;
+}
+
+.add-user-form {
+  margin: 0;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-row .field {
+  flex: 1;
+  min-width: 220px;
+}
+
+.table-responsive {
+  overflow-x: auto;
 }

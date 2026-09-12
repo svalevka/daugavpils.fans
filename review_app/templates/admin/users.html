@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Users &amp; Roles — daugavpils.fans{% endblock %}
+{% block main_class %}main-wide{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <div>
+    <h1>Users &amp; Roles</h1>
+    <p class="meta">Logged in as: {{ user_email }} (Admin)</p>
+  </div>
+  <div class="admin-header-actions">
+    {% if can_review %}
+    <a href="/dashboard" class="button-secondary">Review proposals</a>
+    {% endif %}
+    <form method="post" action="/admin/logout" style="display:inline; margin:0;">
+      <button type="submit" class="button-secondary">Log out</button>
+    </form>
+  </div>
+</div>
+
+<nav class="admin-nav-tabs" aria-label="Admin navigation tabs">
+  <a href="/admin/" class="admin-tab">Statistics</a>
+  <a href="/admin/users/" class="admin-tab active">Users &amp; Roles</a>
+</nav>
+
+<section class="admin-section" style="margin-bottom: 2rem;">
+  <h2>Add New User</h2>
+  <p class="meta">Users will receive a welcome email with their assigned roles and a secure one-time login link.</p>
+  <form method="post" action="/admin/users/add" class="add-user-form">
+    <div class="form-row">
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" required placeholder="contributor@example.com">
+      </div>
+      <div class="field">
+        <label for="display_name">Display name</label>
+        <input type="text" id="display_name" name="display_name" required placeholder="e.g. Sergei V.">
+      </div>
+    </div>
+    <div class="field">
+      <label>Roles</label>
+      <div class="role-checkboxes-inline">
+        {% for role in all_roles %}
+        <label class="checkbox-label">
+          <input type="checkbox" name="roles" value="{{ role }}"{% if role == 'changes-approver' %} checked{% endif %}>
+          <span>{{ role_labels.get(role, role) }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    <button type="submit" class="button-primary">Add User &amp; Send Invitation</button>
+  </form>
+</section>
+
+<section class="admin-section">
+  <h2>Authorized Users ({{ users | length }})</h2>
+  <div class="table-responsive">
+    <table class="admin-table users-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Status</th>
+          <th>Assigned Roles</th>
+          <th>Manage Roles</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        {% set is_maint = (maintainer_email and u.email.lower() == maintainer_email.lower()) %}
+        {% set is_self = (current_user_id and u.id == current_user_id) %}
+        <tr class="{% if not u.is_active %}user-inactive{% endif %}">
+          <td>
+            <div class="user-name"><strong>{{ u.display_name }}</strong></div>
+            <div class="user-email meta">{{ u.email }}</div>
+            {% if is_maint %}
+            <span class="badge badge-meta">Maintainer Fail-safe</span>
+            {% elif is_self %}
+            <span class="badge badge-meta">Current User</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if u.is_active %}
+            <span class="badge badge-status-active">Active</span>
+            {% else %}
+            <span class="badge badge-status-inactive">Inactive</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="user-role-badges">
+              {% if 'admin' in u.roles %}
+              <span class="badge badge-role-admin">Admin</span>
+              {% endif %}
+              {% if 'changes-approver' in u.roles %}
+              <span class="badge badge-role-approver">Changes Approver</span>
+              {% endif %}
+              {% if 'viewer-stats' in u.roles %}
+              <span class="badge badge-role-stats">Viewer Stats</span>
+              {% endif %}
+              {% if not u.roles %}
+              <span class="meta">(no roles)</span>
+              {% endif %}
+            </div>
+          </td>
+          <td>
+            <form method="post" action="/admin/users/{{ u.id }}/roles" class="user-roles-form">
+              <div class="role-checkboxes-inline">
+                {% for role in all_roles %}
+                <label class="checkbox-label">
+                  {% if role == 'admin' and (is_maint or is_self) %}
+                  <input type="hidden" name="roles" value="admin">
+                  <input type="checkbox" checked disabled title="Cannot remove admin role from self or maintainer">
+                  {% else %}
+                  <input type="checkbox" name="roles" value="{{ role }}" {% if role in u.roles %}checked{% endif %}>
+                  {% endif %}
+                  <span>{{ role_labels.get(role, role) }}</span>
+                </label>
+                {% endfor %}
+              </div>
+              <button type="submit" class="button-secondary button-small">Save</button>
+            </form>
+          </td>
+          <td>
+            {% if is_maint or is_self %}
+            <span class="meta" title="Protected account">—</span>
+            {% else %}
+            <form method="post" action="/admin/users/{{ u.id }}/toggle-active" style="margin: 0;">
+              {% if u.is_active %}
+              <button type="submit" class="button-secondary button-small button-danger" onclick="return confirm('Deactivate {{ u.email }}? They will lose access immediately.');">Deactivate</button>
+              {% else %}
+              <button type="submit" class="button-secondary button-small">Reactivate</button>
+              {% endif %}
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

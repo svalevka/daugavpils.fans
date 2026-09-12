@@ -63,6 +63,26 @@ def send_admin_magic_link(smtp_config: SmtpConfig, to_addr: str, link_url: str) 
     )
 
 
+def send_welcome_invitation(
+    smtp_config: SmtpConfig,
+    to_addr: str,
+    display_name: str,
+    roles: list[str],
+    login_url: str,
+) -> None:
+    roles_str = ", ".join(roles) if roles else "contributor"
+    name_str = f" {display_name}" if display_name else ""
+    _send(
+        smtp_config,
+        to_addr,
+        "Welcome to daugavpils.fans administration",
+        f"Hello{name_str},\n\n"
+        f"You have been granted access to daugavpils.fans with the following role(s): {roles_str}.\n\n"
+        f"You can log in using this secure link (expires in 15 minutes, works once):\n\n{login_url}\n\n"
+        "Welcome to the team!",
+    )
+
+
 def send_submission_notification(smtp_config: SmtpConfig, recipients: list[str], summary: str) -> None:
     for to_addr in recipients:
         _send(smtp_config, to_addr, "New proposal to review on daugavpils.fans", summary)

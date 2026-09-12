@@ -11,6 +11,17 @@ CREATE TABLE IF NOT EXISTS approvers (
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Granular role-based access control (GitHub issue #35):
+-- Roles: 'admin', 'changes-approver', 'viewer-stats'.
+CREATE TABLE IF NOT EXISTS user_roles (
+    user_id INTEGER NOT NULL REFERENCES approvers(id) ON DELETE CASCADE,
+    role TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, role)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_roles_role ON user_roles(role);
+
 -- Not exercised until the login/dashboard ticket (#12), but part of this
 -- ticket's own schema deliverable per the issue tracker.
 CREATE TABLE IF NOT EXISTS magic_links (
