@@ -53,7 +53,11 @@ CREATE TABLE IF NOT EXISTS proposals (
     decided_at TEXT,
     github_run_id TEXT,
     applied_at TEXT,
-    apply_error TEXT
+    apply_error TEXT,
+    ai_decision TEXT,
+    ai_confidence REAL,
+    ai_reasoning TEXT,
+    ai_evaluated_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS submission_log (
@@ -102,7 +106,11 @@ CREATE TABLE IF NOT EXISTS media_proposals (
     decided_at TEXT,
     github_run_id TEXT,
     published_at TEXT,
-    publish_error TEXT
+    publish_error TEXT,
+    ai_decision TEXT,
+    ai_confidence REAL,
+    ai_reasoning TEXT,
+    ai_evaluated_at TEXT
 );
 
 -- Admin authentication for site maintainer statistics (/admin/):

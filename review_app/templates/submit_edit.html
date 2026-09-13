@@ -7,6 +7,7 @@
 <pre>{{ current_text }}</pre>
 
 <form method="post" action="/submit">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="band_slug" value="{{ band_slug }}">
   {% if release_slug %}<input type="hidden" name="release_slug" value="{{ release_slug }}">{% endif %}
   <input type="hidden" name="target" value="{{ target }}">

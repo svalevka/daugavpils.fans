@@ -199,18 +199,18 @@ def record_event():
     device = detect_device(ua)
     country = detect_country(request.headers, ip)
 
-    raw_path = str(data.get("path", "/")).strip()
+    raw_path = str(data.get("path", "/")).strip()[:256]
     path = raw_path if raw_path.startswith("/") else f"/{raw_path}"
 
     band_slug, release_slug = parse_path_slugs(path)
     if not band_slug and data.get("band"):
-        band_slug = str(data.get("band")).strip()
+        band_slug = str(data.get("band")).strip()[:64]
     if not release_slug and data.get("release"):
-        release_slug = str(data.get("release")).strip()
+        release_slug = str(data.get("release")).strip()[:64]
 
-    track_name = str(data["track"]).strip() if data.get("track") else None
-    video_name = str(data["video"]).strip() if data.get("video") else None
-    referrer = parse_referrer(str(data.get("referrer", "")))
+    track_name = str(data["track"]).strip()[:128] if data.get("track") else None
+    video_name = str(data["video"]).strip()[:128] if data.get("video") else None
+    referrer = parse_referrer(str(data.get("referrer", "")))[:256]
 
     conn = db.get_connection()
     conn.execute(

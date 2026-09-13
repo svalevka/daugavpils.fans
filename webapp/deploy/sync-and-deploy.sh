@@ -74,14 +74,44 @@ for link in "$CURRENT_LINK" "$CURRENT_CHECKOUT_LINK"; do
   fi
 done
 
-# Atomic, dependency-free overlap guard: `mkdir` either succeeds exactly
-# once or fails, with no race window, on every platform - unlike `flock`,
-# which isn't even installed by default everywhere this might run.
-if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+acquire_lock() {
+  if mkdir "$LOCK_DIR" 2>/dev/null; then
+    echo "$$" > "$LOCK_DIR/pid"
+    return 0
+  fi
+
+  local is_stale=0
+  if [ -f "$LOCK_DIR/pid" ]; then
+    local lock_pid
+    lock_pid="$(cat "$LOCK_DIR/pid" 2>/dev/null || true)"
+    if [ -n "$lock_pid" ] && ! kill -0 "$lock_pid" 2>/dev/null; then
+      echo "stale lock detected: PID $lock_pid is no longer running - reclaiming lock"
+      is_stale=1
+    fi
+  else
+    local dir_mtime now_ts
+    dir_mtime="$(stat -c %Y "$LOCK_DIR" 2>/dev/null || stat -f %m "$LOCK_DIR" 2>/dev/null || echo 0)"
+    now_ts="$(date +%s)"
+    if [ "$dir_mtime" -gt 0 ] && [ $((now_ts - dir_mtime)) -ge 900 ]; then
+      echo "stale lock detected: lock directory older than 15 minutes - reclaiming lock"
+      is_stale=1
+    fi
+  fi
+
+  if [ "$is_stale" -eq 1 ]; then
+    rm -rf "$LOCK_DIR" 2>/dev/null || true
+    if mkdir "$LOCK_DIR" 2>/dev/null; then
+      echo "$$" > "$LOCK_DIR/pid"
+      return 0
+    fi
+  fi
+
   echo "another run is already in progress ($LOCK_DIR exists) - exiting"
   exit 0
-fi
-trap 'rmdir "$LOCK_DIR" 2>/dev/null || true' EXIT
+}
+
+acquire_lock
+trap 'rm -rf "$LOCK_DIR" 2>/dev/null || true' EXIT
 
 if [ -d "$REPO_DIR" ]; then
   git -C "$REPO_DIR" fetch "$REMOTE" "$BRANCH"
@@ -92,7 +122,8 @@ fi
 
 LATEST_SHA="$(git -C "$REPO_DIR" rev-parse "$REMOTE/$BRANCH")"
 
-if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" = "$LATEST_SHA" ]; then
+PREVIOUS_SHA="$(cat "$STATE_FILE" 2>/dev/null || true)"
+if [ -n "$PREVIOUS_SHA" ] && [ "$PREVIOUS_SHA" = "$LATEST_SHA" ]; then
   echo "already deployed $LATEST_SHA - nothing to do"
   exit 0
 fi
@@ -124,6 +155,21 @@ ln -sfn "$(basename "$CHECKOUT_ROOT")/$LATEST_SHA" "$CURRENT_CHECKOUT_LINK"
 
 echo "$LATEST_SHA" > "$STATE_FILE"
 
+# If review_app code or deployment configuration changed since the last deploy,
+# rebuild and restart review-app so server changes go live without manual intervention.
+if [ -n "$PREVIOUS_SHA" ]; then
+  if git -C "$REPO_DIR" diff --name-only "$PREVIOUS_SHA" "$LATEST_SHA" | grep -qE '^(review_app/|webapp/deploy/)'; then
+    echo "review_app code or deployment configuration changed ($PREVIOUS_SHA..$LATEST_SHA)"
+    COMPOSE_FILE="${COMPOSE_FILE:-$(dirname "$STATE_FILE")/docker-compose.yml}"
+    AUTO_REBUILD_CONTAINERS="${AUTO_REBUILD_CONTAINERS:-1}"
+    if [ "$AUTO_REBUILD_CONTAINERS" = "1" ] && command -v docker >/dev/null 2>&1 && [ -f "$COMPOSE_FILE" ]; then
+      echo "rebuilding and restarting review-app container"
+      docker compose -f "$COMPOSE_FILE" build review-app
+      docker compose -f "$COMPOSE_FILE" up -d review-app
+    fi
+  fi
+fi
+
 # Prune worktrees beyond KEEP_CHECKOUTS, oldest (by creation, i.e. mtime -
 # each is written exactly once and never touched again) first.
 mapfile -t all_checkouts < <(ls -1dt "$CHECKOUT_ROOT"/*/ 2>/dev/null | sed 's:/$::')
@@ -134,5 +180,9 @@ if [ "${#all_checkouts[@]}" -gt "$KEEP_CHECKOUTS" ]; then
   done
 fi
 git -C "$REPO_DIR" worktree prune
+
+if [ -n "${HEARTBEAT_URL:-}" ]; then
+  curl -fsS -m 10 --retry 2 "$HEARTBEAT_URL" >/dev/null 2>&1 || echo "WARNING: failed to ping HEARTBEAT_URL" >&2
+fi
 
 echo "deployed $LATEST_SHA"

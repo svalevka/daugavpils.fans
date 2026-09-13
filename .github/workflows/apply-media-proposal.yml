@@ -28,7 +28,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: apply-media-proposal
+  group: apply-archive-mutations
   cancel-in-progress: false
 
 jobs:
@@ -48,10 +48,15 @@ jobs:
 
       - name: Determine which media proposal(s) to apply
         id: targets
+        env:
+          INPUT_PROPOSAL_ID: ${{ github.event.inputs.proposal_id }}
         run: |
-          single_id="${{ github.event.inputs.proposal_id }}"
-          if [ -n "$single_id" ]; then
-            echo "ids=$single_id" >> "$GITHUB_OUTPUT"
+          if [ -n "$INPUT_PROPOSAL_ID" ]; then
+            if ! [[ "$INPUT_PROPOSAL_ID" =~ ^[0-9]+$ ]]; then
+              echo "::error::Invalid proposal_id format (must be an integer)"
+              exit 1
+            fi
+            echo "ids=$INPUT_PROPOSAL_ID" >> "$GITHUB_OUTPUT"
           else
             ids=$(curl -fsSL \
               -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
@@ -64,13 +69,19 @@ jobs:
         if: steps.targets.outputs.ids != ''
         shell: bash --noprofile --norc -o pipefail {0}
         env:
+          PROPOSAL_IDS: ${{ steps.targets.outputs.ids }}
           IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
           IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
         run: |
           git config user.name "daugavpils-fans-bot"
           git config user.email "daugavpils@gmail.com"
           overall_failed=0
-          for id in ${{ steps.targets.outputs.ids }}; do
+          for id in $PROPOSAL_IDS; do
+            if ! [[ "$id" =~ ^[0-9]+$ ]]; then
+              echo "::error::invalid proposal id format: $id"
+              overall_failed=1
+              continue
+            fi
             echo "::group::Media proposal #$id"
             success=0
             error=""
@@ -127,13 +138,13 @@ jobs:
           exit $overall_failed
 
       - name: Trigger Pages mirror rebuild
-        if: steps.targets.outputs.ids != ''
+        if: always() && steps.targets.outputs.ids != ''
         run: gh workflow run pages.yml --ref main
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Trigger metadata sync to archive.org
-        if: steps.targets.outputs.ids != ''
+        if: always() && steps.targets.outputs.ids != ''
         run: gh workflow run sync-metadata.yml --ref main
         env:
           GH_TOKEN: ${{ github.token }}

@@ -42,16 +42,10 @@ permissions:
   actions: write
 
 concurrency:
-  # Approvals can land within seconds of each other; without this, two
-  # runs checkout main at the same commit and one's `git push` gets
-  # rejected as non-fast-forward (see the incident this fixed: proposals
-  # #8 and #9 both failed to apply on 2026-09-08 because they raced #7).
-  # `queued` (not `cancel-in-progress`) so a run already in flight is
-  # never killed mid-push - but see GitHub issue #28 for what this does
-  # *not* protect against (a third dispatch evicting an older *queued*
-  # one outright), which the schedule trigger above exists to recover
-  # from, and the retry loop below exists to reduce in the first place.
-  group: apply-proposal
+  # Approvals can land within seconds of each other, and text proposals
+  # must never race media proposals to push to main. Shared group
+  # apply-archive-mutations ensures all mutations to main queue sequentially.
+  group: apply-archive-mutations
   cancel-in-progress: false
 
 jobs:
@@ -69,10 +63,15 @@ jobs:
 
       - name: Determine which proposal(s) to apply
         id: targets
+        env:
+          INPUT_PROPOSAL_ID: ${{ github.event.inputs.proposal_id }}
         run: |
-          single_id="${{ github.event.inputs.proposal_id }}"
-          if [ -n "$single_id" ]; then
-            echo "ids=$single_id" >> "$GITHUB_OUTPUT"
+          if [ -n "$INPUT_PROPOSAL_ID" ]; then
+            if ! [[ "$INPUT_PROPOSAL_ID" =~ ^[0-9]+$ ]]; then
+              echo "::error::Invalid proposal_id format (must be an integer)"
+              exit 1
+            fi
+            echo "ids=$INPUT_PROPOSAL_ID" >> "$GITHUB_OUTPUT"
           else
             ids=$(curl -fsSL \
               -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
@@ -97,11 +96,18 @@ jobs:
       - name: Apply each proposal
         if: steps.targets.outputs.ids != ''
         shell: bash --noprofile --norc -o pipefail {0}
+        env:
+          PROPOSAL_IDS: ${{ steps.targets.outputs.ids }}
         run: |
           git config user.name "daugavpils-fans-bot"
           git config user.email "daugavpils@gmail.com"
           overall_failed=0
-          for id in ${{ steps.targets.outputs.ids }}; do
+          for id in $PROPOSAL_IDS; do
+            if ! [[ "$id" =~ ^[0-9]+$ ]]; then
+              echo "::error::invalid proposal id format: $id"
+              overall_failed=1
+              continue
+            fi
             echo "::group::Proposal #$id"
             success=0
             error=""
@@ -164,13 +170,13 @@ jobs:
       # token call it. Only worth doing if there was actually something
       # to apply - an empty sweep changes nothing.
       - name: Trigger Pages mirror rebuild
-        if: steps.targets.outputs.ids != ''
+        if: always() && steps.targets.outputs.ids != ''
         run: gh workflow run pages.yml --ref main
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Trigger metadata sync to archive.org
-        if: steps.targets.outputs.ids != ''
+        if: always() && steps.targets.outputs.ids != ''
         run: gh workflow run sync-metadata.yml --ref main
         env:
           GH_TOKEN: ${{ github.token }}

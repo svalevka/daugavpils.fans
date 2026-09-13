@@ -18,6 +18,10 @@ name: Dead-man's-switch - check and trip
 on:
   schedule:
     - cron: "17 3 * * *" # daily, off-the-hour to avoid GitHub's cron pile-up
+  issues:
+    types: [opened, labeled, edited, reopened]
+  issue_comment:
+    types: [created]
   workflow_dispatch: {}
 
 permissions:

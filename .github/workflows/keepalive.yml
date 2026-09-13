@@ -1,0 +1,32 @@
+name: Keepalive
+
+# Prevents GitHub from automatically suspending scheduled (cron) workflows
+# after 60 days of repository inactivity (GitHub Actions default policy).
+# Runs monthly to ensure dead-man's-switch, nightly audit, and sweep crons
+# stay permanently active without requiring manual maintainer commits.
+
+on:
+  schedule:
+    - cron: "0 4 1 * *" # 1st of every month at 04:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update keepalive timestamp
+        run: |
+          mkdir -p .github
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > .github/.keepalive
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/.keepalive
+          if ! git diff --cached --quiet; then
+            git commit -m "Keepalive scheduled workflows [skip ci]"
+            git push
+          fi

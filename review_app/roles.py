@@ -112,17 +112,45 @@ def ensure_default_roles(conn: sqlite3.Connection, maintainer_email: str | None)
     conn.commit()
 
 
+AI_APPROVER_EMAIL = "ai-approver@daugavpils.fans"
+AI_APPROVER_NAME = "AI Approval Agent"
+
+
+def ensure_ai_approver(conn: sqlite3.Connection) -> int:
+    """Ensures the dedicated AI bot account exists in approvers with ROLE_APPROVER."""
+    user = conn.execute(
+        "SELECT id FROM approvers WHERE LOWER(email) = LOWER(?)", (AI_APPROVER_EMAIL,)
+    ).fetchone()
+    if user is None:
+        cur = conn.execute(
+            "INSERT INTO approvers (email, display_name, is_active) VALUES (?, ?, 1)",
+            (AI_APPROVER_EMAIL, AI_APPROVER_NAME),
+        )
+        user_id = cur.lastrowid
+    else:
+        user_id = user[0]
+    conn.execute(
+        "INSERT OR IGNORE INTO user_roles (user_id, role) VALUES (?, ?)",
+        (user_id, ROLE_APPROVER),
+    )
+    conn.commit()
+    return user_id
+
+
 def get_approver_recipients(conn: sqlite3.Connection, maintainer_email: str | None = None) -> list[str]:
     """Returns a deduplicated list of emails of all active users holding
-    ROLE_APPROVER or ROLE_ADMIN, plus maintainer_email if configured."""
+    ROLE_APPROVER or ROLE_ADMIN, plus maintainer_email if configured.
+    Excludes the system AI approver account."""
     query = """
         SELECT DISTINCT a.email
         FROM approvers a
         JOIN user_roles r ON a.id = r.user_id
         WHERE a.is_active = 1 AND r.role IN (?, ?)
+          AND LOWER(a.email) != LOWER(?)
     """
-    rows = conn.execute(query, (ROLE_APPROVER, ROLE_ADMIN)).fetchall()
+    rows = conn.execute(query, (ROLE_APPROVER, ROLE_ADMIN, AI_APPROVER_EMAIL)).fetchall()
     recipients = {row[0] for row in rows}
     if maintainer_email and maintainer_email.strip():
         recipients.add(maintainer_email.strip())
     return sorted(list(recipients))
+

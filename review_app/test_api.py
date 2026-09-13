@@ -358,5 +358,53 @@ class MediaApiTest(ReviewAppTestCase):
         self.assertTrue(stored_file.exists())
 
 
+class BackupEndpointTest(ReviewAppTestCase):
+    def test_backup_requires_bearer_auth(self):
+        res = self.client.get("/api/backup")
+        self.assertEqual(res.status_code, 401)
+
+        res = self.client.get("/api/backup", headers={"Authorization": "Bearer bad-token"})
+        self.assertEqual(res.status_code, 401)
+
+    def test_backup_returns_valid_tar_with_db_and_uploads(self):
+        import io
+        import json
+        import sqlite3
+        import tarfile
+
+        # Seed some data in review.db
+        approver_id = self.seed_approver("backup-test@example.com")
+        self.submit(proposed_value="Test bio for backup")
+
+        # Seed an upload file
+        uploads_dir = self.config.resolved_media_uploads_path()
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        (uploads_dir / "sample.jpg").write_bytes(b"\xff\xd8\xff\xe0mockjpeg")
+
+        res = self.client.get("/api/backup", headers=self.callback_headers())
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.mimetype, "application/gzip")
+
+        # Open returned tar.gz stream and inspect contents
+        tar_bytes = io.BytesIO(res.data)
+        with tarfile.open(fileobj=tar_bytes, mode="r:gz") as tar:
+            names = tar.getnames()
+            self.assertIn("review.db", names)
+            self.assertTrue(any("sample.jpg" in n for n in names))
+
+            # Verify the SQLite db inside the tar is intact
+            db_file = tar.extractfile("review.db")
+            self.assertIsNotNone(db_file)
+            db_data = db_file.read()
+
+            extracted_db_path = self.config.database_path.parent / "extracted_test.db"
+            extracted_db_path.write_bytes(db_data)
+            temp_conn = sqlite3.connect(extracted_db_path)
+            row = temp_conn.execute("SELECT proposed_value FROM proposals LIMIT 1;").fetchone()
+            temp_conn.close()
+            self.assertIsNotNone(row)
+            self.assertEqual(json.loads(row[0]), "Test bio for backup")
+
+
 if __name__ == "__main__":
     unittest.main()

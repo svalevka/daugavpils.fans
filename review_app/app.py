@@ -9,6 +9,7 @@ wsgi.py - see GitHub issue #14.
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import csrf  # noqa: E402
 import db  # noqa: E402
 from admin import bp as admin_bp  # noqa: E402
 from analytics import bp as analytics_bp  # noqa: E402
@@ -45,6 +47,15 @@ def create_app(config: Config) -> Flask:
         "image": config.max_photo_upload_bytes,
         "video": config.max_video_upload_bytes,
     }
+    app.config["MAX_TOTAL_UPLOAD_STORAGE_BYTES"] = config.max_total_upload_storage_bytes
+    app.config["MIN_DISK_FREE_BYTES"] = config.min_disk_free_bytes
+    app.config["AI_CONFIG"] = config.ai
+    # Hardened session cookie attributes (SEC-06)
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    if os.environ.get("FLASK_ENV") != "testing" and not os.environ.get("DISABLE_SECURE_COOKIES"):
+        app.config["SESSION_COOKIE_SECURE"] = True
+
     # A blunt backstop, not the real per-file validation (media_uploads.py
     # does that, with a proper per-file rejection message) - Werkzeug
     # buffers a whole multipart request before our route code ever runs,
@@ -54,6 +65,7 @@ def create_app(config: Config) -> Flask:
     app.config["MAX_CONTENT_LENGTH"] = 4 * config.max_video_upload_bytes
 
     db.init_app(app)
+    csrf.init_app(app)
     app.register_blueprint(submissions_bp)
     app.register_blueprint(media_submissions_bp)
     app.register_blueprint(auth_bp)

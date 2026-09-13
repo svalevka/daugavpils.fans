@@ -189,7 +189,7 @@ def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
     the same model that backs its band.yaml/release.yaml - embedded as a
     <script type="application/ld+json"> for crawlers."""
     data = model.model_dump(by_alias=True, exclude_none=True, mode="json")
-    return json.dumps(data, ensure_ascii=False, indent=2)
+    return json.dumps(data, ensure_ascii=False, indent=2).replace("<", "\\u003c")
 
 
 def load_band(band_dir: Path) -> MusicGroup:

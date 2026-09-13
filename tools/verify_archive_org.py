@@ -81,7 +81,8 @@ def _is_ia_generated(name: str, all_names: set[str]) -> bool:
 
 
 def local_md5(path: Path) -> str:
-    h = hashlib.md5()
+    # Used strictly for Archive.org API checksum comparison, not cryptography
+    h = hashlib.md5(usedforsecurity=False)
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)

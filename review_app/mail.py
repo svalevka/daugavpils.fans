@@ -100,3 +100,35 @@ def send_media_approved_notification(smtp_config: SmtpConfig, to_addr: str, desc
         f"Good news - {description} was approved and will be added to the archive soon.\n\n"
         "Thank you for contributing!",
     )
+
+
+def send_ai_escalation_notification(
+    smtp_config: SmtpConfig,
+    recipients: list[str],
+    *,
+    proposal_id: int,
+    target_summary: str,
+    details: str,
+    ai_decision: str,
+    ai_confidence: float | None,
+    ai_reasoning: str,
+    dashboard_url: str,
+    is_media: bool = False,
+    is_shadow: bool = False,
+) -> None:
+    mode_prefix = "[Shadow Mode] " if is_shadow else "[Action Required] "
+    media_label = "media proposal" if is_media else "proposal"
+    subject = f"{mode_prefix}AI escalated {media_label} #{proposal_id} ({target_summary})"
+
+    conf_str = f"{ai_confidence:.2f}" if ai_confidence is not None else "N/A"
+    body = (
+        f"AI Approval Agent evaluated {media_label} #{proposal_id} for {target_summary}.\n\n"
+        f"AI Recommendation: {ai_decision.upper()} (Confidence: {conf_str})\n"
+        f"AI Reasoning: {ai_reasoning}\n\n"
+        f"--- Submission Details ---\n"
+        f"{details}\n\n"
+        f"Review and decide on the dashboard:\n{dashboard_url}\n"
+    )
+    for to_addr in recipients:
+        _send(smtp_config, to_addr, subject, body)
+

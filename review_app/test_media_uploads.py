@@ -84,6 +84,37 @@ class SniffingAndSavingTest(unittest.TestCase):
         self.assertEqual(media_type, "video")
         self.assertEqual(size, len(big_video))
 
+    def test_total_storage_quota_rejected(self):
+        # Allow one JPEG (len(JPEG_BYTES)), but reject second because quota is exceeded
+        quota = len(JPEG_BYTES) + 10
+        stored, *_ = media_uploads.save_upload(
+            _file_storage(JPEG_BYTES), self.uploads_dir, self.max_bytes, max_total_storage_bytes=quota
+        )
+        self.assertTrue((self.uploads_dir / stored).exists())
+
+        # Second upload should be rejected because current usage + size > quota
+        with self.assertRaises(media_uploads.UploadRejected) as ctx:
+            media_uploads.save_upload(
+                _file_storage(JPEG_BYTES), self.uploads_dir, self.max_bytes, max_total_storage_bytes=quota
+            )
+        self.assertIn("quota exceeded", str(ctx.exception))
+
+    def test_low_disk_free_space_rejected(self):
+        import shutil
+        from unittest.mock import patch
+
+        # Mock shutil.disk_usage to simulate low free space
+        fake_usage = shutil._ntuple_diskusage(100 * 1024 * 1024, 99 * 1024 * 1024, 500 * 1024)
+        with patch("shutil.disk_usage", return_value=fake_usage):
+            with self.assertRaises(media_uploads.UploadRejected) as ctx:
+                media_uploads.save_upload(
+                    _file_storage(JPEG_BYTES),
+                    self.uploads_dir,
+                    self.max_bytes,
+                    min_disk_free_bytes=10 * 1024 * 1024,
+                )
+            self.assertIn("storage space is low", str(ctx.exception))
+
 
 if __name__ == "__main__":
     unittest.main()

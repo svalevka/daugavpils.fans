@@ -142,6 +142,14 @@ systemctl status daugavpils-fans-sync.timer
 journalctl -u daugavpils-fans-sync.service -n 50
 ```
 
+### Automated Offsite Backups to Backblaze B2
+
+To protect SQLite proposals/analytics (`review.db`) and uploaded media files in flight (`/data/uploads`), backups are pulled offsite automatically by GitHub Actions ([`.github/workflows/backup-to-b2.yml`](../../.github/workflows/backup-to-b2.yml)):
+
+* **Zero credentials on the VPS**: `cherry` holds zero Backblaze cloud credentials or API tokens. Backblaze credentials (`B2_APPLICATION_KEY_ID`, `B2_APPLICATION_KEY`) reside exclusively in encrypted GitHub Repository Secrets.
+* **Pull architecture**: The workflow runs nightly at 03:30 UTC, requests an atomic streaming snapshot over HTTPS from `https://review.daugavpils.fans/api/backup` (authenticated via `REVIEW_APP_CALLBACK_KEY`), and directly uploads the `.tar.gz` archive to Backblaze B2 bucket `daugavpils.fans`, pruning remote archives older than 14 days.
+* **Manual run**: Can also be triggered on-demand via GitHub Actions `workflow_dispatch`.
+
 ## Deploying review_app
 
 `review_app` (see GitHub issue #8/#14) is the self-hosted app that lets

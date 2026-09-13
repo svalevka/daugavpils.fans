@@ -6,6 +6,7 @@
 <p class="meta">{{ t.add_member_hint }}</p>
 
 <form method="post" action="/submit/{{ band_slug }}/add-member">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div class="field">
     <label for="name">{{ t.member_name }}</label>
     <input type="text" id="name" name="name" required>

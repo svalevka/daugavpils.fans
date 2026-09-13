@@ -38,6 +38,21 @@ class GithubConfig:
     ref: str = "main"
 
 
+@dataclass(frozen=True)
+class AiConfig:
+    """Settings for the AI autonomous approval agent (GitHub issue #43).
+    mode: 'active' (auto-approves & dispatches), 'shadow' (evaluates & logs
+    without dispatching), or 'disabled' (manual approvals only).
+    """
+
+    mode: str = "disabled"
+    api_key: str = ""
+    base_url: str = "https://api.z.ai/api/coding/paas/v4"
+    model: str = "glm-5.1"
+    confidence_threshold: float = 0.80
+    timeout_seconds: float = 30.0
+
+
 @dataclass
 class Config:
     database_path: Path
@@ -76,6 +91,9 @@ class Config:
     media_uploads_path: Path | None = None
     max_photo_upload_bytes: int = 25 * 1024 * 1024
     max_video_upload_bytes: int = 500 * 1024 * 1024
+    max_total_upload_storage_bytes: int = 2 * 1024 * 1024 * 1024
+    min_disk_free_bytes: int = 1024 * 1024 * 1024
+    ai: AiConfig = AiConfig()
 
     def resolved_media_uploads_path(self) -> Path:
         return self.media_uploads_path or (self.database_path.parent / "uploads")
@@ -101,11 +119,30 @@ class Config:
                 ref=os.environ.get("GITHUB_REF", "main"),
             ),
             callback_key=os.environ["REVIEW_APP_CALLBACK_KEY"],
-            rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "5")),
+            rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "20")),
             login_rate_limit_per_ip_per_hour=int(os.environ.get("LOGIN_RATE_LIMIT_PER_IP_PER_HOUR", "20")),
             media_uploads_path=(
                 Path(os.environ["MEDIA_UPLOADS_PATH"]) if "MEDIA_UPLOADS_PATH" in os.environ else None
             ),
             max_photo_upload_bytes=int(os.environ.get("MAX_PHOTO_UPLOAD_BYTES", str(25 * 1024 * 1024))),
             max_video_upload_bytes=int(os.environ.get("MAX_VIDEO_UPLOAD_BYTES", str(500 * 1024 * 1024))),
+            max_total_upload_storage_bytes=int(
+                os.environ.get("MAX_TOTAL_UPLOAD_STORAGE_BYTES", str(2 * 1024 * 1024 * 1024))
+            ),
+            min_disk_free_bytes=int(
+                os.environ.get("MIN_DISK_FREE_BYTES", str(1024 * 1024 * 1024))
+            ),
+            ai=AiConfig(
+                mode=os.environ.get("AI_APPROVAL_MODE", "shadow").lower(),
+                api_key=(
+                    os.environ.get("ZAI_API_KEY")
+                    or os.environ.get("GLM_API_KEY")
+                    or os.environ.get("OPENAI_API_KEY")
+                    or ""
+                ),
+                base_url=os.environ.get("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/v4"),
+                model=os.environ.get("ZAI_MODEL", "glm-5.1"),
+                confidence_threshold=float(os.environ.get("AI_CONFIDENCE_THRESHOLD", "0.80")),
+                timeout_seconds=float(os.environ.get("AI_TIMEOUT_SECONDS", "30.0")),
+            ),
         )

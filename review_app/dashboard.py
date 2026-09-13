@@ -80,6 +80,10 @@ def view_pending():
             "submitter_name": row["submitter_name"],
             "submitter_contact": row["submitter_contact"],
             "is_own_submission": row["submitted_by_approver_id"] == g.approver["id"],
+            "ai_decision": row["ai_decision"] if "ai_decision" in row.keys() else None,
+            "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
+            "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
+            "ai_evaluated_at": row["ai_evaluated_at"] if "ai_evaluated_at" in row.keys() else None,
         }
         for row in rows
     ]
@@ -110,6 +114,10 @@ def view_pending():
             "status": row["status"],
             "github_run_id": row["github_run_id"] if "github_run_id" in row.keys() else None,
             "publish_error": row["publish_error"] if "publish_error" in row.keys() else None,
+            "ai_decision": row["ai_decision"] if "ai_decision" in row.keys() else None,
+            "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
+            "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
+            "ai_evaluated_at": row["ai_evaluated_at"] if "ai_evaluated_at" in row.keys() else None,
         }
         (media_pending if row["status"] == "pending" else media_awaiting_publish).append(item)
 

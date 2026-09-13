@@ -4,6 +4,7 @@
 <h1>Maintainer login</h1>
 <p class="meta">Site statistics and analytics dashboard</p>
 <form method="post" action="/admin/login">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div class="field">
     <label for="email">Maintainer email</label>
     <input type="email" id="email" name="email" required autofocus>

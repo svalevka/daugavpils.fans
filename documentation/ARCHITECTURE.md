@@ -137,6 +137,20 @@ approved:
   and commit/push directly - the same manual process as "Adding a new
   band, release, or media" below.
 
+### AI Approval Agent (issue #43)
+
+`review_app` includes an autonomous AI approval agent (`review_app/ai_agent.py`) that evaluates incoming proposals asynchronously upon submission:
+
+- **Model and Endpoint**: Uses the Z-AI (`glm-5.1`) model configured on the VPS (reusing the local instance on `cherry`), or an OpenAI-compatible multimodal endpoint.
+- **Autonomy**:
+  - **Text proposals**: High-confidence approvals ($\ge 0.80$, typos, verified links, non-vandalous biography expansions, member additions) are auto-approved under the dedicated `AI Approval Agent` system identity and dispatch `apply-proposal.yml` immediately.
+  - **Media proposals**: High-confidence archival photos and artwork are auto-approved under `AI Approval Agent` and automatically dispatch `apply-media-proposal.yml` to upload to archive.org and commit to git `main`.
+  - **Ambiguous or non-trivial proposals**: Escalated to the maintainer via email with the AI's confidence, hesitation reasoning, diff/preview, and dashboard link.
+- **Modes**: Controlled by `AI_APPROVAL_MODE`:
+  - `active`: Full autonomous approvals and workflow dispatch enabled.
+  - `shadow`: Evaluates and logs reasoning to SQLite and sends shadow notifications, but does not auto-dispatch workflows.
+  - `disabled`: Bypassed; standard manual review flow.
+
 `apply-proposal.yml`, `apply-media-proposal.yml`, and `pages.yml` each
 use their own `concurrency:` group (`apply-proposal`,
 `apply-media-proposal`, and `pages` respectively) so that proposals

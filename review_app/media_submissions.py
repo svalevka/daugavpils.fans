@@ -18,11 +18,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
+import ai_agent  # noqa: E402
 import archive_read  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
+from config import AiConfig  # noqa: E402
 
 bp = Blueprint("media_submissions", __name__)
 
@@ -126,20 +128,27 @@ def create_media_proposal():
 
     uploads_dir = current_app.config["MEDIA_UPLOADS_PATH"]
     max_bytes_by_type = current_app.config["MAX_UPLOAD_BYTES"]
+    max_total_storage_bytes = current_app.config.get("MAX_TOTAL_UPLOAD_STORAGE_BYTES")
+    min_disk_free_bytes = current_app.config.get("MIN_DISK_FREE_BYTES")
 
     saved = 0
+    saved_ids: list[int] = []
     skipped: list[str] = []
     for index, file_storage in enumerate(files):
         caption = request.form.get(f"caption_{index}", "").strip() or None
         try:
             stored_filename, content_type, media_type, size = media_uploads.save_upload(
-                file_storage, uploads_dir, max_bytes_by_type
+                file_storage,
+                uploads_dir,
+                max_bytes_by_type,
+                max_total_storage_bytes=max_total_storage_bytes,
+                min_disk_free_bytes=min_disk_free_bytes,
             )
         except media_uploads.UploadRejected as exc:
             skipped.append(f"{file_storage.filename}: {exc}")
             continue
 
-        conn.execute(
+        cur = conn.execute(
             """
             INSERT INTO media_proposals (
                 band_slug, release_slug, media_type, original_filename, stored_filename,
@@ -163,28 +172,31 @@ def create_media_proposal():
                 submitted_by_approver_id,
             ),
         )
+        saved_ids.append(cur.lastrowid)
         saved += 1
     conn.commit()
 
-    if saved:
-        scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
-        login_url = url_for("auth.login_form", _external=True)
-        summary = (
-            f"{saved} new media proposal(s) for {scope}"
-            + (f" ({len(skipped)} skipped - see below)" if skipped else "")
-            + f".\n\nLog in to the dashboard to review: {login_url}"
-        )
-        if skipped:
-            summary += "\n\nSkipped:\n" + "\n".join(f"- {s}" for s in skipped)
-        # Same stance as submissions.py: the proposals are already
-        # durably saved above - a submitter should never see a failure
-        # just because the notification couldn't be sent.
-        try:
-            recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
-            mail.send_submission_notification(
-                current_app.config["SMTP_CONFIG"], recipients, summary
+    ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
+    if ai_config.mode == "disabled":
+        if saved:
+            scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
+            login_url = url_for("auth.login_form", _external=True)
+            summary = (
+                f"{saved} new media proposal(s) for {scope}"
+                + (f" ({len(skipped)} skipped - see below)" if skipped else "")
+                + f".\n\nLog in to the dashboard to review: {login_url}"
             )
-        except OSError:
-            current_app.logger.exception("failed to send submission notification email")
+            if skipped:
+                summary += "\n\nSkipped:\n" + "\n".join(f"- {s}" for s in skipped)
+            try:
+                recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
+                mail.send_submission_notification(
+                    current_app.config["SMTP_CONFIG"], recipients, summary
+                )
+            except OSError:
+                current_app.logger.exception("failed to send submission notification email")
+    else:
+        for mid in saved_ids:
+            ai_agent.dispatch_evaluation(current_app._get_current_object(), mid, is_media=True)
 
     return render_template("submit_media_done.html", saved=saved, skipped=skipped), 201

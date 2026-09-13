@@ -35,14 +35,26 @@
   <h3>Proposed</h3>
   <pre>{{ p.proposed_value }}</pre>
 
+  {% if p.ai_decision %}
+  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if p.ai_decision == 'approved' %}#2da44e{% elif p.ai_decision == 'escalated' %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
+    <strong>AI Agent:</strong>
+    <span class="status-badge" style="font-size: 0.8em; margin-left: 0.25rem;">
+      {{ p.ai_decision | upper }}{% if p.ai_confidence is not none %} ({{ (p.ai_confidence * 100) | round | int }}% confidence){% endif %}
+    </span>
+    {% if p.ai_reasoning %}<p style="margin: 0.25rem 0 0 0; color: #555;">{{ p.ai_reasoning }}</p>{% endif %}
+  </div>
+  {% endif %}
+
   {% if p.is_own_submission %}
   <p class="note"><em>You submitted this proposal - another approver must decide on it.</em></p>
   {% else %}
   <div class="actions">
     <form method="post" action="/proposals/{{ p.id }}/approve">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Approve</button>
     </form>
     <form method="post" action="/proposals/{{ p.id }}/reject">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Reject</button>
     </form>
   </div>
@@ -70,14 +82,26 @@
   <video src="/media-proposals/{{ m.id }}/file" controls preload="none" style="max-width: 100%; border-radius: 4px;"></video>
   {% endif %}
 
+  {% if m.ai_decision %}
+  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if m.ai_decision == 'approved' %}#2da44e{% elif m.ai_decision == 'escalated' %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
+    <strong>AI Agent:</strong>
+    <span class="status-badge" style="font-size: 0.8em; margin-left: 0.25rem;">
+      {{ m.ai_decision | upper }}{% if m.ai_confidence is not none %} ({{ (m.ai_confidence * 100) | round | int }}% confidence){% endif %}
+    </span>
+    {% if m.ai_reasoning %}<p style="margin: 0.25rem 0 0 0; color: #555;">{{ m.ai_reasoning }}</p>{% endif %}
+  </div>
+  {% endif %}
+
   {% if m.is_own_submission %}
   <p class="note"><em>You submitted this - another approver must decide on it.</em></p>
   {% else %}
   <div class="actions">
     <form method="post" action="/media-proposals/{{ m.id }}/approve">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Approve</button>
     </form>
     <form method="post" action="/media-proposals/{{ m.id }}/reject">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Reject</button>
     </form>
   </div>
@@ -122,15 +146,26 @@
   {% else %}
   <video src="/media-proposals/{{ m.id }}/file" controls preload="none" style="max-width: 100%; border-radius: 4px;"></video>
   {% endif %}
+  {% if m.ai_decision %}
+  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if m.ai_decision == 'approved' %}#2da44e{% elif m.ai_decision == 'escalated' %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
+    <strong>AI Agent:</strong>
+    <span class="status-badge" style="font-size: 0.8em; margin-left: 0.25rem;">
+      {{ m.ai_decision | upper }}{% if m.ai_confidence is not none %} ({{ (m.ai_confidence * 100) | round | int }}% confidence){% endif %}
+    </span>
+    {% if m.ai_reasoning %}<p style="margin: 0.25rem 0 0 0; color: #555;">{{ m.ai_reasoning }}</p>{% endif %}
+  </div>
+  {% endif %}
 
   <div class="actions">
     {% if m.status == 'publishing' %}
     <p class="note"><em>Upload in progress...</em></p>
     {% else %}
     <form method="post" action="/media-proposals/{{ m.id }}/upload">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">{% if m.status == 'publish_failed' %}Retry upload{% else %}Upload{% endif %}</button>
     </form>
     <form method="post" action="/media-proposals/{{ m.id }}/publish">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit" class="button-secondary">Mark published manually</button>
     </form>
     {% endif %}

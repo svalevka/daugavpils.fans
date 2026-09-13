@@ -4,6 +4,7 @@ services:
     container_name: daugavpils-fans-nginx
     restart: unless-stopped
     ports:
+      - "80:80"
       - "443:443"
     volumes:
       # ./site is mounted once, as a whole, at container start; inside it

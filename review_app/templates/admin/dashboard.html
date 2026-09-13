@@ -12,6 +12,7 @@
     <a href="/dashboard" class="button-secondary">Review proposals</a>
     {% endif %}
     <form method="post" action="/admin/logout" style="display:inline; margin:0;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit" class="button-secondary">Log out</button>
     </form>
   </div>

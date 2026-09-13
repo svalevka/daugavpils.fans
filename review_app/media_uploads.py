@@ -10,10 +10,17 @@ endpoint); only the file's own leading bytes decide its type.
 from __future__ import annotations
 
 import secrets
+import shutil
 from pathlib import Path
 from typing import BinaryIO
 
 CHUNK_SIZE = 1024 * 1024  # 1 MiB
+
+
+def get_uploads_storage_usage(uploads_dir: Path) -> int:
+    if not uploads_dir.exists():
+        return 0
+    return sum(f.stat().st_size for f in uploads_dir.iterdir() if f.is_file())
 
 
 class UploadRejected(Exception):
@@ -52,13 +59,18 @@ def _sniff(head: bytes) -> tuple[str, str, str] | None:
 
 
 def save_upload(
-    file_storage, uploads_dir: Path, max_bytes_by_type: dict[str, int]
+    file_storage,
+    uploads_dir: Path,
+    max_bytes_by_type: dict[str, int],
+    max_total_storage_bytes: int | None = None,
+    min_disk_free_bytes: int | None = None,
 ) -> tuple[str, str, str, int]:
     """Stream `file_storage` to disk under `uploads_dir`. Returns
     (stored_filename, content_type, media_type, size_bytes). Raises
     UploadRejected - and leaves no partial file behind - if the content
-    isn't a recognized image/video, or exceeds
-    max_bytes_by_type[media_type]."""
+    isn't a recognized image/video, exceeds max_bytes_by_type[media_type],
+    exceeds max_total_storage_bytes, or if free disk space is below
+    min_disk_free_bytes."""
     stream: BinaryIO = file_storage.stream
     head = stream.read(64)
     sniffed = _sniff(head)
@@ -68,12 +80,29 @@ def save_upload(
     max_bytes = max_bytes_by_type[media_type]
 
     uploads_dir.mkdir(parents=True, exist_ok=True)
+
+    if min_disk_free_bytes is not None:
+        try:
+            free_bytes = shutil.disk_usage(uploads_dir).free
+            if free_bytes < min_disk_free_bytes:
+                raise UploadRejected("server storage space is low; please try again later")
+        except OSError:
+            pass
+
+    current_storage_usage = 0
+    if max_total_storage_bytes is not None:
+        current_storage_usage = get_uploads_storage_usage(uploads_dir)
+        if current_storage_usage >= max_total_storage_bytes:
+            raise UploadRejected("total upload storage quota exceeded; please try again later")
+
     stored_filename = f"{secrets.token_hex(16)}{extension}"
     dest = uploads_dir / stored_filename
 
     size = len(head)
     if size > max_bytes:
         raise UploadRejected(f"exceeds the {max_bytes // (1024 * 1024)}MB limit for {media_type}s")
+    if max_total_storage_bytes is not None and (current_storage_usage + size) > max_total_storage_bytes:
+        raise UploadRejected("total upload storage quota exceeded; please try again later")
 
     with open(dest, "wb") as out:
         out.write(head)
@@ -86,6 +115,10 @@ def save_upload(
                 out.close()
                 dest.unlink(missing_ok=True)
                 raise UploadRejected(f"exceeds the {max_bytes // (1024 * 1024)}MB limit for {media_type}s")
+            if max_total_storage_bytes is not None and (current_storage_usage + size) > max_total_storage_bytes:
+                out.close()
+                dest.unlink(missing_ok=True)
+                raise UploadRejected("total upload storage quota exceeded; please try again later")
             out.write(chunk)
 
     return stored_filename, content_type, media_type, size

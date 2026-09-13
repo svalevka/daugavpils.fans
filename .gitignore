@@ -24,3 +24,16 @@ bands/**/*.part
 
 # Generated static site output (ADR-0001) - a build artifact, not source.
 webapp/dist/
+
+# Local secrets, credentials, databases, and TLS certs
+.env
+*.env
+!*.env.example
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+*.pem
+*.key
+*.crt
+review-app-data/

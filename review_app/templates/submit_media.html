@@ -6,6 +6,7 @@
 <p>{{ t.media_desc }}</p>
 
 <form method="post" action="/submit-media" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="band_slug" value="{{ band_slug }}">
   {% if release_slug %}<input type="hidden" name="release_slug" value="{{ release_slug }}">{% endif %}
 

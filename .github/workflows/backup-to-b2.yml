@@ -1,0 +1,58 @@
+name: Nightly Backup to Backblaze B2
+
+# Downloads an atomic snapshot of review.db and uploads/ from review_app
+# over the authenticated callback API, then uploads to Backblaze B2.
+#
+# Cherry (the VPS) holds ZERO Backblaze credentials - B2 secrets live
+# solely in GitHub Secrets and are injected into memory on the runner.
+
+on:
+  schedule:
+    - cron: "30 3 * * *" # Daily at 03:30 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install rclone
+        run: |
+          which rclone || (sudo apt-get update && sudo apt-get install -y rclone)
+
+      - name: Fetch backup archive from review_app
+        env:
+          REVIEW_APP_BASE_URL: ${{ vars.REVIEW_APP_BASE_URL }}
+          CALLBACK_KEY: ${{ secrets.REVIEW_APP_CALLBACK_KEY }}
+        run: |
+          BASE_URL="${REVIEW_APP_BASE_URL:-https://review.daugavpils.fans}"
+          TIMESTAMP=$(date -u +"%Y%m%d-%H%M%S")
+          FILENAME="review-app-backup-${TIMESTAMP}.tar.gz"
+
+          echo "Fetching backup bundle from ${BASE_URL}/api/backup..."
+          curl -fsSL \
+            -H "Authorization: Bearer ${CALLBACK_KEY}" \
+            "${BASE_URL}/api/backup" \
+            -o "${FILENAME}"
+
+          tar -tzf "${FILENAME}" >/dev/null
+          echo "Downloaded and verified backup archive: ${FILENAME} ($(stat -c %s "${FILENAME}") bytes)"
+          echo "ARCHIVE_FILENAME=${FILENAME}" >> "$GITHUB_ENV"
+
+      - name: Upload backup to Backblaze B2 and prune old archives
+        env:
+          RCLONE_CONFIG_B2_TYPE: b2
+          RCLONE_CONFIG_B2_ACCOUNT: ${{ secrets.B2_APPLICATION_KEY_ID }}
+          RCLONE_CONFIG_B2_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_BUCKET: ${{ secrets.B2_BUCKET_NAME }}
+        run: |
+          BUCKET="${B2_BUCKET:-daugavpils.fans}"
+          echo "Uploading ${ARCHIVE_FILENAME} to b2:${BUCKET}..."
+          rclone copy "${ARCHIVE_FILENAME}" "b2:${BUCKET}"
+          echo "Backup uploaded successfully."
+
+          echo "Pruning remote backups older than 14 days from b2:${BUCKET}..."
+          rclone delete --min-age 14d "b2:${BUCKET}" 2>/dev/null || true
+          echo "Pruning complete."

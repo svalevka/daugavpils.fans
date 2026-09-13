@@ -3,6 +3,7 @@
 {% block content %}
 <h1>Approver login</h1>
 <form method="post" action="/login">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div class="field">
     <label for="email">Your email</label>
     <input type="email" id="email" name="email">

@@ -7,6 +7,7 @@ as a GitHub repo secret, known only to review_app and the Action.
 """
 from __future__ import annotations
 
+import hmac
 import json
 import sys
 from pathlib import Path
@@ -24,7 +25,7 @@ def _require_callback_key() -> None:
     expected = current_app.config["REVIEW_APP_CALLBACK_KEY"]
     header = request.headers.get("Authorization", "")
     token = header.removeprefix("Bearer ") if header.startswith("Bearer ") else None
-    if token is None or token != expected:
+    if token is None or not hmac.compare_digest(token, expected):
         abort(401)
 
 
@@ -221,4 +222,50 @@ def media_publish_result(proposal_id: int):
         conn.commit()
 
     return jsonify({"status": new_status})
+
+
+@bp.get("/backup")
+def get_backup_bundle():
+    """Stream an atomic compressed snapshot of review.db and uploads/ to authorized caller."""
+    _require_callback_key()
+    import shutil
+    import sqlite3
+    import tarfile
+    import tempfile
+    from flask import after_this_request
+
+    tmp_dir = tempfile.mkdtemp(prefix="review_backup_")
+
+    @after_this_request
+    def remove_tmp(response):
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+        return response
+
+    stage_dir = Path(tmp_dir) / "stage"
+    stage_dir.mkdir()
+
+    db_path = Path(current_app.config["DATABASE_PATH"])
+    if db_path.exists():
+        dest_db = stage_dir / "review.db"
+        src = sqlite3.connect(db_path)
+        dst = sqlite3.connect(dest_db)
+        src.backup(dst)
+        dst.close()
+        src.close()
+
+    uploads_path = Path(current_app.config["MEDIA_UPLOADS_PATH"])
+    if uploads_path.exists() and any(uploads_path.iterdir()):
+        shutil.copytree(uploads_path, stage_dir / "uploads", dirs_exist_ok=True)
+
+    archive_path = Path(tmp_dir) / "review-app-backup.tar.gz"
+    with tarfile.open(archive_path, "w:gz") as tar:
+        for item in stage_dir.iterdir():
+            tar.add(item, arcname=item.name)
+
+    return send_file(
+        archive_path,
+        mimetype="application/gzip",
+        as_attachment=True,
+        download_name="review-app-backup.tar.gz",
+    )
 

@@ -17,6 +17,7 @@ SITE_SKIP_LOCAL_VALIDATION, same contract the real build.py has).
 """
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -182,6 +183,23 @@ class FirstAndRepeatDeployTest(unittest.TestCase):
             # Both symlinks move together, to the same new commit.
             self.assertEqual(h.current_link.resolve().parent.parent, h.current_checkout_link.resolve())
 
+    def test_detects_review_app_changes_on_new_commit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            h = DeployHarness(Path(tmp))
+            _init_origin(h.origin_dir, "v1")
+            h.run()
+
+            # Add a file in review_app/
+            review_app_dir = h.origin_dir / "review_app"
+            review_app_dir.mkdir(exist_ok=True)
+            (review_app_dir / "new_feature.py").write_text("# new feature\n")
+            _git("add", "review_app", cwd=h.origin_dir)
+            _git("commit", "-m", "update review_app", cwd=h.origin_dir)
+
+            result = h.run()
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertIn("review_app code or deployment configuration changed", result.stdout)
+
 
 class FailedBuildTest(unittest.TestCase):
     def test_a_failing_build_never_moves_current(self):
@@ -226,6 +244,7 @@ class OverlapTest(unittest.TestCase):
             h = DeployHarness(Path(tmp))
             _init_origin(h.origin_dir, "v1")
             h.lock_dir.mkdir()  # simulate an in-progress run holding the lock
+            (h.lock_dir / "pid").write_text(str(os.getpid()))
 
             result = h.run()
 
@@ -233,6 +252,21 @@ class OverlapTest(unittest.TestCase):
             self.assertIn("already in progress", result.stdout)
             self.assertFalse(h.site_dir.exists())
             self.assertFalse(h.repo_dir.exists())
+
+    def test_stale_lock_with_dead_pid_is_reclaimed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            h = DeployHarness(Path(tmp))
+            _init_origin(h.origin_dir, "v1")
+            h.lock_dir.mkdir()
+            # Write a dead PID that cannot be running
+            (h.lock_dir / "pid").write_text("99999999")
+
+            result = h.run()
+
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertIn("stale lock detected", result.stdout)
+            self.assertEqual(h.current_index_html(), "v1")
+            self.assertTrue(h.state_file.exists())
 
 
 if __name__ == "__main__":

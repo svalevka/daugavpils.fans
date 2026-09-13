@@ -19,11 +19,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
+import ai_agent  # noqa: E402
 import archive_read  # noqa: E402
 import db  # noqa: E402
 import i18n  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
+from config import AiConfig  # noqa: E402
 from editable_fields import (  # noqa: E402
     EDITABLE_FIELDS,
     NESTED_LIST_ATTR,
@@ -304,25 +306,25 @@ def create_proposal():
     )
     conn.commit()
 
-    scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
-    login_url = url_for("auth.login_form", _external=True)
-    summary = (
-        f"New proposal #{cur.lastrowid} for {scope} ({target}.{field}):\n\n"
-        f"- {original_value!r}\n+ {proposed_value!r}\n\n"
-        f"Log in to the dashboard to review it: {login_url}"
-    )
-    # The proposal is already durably committed above - a submitter
-    # should never see a failure just because the notification couldn't
-    # be sent (e.g. SMTP is down). The maintainer finds out some other
-    # way (checking the dashboard) rather than the submission itself
-    # erroring out.
-    try:
-        recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
-        mail.send_submission_notification(
-            current_app.config["SMTP_CONFIG"], recipients, summary
+    proposal_id = cur.lastrowid
+    ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
+    if ai_config.mode == "disabled":
+        scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
+        login_url = url_for("auth.login_form", _external=True)
+        summary = (
+            f"New proposal #{proposal_id} for {scope} ({target}.{field}):\n\n"
+            f"- {original_value!r}\n+ {proposed_value!r}\n\n"
+            f"Log in to the dashboard to review it: {login_url}"
         )
-    except OSError:
-        current_app.logger.exception("failed to send submission notification email")
+        try:
+            recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
+            mail.send_submission_notification(
+                current_app.config["SMTP_CONFIG"], recipients, summary
+            )
+        except OSError:
+            current_app.logger.exception("failed to send submission notification email")
+    else:
+        ai_agent.dispatch_evaluation(current_app._get_current_object(), proposal_id, is_media=False)
 
     return render_template("submit_done.html"), 201
 
@@ -389,21 +391,23 @@ def create_member_proposal(band_slug: str):
     )
     conn.commit()
 
-    login_url = url_for("auth.login_form", _external=True)
-    summary = (
-        f"New proposal #{cur.lastrowid} for {band_slug} (new band member):\n\n"
-        f"+ {proposed_value!r}\n\n"
-        f"Log in to the dashboard to review it: {login_url}"
-    )
-    # Same stance as create_proposal(): the proposal is already durably
-    # committed above - a submitter should never see a failure just
-    # because the notification couldn't be sent.
-    try:
-        recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
-        mail.send_submission_notification(
-            current_app.config["SMTP_CONFIG"], recipients, summary
+    proposal_id = cur.lastrowid
+    ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
+    if ai_config.mode == "disabled":
+        login_url = url_for("auth.login_form", _external=True)
+        summary = (
+            f"New proposal #{proposal_id} for {band_slug} (new band member):\n\n"
+            f"+ {proposed_value!r}\n\n"
+            f"Log in to the dashboard to review it: {login_url}"
         )
-    except OSError:
-        current_app.logger.exception("failed to send submission notification email")
+        try:
+            recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
+            mail.send_submission_notification(
+                current_app.config["SMTP_CONFIG"], recipients, summary
+            )
+        except OSError:
+            current_app.logger.exception("failed to send submission notification email")
+    else:
+        ai_agent.dispatch_evaluation(current_app._get_current_object(), proposal_id, is_media=False)
 
     return render_template("submit_done.html"), 201
