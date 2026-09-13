@@ -20,6 +20,21 @@ needs `export_schema.py` re-run afterwards (see `test_export_schema_drift.py`
 below), and if it makes an existing field required, existing `band.yaml`/
 `release.yaml` files may need updating too.
 
+`MusicAlbum.creditText`/`creditText_en` (GitHub issue #42) are release-
+scoped free-text credits for someone who contributed to *that release
+only* (e.g. a guest vocalist), as distinct from `GroupMember`/`member` on
+`MusicGroup`, which is for ongoing band membership - see `GroupMember`'s
+own docstring. `MusicAlbum` sets `validate_assignment=True` (the only
+model in this file that does) specifically so its
+`_check_credit_text_translation_alignment` model validator - `creditText_en`
+must never be longer than `creditText`, since it translates a *prefix* of
+it (a credit can be added now and translated later; that's normal, not
+an error) - actually fires when `tools/apply_proposal.py`'s generic edit
+path mutates an already-loaded model via plain `setattr()`, not just on
+initial load from disk. Without `validate_assignment=True`, the validator
+would only ever catch this on a fresh `model_validate()` call, never on
+the actual proposed edit being applied.
+
 ## `export_schema.py`
 
 **Problem it solves:** the archive's real, portable contract needs to be
@@ -84,6 +99,12 @@ derived from this same file's `member` entries so the two can't drift
 apart. Each `EditableField` also holds bilingual labels (`label`, `label_ru`)
 for human-readable form rendering in the review app (GitHub issue #41).
 
+`release`/`creditText` and `release`/`creditText_en` (GitHub issue #42)
+are ordinary `kind="list"` entries like `genre` - no pseudo-target needed,
+unlike `new_member` above, since a release-scoped credit is just another
+field on an already-existing `MusicAlbum`, not a whole new record with no
+list_index to attach to yet.
+
 ## `apply_proposal.py`
 
 **Problem it solves:** turning one approved public text-edit proposal
@@ -103,6 +124,14 @@ model -> `model_dump(by_alias=True, exclude_none=True)` ->
 `validate.py --write` already uses, keeping diffs minimal. Does not run
 `validate.py` itself - the caller (the Action) does that immediately
 after as a safety net.
+
+The generic `setattr(container, field, proposed_value)` mutation is
+wrapped in a `try/except ValidationError` (GitHub issue #42): a
+model-level validator - currently only `MusicAlbum`'s `creditText`/
+`creditText_en` alignment check - can reject the assignment outright
+(see `models.py` above), and this re-raises that as `ApplyError` rather
+than letting a raw pydantic traceback crash the CLI, matching every
+other rejection path in this function.
 
 Its band/release-loading and nested-field-navigation functions
 (`load_band`, `load_release`, `container_for`) are public and also
@@ -326,8 +355,10 @@ for testing `--write`. `build_archive_with_nested_fields()` builds on
 `build_valid_archive()`'s layout but also populates every free-text
 field `apply_proposal.py`/`editable_fields.py` can touch (band
 description/location/alternateName/genre, one band member, one band
-image, release description/genre, the track's alternateName, one release
-image), for testing proposal application. `run_validate()` invokes
+image, release description/genre, creditText/creditText_en (one matching
+entry each, for exercising GitHub issue #42's translation-alignment
+invariant), the track's alternateName, one release image), for testing
+proposal application. `run_validate()` invokes
 `validate.py` as a subprocess against a given directory and captures its
 output; `run_apply_proposal()` does the same for `apply_proposal.py`,
 writing a given proposal dict to a scratch JSON file first.
@@ -345,9 +376,11 @@ name arbitrary fields on `band.yaml`/`release.yaml`) - it needs to be
 checked against the exact agreed field list, not just "does it import."
 
 **How:** calls `lookup()` directly for every stage-1 field that should be
-allowed and asserts each resolves, then calls it for a representative set
-of structural/computed fields (`slug`, `name`, `sameAs`, `byArtist`,
-`contentUrl`, `identifier`, etc.) and asserts each is refused.
+allowed (now including `release`/`creditText` and `release`/`creditText_en`,
+GitHub issue #42) and asserts each resolves, then calls it for a
+representative set of structural/computed fields (`slug`, `name`,
+`sameAs`, `byArtist`, `contentUrl`, `identifier`, etc.) and asserts each
+is refused.
 
 ## `test_apply_proposal.py`
 
@@ -371,7 +404,16 @@ completely untouched. Also covers `target: "new_member"` (GitHub issue
 member (with just a name, and with every field) rather than editing one
 field of an existing item, plus its own rejections (missing name,
 unknown field in `proposed_value`, a `release_slug` or `list_index` that
-shouldn't be there).
+shouldn't be there). Also covers `release.creditText`/`creditText_en`
+(GitHub issue #42) as `ApplyCreditTextTranslationAlignmentTest`: same-
+length edits and a same-length replacement apply cleanly, a shorter
+`creditText_en` (a credit added but not yet translated) is accepted, and
+`creditText_en` ending up longer than `creditText` - the actual bug the
+model-level check guards against - is rejected with the file left
+untouched, exercised through the real CLI (not by calling the Pydantic
+model directly) so what's actually being proven is that a bad proposal
+fails cleanly (`ApplyError`, non-zero exit) rather than crashing with a
+raw traceback.
 
 ## `test_export_schema_drift.py`
 

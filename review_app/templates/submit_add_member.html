@@ -3,6 +3,8 @@
 {% block content %}
 <h1>{{ t.add_member_heading }}</h1>
 
+<p class="meta">{{ t.add_member_hint }}</p>
+
 <form method="post" action="/submit/{{ band_slug }}/add-member">
   <div class="field">
     <label for="name">{{ t.member_name }}</label>

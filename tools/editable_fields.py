@@ -29,6 +29,13 @@ field edit to, since the item doesn't exist yet. That's `new_member`
 below: a separate pseudo-target carrying a whole new record's worth of
 fields at once, not looked up via `lookup()` like the field-edit targets
 above.
+
+`release.creditText`/`creditText_en` (GitHub issue #42) are for someone
+who contributed to *one release only* (e.g. a guest vocalist), as
+opposed to `member`, which is for ongoing band membership - see
+GroupMember's docstring in tools/models.py for the full reasoning. Both
+are ordinary `kind="list"` fields like `genre`, needing no new proposal
+shape or apply-path of their own.
 """
 from __future__ import annotations
 
@@ -94,6 +101,14 @@ EDITABLE_FIELDS: tuple[EditableField, ...] = (
     EditableField("release", "description", "scalar", "Provenance / liner notes", "История записи / описание"),
     EditableField("release", "description_en", "scalar", "Provenance / liner notes (English translation)", "История записи (перевод на английский)"),
     EditableField("release", "genre", "list", "Genres", "Жанры"),
+    EditableField(
+        "release", "creditText", "list", "Recording credits (e.g. a guest musician on this release only)",
+        "Участники записи (например, приглашённый музыкант только на этом релизе)",
+    ),
+    EditableField(
+        "release", "creditText_en", "list", "Recording credits (English translation)",
+        "Участники записи (перевод на английский)",
+    ),
     EditableField("track", "alternateName", "scalar", "Alternate track title", "Альтернативное название трека"),
     EditableField("band_image", "caption", "scalar", "Photo caption", "Подпись к фотографии"),
     EditableField("band_image", "caption_en", "scalar", "Photo caption (English translation)", "Подпись к фотографии (на английском)"),

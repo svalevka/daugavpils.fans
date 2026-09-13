@@ -1,7 +1,7 @@
 {
   "$defs": {
     "GroupMember": {
-      "description": "A person's involvement in a MusicGroup. Not a formal schema.org type;\nkept intentionally minimal (schema.org has no standard way to attach a\nrole/period to a member relationship).",
+      "description": "A person's involvement in a MusicGroup. Not a formal schema.org type;\nkept intentionally minimal (schema.org has no standard way to attach a\nrole/period to a member relationship).\n\nReserved for actual, ongoing band membership (hence `period`) - not for\nsomeone who only contributed to one release (e.g. a guest vocalist on a\nsingle album). That belongs on that specific MusicAlbum's `creditText`\ninstead (GitHub issue #42), which needs no period of its own: the\nrelease itself is the temporal marker.",
       "properties": {
         "name": {
           "description": "Name as actually written, in its real script/alphabet",

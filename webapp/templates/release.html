@@ -23,6 +23,15 @@
 {{ macros.bio(localize(release, "description", lang)) }}
 {% endif %}
 
+{% if release.creditText %}
+<h2>{{ t.credits }}</h2>
+<ul class="member-list">
+  {% for line in localize_list(release, "creditText", lang) %}
+  <li>{{ line }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
 <h2>{{ t.tracklist }}</h2>
 {% if release.has_audio %}
 <label class="autoplay-control">

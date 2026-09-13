@@ -393,6 +393,22 @@
       },
       "title": "Video",
       "type": "array"
+    },
+    "creditText": {
+      "description": "Free-text credits for people who contributed to this specific release only (e.g. a guest vocalist), not ongoing band members - one line per credit, e.g. 'Anna Kalniņa - second vocals'. Not band.member: this release is itself the temporal/scope marker, so no period is needed or wanted here.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Credittext",
+      "type": "array"
+    },
+    "creditText_en": {
+      "description": "English translation of creditText, same optional/fallback convention as description_en/role_en/caption_en. Translates a *prefix* of creditText 1:1 by position - entries beyond len(creditText_en) simply aren't translated yet (same 'not yet translated' meaning every other _en field already has when unset). Must never be longer than creditText.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Credittext En",
+      "type": "array"
     }
   },
   "required": [

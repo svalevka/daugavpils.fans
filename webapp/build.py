@@ -41,6 +41,7 @@ import shutil
 import subprocess
 import sys
 from functools import partial
+from itertools import zip_longest
 from pathlib import Path
 
 import markdown
@@ -111,6 +112,26 @@ def localize(obj, field: str, lang: str) -> str | None:
     if lang == "en":
         return getattr(obj, f"{field}_en", None) or base
     return base
+
+
+def localize_list(obj, field: str, lang: str) -> list[str]:
+    """List-field counterpart to localize() - for MusicAlbum.creditText/
+    creditText_en (GitHub issue #42), the one bilingual field that's a list
+    of independent lines rather than one string, so there's no single
+    obj.<field>/<field>_en pair to fall back between as a whole: each line
+    needs its own fallback. tools/models.py's MusicAlbum enforces
+    creditText_en is never longer than creditText (it translates a
+    *prefix* of it, 1:1 by position - entries beyond that just aren't
+    translated yet), so this must use zip_longest, not zip: a plain zip
+    would silently drop every untranslated tail entry instead of falling
+    back to its native-script text."""
+    base = getattr(obj, field, None) or []
+    if lang != "en":
+        return base
+    translated = getattr(obj, f"{field}_en", None) or []
+    if not translated:
+        return base
+    return [en or ru for ru, en in zip_longest(base, translated, fillvalue=None)]
 
 
 def license_label(url: str) -> str:
@@ -277,6 +298,7 @@ def build() -> None:
     env.filters["duration"] = format_duration
     env.filters["license_label"] = license_label
     env.globals["localize"] = localize
+    env.globals["localize_list"] = localize_list
     env.globals["band_media_url"] = band_media_url
     env.globals["release_media_url"] = release_media_url
     env.globals["partial"] = partial

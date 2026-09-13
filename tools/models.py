@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class PropertyValue(BaseModel):
@@ -96,7 +96,13 @@ class MusicRecording(BaseModel):
 class GroupMember(BaseModel):
     """A person's involvement in a MusicGroup. Not a formal schema.org type;
     kept intentionally minimal (schema.org has no standard way to attach a
-    role/period to a member relationship)."""
+    role/period to a member relationship).
+
+    Reserved for actual, ongoing band membership (hence `period`) - not for
+    someone who only contributed to one release (e.g. a guest vocalist on a
+    single album). That belongs on that specific MusicAlbum's `creditText`
+    instead (GitHub issue #42), which needs no period of its own: the
+    release itself is the temporal marker."""
 
     name: str = Field(description="Name as actually written, in its real script/alphabet")
     name_en: Optional[str] = Field(default=None, description="Latin transliteration of name")
@@ -137,7 +143,16 @@ class MusicGroup(BaseModel):
 class MusicAlbum(BaseModel):
     """schema.org MusicAlbum - one release by a MusicGroup."""
 
-    model_config = ConfigDict(populate_by_name=True)
+    # validate_assignment=True (GitHub issue #42): tools/apply_proposal.py's
+    # generic edit path mutates an already-loaded model via plain
+    # `setattr()`, not by re-running model_validate() - without this,
+    # creditText's own model_validator below would only ever fire on
+    # initial load (the pre-edit state), never on the proposed edit
+    # actually being applied, silently defeating the whole point of the
+    # check. Scoped to this one model rather than every model in this
+    # file, since it's the one that currently needs a cross-field
+    # invariant enforced on the setattr path.
+    model_config = ConfigDict(populate_by_name=True, validate_assignment=True)
 
     type_: str = Field(default="MusicAlbum", alias="@type")
     name: str = Field(description="Album title as actually written, in its real script/alphabet")
@@ -158,7 +173,41 @@ class MusicAlbum(BaseModel):
     video: list[VideoObject] = Field(
         default_factory=list, description="e.g. an official music video, or live footage from this release's era"
     )
+    creditText: list[str] = Field(
+        default_factory=list,
+        description="Free-text credits for people who contributed to this specific release only "
+        "(e.g. a guest vocalist), not ongoing band members - one line per credit, "
+        "e.g. 'Anna Kalniņa - second vocals'. Not band.member: this release is itself "
+        "the temporal/scope marker, so no period is needed or wanted here.",
+    )
+    creditText_en: list[str] = Field(
+        default_factory=list,
+        description="English translation of creditText, same optional/fallback convention as "
+        "description_en/role_en/caption_en. Translates a *prefix* of creditText 1:1 by "
+        "position - entries beyond len(creditText_en) simply aren't translated yet (same "
+        "'not yet translated' meaning every other _en field already has when unset). Must "
+        "never be longer than creditText.",
+    )
 
     @property
     def has_audio(self) -> bool:
         return any(t.audio is not None for t in self.track)
+
+    @model_validator(mode="after")
+    def _check_credit_text_translation_alignment(self) -> "MusicAlbum":
+        # <=, not == : creditText and creditText_en are each edited by a
+        # separate proposal (apply_proposal.py's pipeline only ever
+        # touches one field per proposal), so "add a new credit, translate
+        # it later" necessarily passes through a state where creditText_en
+        # is shorter than creditText - that's the normal, desired
+        # "not yet translated" case, not a bug. Only creditText_en ending
+        # up *longer* (e.g. creditText shrank without creditText_en being
+        # trimmed to match) is the actual dangling-translation bug this
+        # guards against.
+        if len(self.creditText_en) > len(self.creditText):
+            raise ValueError(
+                f"creditText_en has {len(self.creditText_en)} entries but creditText only has "
+                f"{len(self.creditText)} - creditText_en must never be longer than creditText "
+                "(it translates a prefix of it, 1:1 by position)"
+            )
+        return self

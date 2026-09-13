@@ -40,6 +40,9 @@ STRINGS: dict[str, dict[str, str]] = {
         "submit_button": "Отправить на проверку",
         "add_member_title": "Добавить участника группы — daugavpils.fans",
         "add_member_heading": "Добавить участника группы",
+        "add_member_hint": "Это для тех, кто был участником группы на протяжении времени. "
+        "Если человек участвовал только в одном релизе (например, спел на одной записи) — "
+        "укажите это на странице этого релиза, в поле «Участники записи».",
         "member_name": "Имя (на языке оригинала / как пишется)",
         "member_name_en": "Имя (латинская транслитерация, необязательно)",
         "member_role": "Роль / инструмент (необязательно)",
@@ -86,6 +89,9 @@ STRINGS: dict[str, dict[str, str]] = {
         "submit_button": "Submit for review",
         "add_member_title": "Add a band member — daugavpils.fans",
         "add_member_heading": "Add a band member",
+        "add_member_hint": "This is for someone who was part of the band over a span of time. "
+        "If they only contributed to one release (e.g. sang on a single recording), use that "
+        "release's own page instead, under \"Recording credits\".",
         "member_name": "Name (as actually written, in its real script)",
         "member_name_en": "Name (Latin transliteration, optional)",
         "member_role": "Role (optional)",

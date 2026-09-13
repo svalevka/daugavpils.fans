@@ -33,6 +33,8 @@ class EditableFieldsAllowlistTest(unittest.TestCase):
             ("release", "description"),
             ("release", "description_en"),
             ("release", "genre"),
+            ("release", "creditText"),
+            ("release", "creditText_en"),
             ("track", "alternateName"),
             ("band_image", "caption"),
             ("band_image", "caption_en"),

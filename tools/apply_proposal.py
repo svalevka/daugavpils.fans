@@ -243,7 +243,22 @@ def apply_proposal(proposal: dict[str, Any], bands_dir: Path) -> Path:
             f"proposal was submitted)"
         )
 
-    setattr(container, field, proposed_value)
+    # A model-level validator (e.g. MusicAlbum's creditText/creditText_en
+    # length check, GitHub issue #42) can reject this assignment outright.
+    # Caught and re-raised as ApplyError to match every other rejection
+    # path in this function, rather than letting a bare pydantic
+    # ValidationError crash the CLI with a raw traceback - the field-level
+    # allowlist/staleness checks above already all raise ApplyError, and a
+    # model-level check should be no different from the caller's
+    # perspective. (The container is left with proposed_value's cross-field
+    # invariant violated in memory at this point - Pydantic's
+    # validate_assignment doesn't roll back a rejected assignment - but
+    # nothing downstream reads it: this function returns/raises here,
+    # ending this process's use of it.)
+    try:
+        setattr(container, field, proposed_value)
+    except ValidationError as e:
+        raise ApplyError(f"invalid value for {target}.{field}: {e}") from e
 
     if target in TOP_LEVEL_TARGETS:
         rewritten_path = band_yaml if target == "band" else release_yaml

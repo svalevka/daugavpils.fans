@@ -223,6 +223,218 @@ class ApplyValidFieldsTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
             self.assertEqual(yaml.safe_load(fx.release_yaml.read_text()), expected)
 
+    def test_applies_release_credit_text_list_replacement(self):
+        # Same length as the fixture's existing creditText_en (1 entry) -
+        # only creditText's own content changes, so the translation-
+        # alignment invariant stays satisfied without also touching
+        # creditText_en in this proposal (see
+        # ApplyCreditTextTranslationAlignmentTest for the case where the
+        # count itself changes).
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before = yaml.safe_load(fx.release_yaml.read_text())
+            expected = _canonical(MusicAlbum, before)
+            expected["creditText"] = ["Corrected Guest Vocalist - second vocals"]
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "release",
+                    "list_index": None,
+                    "field": "creditText",
+                    "original_value": before["creditText"],
+                    "proposed_value": ["Corrected Guest Vocalist - second vocals"],
+                },
+                tmp_path,
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertEqual(yaml.safe_load(fx.release_yaml.read_text()), expected)
+
+            validate_result = run_validate(bands_dir)
+            self.assertEqual(validate_result.returncode, 0, msg=validate_result.stdout + validate_result.stderr)
+
+    def test_applies_release_credit_text_list_growth_with_matching_translation(self):
+        # A real-world "add another credit" scenario: the count changes,
+        # so a correct submitter proposal must grow creditText_en to
+        # match in the same sitting - exercised here as two separate
+        # apply_proposal.py invocations (band.yaml is re-read fresh each
+        # time, same as the real Action does per proposal id), confirming
+        # the invariant holds once *both* proposals have landed even
+        # though it's momentarily unmatched in real review-queue terms
+        # only if these were approved out of order (out of scope here -
+        # see the alignment test class for the rejection case).
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before = yaml.safe_load(fx.release_yaml.read_text())
+
+            r1 = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "release",
+                    "list_index": None,
+                    "field": "creditText",
+                    "original_value": before["creditText"],
+                    "proposed_value": ["Guest Vocalist - second vocals", "Guest Bassist - bass"],
+                },
+                tmp_path,
+            )
+            self.assertEqual(r1.returncode, 0, msg=r1.stdout + r1.stderr)
+
+            r2 = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "release",
+                    "list_index": None,
+                    "field": "creditText_en",
+                    "original_value": before["creditText_en"],
+                    "proposed_value": [
+                        "Guest Vocalist - second vocals (EN)",
+                        "Guest Bassist - bass (EN)",
+                    ],
+                },
+                tmp_path,
+            )
+            self.assertEqual(r2.returncode, 0, msg=r2.stdout + r2.stderr)
+
+            after = yaml.safe_load(fx.release_yaml.read_text())
+            self.assertEqual(after["creditText"], ["Guest Vocalist - second vocals", "Guest Bassist - bass"])
+            self.assertEqual(
+                after["creditText_en"],
+                ["Guest Vocalist - second vocals (EN)", "Guest Bassist - bass (EN)"],
+            )
+
+            validate_result = run_validate(bands_dir)
+            self.assertEqual(validate_result.returncode, 0, msg=validate_result.stdout + validate_result.stderr)
+
+
+class ApplyCreditTextTranslationAlignmentTest(unittest.TestCase):
+    """MusicAlbum's model_validator (GitHub issue #42) rejects a
+    creditText_en whose length doesn't match creditText's - exercised
+    here through the real apply_proposal.py CLI (not by calling the
+    Pydantic model directly), since what actually matters is that a bad
+    proposal gets cleanly refused (ApplyError, non-zero exit, untouched
+    file) rather than crashing the Action with a raw traceback."""
+
+    def test_matching_length_translation_is_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before = yaml.safe_load(fx.release_yaml.read_text())
+            expected = _canonical(MusicAlbum, before)
+            expected["creditText_en"] = ["Guest Vocalist - second vocals (EN)"]
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "release",
+                    "list_index": None,
+                    "field": "creditText_en",
+                    "original_value": before["creditText_en"],
+                    "proposed_value": ["Guest Vocalist - second vocals (EN)"],
+                },
+                tmp_path,
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertEqual(yaml.safe_load(fx.release_yaml.read_text()), expected)
+
+    def test_mismatched_length_translation_is_rejected_without_writing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before_text = fx.release_yaml.read_text()
+            before = yaml.safe_load(before_text)
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "release",
+                    "list_index": None,
+                    "field": "creditText_en",
+                    "original_value": before["creditText_en"],
+                    "proposed_value": ["Extra line one (EN)", "Extra line two (EN)"],
+                },
+                tmp_path,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("creditText_en has 2 entries but creditText only has 1", result.stderr)
+            self.assertEqual(fx.release_yaml.read_text(), before_text)
+
+    def test_shorter_translation_prefix_is_accepted(self):
+        # The "add a credit now, translate it later" case (GitHub issue
+        # #42's real design correction): creditText_en shorter than
+        # creditText is a normal, valid "not yet translated" state, same
+        # as every other unset _en field - must NOT be rejected.
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before = yaml.safe_load(fx.release_yaml.read_text())
+            expected = _canonical(MusicAlbum, before)
+            expected["creditText"] = ["Guest Vocalist - second vocals", "Guest Bassist - bass"]
+            # creditText_en deliberately left at its original 1-entry
+            # value - shorter than the new 2-entry creditText.
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "release",
+                    "list_index": None,
+                    "field": "creditText",
+                    "original_value": before["creditText"],
+                    "proposed_value": ["Guest Vocalist - second vocals", "Guest Bassist - bass"],
+                },
+                tmp_path,
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertEqual(yaml.safe_load(fx.release_yaml.read_text()), expected)
+
+    def test_shrinking_credit_text_below_existing_translation_length_is_rejected(self):
+        # The actual bug this invariant exists to catch: creditText
+        # shrinks (a credit removed) without creditText_en being trimmed
+        # to match - now longer than creditText, meaning a dangling
+        # translation for a credit that no longer exists.
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before_text = fx.release_yaml.read_text()
+            before = yaml.safe_load(before_text)
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "release",
+                    "list_index": None,
+                    "field": "creditText",
+                    "original_value": before["creditText"],
+                    "proposed_value": [],
+                },
+                tmp_path,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("creditText_en has 1 entries but creditText only has 0", result.stderr)
+            self.assertEqual(fx.release_yaml.read_text(), before_text)
+
 
 class ApplyNewMemberTest(unittest.TestCase):
     """target == "new_member" (GitHub issue #39): appends a whole new

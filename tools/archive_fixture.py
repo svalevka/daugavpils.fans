@@ -218,7 +218,8 @@ class NestedFieldsFixture:
     scalar/list/nested free-text fields tools/apply_proposal.py edits:
     band description/description_en/location/alternateName/genre, one
     band member, one band image; release description/description_en/
-    genre, the track's alternateName, one release image."""
+    genre, creditText/creditText_en (one matching entry each), the
+    track's alternateName, one release image."""
 
     bands_dir: Path
     band_slug: str
@@ -309,6 +310,8 @@ def build_archive_with_nested_fields(
             "genre": ["post-punk"],
             "description": "Original release description.",
             "description_en": "Original release description (EN).",
+            "creditText": ["Guest Vocalist - second vocals"],
+            "creditText_en": ["Guest Vocalist - second vocals (EN)"],
             "image": [
                 {
                     "@type": "ImageObject",
