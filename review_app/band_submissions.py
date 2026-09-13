@@ -10,7 +10,7 @@ import logging
 import sys
 from pathlib import Path
 
-from flask import Blueprint, abort, current_app, render_template, request, session
+from flask import Blueprint, abort, current_app, render_template, request, session, url_for
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -21,6 +21,7 @@ import audio_validation  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
+import roles  # noqa: E402
 from config import AiConfig  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -314,28 +315,34 @@ def create_band_proposal():
     conn.commit()
     proposal_id = cur.lastrowid
 
-    # Curator notification email
-    try:
-        summary_str = f"New Band: {band_name} ({band_slug})"
-        if has_release:
-            summary_str += f" with release {release_name} ({len(tracks_list)} tracks)"
-        mail.send_submission_notification(
-            current_app.config["SMTP_CONFIG"],
-            current_app.config["MAINTAINER_EMAIL"],
-            proposal_id,
-            summary_str,
-            submitter_name=submitter_name,
-            submitter_contact=submitter_contact,
-        )
-    except OSError:
-        current_app.logger.exception("failed to send notification email for band proposal %s", proposal_id)
-
-    # AI evaluation dispatch
-    try:
-        sync_eval = current_app.config.get("AI_SYNC_EVALUATION", False)
-        ai_agent.dispatch_band_evaluation(current_app._get_current_object(), proposal_id, sync=sync_eval)
-    except Exception:
-        current_app.logger.exception("failed to dispatch AI evaluation for band proposal %s", proposal_id)
+    ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
+    if ai_config.mode == "disabled":
+        try:
+            login_url = url_for("auth.login_form", _external=True)
+            summary_str = f"New Band: {band_name} ({band_slug})"
+            if has_release:
+                summary_str += f" with release {release_name} ({len(tracks_list)} tracks)"
+            summary = (
+                f"New band proposal #{proposal_id} ({summary_str}):\n\n"
+                f"Band: {band_name} ({band_slug})\n"
+                f"Submitter: {submitter_name or 'anonymous'} <{submitter_contact or 'none'}>\n\n"
+                f"Log in to the dashboard to review it: {login_url}"
+            )
+            recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
+            mail.send_submission_notification(
+                current_app.config["SMTP_CONFIG"],
+                recipients,
+                summary,
+            )
+        except Exception:
+            current_app.logger.exception("failed to send notification email for band proposal %s", proposal_id)
+    else:
+        # AI evaluation dispatch
+        try:
+            sync_eval = current_app.config.get("AI_SYNC_EVALUATION", False)
+            ai_agent.dispatch_band_evaluation(current_app._get_current_object(), proposal_id, sync=sync_eval)
+        except Exception:
+            current_app.logger.exception("failed to dispatch AI evaluation for band proposal %s", proposal_id)
 
     return render_template(
         "submit_add_band_done.html",

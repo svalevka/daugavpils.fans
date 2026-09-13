@@ -10,7 +10,7 @@ import logging
 import sys
 from pathlib import Path
 
-from flask import Blueprint, abort, current_app, render_template, request, session
+from flask import Blueprint, abort, current_app, render_template, request, session, url_for
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -22,6 +22,7 @@ import audio_validation  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
+import roles  # noqa: E402
 from config import AiConfig  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -246,23 +247,26 @@ def create_album_proposal():
 
     ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
     if ai_config.mode != "disabled":
-        ai_agent.dispatch_album_evaluation(current_app._get_current_object(), proposal_id)
+        try:
+            ai_agent.dispatch_album_evaluation(current_app._get_current_object(), proposal_id)
+        except Exception:
+            logger.exception("failed to dispatch AI evaluation for album proposal %s", proposal_id)
     else:
         # Fallback maintainer email notification
-        smtp_cfg = current_app.config.get("SMTP")
-        maintainer_email = current_app.config.get("MAINTAINER_EMAIL")
-        if smtp_cfg and maintainer_email:
+        smtp_cfg = current_app.config.get("SMTP_CONFIG")
+        if smtp_cfg:
             try:
-                subject = f"[daugavpils.fans review] New album proposal: {album_name} ({band_slug})"
-                body = (
+                login_url = url_for("auth.login_form", _external=True)
+                summary = (
                     f"New album proposal #{proposal_id} submitted for band '{band_slug}':\n\n"
                     f"Title: {album_name}\n"
                     f"Year: {date_published}\n"
                     f"Tracks: {len(tracks_list)}\n"
-                    f"Submitter: {submitter_name or 'Anonymous'} ({submitter_contact or 'no contact'})\n\n"
-                    f"Review in dashboard: {request.host_url}dashboard\n"
+                    f"Submitter: {submitter_name or 'Anonymous'} <{submitter_contact or 'no contact'}>\n\n"
+                    f"Review in dashboard: {login_url}\n"
                 )
-                mail.send_simple_notification(smtp_cfg, maintainer_email, subject, body)
+                recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
+                mail.send_submission_notification(smtp_cfg, recipients, summary)
             except Exception as exc:
                 logger.warning("Failed to send album submission notification: %s", exc)
 

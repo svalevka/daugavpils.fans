@@ -82,7 +82,9 @@ class ReviewAppTestCase(unittest.TestCase):
         # tests (patching it a second time under the other path would
         # silently clobber this one instead of adding independent
         # coverage).
-        self.mock_send_notification = self._patch("submissions.mail.send_submission_notification")
+        self.mock_send_notification = self._patch(
+            "submissions.mail.send_submission_notification", autospec=True
+        )
         self.mock_send_media_notification = self.mock_send_notification
         self.mock_send_magic_link = self._patch("auth.mail.send_magic_link")
         self.mock_trigger_apply = self._patch("dashboard.github_dispatch.trigger_apply")
@@ -91,8 +93,8 @@ class ReviewAppTestCase(unittest.TestCase):
         self.mock_trigger_band_apply = self._patch("dashboard.github_dispatch.trigger_band_apply")
         self.mock_send_media_approved = self._patch("dashboard.mail.send_media_approved_notification")
 
-    def _patch(self, target: str) -> mock.MagicMock:
-        patcher = mock.patch(target)
+    def _patch(self, target: str, **kwargs) -> mock.MagicMock:
+        patcher = mock.patch(target, **kwargs)
         mocked = patcher.start()
         self.addCleanup(patcher.stop)
         return mocked

@@ -63,6 +63,13 @@ class BandSubmissionPostTest(ReviewAppTestCase):
         uploads_dir = self.config.resolved_media_uploads_path()
         self.assertTrue((uploads_dir / prop["band_photo_stored_filename"]).exists())
 
+        self.mock_send_notification.assert_called_once()
+        _smtp_config, recipients, summary = self.mock_send_notification.call_args.args
+        self.assertEqual(recipients, ["maintainer@example.com"])
+        self.assertIn("Северный Ветер", summary)
+        self.assertIn("severnyi-veter", summary)
+        self.assertIn("Иван", summary)
+
     @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
     def test_valid_band_with_first_release_creates_pending_proposal(self, _mock_probe):
         resp = self.submit_band(
@@ -131,6 +138,23 @@ class BandSubmissionPostTest(ReviewAppTestCase):
         # 6th submission from same IP triggers 429
         resp = self.submit_band(name="Excess Band")
         self.assertEqual(resp.status_code, 429)
+
+    def test_mail_failure_does_not_break_submission(self):
+        self.mock_send_notification.side_effect = OSError("SMTP connect timeout")
+        resp = self.submit_band(name="Mail Fail Band")
+        self.assertEqual(resp.status_code, 201)
+        proposals = self.fetch_band_proposals()
+        self.assertEqual(len(proposals), 1)
+        self.assertEqual(proposals[0]["name"], "Mail Fail Band")
+
+    @patch("ai_agent.dispatch_band_evaluation")
+    def test_ai_enabled_dispatches_ai_evaluation_without_curator_email(self, mock_dispatch):
+        from config import AiConfig
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active")
+        resp = self.submit_band(name="AI Handled Band")
+        self.assertEqual(resp.status_code, 201)
+        mock_dispatch.assert_called_once()
+        self.mock_send_notification.assert_not_called()
 
 
 if __name__ == "__main__":

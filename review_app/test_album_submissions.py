@@ -130,6 +130,17 @@ class AlbumSubmissionPostTest(ReviewAppTestCase):
         prop = self.fetch_album_proposals()[0]
         self.assertEqual(prop["submitted_by_approver_id"], 1)
 
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_album_submission_with_ai_disabled_sends_notification(self, _mock_probe):
+        from config import AiConfig
+        self.app.config["AI_CONFIG"] = AiConfig(mode="disabled")
+        resp = self.submit_album(name="Fallback Album", date_published="1998")
+        self.assertEqual(resp.status_code, 201)
+        self.mock_send_notification.assert_called_once()
+        _smtp, recipients, summary = self.mock_send_notification.call_args.args
+        self.assertEqual(recipients, ["maintainer@example.com"])
+        self.assertIn("Fallback Album", summary)
+
 
 if __name__ == "__main__":
     unittest.main()
