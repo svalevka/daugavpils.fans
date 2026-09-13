@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Add a band member — daugavpils.fans{% endblock %}
+{% block content %}
+<h1>Add a band member</h1>
+
+<form method="post" action="/submit/{{ band_slug }}/add-member">
+  <div class="field">
+    <label for="name">Name (as actually written, in its real script)</label>
+    <input type="text" id="name" name="name" required>
+  </div>
+  <div class="field">
+    <label for="name_en">Name (Latin transliteration, optional)</label>
+    <input type="text" id="name_en" name="name_en">
+  </div>
+  <div class="field">
+    <label for="role">Role (optional)</label>
+    <input type="text" id="role" name="role">
+  </div>
+  <div class="field">
+    <label for="role_en">Role (English translation, optional)</label>
+    <input type="text" id="role_en" name="role_en">
+  </div>
+  <div class="field">
+    <label for="period">Period, e.g. "1994-1996" (optional)</label>
+    <input type="text" id="period" name="period">
+  </div>
+
+  <div class="field">
+    <label for="submitter_name">Your name (optional)</label>
+    <input type="text" id="submitter_name" name="submitter_name">
+  </div>
+  <div class="field">
+    <label for="submitter_contact">Your email, if you'd like to be reachable (optional)</label>
+    <input type="text" id="submitter_contact" name="submitter_contact">
+  </div>
+
+  <!-- honeypot: hidden from real visitors via CSS, never filled by a human -->
+  <div class="field honeypot" aria-hidden="true">
+    <label for="website">Leave this field blank</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+  </div>
+
+  <button type="submit">Submit for review</button>
+</form>
+{% endblock %}

@@ -75,6 +75,14 @@ can propose edits to (e.g. opening up a stage-2/3/4 field). Both
 `apply_proposal.py` below and the review app import this same list rather
 than each hand-maintaining their own copy.
 
+Also defines `NEW_MEMBER_TARGET`/`NEW_MEMBER_FIELDS` (GitHub issue #39):
+proposing a brand new band member, rather than editing an existing one,
+doesn't fit the per-field `lookup()` allowlist above (there's no
+list_index yet, since the item doesn't exist) - these instead name the
+`"new_member"` pseudo-target and the whole-record field set it accepts,
+derived from this same file's `member` entries so the two can't drift
+apart.
+
 ## `apply_proposal.py`
 
 **Problem it solves:** turning one approved public text-edit proposal
@@ -101,6 +109,14 @@ imported read-only by `review_app/archive_read.py`, so the "current
 value" a submitter sees on the proposal form can never drift from what
 this same navigation logic will later compare a proposal's
 `original_value` against.
+
+`target: "new_member"` (GitHub issue #39) is handled separately, by
+`_apply_new_member()`: instead of comparing against a current value and
+overwriting one field on an existing list entry, it validates the
+proposed fields as a whole new `GroupMember` and appends it to the
+band's `member` list. No staleness check applies here - appending can't
+clobber a concurrent edit or another concurrent addition the way
+overwriting a field in place could.
 
 **When you'd run it:**
 - `python tools/apply_proposal.py --proposal-file proposal.json` -- apply
@@ -349,7 +365,12 @@ target kind (band/release scalar and list fields, member/track/image
 fields nested by index) applying correctly with everything else in the
 file left unchanged, plus each rejection case (disallowed field, unknown
 or path-traversal slug, stale `original_value`) leaving the file
-completely untouched.
+completely untouched. Also covers `target: "new_member"` (GitHub issue
+#39) separately, since it's a different code path: appending a whole new
+member (with just a name, and with every field) rather than editing one
+field of an existing item, plus its own rejections (missing name,
+unknown field in `proposed_value`, a `release_slug` or `list_index` that
+shouldn't be there).
 
 ## `test_export_schema_drift.py`
 

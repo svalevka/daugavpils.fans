@@ -46,6 +46,13 @@ proposal.json shape (as returned by review_app's GET /api/proposals/<id>):
 `release_slug`/`list_index` are null unless the target needs them.
 `original_value`/`proposed_value` are strings for scalar fields, lists of
 strings for list fields (see tools/editable_fields.py's `kind`).
+
+`target: "new_member"` (GitHub issue #39) is a different shape: it
+proposes a whole new band member rather than an edit to an existing
+field, so `field`/`list_index` are unused (no existing item to attach a
+field edit to), `original_value` is always null, and `proposed_value` is
+an object whose keys are a subset of tools/editable_fields.py's
+NEW_MEMBER_FIELDS - e.g. {"name": "...", "role": "..."}.
 """
 from __future__ import annotations
 
@@ -62,11 +69,13 @@ from pydantic import BaseModel, ValidationError
 from editable_fields import (
     BAND_SCOPED_TARGETS,
     NESTED_LIST_ATTR,
+    NEW_MEMBER_FIELDS,
+    NEW_MEMBER_TARGET,
     RELEASE_SCOPED_TARGETS,
     TOP_LEVEL_TARGETS,
     lookup,
 )
-from models import MusicAlbum, MusicGroup
+from models import GroupMember, MusicAlbum, MusicGroup
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -160,11 +169,46 @@ def container_for(
     return items[list_index]
 
 
+def _apply_new_member(proposal: dict[str, Any], bands_dir: Path) -> Path:
+    """Handle target == "new_member": append a whole new GroupMember to
+    the band's member list, rather than editing an existing one. No
+    list_index (the item doesn't exist yet) and no staleness check
+    against original_value (there's nothing existing to have gone stale -
+    appending can't clobber a concurrent edit or another concurrent
+    addition the way overwriting a field in place could)."""
+    band_slug = proposal["band_slug"]
+    if proposal.get("release_slug"):
+        raise ApplyError("target 'new_member' must not have release_slug")
+    if proposal.get("list_index") is not None:
+        raise ApplyError("target 'new_member' must not have list_index")
+
+    proposed_value = proposal["proposed_value"]
+    if not isinstance(proposed_value, dict):
+        raise ApplyError("target 'new_member' requires an object proposed_value")
+    unknown_fields = sorted(set(proposed_value) - set(NEW_MEMBER_FIELDS))
+    if unknown_fields:
+        raise ApplyError(f"new_member proposed_value has unknown field(s): {unknown_fields}")
+
+    _, band_yaml, band = load_band(bands_dir, band_slug)
+
+    try:
+        new_member = GroupMember.model_validate(proposed_value)
+    except ValidationError as e:
+        raise ApplyError(f"invalid new member: {e}") from e
+
+    band.member.append(new_member)
+    dump_yaml(band_yaml, band.model_dump(by_alias=True, exclude_none=True))
+    return band_yaml
+
+
 def apply_proposal(proposal: dict[str, Any], bands_dir: Path) -> Path:
     """Apply one proposal in place. Returns the path of the YAML file that
     was rewritten. Raises ApplyError (message is user-safe) on any
     problem, and never touches the filesystem before every check passes."""
     target = proposal["target"]
+    if target == NEW_MEMBER_TARGET:
+        return _apply_new_member(proposal, bands_dir)
+
     field = proposal["field"]
     band_slug = proposal["band_slug"]
     release_slug = proposal.get("release_slug")

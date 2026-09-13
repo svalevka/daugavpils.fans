@@ -224,6 +224,166 @@ class ApplyValidFieldsTest(unittest.TestCase):
             self.assertEqual(yaml.safe_load(fx.release_yaml.read_text()), expected)
 
 
+class ApplyNewMemberTest(unittest.TestCase):
+    """target == "new_member" (GitHub issue #39): appends a whole new
+    GroupMember to band.member rather than editing an existing one - a
+    different code path from every case in ApplyValidFieldsTest above,
+    since there's no existing list_index to compare original_value
+    against."""
+
+    def test_appends_a_new_member_with_only_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before = yaml.safe_load(fx.band_yaml.read_text())
+            expected = _canonical(MusicGroup, before)
+            expected["member"].append({"name": "New Member"})
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": None,
+                    "target": "new_member",
+                    "list_index": None,
+                    "field": "",
+                    "original_value": None,
+                    "proposed_value": {"name": "New Member"},
+                },
+                tmp_path,
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertEqual(yaml.safe_load(fx.band_yaml.read_text()), expected)
+
+            validate_result = run_validate(bands_dir)
+            self.assertEqual(validate_result.returncode, 0, msg=validate_result.stdout + validate_result.stderr)
+
+    def test_appends_a_new_member_with_every_field(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before = yaml.safe_load(fx.band_yaml.read_text())
+            expected = _canonical(MusicGroup, before)
+            new_member = {
+                "name": "Anna Kalniņa",
+                "name_en": "Anna Kalnina",
+                "role": "bass",
+                "role_en": "bass (EN)",
+                "period": "1994-1996",
+            }
+            expected["member"].append(new_member)
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": None,
+                    "target": "new_member",
+                    "list_index": None,
+                    "field": "",
+                    "original_value": None,
+                    "proposed_value": new_member,
+                },
+                tmp_path,
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertEqual(yaml.safe_load(fx.band_yaml.read_text()), expected)
+
+    def test_rejects_missing_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before_text = fx.band_yaml.read_text()
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": None,
+                    "target": "new_member",
+                    "list_index": None,
+                    "field": "",
+                    "original_value": None,
+                    "proposed_value": {"role": "bass"},
+                },
+                tmp_path,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(fx.band_yaml.read_text(), before_text)
+
+    def test_rejects_unknown_field_in_proposed_value(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before_text = fx.band_yaml.read_text()
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": None,
+                    "target": "new_member",
+                    "list_index": None,
+                    "field": "",
+                    "original_value": None,
+                    "proposed_value": {"name": "New Member", "slug": "hijacked"},
+                },
+                tmp_path,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(fx.band_yaml.read_text(), before_text)
+
+    def test_rejects_release_slug(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before_text = fx.band_yaml.read_text()
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": fx.release_slug,
+                    "target": "new_member",
+                    "list_index": None,
+                    "field": "",
+                    "original_value": None,
+                    "proposed_value": {"name": "New Member"},
+                },
+                tmp_path,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(fx.band_yaml.read_text(), before_text)
+
+    def test_rejects_list_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            bands_dir = tmp_path / "bands"
+            fx = build_archive_with_nested_fields(bands_dir)
+            before_text = fx.band_yaml.read_text()
+
+            result = run_apply_proposal(
+                bands_dir,
+                {
+                    "band_slug": fx.band_slug,
+                    "release_slug": None,
+                    "target": "new_member",
+                    "list_index": 0,
+                    "field": "",
+                    "original_value": None,
+                    "proposed_value": {"name": "New Member"},
+                },
+                tmp_path,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(fx.band_yaml.read_text(), before_text)
+
+
 class ApplyRejectsInvalidRequestsTest(unittest.TestCase):
     def test_rejects_disallowed_structural_field(self):
         with tempfile.TemporaryDirectory() as tmp:

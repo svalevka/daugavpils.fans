@@ -20,13 +20,18 @@
 
 {% for p in proposals %}
 <article class="proposal">
-  <h2>#{{ p.id }} — {{ p.band_slug }}{% if p.release_slug %}/{{ p.release_slug }}{% endif %} — {{ p.target }}.{{ p.field }}{% if p.list_index is not none %}[{{ p.list_index }}]{% endif %}</h2>
+  <h2>#{{ p.id }} — {{ p.band_slug }}{% if p.release_slug %}/{{ p.release_slug }}{% endif %} —
+    {%- if p.target == "new_member" %} new band member
+    {%- else %} {{ p.target }}.{{ p.field }}{% if p.list_index is not none %}[{{ p.list_index }}]{% endif %}
+    {%- endif %}</h2>
   {% if p.submitter_name or p.submitter_contact %}
   <p class="meta">Submitted by {{ p.submitter_name or "(no name given)" }}{% if p.submitter_contact %} &lt;{{ p.submitter_contact }}&gt;{% endif %}</p>
   {% endif %}
 
+  {% if p.target != "new_member" %}
   <h3>Current</h3>
   <pre>{{ p.original_value }}</pre>
+  {% endif %}
   <h3>Proposed</h3>
   <pre>{{ p.proposed_value }}</pre>
 

@@ -23,7 +23,13 @@ import archive_read  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
-from editable_fields import EDITABLE_FIELDS, NESTED_LIST_ATTR, lookup  # noqa: E402
+from editable_fields import (  # noqa: E402
+    EDITABLE_FIELDS,
+    NESTED_LIST_ATTR,
+    NEW_MEMBER_FIELDS,
+    NEW_MEMBER_TARGET,
+    lookup,
+)
 from models import MusicAlbum, MusicGroup  # noqa: E402
 
 bp = Blueprint("submissions", __name__)
@@ -162,6 +168,20 @@ def _edit_form(band_slug: str, release_slug: str | None):
     )
 
 
+@bp.get("/submit/<band_slug>/add-member")
+def add_member_form(band_slug: str):
+    """Propose a brand new band member (GitHub issue #39) - distinct from
+    _edit_form() above: there's no existing item, so no current value to
+    show and no (target, field, list_index) to pre-fill from, just an
+    empty form for the whole new record."""
+    checkout = current_app.config["ARCHIVE_CHECKOUT_PATH"]
+    try:
+        archive_read.get_band(checkout, band_slug)
+    except archive_read.ApplyError:
+        abort(404)
+    return render_template("submit_add_member.html", band_slug=band_slug)
+
+
 def _resolve_submitted_by_approver_id(
     conn, session_approver_id: int | None, submitter_contact: str | None
 ) -> int | None:
@@ -187,11 +207,11 @@ def _resolve_submitted_by_approver_id(
     return None
 
 
-@bp.post("/submit")
-def create_proposal():
-    conn = db.get_connection()
-    ip = request.remote_addr or "unknown"
-
+def _enforce_rate_limit_and_log(conn, ip: str) -> None:
+    """Shared by every /submit* POST route: same per-IP-per-hour cap,
+    against the same submission_log table, logged regardless of what
+    happens next (honeypot included) - a bot that fills the honeypot
+    every time should still get rate-limited."""
     limit = current_app.config["RATE_LIMIT_PER_IP_PER_HOUR"]
     recent = conn.execute(
         "SELECT COUNT(*) FROM submission_log WHERE ip = ? AND submitted_at > datetime('now', '-1 hour')",
@@ -199,11 +219,15 @@ def create_proposal():
     ).fetchone()[0]
     if recent >= limit:
         abort(429)
-
-    # Logged regardless of what happens next (honeypot included) - a bot
-    # that fills the honeypot every time should still get rate-limited.
     conn.execute("INSERT INTO submission_log (ip) VALUES (?)", (ip,))
     conn.commit()
+
+
+@bp.post("/submit")
+def create_proposal():
+    conn = db.get_connection()
+    ip = request.remote_addr or "unknown"
+    _enforce_rate_limit_and_log(conn, ip)
 
     if request.form.get("website"):  # honeypot: real users never see/fill this field
         # Same status code as a real success (201) - a differing code
@@ -282,6 +306,88 @@ def create_proposal():
     # be sent (e.g. SMTP is down). The maintainer finds out some other
     # way (checking the dashboard) rather than the submission itself
     # erroring out.
+    try:
+        recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
+        mail.send_submission_notification(
+            current_app.config["SMTP_CONFIG"], recipients, summary
+        )
+    except OSError:
+        current_app.logger.exception("failed to send submission notification email")
+
+    return render_template("submit_done.html"), 201
+
+
+@bp.post("/submit/<band_slug>/add-member")
+def create_member_proposal(band_slug: str):
+    """Propose a brand new band member (GitHub issue #39). Separate from
+    create_proposal() above because the shape is different - one whole
+    new record's worth of fields submitted together, rather than one
+    field's old/new text - but reuses the same `proposals` table and the
+    same approve -> apply-proposal.yml -> tools/apply_proposal.py
+    pipeline: appending a member to band.yaml is exactly the kind of
+    git-write that pipeline already exists to do safely."""
+    conn = db.get_connection()
+    ip = request.remote_addr or "unknown"
+    _enforce_rate_limit_and_log(conn, ip)
+
+    if request.form.get("website"):  # honeypot: real users never see/fill this field
+        return render_template("submit_done.html"), 201
+
+    checkout = current_app.config["ARCHIVE_CHECKOUT_PATH"]
+    try:
+        archive_read.get_band(checkout, band_slug)
+    except archive_read.ApplyError:
+        abort(400)
+
+    name = request.form.get("name", "").strip()
+    if not name:
+        abort(400)
+
+    proposed_value: dict[str, str] = {"name": name}
+    for field in NEW_MEMBER_FIELDS:
+        if field == "name":
+            continue
+        value = request.form.get(field, "").strip()
+        if value:
+            proposed_value[field] = value
+
+    submitter_name = request.form.get("submitter_name", "").strip() or None
+    submitter_contact = request.form.get("submitter_contact", "").strip() or None
+    submitted_by_approver_id = _resolve_submitted_by_approver_id(
+        conn, session.get("approver_id"), submitter_contact
+    )
+
+    cur = conn.execute(
+        """
+        INSERT INTO proposals (
+            band_slug, release_slug, target, list_index, field,
+            original_value, proposed_value,
+            submitter_name, submitter_contact, submitter_ip,
+            submitted_by_approver_id, status
+        ) VALUES (?, NULL, ?, NULL, '', ?, ?, ?, ?, ?, ?, 'pending')
+        """,
+        (
+            band_slug,
+            NEW_MEMBER_TARGET,
+            json.dumps(None),
+            json.dumps(proposed_value),
+            submitter_name,
+            submitter_contact,
+            ip,
+            submitted_by_approver_id,
+        ),
+    )
+    conn.commit()
+
+    login_url = url_for("auth.login_form", _external=True)
+    summary = (
+        f"New proposal #{cur.lastrowid} for {band_slug} (new band member):\n\n"
+        f"+ {proposed_value!r}\n\n"
+        f"Log in to the dashboard to review it: {login_url}"
+    )
+    # Same stance as create_proposal(): the proposal is already durably
+    # committed above - a submitter should never see a failure just
+    # because the notification couldn't be sent.
     try:
         recipients = roles.get_approver_recipients(conn, current_app.config.get("MAINTAINER_EMAIL"))
         mail.send_submission_notification(

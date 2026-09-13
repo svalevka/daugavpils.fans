@@ -166,6 +166,66 @@ class SelfApprovalStampingTest(ReviewAppTestCase):
         self.assertIsNone(row["submitted_by_approver_id"])
 
 
+class NewMemberSubmissionTest(ReviewAppTestCase):
+    def test_creates_pending_new_member_row(self):
+        response = self.submit_new_member(
+            name="Anna Kalniņa", role="vocals", role_en="vocals (EN)", period="1994-1996"
+        )
+        self.assertEqual(response.status_code, 201)
+
+        rows = self.fetch_proposals()
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["status"], "pending")
+        self.assertEqual(row["band_slug"], self.fx.band_slug)
+        self.assertEqual(row["target"], "new_member")
+        self.assertIsNone(row["list_index"])
+        self.assertIsNone(json.loads(row["original_value"]))
+        self.assertEqual(
+            json.loads(row["proposed_value"]),
+            {"name": "Anna Kalniņa", "role": "vocals", "role_en": "vocals (EN)", "period": "1994-1996"},
+        )
+        self.assertIsNone(row["submitted_by_approver_id"])
+
+    def test_omitted_optional_fields_are_not_stored(self):
+        response = self.submit_new_member(name="Just A Name")
+        self.assertEqual(response.status_code, 201)
+
+        row = self.fetch_proposals()[0]
+        self.assertEqual(json.loads(row["proposed_value"]), {"name": "Just A Name"})
+
+    def test_missing_name_is_rejected(self):
+        response = self.submit_new_member(name="  ")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.fetch_proposals(), [])
+
+    def test_unknown_band_is_rejected(self):
+        response = self.submit_new_member(band_slug="does-not-exist")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.fetch_proposals(), [])
+
+    def test_filled_honeypot_produces_no_row(self):
+        response = self.submit_new_member(website="I am a bot")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(self.fetch_proposals(), [])
+
+    def test_triggers_a_maintainer_notification_email(self):
+        self.submit_new_member(name="Anna Kalniņa")
+        self.mock_send_notification.assert_called_once()
+
+    def test_add_member_form_renders_for_known_band(self):
+        response = self.client.get(f"/submit/{self.fx.band_slug}/add-member")
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_member_form_for_unknown_band_is_not_found(self):
+        response = self.client.get("/submit/does-not-exist/add-member")
+        self.assertEqual(response.status_code, 404)
+
+    def test_band_target_page_links_to_add_member_form(self):
+        response = self.client.get(f"/submit/{self.fx.band_slug}")
+        self.assertIn(f"/submit/{self.fx.band_slug}/add-member".encode(), response.data)
+
+
 class NavigationPagesTest(ReviewAppTestCase):
     def test_band_picker_lists_the_band(self):
         response = self.client.get("/submit")

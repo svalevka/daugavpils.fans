@@ -137,6 +137,40 @@ class FullApprovalPipelineTest(ReviewAppTestCase):
 
         self.assertEqual(self.fetch_proposals()[0]["status"], "applied")
 
+    def test_a_new_member_proposal_lands_a_correct_commit(self):
+        """Same pipeline, but for target == "new_member" (GitHub issue
+        #39) - proving the add-member flow round-trips through the real
+        approve -> fetch -> apply -> push sequence, not just through
+        tools/test_apply_proposal.py's direct subprocess invocation."""
+        approver_id = self.seed_approver("approver@example.com")
+        self.submit_new_member(name="Anna Kalniņa", role="bass", period="1994-1996")
+        proposal_id = self.fetch_proposals()[0]["id"]
+        self.login_as(approver_id)
+        self.client.post(f"/proposals/{proposal_id}/approve")
+
+        with tempfile.TemporaryDirectory() as action_tmp:
+            pipeline_result = self._simulate_the_action(proposal_id, Path(action_tmp))
+        self.assertEqual(pipeline_result.returncode, 0, msg=pipeline_result.stdout + pipeline_result.stderr)
+        self.assertIn("OK", pipeline_result.stdout)
+
+        push_result = self._commit_and_push(proposal_id)
+        self.assertEqual(push_result.returncode, 0, msg=push_result.stdout + push_result.stderr)
+
+        self.client.post(
+            f"/api/proposals/{proposal_id}/apply-result",
+            json={"success": True, "run_id": "1"},
+            headers=self.callback_headers(),
+        )
+
+        with tempfile.TemporaryDirectory() as verify_tmp:
+            verify_dir = Path(verify_tmp) / "verify"
+            _run_ok(_git("clone", str(self.origin_dir), str(verify_dir), cwd=Path(verify_tmp)), "verify clone")
+            band_yaml = (verify_dir / "bands" / self.fx.band_slug / "band.yaml").read_text()
+            self.assertIn("Anna Kalni", band_yaml)  # avoid encoding fussiness in the test assertion itself
+            self.assertIn("1994-1996", band_yaml)
+
+        self.assertEqual(self.fetch_proposals()[0]["status"], "applied")
+
     def test_a_failed_validation_never_reaches_origin(self):
         # Sabotage the checkout so validate.py fails after apply_proposal.py
         # succeeds: delete the audio file a track references.

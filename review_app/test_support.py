@@ -173,6 +173,20 @@ class ReviewAppTestCase(unittest.TestCase):
         base.update(form)
         return self.client.post("/submit", data=base)
 
+    def submit_new_member(self, band_slug: str | None = None, **form):
+        base = {
+            "name": "New Member",
+            "name_en": "",
+            "role": "",
+            "role_en": "",
+            "period": "",
+            "submitter_name": "",
+            "submitter_contact": "",
+            "website": "",
+        }
+        base.update(form)
+        return self.client.post(f"/submit/{band_slug or self.fx.band_slug}/add-member", data=base)
+
     def submit_media(self, file_tuples: list[tuple[str, bytes]] | None = None, **form):
         """file_tuples: list of (filename, bytes) pairs - the bytes'
         actual leading signature is what media_uploads.py sniffs, not

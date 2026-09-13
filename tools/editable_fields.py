@@ -22,6 +22,13 @@ name) throughout review_app/ and apply_proposal.py, so it carries no
 structural identity - it's just the person's real-script name, which is
 exactly what public correction proposals are for (e.g. fixing a misspelt
 Russian name).
+
+Proposing a brand *new* member (GitHub issue #39) doesn't fit this
+per-field allowlist at all - there's no existing list_index to attach a
+field edit to, since the item doesn't exist yet. That's `new_member`
+below: a separate pseudo-target carrying a whole new record's worth of
+fields at once, not looked up via `lookup()` like the field-edit targets
+above.
 """
 from __future__ import annotations
 
@@ -37,6 +44,7 @@ Target = Literal[
     "release_image",
     "band_video",
     "release_video",
+    "new_member",
 ]
 Kind = Literal["scalar", "list"]
 
@@ -92,6 +100,14 @@ EDITABLE_FIELDS: tuple[EditableField, ...] = (
     EditableField("band_video", "name", "scalar", "Video title"),
     EditableField("release_video", "name", "scalar", "Video title"),
 )
+
+# Pseudo-target for proposing a brand new band member rather than editing
+# an existing one (see tools/apply_proposal.py's _apply_new_member() and
+# review_app/submissions.py's add-member routes). NEW_MEMBER_FIELDS is
+# derived from EDITABLE_FIELDS's own "member" entries rather than
+# hand-listed again, so the two can never drift apart.
+NEW_MEMBER_TARGET: Target = "new_member"
+NEW_MEMBER_FIELDS: tuple[str, ...] = tuple(ef.field for ef in EDITABLE_FIELDS if ef.target == "member")
 
 _BY_KEY: dict[tuple[str, str], EditableField] = {(f.target, f.field): f for f in EDITABLE_FIELDS}
 
