@@ -11,6 +11,21 @@ getting it right and keeping it boring/predictable matters more than
 optimizing for speed or building something clever. When those goals
 conflict, default to the simpler, more conservative choice, and say so.
 
+### Automated testing and CI
+
+Testing is critical for this project. Strive for automated tests wherever feasible and possible. All tests must be GitHub Actions CI-based (`.github/workflows/test.yml`), which runs automatically on every push to `main` and on every pull request.
+
+Always run the full test suite locally before pushing or opening a PR:
+
+```bash
+python -m unittest discover -s tools -p 'test_*.py'
+python -m unittest discover -s webapp -p 'test_*.py'
+python -m unittest discover -s webapp/deploy -p 'test_*.py'
+python -m unittest discover -s review_app -p 'test_*.py'
+```
+
+When adding or modifying functionality in `tools/`, `webapp/`, `webapp/deploy/`, or `review_app/`, accompany the change with automated unittests covering both happy paths and failure/rejection modes.
+
 ## Agent skills
 
 ### Issue tracker
@@ -74,6 +89,10 @@ copy. When a contributor supplies this text, use it in full - never
 summarize, condense, or paraphrase it down without their explicit
 approval first. If a full transcription seems too long, ask; don't
 default to shortening it.
+
+### Single archive.org account for all uploads
+
+All music and media across the Archive is uploaded and maintained using a single shared archive.org account (`daugavpils.fans`). That account is the only way to upload music and media to keep archive.org items, URLs, and metadata backups consistent across the entire project. External contributors do not upload to archive.org directly; they contribute metadata via pull requests, and the maintainer executes the archive.org publish using this single account.
 
 ### Where metadata backups go on archive.org
 

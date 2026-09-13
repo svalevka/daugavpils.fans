@@ -433,6 +433,25 @@ python tools/verify_archive_org.py
 python tools/verify_archive_org.py --bands <band-slug>
 ```
 
+## Running tests
+
+Automated testing is critical for this project, and tests are automated wherever feasible. Every push and pull request runs the full test suite in GitHub Actions CI (`.github/workflows/test.yml`).
+
+To run the complete test suite locally:
+
+```bash
+# install dependencies for all components:
+pip install -r tools/requirements.txt -r webapp/requirements.txt -r review_app/requirements.txt
+
+# run all test suites:
+python -m unittest discover -s tools -p 'test_*.py'
+python -m unittest discover -s webapp -p 'test_*.py'
+python -m unittest discover -s webapp/deploy -p 'test_*.py'
+python -m unittest discover -s review_app -p 'test_*.py'
+```
+
+Running the `tools/` tests requires `ffmpeg` / `ffprobe` installed on your `PATH` (used by `tools/archive_fixture.py` to construct valid synthetic test media files).
+
 ## Adding a new band, step by step
 
 This walks through the actual sequence, end to end. `tools/models.py` is
@@ -452,15 +471,14 @@ example to copy from, look at an existing band - e.g.
   `validate.py --write` shells out to it to read each audio/video file's
   duration and bitrate. It's a system binary, not something
   `pip install` provides.
-- **Only for step 7 (actually publishing to archive.org):** the `ia` CLI
-  (installed by that same `pip install -r tools/requirements.txt`, via
-  the `internetarchive` package) authenticated with `ia configure`. This
-  must be **the project's shared archive.org account, not a personal
-  one** (see `tools/TOOLS.md`) - every band/release item and the
-  metadata backup all need to live under one consistent account. If you
-  don't have those credentials, you can still do everything through
-  step 6 (write the metadata, validate it, open/merge the PR) - someone
-  with the project's archive.org access publishes it from there.
+- **Publishing to archive.org (Maintainer only):** external contributors
+  do not need an archive.org account or the `ia` CLI. All music and media
+  across the Archive is uploaded and published exclusively by the project
+  maintainer using the single shared archive.org account (`daugavpils.fans`).
+  That single account is the only way music and media are uploaded, ensuring
+  archive.org item ownership, URLs, torrents, and metadata backups remain
+  consistent across the entire project. Steps 1-6 below (authoring metadata,
+  validating it, and opening a PR) require only Python and `ffprobe`.
 
 1. **Create the band folder and `band.yaml`.** Pick a slug (see "Naming
    convention" above) and create `bands/<band-slug>/band.yaml`. Only
@@ -534,9 +552,12 @@ example to copy from, look at an existing band - e.g.
 
 6. **Open a pull request** with the new `band.yaml`/`release.yaml` (media
    files themselves are gitignored - see "What's actually portable here"
-   above - so only the metadata is committed). Once reviewed and merged:
+   above - so only the metadata is committed). Contributors arrange to
+   share the media files with the maintainer.
 
-7. **Publish the media to archive.org.**
+7. **Publish the media to archive.org (Maintainer).** Once the pull
+   request is reviewed and merged into `main`, the project maintainer
+   publishes the media using the single shared archive.org account:
 
    ```bash
    python tools/publish_to_archive_org.py --bands <band-slug> --dry-run   # preview first
@@ -549,7 +570,8 @@ example to copy from, look at an existing band - e.g.
    to the consolidated `daugavpils-fans-metadata` item (see "Metadata
    schema" above) - all in one run. `--bands` scopes the walk to just the
    band(s) you named instead of every band in the archive (see
-   `tools/TOOLS.md`); omit it to publish everything.
+   `tools/TOOLS.md`); omit it to publish everything. The maintainer then
+   commits and pushes the resulting `sameAs` metadata updates back to `main`.
 
 ### Updating an existing band or release later
 
