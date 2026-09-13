@@ -103,6 +103,7 @@ On the page of any band or album, there is a **"Suggest a change"** button (**[r
    - upload media files to permanent storage on archive.org;
    - format metadata in the project repository and update the consolidated metadata backup;
    - rebuild and update the daugavpils.fans website.
+4. All review decisions (approved and rejected submissions) are recorded in the curators' decision log with history retained for 90 days.
 
 ### Alternative: hand materials to a curator directly
 If using the web form is inconvenient (for example, if you have a box of cassette tapes or gigabytes of digitized audio):

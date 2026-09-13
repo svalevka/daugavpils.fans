@@ -151,6 +151,14 @@ see ADR-0003's Consequences) and applied via dedicated GitHub Actions workflows:
   - `shadow`: Evaluates and logs reasoning to SQLite and sends shadow notifications, but does not auto-dispatch workflows.
   - `disabled`: Bypassed; standard manual review flow.
 
+### Decision history and 90-day retention log
+
+The curation dashboard includes a dedicated decision history and audit log at `/dashboard/history` (`review_app/dashboard.py`):
+
+- **Audit trail**: Every moderation decision across all four submission types (text corrections, media files, new albums, new band profiles) records the decision timestamp (`decided_at`), decision status (`approved`, `rejected`), the decider attribution (`decided_by` — human curator email vs `AI Approval Agent`), and any curator review notes or AI hesitation reasoning.
+- **Filtering**: Curators can filter the audit log by timeframe (past 7 days, 30 days, 90 days, or all time), status (`approved`, `rejected`), and proposal type (`text`, `media`, `album`, `band`).
+- **90-Day automatic retention**: Completed decisions (`applied`, `published`, or `rejected`) are rotated out after 90 days (`prune_old_decided_proposals()` in `review_app/db.py`). The routine is executed automatically during database initialization and whenever `/dashboard/history` is queried. Pending or in-flight proposals are never pruned.
+
 `apply-proposal.yml`, `apply-media-proposal.yml`, and `pages.yml` each
 use their own `concurrency:` group (`apply-proposal`,
 `apply-media-proposal`, and `pages` respectively) so that proposals

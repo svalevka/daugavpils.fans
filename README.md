@@ -315,6 +315,13 @@ Four kinds of proposals, handled by automated pipelines:
   `apply-band-proposal.yml` which runs `tools/apply_band_proposal.py` to create
   `bands/<band-slug>/band.yaml`, place media files, optionally create the first release,
   publish to archive.org, update the metadata backup bundle, and commit to `main`.
+- **Decision history & audit log** (`/dashboard/history`) - maintainers and curators
+  can review a filterable audit log of decided proposals across timeframes (past 7 days,
+  30 days, 90 days, or all time), statuses (approved, rejected), submission types
+  (text, media, albums, bands), and deciders (AI autonomous agent vs curator identity,
+  including AI confidence and hesitation reasoning). Completed decisions are retained for
+  90 days and automatically pruned (`prune_old_decided_proposals()`) to keep the SQLite
+  database lean and protect contributor privacy.
 
 This feature only exists on the primary domain - the GitHub Pages mirror
 below has no such app; visiting it there won't find a proposal form.
