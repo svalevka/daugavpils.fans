@@ -125,3 +125,23 @@ video:
   '@type': VideoObject
   bitrate: 973 kbps
   duration: PT3M57S
+- contentUrl: media/chemical-reaction-2003-net-lyubvi.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: aff724f89f08c7570f3eb67eee2eedf7314bd59ffe267356634294623ecd74d4
+  '@type': VideoObject
+  name: Нет любви (фестиваль «Chemical Reaction», 2003)
+  bitrate: 596 kbps
+  duration: PT3M35S
+- contentUrl: media/chemical-reaction-2003-live.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2725b2ee8dd3941dfe0faf941a4bfa602033a40d85fb5c654741c72c5a5a8bc8
+  '@type': VideoObject
+  name: Выступление на фестивале «Chemical Reaction» (2003)
+  bitrate: 553 kbps
+  duration: PT2M3S

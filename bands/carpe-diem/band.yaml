@@ -143,3 +143,33 @@ video:
   name: Когда меня не станет
   bitrate: 507 kbps
   duration: PT3M0S
+- contentUrl: media/carpe-diem-ty-vsegda-odin-ty-sdokh-megalive-2000.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: bf3a79808c7759fd91fbd33720bb33faf84786707d23737f489fabb00a7c6e53
+  '@type': VideoObject
+  name: Ты всегда один & Ты сдох (фестиваль «Mega Live», ЦЛК, 2000)
+  bitrate: 579 kbps
+  duration: PT6M40S
+- contentUrl: media/carpe-diem-this-time-zeldor-1998.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: fc022963575e3bcc068259a17e5efea59ebda46002e09bb6d3f602822962c5ad
+  '@type': VideoObject
+  name: This Time (концерт в клубе железнодорожников, 1998)
+  bitrate: 556 kbps
+  duration: PT2M59S
+- contentUrl: media/carpe-diem-moi-mir-osenniy-rok-1997.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: aa9306c690c3a924d21e9946d40f6974ba145f553e4a9db3d49bf7cf365f9814
+  '@type': VideoObject
+  name: Мой мир (фестиваль «Осенний рок», клуб железнодорожников, 1997)
+  bitrate: 472 kbps
+  duration: PT3M17S

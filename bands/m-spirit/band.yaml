@@ -208,3 +208,23 @@ video:
   name: Концерт в клубе железнодорожников
   bitrate: 999 kbps
   duration: PT3M31S
+- contentUrl: media/m-spirit-bashnya-deda-1996.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ccf54df5effafe973b3b21c62f29dafb045c130e1f53b4d4c0c1006e4f8714d2
+  '@type': VideoObject
+  name: Выступление на фестивале «Башня Деда» (1996)
+  bitrate: 498 kbps
+  duration: PT9M6S
+- contentUrl: media/m-spirit-kontsert-pamyati-vlada-zdanovskogo-1995.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 6b68726d5807c35440104736b7691a87c84d65e06674abfdc38867ef73900577
+  '@type': VideoObject
+  name: Концерт памяти Влада Здановского (02.12.1995)
+  bitrate: 602 kbps
+  duration: PT22M22S

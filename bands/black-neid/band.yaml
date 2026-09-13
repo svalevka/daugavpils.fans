@@ -55,6 +55,18 @@ description_en: 'Daugavpils rock band Black Neid, who performed at the Bashnya D
   Vader (bass)
 
   Vadim Sidorov (drums)'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-black-neid
+- https://archive.org/download/daugavpils-fans-black-neid/daugavpils-fans-black-neid_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/black-neid-bashnya-deda-1996.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d5b2c4a3123297b8a4ff1e93473bd594a31932cda2d06dc45d9b1b5c609b4801
+  '@type': VideoObject
+  name: Выступление на фестивале «Башня Деда» (1996)
+  bitrate: 537 kbps
+  duration: PT5M41S

@@ -215,3 +215,13 @@ video:
   name: Выступление на фестивале «Krabis» (19.10.1998, ЦЛК, Даугавпилс)
   bitrate: 503 kbps
   duration: PT16M53S
+- contentUrl: media/disease-zeldor-1998.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e844464e2c76cb3716c225be377dfcf32f468a6730b192037f0b562930566293
+  '@type': VideoObject
+  name: Выступление в клубе железнодорожников (1998)
+  bitrate: 537 kbps
+  duration: PT2M25S

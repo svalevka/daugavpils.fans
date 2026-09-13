@@ -87,8 +87,8 @@ video:
   identifier:
   - '@type': PropertyValue
     propertyID: sha256
-    value: 4946bdd8c37e959e59071bb0a602576e9529205b10784355be22e4d9a0fbe0f6
+    value: e02fbdbb7411cd34db5ca8ee1cb9a0dc08ef6485b140c8cc010243d12decb2fa
   '@type': VideoObject
   name: Выступление на фестивале «Башня Деда» (1996)
-  bitrate: 532 kbps
-  duration: PT4M39S
+  bitrate: 601 kbps
+  duration: PT5M28S

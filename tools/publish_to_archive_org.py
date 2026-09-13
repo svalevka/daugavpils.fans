@@ -191,6 +191,10 @@ def publish_item(
                 wait_time = (attempt + 1) * 60
                 print(f"    Rate limit / 503 Slow Down hit. Waiting {wait_time}s before retrying (attempt {attempt + 1}/{max_retries})...")
                 time.sleep(wait_time)
+            elif attempt < max_retries - 1 and ("timed out" in err.lower() or "connection" in err.lower() or "reset" in err.lower() or "aborted" in err.lower()):
+                wait_time = (attempt + 1) * 10
+                print(f"    Network error ({exc}). Retrying in {wait_time}s (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait_time)
             else:
                 raise
 

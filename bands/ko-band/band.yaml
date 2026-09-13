@@ -188,3 +188,63 @@ video:
   name: Концерт (08.10.2004)
   bitrate: 291 kbps
   duration: PT10M19S
+- contentUrl: media/ko-band-2002-net-imeni.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: f565d06cc085e4ee6b27dd64c7bf73fcf87c430ff748e4bc2cbd4cc60cd24604
+  '@type': VideoObject
+  name: Нет имени (2002)
+  bitrate: 568 kbps
+  duration: PT4M23S
+- contentUrl: media/ko-band-2002-morrison.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d5533ffcc0e16650baa1255dc7788a083baa7c318c7504705c36018329e3f5e4
+  '@type': VideoObject
+  name: Morrison (кавер, 2002)
+  bitrate: 576 kbps
+  duration: PT4M35S
+- contentUrl: media/ko-band-2002-i-see-you.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a4f1d5de6bb29a070ce41daa26f019d7af06440a82e68bbd458f52ec9208bc60
+  '@type': VideoObject
+  name: I See You (2002)
+  bitrate: 551 kbps
+  duration: PT3M9S
+- contentUrl: media/ko-band-2002-nemnogo-skuchno.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a908d38c9468ab89446c8bab36d8454050e90b6490b2b3e08c4bbdf885fa6428
+  '@type': VideoObject
+  name: Немного скучно (2002)
+  bitrate: 519 kbps
+  duration: PT4M57S
+- contentUrl: media/ko-band-2002-damochka-durochka.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 86e8bd98ea9fcc8826039e43558b211e485df93fdfe4af82bca6d09d723b6c71
+  '@type': VideoObject
+  name: Дамочка-дурочка (2002)
+  bitrate: 586 kbps
+  duration: PT4M2S
+- contentUrl: media/ko-band-2002-etot-gorod.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: abf8fef5f00ecaaf8afc3a6c2909ffb3e20ab64f07e31e92e2194bca46c51256
+  '@type': VideoObject
+  name: Этот город (2002)
+  bitrate: 517 kbps
+  duration: PT2M57S
