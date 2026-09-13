@@ -6,7 +6,7 @@ database/checkout without racing other tests or touching real state).
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -21,7 +21,7 @@ class SmtpConfig:
     port: int
     from_addr: str
     user: str | None = None
-    password: str | None = None
+    password: str | None = field(default=None, repr=False)
 
 
 @dataclass(frozen=True)
@@ -32,7 +32,7 @@ class GithubConfig:
     review_app never holds any credential that can push to git, only the
     triggered Action's own per-run token does that."""
 
-    token: str
+    token: str = field(repr=False)
     repo: str  # "owner/name"
     workflow_file: str = "apply-proposal.yml"
     ref: str = "main"
@@ -46,7 +46,7 @@ class AiConfig:
     """
 
     mode: str = "disabled"
-    api_key: str = ""
+    api_key: str = field(default="", repr=False)
     base_url: str = "https://api.z.ai/api/coding/paas/v4"
     model: str = "glm-5.1"
     confidence_threshold: float = 0.80
@@ -57,11 +57,11 @@ class AiConfig:
 class Config:
     database_path: Path
     archive_checkout_path: Path
-    secret_key: str
+    secret_key: str = field(repr=False)
     maintainer_email: str
     smtp: SmtpConfig
     github: GithubConfig
-    callback_key: str
+    callback_key: str = field(repr=False)
     # 5 (the previous default) turned out too low for legitimate use: the
     # /submit flow is one field per POST (see submissions.py's module
     # docstring - there's no batched multi-field submission), so a

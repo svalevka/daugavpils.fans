@@ -49,6 +49,16 @@ jobs:
           B2_BUCKET: ${{ secrets.B2_BUCKET_NAME }}
         run: |
           BUCKET="${B2_BUCKET:-daugavpils.fans}"
+          echo "=== Backblaze B2 Buckets ==="
+          rclone lsd b2: || true
+
+          echo "=== Cleaning legacy openclaw bucket if present ==="
+          rclone cleanup b2:backup-daugavpils 2>/dev/null || true
+          rclone purge b2:backup-daugavpils 2>/dev/null || true
+
+          echo "=== Target bucket size ==="
+          rclone size "b2:${BUCKET}" || true
+
           echo "Uploading ${ARCHIVE_FILENAME} to b2:${BUCKET}..."
           rclone copy "${ARCHIVE_FILENAME}" "b2:${BUCKET}"
           echo "Backup uploaded successfully."

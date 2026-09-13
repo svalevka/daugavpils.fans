@@ -371,3 +371,7 @@ class AiAgentDashboardViewTest(ReviewAppTestCase):
         self.assertIn("ESCALATED", html)
         self.assertIn("65% confidence", html)
         self.assertIn("Requires historical citation for festival dates.", html)
+
+    def test_config_repr_does_not_leak_secrets(self):
+        cfg = AiConfig(mode="active", api_key="super-secret-zai-key")
+        self.assertNotIn("super-secret-zai-key", repr(cfg))
