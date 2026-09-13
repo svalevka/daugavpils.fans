@@ -1,0 +1,61 @@
+'@type': MusicGroup
+name: Mikazza
+slug: mikazza
+alternateName: []
+foundingDate: '2004'
+dissolutionDate: '2004'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Punk Rock
+- Garage Rock
+member:
+- name: Славка Александров
+  name_en: Slavka Aleksandrov
+  role: голос
+  role_en: vocals
+- name: Валера Клещ
+  name_en: Valera Kleshch
+  role: гитара
+  role_en: guitar
+- name: Алвин Матисанс
+  name_en: Alvin Matisans
+  role: гитара
+  role_en: guitar
+- name: Дима Спиваков
+  name_en: Dima Spivakov
+  role: бас-гитара, тексты
+  role_en: bass guitar, lyrics
+- name: Лёша Логинов
+  name_en: Lesha Loginov
+  role: барабаны
+  role_en: drums
+description: |-
+  Больше 20 лет назад, была в Даугавпилсе группа Mikazza.
+
+  Собрались и распустились в течении 2004 года. Успели сыграть 4 концерта.
+  Барабаны - Лёша Логинов
+  Гитара - Валера Клещ
+  Гитара - Алвин Матисанс
+  Бас и тексты - Дима Спиваков
+  Голос - Славка Александров
+
+  Записывал Лёша «Вантуз» Красько, под знаменем ZaZaZa Records, на стерео VHS кассету.
+
+  Сделано в каморке Дома Культуры Химиков, Даугавпилс, Латвия.
+description_en: |-
+  More than 20 years ago, there was a band in Daugavpils named Mikazza.
+
+  Formed and disbanded during 2004. Managed to play 4 concerts.
+  Drums - Lesha Loginov
+  Guitar - Valera Kleshch
+  Guitar - Alvin Matisans
+  Bass and lyrics - Dima Spivakov
+  Vocals - Slavka Aleksandrov
+
+  Recorded by Lesha "Vantuz" Krasko under the banner of ZaZaZa Records onto a stereo VHS tape.
+
+  Made in the rehearsal room of the Palace of Culture of Chemists (DKKH), Daugavpils, Latvia.
+sameAs: []
+image: []
+video: []

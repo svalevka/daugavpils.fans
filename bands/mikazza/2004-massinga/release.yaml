@@ -1,0 +1,136 @@
+'@type': MusicAlbum
+name: Massinga
+slug: 2004-massinga
+datePublished: '2004'
+byArtist: mikazza
+genre:
+- Alternative Rock
+- Punk Rock
+- Garage Rock
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Записано в 2004 году в каморке Дома Культуры Химиков (ДКХ), Даугавпилс.
+  Запись сделал Алексей «Вантуз» Красько (ZaZaZa Records) на стерео VHS кассету.
+
+
+  Состав:
+
+  Славка Александров — голос
+
+  Валера Клещ — гитара
+
+  Алвин Матисанс — гитара
+
+  Дима Спиваков — бас-гитара, тексты
+
+  Лёша Логинов — барабаны'
+description_en: 'Recorded in 2004 in the rehearsal room of the Palace of Culture of
+  Chemists (DKKH), Daugavpils. Recorded by Alexey "Vantuz" Krasko (ZaZaZa Records)
+  onto a stereo VHS tape.
+
+
+  Lineup:
+
+  Slavka Aleksandrov — vocals
+
+  Valera Kleshch — guitar
+
+  Alvin Matisans — guitar
+
+  Dima Spivakov — bass guitar, lyrics
+
+  Lesha Loginov — drums'
+sameAs:
+- https://www.youtube.com/playlist?list=OLAK5uy_kcpVJNPPm_uFcEdnUfJ6jvlJDfQ5dCPfE
+- https://archive.org/details/daugavpils-fans-mikazza-2004-massinga
+- https://archive.org/download/daugavpils-fans-mikazza-2004-massinga/daugavpils-fans-mikazza-2004-massinga_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Bones
+  audio:
+    contentUrl: 01-bones.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5bc1c0c728044dab22a8fb4c84da47cba85e1601dd5b5fd687121bb89d37dc9e
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M22S
+- '@type': MusicRecording
+  position: 2
+  name: Chances
+  audio:
+    contentUrl: 02-chances.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e23df967a5da7c1e06860549a3f377680c847518c07bef93613c23c54bdcfc06
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M47S
+- '@type': MusicRecording
+  position: 3
+  name: Lorry Driver
+  audio:
+    contentUrl: 03-lorry-driver.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5db46fe776e4d01c585cb0ac1efa1f51b99bcd6d6b869e5f64d5c9c633f51710
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M4S
+- '@type': MusicRecording
+  position: 4
+  name: Fare Thee Well
+  audio:
+    contentUrl: 04-fare-thee-well.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cdc4994e1730da34e8bd42e97f5cdf48d508505377b4bb454d4e96dfdcae535b
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M31S
+- '@type': MusicRecording
+  position: 5
+  name: Spinning Light
+  audio:
+    contentUrl: 05-spinning-light.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e2a893fe0d226738473a1536dbca296e564f11548617efc2021b3e3fcfa941e7
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M16S
+- '@type': MusicRecording
+  position: 6
+  name: Music X
+  audio:
+    contentUrl: 06-music-x.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c9df120b323347be1460f604fb0a2466d050b01ca912caf3fc943c41f79e6c95
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M16S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 13e6dc805a3a76cc8f50586240d75d7a8b02c16c3d66edcfceef195e1a42f52b
+  '@type': ImageObject
+  caption: Обложка альбома Massinga (2004)
+  caption_en: Cover art for Massinga (2004)
+  depicts: []
+video: []
