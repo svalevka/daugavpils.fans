@@ -837,19 +837,26 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
         )
 
         if should_auto_approve:
+            from dashboard import is_album_publishing_throttled
+
+            is_throttled, _, _ = is_album_publishing_throttled(conn)
             ai_approver_id = roles.ensure_ai_approver(conn)
+
+            # If not throttled, transition directly to 'publishing' and dispatch workflow.
+            # If throttled, approve but leave in 'approved' status for scheduled sweep once 24h elapses!
+            new_status = "publishing" if not is_throttled else "approved"
             cur = conn.execute(
                 """
                 UPDATE album_proposals
-                SET status = 'approved', decided_by = ?, decided_at = datetime('now'),
+                SET status = ?, decided_by = ?, decided_at = datetime('now'),
                     ai_decision = 'approved', ai_confidence = ?, ai_reasoning = ?,
                     ai_evaluated_at = datetime('now')
                 WHERE id = ? AND status = 'pending'
                 """,
-                (ai_approver_id, result.confidence, result.reasoning, proposal_id),
+                (new_status, ai_approver_id, result.confidence, result.reasoning, proposal_id),
             )
             conn.commit()
-            if cur.rowcount == 1:
+            if cur.rowcount == 1 and not is_throttled:
                 try:
                     github_dispatch.trigger_album_apply(app.config["GITHUB_CONFIG"], proposal_id)
                 except OSError:
@@ -857,7 +864,7 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                         "failed to dispatch apply-album-proposal.yml for auto-approved album %s",
                         proposal_id,
                     )
-                return
+            return
 
         # Record evaluation for escalation or shadow mode
         conn.execute(

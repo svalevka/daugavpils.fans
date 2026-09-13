@@ -332,9 +332,16 @@ def get_album_proposal_track_file(proposal_id: int, position: int):
 @bp.get("/album-proposals/approved")
 def list_approved_album_proposals():
     _require_callback_key()
+    from dashboard import is_album_publishing_throttled
+
     conn = db.get_connection()
+    is_throttled, count, _ = is_album_publishing_throttled(conn)
+    if is_throttled:
+        return jsonify([])
+    remaining_quota = max(0, 3 - count)
     rows = conn.execute(
-        "SELECT id FROM album_proposals WHERE status IN ('approved', 'publishing') ORDER BY id"
+        "SELECT id FROM album_proposals WHERE status IN ('approved', 'publishing') ORDER BY id LIMIT ?",
+        (remaining_quota,),
     ).fetchall()
     return jsonify([row["id"] for row in rows])
 

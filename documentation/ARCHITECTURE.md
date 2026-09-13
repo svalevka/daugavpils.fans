@@ -127,6 +127,7 @@ see ADR-0003's Consequences) and applied via dedicated GitHub Actions workflows:
   rather do it by hand.
 - **Album proposals** (issue #20) - community submission of new releases
   (`/submit/<band>/add-release`) with multi-track audio upload and cover art.
+  Enforces a 24-hour rate limit (max 3 releases published per rolling 24 hours).
   Approving dispatches `apply-album-proposal.yml`, which downloads tracks, probes
   audio with `ffprobe`, computes SHA-256 checksums, writes `release.yaml`, uploads
   to archive.org (`daugavpils-fans-<band>-<release>`), and commits/pushes to `main`.

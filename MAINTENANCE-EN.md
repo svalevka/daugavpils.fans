@@ -71,52 +71,47 @@ This split is deliberate: if something happens to the daugavpils.fans
 site, the recordings and descriptions themselves don't disappear along
 with it — they don't depend on whether the site is running.
 
-## How to add a completely new band or release
+## How to add a new band or release
 
-If a band or album isn't in the archive yet, it can't currently be
-added by yourself through the site — that's still done by hand, by one
-of the project's curators. If you have recordings, photos, old tapes,
-articles, or simply a story about a Daugavpils band worth preserving,
-write to:
+You can add a new band, album, photo, or correction directly through the site's web interface — without needing to know git, without registering, and without special software.
 
-- **[GitHub Issues](https://github.com/svalevka/daugavpils.fans/issues)**
-  for the project (you can just describe what you have in your own
-  words) — or
-- **the project curator's email** — the address is in the "How to get
-  in touch" section at the end of this page.
+### 1. Add a completely new band
+On the main page of [daugavpils.fans](https://daugavpils.fans), in the top navigation header, there is a **"Suggest a band"** button (leading to **[review.daugavpils.fans/submit/add-band](https://review.daugavpils.fans/submit/add-band)**).
 
-You don't need to format anything "properly" yourself — it's enough to
-share the material and describe what it is. The curator will then put
-it into the archive in the right form.
+There you can provide:
+- Band name, years of activity, and musical genres;
+- Band history, biography, or personal memories (first-hand testimonies);
+- Band photo (optional);
+- First album or demo recording (optional): title, year of recording, track audio files (MP3, FLAC, WAV, AAC, OGG, M4A) with drag-and-drop track reordering, and cover artwork.
 
-*(If you know your way around git and want to prepare the material
-yourself — the exact technical process is described in
-[README.md](README.md).)*
+### 2. Add a new album to an existing band
+On the page of any band, there is a **"Suggest an album"** button (leading to the album submission form for that band, e.g. `review.daugavpils.fans/submit/<slug>/add-release`).
 
-## How to fix text or add photos/video to a band that's already there
+There you can:
+- Specify the release title, year, genres, liner notes, and select an open license (Creative Commons);
+- Upload track audio files, arrange their playback order via drag-and-drop, and enter track titles;
+- Attach album cover art.
 
-This is a different, simpler case. If the band or album is already on
-the site, and you want to:
+### 3. Fix text or add photos/video to an existing band or album
+On the page of any band or album, there is a **"Suggest a change"** button (**[review.daugavpils.fans/submit](https://review.daugavpils.fans/submit)**). There you can fix inaccuracies in biographies, lineup lists, or photo captions, or upload a new photo or video clip/live recording.
 
-- fix something in the existing text (an inaccuracy in the biography,
-  the lineup, a photo caption), or
-- add a new photo or video to that band/album,
+### What happens after submitting?
+1. The proposal is reviewed by an autonomous AI assistant (checking for spam, manipulation, authenticity of history, and valid audio files) or reviewed by curators in the moderation dashboard.
+2. Safety limits apply to publishing new material: at most 1 new band and at most 3 new releases are published per rolling 24 hours (to protect the archive from spam surges). The queue publishes automatically as the 24-hour window elapses.
+3. Once approved, the automated process on GitHub will:
+   - compute SHA-256 checksums, bitrates, and durations via `ffprobe`;
+   - upload media files to permanent storage on archive.org;
+   - format metadata in the project repository and update the consolidated metadata backup;
+   - rebuild and update the daugavpils.fans website.
 
-— **you don't need to file a GitHub Issue and wait for a reply**, and
-you don't need to register or use git. Every band or album page has a
-**"Suggest a change"** button (it leads to
-**[review.daugavpils.fans/submit](https://review.daugavpils.fans/submit)**)
-— there you can propose a text correction right away, or upload a new
-photo/video straight from your phone or computer.
+### Alternative: hand materials to a curator directly
+If using the web form is inconvenient (for example, if you have a box of cassette tapes or gigabytes of digitized audio):
+- post to **[GitHub Issues](https://github.com/svalevka/daugavpils.fans/issues)** for the project (in your own words);
+- or email **the curator** at `daugavpils@gmail.com`.
 
-Both kinds of suggestions are reviewed and approved by the curator the
-same way. Once approved, text corrections appear on the site
-immediately, automatically. Photos and video are published almost the
-same way, but the file first needs to be uploaded to the archive on
-archive.org — that's a separate step, so it can take a bit longer.
+The curator will help digitize, verify, and carefully integrate the materials into the archive.
 
-This feature only exists on the main daugavpils.fans site — the backup
-copy on GitHub Pages (see below) doesn't have this form.
+*(If you know your way around git and want to prepare materials manually via a pull request, the step-by-step technical process is described in [README.md](README.md).)*
 
 ## What happens if there's no one left to run this
 

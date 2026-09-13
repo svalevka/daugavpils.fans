@@ -159,6 +159,7 @@ CREATE INDEX IF NOT EXISTS idx_analytics_band ON analytics_events(band_slug, cre
 -- under an existing band. Similar to media_proposals, approving one dispatches
 -- apply-album-proposal.yml which uploads audio/cover to archive.org, creates
 -- release.yaml, commits to git, and unlinks staged files.
+-- Publishing is throttled to at most 3 releases per rolling 24 hours.
 CREATE TABLE IF NOT EXISTS album_proposals (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -190,6 +191,7 @@ CREATE TABLE IF NOT EXISTS album_proposals (
 
 CREATE INDEX IF NOT EXISTS idx_album_proposals_status ON album_proposals(status, created_at);
 CREATE INDEX IF NOT EXISTS idx_album_proposals_slug ON album_proposals(band_slug, release_slug);
+CREATE INDEX IF NOT EXISTS idx_album_proposals_published ON album_proposals(published_at);
 
 -- New band proposals (GitHub issue #22):
 -- Allows proposing a brand-new band (MusicGroup) with optional band photo,

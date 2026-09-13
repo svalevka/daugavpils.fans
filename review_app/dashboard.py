@@ -77,6 +77,30 @@ def is_band_publishing_throttled(conn) -> tuple[bool, str | None]:
     return True, row["published_at"]
 
 
+def is_album_publishing_throttled(conn) -> tuple[bool, int, str | None]:
+    """Checks if album/release publishing is throttled (max 3 releases per rolling 24 hours).
+    Counts releases published via album_proposals as well as releases included in band_proposals (has_release=1).
+    Returns (True, count, oldest_blocking_published_at) if throttled (count >= 3);
+    (False, count, None) if publishing is permitted.
+    """
+    rows = conn.execute(
+        """
+        SELECT published_at FROM (
+            SELECT published_at FROM album_proposals
+            WHERE status = 'published' AND datetime(published_at) >= datetime('now', '-24 hours')
+            UNION ALL
+            SELECT published_at FROM band_proposals
+            WHERE status = 'published' AND has_release = 1 AND datetime(published_at) >= datetime('now', '-24 hours')
+        )
+        ORDER BY datetime(published_at) ASC
+        """
+    ).fetchall()
+    count = len(rows)
+    if count >= 3:
+        return True, count, rows[count - 3]["published_at"]
+    return False, count, None
+
+
 @bp.get("/dashboard")
 @require_approver
 def view_pending():
@@ -208,6 +232,7 @@ def view_pending():
         (band_pending if row["status"] == "pending" else band_awaiting_publish).append(item)
 
     is_band_throttled, last_band_published_at = is_band_publishing_throttled(conn)
+    is_album_throttled, album_published_count, last_album_published_at = is_album_publishing_throttled(conn)
 
     return render_template(
         "dashboard.html",
@@ -220,6 +245,9 @@ def view_pending():
         band_awaiting_publish=band_awaiting_publish,
         is_band_throttled=is_band_throttled,
         last_band_published_at=last_band_published_at,
+        is_album_throttled=is_album_throttled,
+        album_published_count=album_published_count,
+        last_album_published_at=last_album_published_at,
         approver=g.approver,
         can_view_stats=roles.user_has_role(conn, g.approver["id"], roles.ROLE_STATS),
     )
@@ -537,6 +565,10 @@ def upload_album(proposal_id: int):
         abort(404)
     if row["status"] not in ("approved", "publishing", "publish_failed"):
         abort(409)
+
+    is_throttled, _, _ = is_album_publishing_throttled(conn)
+    if is_throttled:
+        abort(429)
 
     conn.execute(
         "UPDATE album_proposals SET status = 'publishing', publish_error = NULL WHERE id = ?",

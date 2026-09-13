@@ -12,6 +12,7 @@ Unit and integration tests for album proposal dashboard management
 from __future__ import annotations
 
 import json
+import sqlite3
 import sys
 import unittest
 from pathlib import Path
@@ -197,6 +198,56 @@ class AlbumUploadAndPublishTest(ReviewAppTestCase):
         self.assertEqual(prop_after["status"], "published")
         self.assertFalse(cover_path.exists())
         self.assertFalse(track_path.exists())
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_upload_returns_429_when_throttled(self, _mock_probe):
+        # Simulate 3 releases published in the last 24h
+        conn = sqlite3.connect(self.database_path)
+        for i in range(3):
+            conn.execute(
+                f"""
+                INSERT INTO album_proposals (band_slug, release_slug, name, date_published, license, tracks_json, status, published_at, submitter_ip)
+                VALUES ('test-band', 'rel-{i}', 'Rel {i}', '2000', 'CC BY', '[]', 'published', datetime('now', '-{i+1} hours'), '127.0.0.1')
+                """
+            )
+        conn.commit()
+        conn.close()
+
+        approver_id = self.seed_approver("curator@example.com")
+        self.submit_album(name="4th Album")
+        prop_id = self.fetch_album_proposals()[-1]["id"]
+
+        self.login_as(approver_id)
+        self.client.post(f"/album-proposals/{prop_id}/approve")
+
+        upload_resp = self.client.post(f"/album-proposals/{prop_id}/upload")
+        self.assertEqual(upload_resp.status_code, 429)
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_dashboard_displays_throttled_banner_when_3_releases_published(self, _mock_probe):
+        conn = sqlite3.connect(self.database_path)
+        for i in range(3):
+            conn.execute(
+                f"""
+                INSERT INTO album_proposals (band_slug, release_slug, name, date_published, license, tracks_json, status, published_at, submitter_ip)
+                VALUES ('test-band', 'rel-{i}', 'Rel {i}', '2000', 'CC BY', '[]', 'published', datetime('now', '-{i+1} hours'), '127.0.0.1')
+                """
+            )
+        conn.commit()
+        conn.close()
+
+        approver_id = self.seed_approver("curator@example.com")
+        self.submit_album(name="Queued Album")
+        prop_id = self.fetch_album_proposals()[-1]["id"]
+
+        self.login_as(approver_id)
+        self.client.post(f"/album-proposals/{prop_id}/approve")
+
+        resp = self.client.get("/dashboard")
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b"Publishing Throttled:", resp.data)
+        self.assertIn(b"3 releases per rolling 24 hours", resp.data)
+        self.assertIn(b"disabled", resp.data)
 
 
 class AlbumFileServingTest(ReviewAppTestCase):

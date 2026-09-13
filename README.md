@@ -300,7 +300,8 @@ Four kinds of proposals, handled by automated pipelines:
   (MP3, FLAC, WAV, AAC, OGG, M4A), per-track titles, drag-and-drop track order,
   metadata (year, genre, description, license), and optional cover art. The backend
   validates audio streams with `ffprobe`. Evaluated autonomously by the AI agent
-  (confidence $\ge 0.90$) or reviewed on `/dashboard`. Approval dispatches
+  (confidence $\ge 0.90$) or reviewed on `/dashboard`. Enforces a rolling 24-hour rate
+  limit (at most 3 releases published per rolling 24 hours). Approval dispatches
   `apply-album-proposal.yml` which runs `tools/apply_album_proposal.py` to create
   `bands/<band-slug>/<release-slug>/release.yaml`, probe audio properties, compute
   SHA-256 checksums, upload to archive.org (`daugavpils-fans-<band>-<release>`),

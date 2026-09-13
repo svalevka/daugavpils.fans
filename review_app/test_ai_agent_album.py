@@ -62,12 +62,50 @@ class AiAgentAlbumTest(ReviewAppTestCase):
         self.assertEqual(resp.status_code, 201)
 
         prop = self.fetch_album_proposals()[0]
-        self.assertEqual(prop["status"], "approved")
+        self.assertEqual(prop["status"], "publishing")
         self.assertEqual(prop["ai_decision"], "approved")
         self.assertAlmostEqual(prop["ai_confidence"], 0.95)
         self.assertEqual(prop["ai_reasoning"], "Legitimate archival live album by local punk band from 1996.")
         self.assertIsNotNone(prop["decided_by"])
         self.mock_ai_trigger_album_apply.assert_called_once_with(self.config.github, prop["id"])
+        self.mock_ai_escalation.assert_not_called()
+
+    @mock.patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_active_mode_auto_approve_when_throttled_leaves_status_approved(self, _mock_probe):
+        # Simulate 3 releases published in the last 24h
+        import sqlite3
+        conn = sqlite3.connect(self.database_path)
+        for i in range(3):
+            conn.execute(
+                f"""
+                INSERT INTO album_proposals (band_slug, release_slug, name, date_published, license, tracks_json, status, published_at, submitter_ip)
+                VALUES ('test-band', 'album-{i}', 'Album {i}', '2000', 'CC BY', '[]', 'published', datetime('now', '-{i+1} hours'), '127.0.0.1')
+                """
+            )
+        conn.commit()
+        conn.close()
+
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.90)
+        self.mock_ai_api.return_value = json.dumps(
+            {
+                "decision": "approve",
+                "confidence": 0.95,
+                "reasoning": "Legitimate album but throttled.",
+                "spam_or_vandalism": False,
+            }
+        )
+
+        resp = self.submit_album(
+            name="Throttled Album",
+            date_published="2001",
+            track_tuples=[("01-intro.mp3", MP3_BYTES), ("02-anthem.mp3", MP3_BYTES)],
+        )
+        self.assertEqual(resp.status_code, 201)
+
+        prop = self.fetch_album_proposals()[-1]
+        self.assertEqual(prop["status"], "approved")
+        self.assertEqual(prop["ai_decision"], "approved")
+        self.mock_ai_trigger_album_apply.assert_not_called()
         self.mock_ai_escalation.assert_not_called()
 
     @mock.patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)

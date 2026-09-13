@@ -12,6 +12,7 @@ used by GitHub Actions (.github/workflows/apply-album-proposal.yml)
 from __future__ import annotations
 
 import json
+import sqlite3
 import sys
 import unittest
 from pathlib import Path
@@ -166,6 +167,85 @@ class AlbumApiApprovedListTest(ReviewAppTestCase):
         self.assertEqual(resp.status_code, 200)
         ids = resp.get_json()
         self.assertEqual(ids, [props[0]["id"], props[1]["id"]])
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_returns_empty_list_when_throttled_by_album_proposals(self, _mock_probe):
+        # Seed 3 albums published within last 24h
+        conn = sqlite3.connect(self.database_path)
+        for i in range(3):
+            conn.execute(
+                """
+                INSERT INTO album_proposals (band_slug, release_slug, name, date_published, license, tracks_json, status, published_at, submitter_ip)
+                VALUES ('test-band', ?, ?, '2000', 'CC BY', '[]', 'published', datetime('now', '-2 hours'), '127.0.0.1')
+                """,
+                (f"rel-{i}", f"Rel {i}"),
+            )
+        conn.commit()
+        conn.close()
+
+        approver_id = self.seed_approver("curator@example.com")
+        self.submit_album(name="Album 4")
+        prop_id = self.fetch_album_proposals()[-1]["id"]
+        self.login_as(approver_id)
+        self.client.post(f"/album-proposals/{prop_id}/approve")
+
+        resp = self.client.get("/api/album-proposals/approved", headers=self.callback_headers())
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.get_json(), [])
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_returns_at_most_remaining_quota_when_partially_throttled(self, _mock_probe):
+        # 2 albums published -> quota remaining is 1 (3 - 2 = 1)
+        conn = sqlite3.connect(self.database_path)
+        for i in range(2):
+            conn.execute(
+                """
+                INSERT INTO album_proposals (band_slug, release_slug, name, date_published, license, tracks_json, status, published_at, submitter_ip)
+                VALUES ('test-band', ?, ?, '2000', 'CC BY', '[]', 'published', datetime('now', '-2 hours'), '127.0.0.1')
+                """,
+                (f"rel-{i}", f"Rel {i}"),
+            )
+        conn.commit()
+        conn.close()
+
+        approver_id = self.seed_approver("curator@example.com")
+        self.submit_album(name="Pending 1")
+        self.submit_album(name="Pending 2")
+        props = [p for p in self.fetch_album_proposals() if p["status"] == "pending"]
+
+        self.login_as(approver_id)
+        self.client.post(f"/album-proposals/{props[0]['id']}/approve")
+        self.client.post(f"/album-proposals/{props[1]['id']}/approve")
+
+        resp = self.client.get("/api/album-proposals/approved", headers=self.callback_headers())
+        self.assertEqual(resp.status_code, 200)
+        # Only 1 should be returned because only 1 release slot remains today
+        self.assertEqual(resp.get_json(), [props[0]["id"]])
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_throttling_respects_band_proposals_with_release(self, _mock_probe):
+        # Seed 3 bands published with releases in the last 24h
+        conn = sqlite3.connect(self.database_path)
+        for i in range(3):
+            conn.execute(
+                """
+                INSERT INTO band_proposals (name, band_slug, has_release, release_name, release_slug, status, published_at, submitter_ip)
+                VALUES (?, ?, 1, 'Release', 'release', 'published', datetime('now', '-3 hours'), '127.0.0.1')
+                """,
+                (f"Band {i}", f"band-{i}"),
+            )
+        conn.commit()
+        conn.close()
+
+        approver_id = self.seed_approver("curator@example.com")
+        self.submit_album(name="Throttled by Band Release")
+        prop_id = self.fetch_album_proposals()[-1]["id"]
+        self.login_as(approver_id)
+        self.client.post(f"/album-proposals/{prop_id}/approve")
+
+        resp = self.client.get("/api/album-proposals/approved", headers=self.callback_headers())
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.get_json(), [])
 
 
 class AlbumApiResultRecordingTest(ReviewAppTestCase):

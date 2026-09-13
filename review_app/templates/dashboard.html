@@ -234,6 +234,11 @@
 {% endfor %}
 
 <h2>Ready to publish albums ({{ album_awaiting_publish | length }})</h2>
+{% if is_album_throttled %}
+<div class="banner banner-warning">
+  <strong>Publishing Throttled:</strong> {{ album_published_count }} release(s) published recently (last: {{ last_album_published_at }}). The archive throttles publication to 3 releases per rolling 24 hours. Queued releases will be published by schedule once 24 hours have elapsed.
+</div>
+{% endif %}
 {% if not album_awaiting_publish %}
 <p>Nothing ready to publish.</p>
 {% endif %}
@@ -256,7 +261,7 @@
     {% else %}
     <form method="post" action="/album-proposals/{{ a.id }}/upload">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button type="submit">{% if a.status == 'publish_failed' %}Retry upload{% else %}Upload & Publish{% endif %}</button>
+      <button type="submit" {% if is_album_throttled %}disabled title="Publishing throttled: 3 releases per 24 hours limit reached"{% endif %}>{% if a.status == 'publish_failed' %}Retry upload{% else %}Upload & Publish{% endif %}</button>
     </form>
     <form method="post" action="/album-proposals/{{ a.id }}/publish">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
