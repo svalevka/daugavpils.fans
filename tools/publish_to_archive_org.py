@@ -159,7 +159,8 @@ def publish_item(
     if metadata_only:
         print(f"  {item_id}: syncing metadata")
         for k, v in sorted(metadata.items()):
-            preview = (v[:60] + "...") if len(v) > 60 else v
+            v_str = str(v) if v is not None else ""
+            preview = (v_str[:60] + "...") if len(v_str) > 60 else v_str
             print(f"    {k}: {preview!r}")
         if dry_run:
             return True
