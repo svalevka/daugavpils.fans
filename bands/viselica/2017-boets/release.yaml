@@ -1,0 +1,47 @@
+'@type': MusicAlbum
+name: Боец
+slug: 2017-boets
+datePublished: '2017'
+byArtist: viselica
+genre:
+- панк-рок
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: Сингл "Боец", записанный совместно с RHY, был выложен 7 ноября 2017 года
+  - в столетие Октябрьской революции. Первое новое издание группы за шесть лет после
+  альбома "Фон" (2011).
+description_en: The single 'Boets' ('Fighter'), recorded together with RHY, was released
+  on November 7, 2017 - the hundredth anniversary of the October Revolution. The band's
+  first new release in six years, since the 'Fon' album (2011).
+sameAs:
+- https://archive.org/details/daugavpils-fans-viselica-2017-boets
+- https://archive.org/download/daugavpils-fans-viselica-2017-boets/daugavpils-fans-viselica-2017-boets_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Боец
+  audio:
+    contentUrl: 01-boets.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8624b11f5a793091a4a088edfcfe68ee8acb76e04cbaf673add57a9374ceb65c
+    '@type': AudioObject
+    bitrate: 326 kbps
+    duration: PT4M15S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3dc69d344e0cd7cb67412bc7539d72ff299029cc1de6c4789871cda28445ba1b
+  '@type': ImageObject
+  caption: Обложка сингла Боец
+  caption_en: Cover art for Boets
+  depicts: []
+video: []
+creditText:
+- Виселица & RHY
+creditText_en:
+- Viselica & RHY

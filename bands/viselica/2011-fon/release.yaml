@@ -1,0 +1,182 @@
+'@type': MusicAlbum
+name: Фон
+slug: 2011-fon
+datePublished: '2011'
+byArtist: viselica
+genre:
+- экспериментальная музыка
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: '"Фон" - четвёртый альбом Виселицы, выложенный для свободного скачивания
+  31 января 2011 года. В отличие от предыдущих панк-альбомов группы, "Фон" - это одиннадцать
+  безымянных, пронумерованных фрагментов ("Фон 1"-"Фон 11"), построенных на фоновых
+  шумовых и эмбиентных текстурах, поверх части которых читаются стихи - в том числе
+  стихи Бориса Савинкова (треки "Фон 3" и "Фон 7") и текст самого Артура Петрова (Будулая)
+  (трек "Фон 8"). Обложка альбома оформлена в виде звуковых спектрограмм самих треков.'
+description_en: '''Fon'' (''Background'') is Viselica''s fourth album, released for
+  free download on January 31, 2011. Unlike the band''s earlier punk records, ''Fon''
+  consists of eleven untitled, numbered fragments (''Fon 1'' through ''Fon 11'') built
+  from background noise and ambient textures, with some of them set to recited poetry
+  - including poems by Boris Savinkov (tracks ''Fon 3'' and ''Fon 7'') and a text
+  by Artur Petrov (Budulai) himself (track ''Fon 8''). The cover art is composed of
+  the tracks'' own sound spectrograms.'
+sameAs:
+- https://archive.org/details/daugavpils-fans-viselica-2011-fon
+- https://archive.org/download/daugavpils-fans-viselica-2011-fon/daugavpils-fans-viselica-2011-fon_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Фон 1
+  audio:
+    contentUrl: 01-fon-1.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: af18fba4dc0f9cc7163979d15e04e713815c61c279c62b13759454611b82ea75
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT1M21S
+- '@type': MusicRecording
+  position: 2
+  name: Фон 2
+  audio:
+    contentUrl: 02-fon-2.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 37913d342fff8d2f3f41202cdd086188030072f59e3cc62d4005863b0e1da5b1
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT3M12S
+- '@type': MusicRecording
+  position: 3
+  name: Фон 3
+  audio:
+    contentUrl: 03-fon-3.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 988b2606f44c433b15b9919a85097a76b18556b25eefe12a83a9a837939a0243
+    '@type': AudioObject
+    bitrate: 257 kbps
+    duration: PT56S
+- '@type': MusicRecording
+  position: 4
+  name: Фон 4
+  audio:
+    contentUrl: 04-fon-4.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ece400e29e4a7628d26230488d088c8bd079159ffb116ac2f7772eccd045f830
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT5M29S
+- '@type': MusicRecording
+  position: 5
+  name: Фон 5
+  audio:
+    contentUrl: 05-fon-5.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 728ea84a08f109ebac566651fd576e8f4b02c1010019c924279099fa73212345
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT3M11S
+- '@type': MusicRecording
+  position: 6
+  name: Фон 6
+  audio:
+    contentUrl: 06-fon-6.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: eb79e0805841724be6061624ffcde3dd12c5c7201bc8cb4ef295b7d4b580c524
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT4M19S
+- '@type': MusicRecording
+  position: 7
+  name: Фон 7
+  audio:
+    contentUrl: 07-fon-7.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e2bc99ba3ecdbd38776a72d1821fb12fba0aaac899c74eaedf410194c533bc8f
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT5M4S
+- '@type': MusicRecording
+  position: 8
+  name: Фон 8
+  audio:
+    contentUrl: 08-fon-8.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7e1ec414ff8b3ee10333d77754f6cd4043d8dd4c9f8f2966833affa39c67f413
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT25S
+- '@type': MusicRecording
+  position: 9
+  name: Фон 9
+  audio:
+    contentUrl: 09-fon-9.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cfa5c039cc4a80039730a5659a1b72b86a5692c89585d4e1774f4b83ed939c6c
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT4M58S
+- '@type': MusicRecording
+  position: 10
+  name: Фон 10
+  audio:
+    contentUrl: 10-fon-10.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 843f1d92e1425b1f97cdad5e66aba78f94f8e631f737907c5c4d7790b2b96ce6
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT2M55S
+- '@type': MusicRecording
+  position: 11
+  name: Фон 11
+  audio:
+    contentUrl: 11-fon-11.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 87f56a2c9766341f62514ae03a6844913edc4a21197f2dd1816a0d397d79ff5d
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT2M34S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 8cbd21420c1ed23f5d8d7af146c6e99789714083313b1d0054b9179e842e4021
+  '@type': ImageObject
+  caption: Обложка альбома Фон
+  caption_en: Cover art for Fon
+  depicts: []
+video: []
+creditText: []
+creditText_en: []

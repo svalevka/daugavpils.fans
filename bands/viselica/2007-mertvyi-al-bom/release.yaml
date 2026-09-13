@@ -1,0 +1,193 @@
+'@type': MusicAlbum
+name: Мертвый альбом
+slug: 2007-mertvyi-al-bom
+datePublished: '2007'
+byArtist: viselica
+genre:
+- панк-рок
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'Третий альбом Виселицы, "Мертвый альбом", вышел 15 июля 2007 года -
+  спустя пять лет после "Резни" и уже после ареста, психиатрической экспертизы и тюремного
+  заключения Артура Петрова (Будулая). Большая часть музыки и текстов написана Будулаем,
+  две песни ("Который звал себя Я" и "Радость") - на стихи Бориса Савинкова, эсера-боевика
+  и писателя начала XX века, ещё одна ("Возмездие") - на стихи поэта Рамиреса. Гридас
+  написал музыку и текст к песне "Фото" и музыку к "Папке". В записи участвовали приглашённые
+  музыканты: А. Лебедева (вокал), Кузя (бас, соло), Варик (бас), Емеля (флейта, клавиши);
+  аранжировку последнего трека и мастеринг всего альбома сделал RHY. Обложка собрана
+  из фотографии А. Лебедевой и оформления студии "Поступательные Движения" и художника
+  Павла Брата.'
+description_en: Viselica's third album, 'Mertvyi albom' ('Dead Album'), came out on
+  July 15, 2007 - five years after 'Reznia', and after Artur Petrov (Budulai) had
+  already been through arrest, forced psychiatric evaluation, and imprisonment. Most
+  of the music and lyrics were written by Budulai; two songs ('Kotoryi zval sebia
+  ia' and 'Radost') set to poems by Boris Savinkov, an early-20th-century Socialist-Revolutionary
+  militant and writer, and one ('Vozmezdie') to a poem by the poet Ramires. Gridas
+  wrote both music and lyrics for 'Foto' and the music for 'Papka'. Guest musicians
+  on the record included A. Lebedeva (vocals), Kuzya (bass, guitar solo), Varik (bass),
+  and Emelya (flute, keyboards); the final track's arrangement and the whole album's
+  mastering were done by RHY. The cover combines a photograph by A. Lebedeva with
+  design work by the studio 'Postupatelnye Dvizheniya' and the artist Pavel Brat.
+sameAs:
+- https://archive.org/details/daugavpils-fans-viselica-2007-mertvyi-al-bom
+- https://archive.org/download/daugavpils-fans-viselica-2007-mertvyi-al-bom/daugavpils-fans-viselica-2007-mertvyi-al-bom_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Dies Irae — Детишки захватили боинг
+  audio:
+    contentUrl: 01-dies-irae-detishki-zakhvatili-boing.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 61c65c6e31e4107c2f3db9bb60f562ae32aaaa0fec743544be29f39c7bf60f80
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT1M38S
+- '@type': MusicRecording
+  position: 2
+  name: Возмездие
+  audio:
+    contentUrl: 02-vozmezdie.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fef8677051b3d06799191a29498a493d8cdf28920060b116896a0089cbe8f08c
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M53S
+- '@type': MusicRecording
+  position: 3
+  name: Марш 1
+  audio:
+    contentUrl: 03-marsh-1.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9db0768ffb95def9f48805934a26c534867c088f82efdb3cfe6c2667eca40f68
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M12S
+- '@type': MusicRecording
+  position: 4
+  name: Который звал себя Я
+  audio:
+    contentUrl: 04-kotoryi-zval-sebia-ia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cfbe11ffa920409a7facb6f942ffbb72ccbcd1a805e83406f8c9878a8f7b9404
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT6M7S
+- '@type': MusicRecording
+  position: 5
+  name: Осознание
+  audio:
+    contentUrl: 05-osoznanie.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e79f15a154adf4147ffc2671822be52c70f9dce40303fb1df4358d4f1460aec9
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT6M17S
+- '@type': MusicRecording
+  position: 6
+  name: Папка
+  audio:
+    contentUrl: 06-papka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 17b4eecd0f1ef24451c93c1b2b24a1213ca4d64ffd119c559177ba7882c4b808
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M30S
+- '@type': MusicRecording
+  position: 7
+  name: Фото
+  audio:
+    contentUrl: 07-foto.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c50e9ef9a17c64fce8c7e56d556115658b61ad30380f1b39e5d63c7a4b80c007
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M45S
+- '@type': MusicRecording
+  position: 8
+  name: Вечность
+  audio:
+    contentUrl: 08-vechnost.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 25b5a34ef3525a36523daf091d103397d55a1e4043d920be31a04e15859b41bf
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M8S
+- '@type': MusicRecording
+  position: 9
+  name: Радость
+  audio:
+    contentUrl: 09-radost.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ba8dfa0784345e6314305f12671b0878b232b997fdb702f2c34f8bb45675d5cf
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M38S
+- '@type': MusicRecording
+  position: 10
+  name: Марш 2
+  audio:
+    contentUrl: 10-marsh-2.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4607c42cf097447d4391fb2d08d02ebe52275f6bc486fc4efb4c3909f8c822ed
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M36S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 588a17363d5c07295fc063c85b6d8c3776379b22260a6c2ca9b595fe51b68cad
+  '@type': ImageObject
+  caption: Обложка альбома Мертвый альбом
+  caption_en: Cover art for Mertvyi albom
+  depicts: []
+video: []
+creditText:
+- А. Лебедева, Будулай — вокал (трек 1, "Dies Irae — Детишки захватили боинг")
+- Кузя — бас, соло (трек 2, "Возмездие")
+- Емеля — флейта (трек 3, "Марш 1")
+- Варик — бас, Кузя — клавиши (трек 4, "Который звал себя Я")
+- Емеля — клавиши (трек 5, "Осознание")
+- RHY — аранжировка (трек 10, "Марш 2"), мастеринг всего альбома
+- Обложка — фото А. Лебедевой, оформление студии "Поступательные Движения" и Павла
+  Брата
+creditText_en:
+- A. Lebedeva, Budulai — vocals (track 1, "Dies Irae — Detishki zakhvatili boing")
+- Kuzya — bass, guitar solo (track 2, "Vozmezdie")
+- Emelya — flute (track 3, "Marsh 1")
+- Varik — bass, Kuzya — keyboards (track 4, "Kotoryi zval sebia ia")
+- Emelya — keyboards (track 5, "Osoznanie")
+- RHY — arrangement (track 10, "Marsh 2"), mastering for the whole album
+- Cover — photo by A. Lebedeva, design by the studio "Postupatelnye Dvizheniya" and
+  Pavel Brat
