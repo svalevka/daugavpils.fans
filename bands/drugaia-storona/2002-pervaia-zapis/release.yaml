@@ -1,0 +1,144 @@
+'@type': MusicAlbum
+name: Первая запись
+slug: 2002-pervaia-zapis
+datePublished: '2002'
+byArtist: drugaia-storona
+genre:
+- Pop-Rock
+- Funk
+- Indie Rock
+description: 'Первая запись группы, упомянутая в истории коллектива. Композиции найдены
+  в веб-архиве (web.archive.org) личной страницы группы на сайте zanoza.lv, где они
+  подписаны как «музыка периода 2001-2002» в составе: Вячеслав О. (соло-гитара), Дмитрий
+  Д. (бас-гитара, вокал), Роман К. (гитара, вокал), Владимир Р. (ударные), Андрей
+  Г. (перкуссия, вокал).'
+description_en: 'The band''s first recording, mentioned in the group''s own history.
+  Tracks recovered via the Wayback Machine (web.archive.org) from the band''s page
+  on zanoza.lv, where they are labeled "music of the 2001-2002 period" with the lineup:
+  Vyacheslav O. (lead guitar), Dmitry D. (bass guitar, vocals), Roman K. (guitar,
+  vocals), Vladimir R. (drums), Andrei G. (percussion, vocals).'
+sameAs:
+- https://web.archive.org/web/20061206181826/http://www.zanoza.lv/art/view/2
+- https://archive.org/details/daugavpils-fans-drugaia-storona-2002-pervaia-zapis
+- https://archive.org/download/daugavpils-fans-drugaia-storona-2002-pervaia-zapis/daugavpils-fans-drugaia-storona-2002-pervaia-zapis_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Фанк
+  alternateName: Funk
+  audio:
+    contentUrl: 01-funk.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 866c190b1be6c84fc1bc3e9311a49f12135e4b936f67d855f4bccefd217d68aa
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M57S
+- '@type': MusicRecording
+  position: 2
+  name: Икс
+  alternateName: Iks
+  audio:
+    contentUrl: 02-iks.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f44f3b2d8bd6e4bc20112080654f8e19182c0a024e8367770ad2678789605cb9
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT7M34S
+- '@type': MusicRecording
+  position: 3
+  name: Неудачник
+  audio:
+    contentUrl: 03-neudachnik.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: abc9582b1ac6da7e6fbb5236ec5a6afffc53e4bb32420212124b8b377ba3081b
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M11S
+- '@type': MusicRecording
+  position: 4
+  name: О нём
+  audio:
+    contentUrl: 04-o-njom.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a57d5a8562148363a1b70e5850614c04500caafec6fa317ad737301623005c70
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M42S
+- '@type': MusicRecording
+  position: 5
+  name: Огненный образ
+  audio:
+    contentUrl: 05-ognennyi-obraz.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7a769486f275adc40bc9191c116e2c8b8ca1643224724a529cc69a8f2910c580
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT6M14S
+- '@type': MusicRecording
+  position: 6
+  name: Сказка
+  audio:
+    contentUrl: 06-skazka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0dac4f1c2f1f84ca35e40517aa81799478393f909169dac6a37ce1a6a39f14ee
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M22S
+- '@type': MusicRecording
+  position: 7
+  name: Жизнь - для меня
+  audio:
+    contentUrl: 07-zhizn-dlia-menia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ab641efe197ffa13b20b50c5e02c85ddb84818cecedf42aa0d16046eeb7fb686
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M12S
+- '@type': MusicRecording
+  position: 8
+  name: Зверь
+  audio:
+    contentUrl: 08-zver.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 47e168631c8c4be90531ec877c1e5fce4afef532388dfeb81bc4cbc81e1ea4b9
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M45S
+image: []
+video: []
+creditText:
+- Вячеслав О. - соло-гитара
+- Дмитрий Д. - бас-гитара, вокал
+- Роман К. - гитара, вокал
+- Владимир Р. - ударные
+- Андрей Г. - перкуссия, вокал
+creditText_en:
+- Vyacheslav O. - lead guitar
+- Dmitry D. - bass guitar, vocals
+- Roman K. - guitar, vocals
+- Vladimir R. - drums
+- Andrei G. - percussion, vocals

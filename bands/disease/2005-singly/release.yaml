@@ -1,0 +1,54 @@
+'@type': MusicAlbum
+name: Синглы 2005
+slug: 2005-singly
+datePublished: '2005'
+byArtist: disease
+genre:
+- Symphonic Metal
+- Instrumental Symphonic Metal
+description: 'Два сингла 2005 года, размещённые на личной странице группы на сайте
+  zanoza.lv (найдены через веб-архив web.archive.org) - других сведений об их записи
+  не сохранилось. "Dead Young" здесь - более ранняя/отдельная версия: на альбоме "I
+  Stay Here" (2006) есть трек с тем же названием, но это другой файл (иной размер
+  и, вероятно, другое сведение), поэтому обе версии сохранены отдельно, а не как дубликат.'
+description_en: 'Two 2005 singles posted on the band''s zanoza.lv page (recovered
+  via the Wayback Machine, web.archive.org) - no further details about their recording
+  survive. "Dead Young" here is an earlier/separate version: the "I Stay Here" (2006)
+  album has a track with the same title, but it is a distinct file (different size,
+  likely a different mix), so both versions are kept rather than treating this as
+  a duplicate.'
+sameAs:
+- https://web.archive.org/web/20070125022438/http://www.zanoza.lv/art/view/1
+- https://archive.org/details/daugavpils-fans-disease-2005-singly
+- https://archive.org/download/daugavpils-fans-disease-2005-singly/daugavpils-fans-disease-2005-singly_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Dead Young
+  audio:
+    contentUrl: 01-dead-young.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7dbefb52e251f2dd8a526d1207c81c1333110aad3b3ec97c80da5b55cc721687
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M45S
+- '@type': MusicRecording
+  position: 2
+  name: Your First
+  audio:
+    contentUrl: 02-your-first.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b993794ef38be684d11320e76d7f433dd08f3a03b5ded21dbf40420be5415f5a
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M44S
+image: []
+video: []
+creditText: []
+creditText_en: []

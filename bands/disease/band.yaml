@@ -119,7 +119,92 @@ image:
   caption: Disease
   caption_en: Disease
   depicts: []
+- contentUrl: media/disease-full.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 11112ac28e26a4132967ea66a4bb55050d91ffeaf3abb5138b326a9e268bb4c6
+  '@type': ImageObject
+  caption: Disease, полный состав (zanoza.lv)
+  caption_en: Disease, full lineup (zanoza.lv)
+  depicts: []
+- contentUrl: media/disease-piton.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 492b6d854354af7b46a2ec32d8fc37e342a9032ffc82c236529d26819d0c904b
+  '@type': ImageObject
+  caption: Питон (Павел Степанов)
+  caption_en: Piton (Pavel Stepanov)
+  depicts:
+  - Павел Степанов (Питон)
+- contentUrl: media/disease-roma.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2cb7ded41d8334bd66e90dff45ca07d7cfbc16baaf2e3e519548583cf7305b47
+  '@type': ImageObject
+  caption: Роман Максимов
+  caption_en: Roman Maksimov
+  depicts:
+  - Роман Максимов
+- contentUrl: media/disease-timur.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ad9f79c1b70d7faf642f20d8994a49c448cc48a69461740c71985aaa48257654
+  '@type': ImageObject
+  caption: Тимур Озун
+  caption_en: Timur Ozun
+  depicts:
+  - Тимур Озун
+- contentUrl: media/disease-vadim.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d3ba5642a6eab14490f89f14df5e1dbd1e565a00d064ae72ef565dbac3e266b7
+  '@type': ImageObject
+  caption: Вадим Ветрин
+  caption_en: Vadim Vetrin
+  depicts:
+  - Вадим Ветрин
+- contentUrl: media/disease-viktor.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2eeb56dd560b84cc1783518f18097f6c9984c05b30f18b40cec9ad3a40335814
+  '@type': ImageObject
+  caption: Виктор Станкевич
+  caption_en: Viktor Stankevich
+  depicts:
+  - Виктор Станкевич
 video:
+- contentUrl: media/disease-koncert.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 55d0903a542f988bc8213eaf10881cc983d335741c190aa1b30074181f6922ec
+  '@type': VideoObject
+  name: Концерт (архивная запись, zanoza.lv)
+  bitrate: 697 kbps
+  duration: PT3M32S
+- contentUrl: media/disease-treiler-7-dekabria-2005.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 43cf4be4ae378333b4431fbb6b04ab02db779b3ef251d3b2c3584fdac218ce2c
+  '@type': VideoObject
+  name: Трейлер клипа, 2005
+  bitrate: 367 kbps
+  duration: PT22S
 - contentUrl: media/disease-krabis-1998.mp4
   encodingFormat: video/mp4
   identifier:

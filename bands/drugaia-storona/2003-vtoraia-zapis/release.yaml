@@ -1,0 +1,134 @@
+'@type': MusicAlbum
+name: Вторая запись
+slug: 2003-vtoraia-zapis
+datePublished: '2003'
+byArtist: drugaia-storona
+genre:
+- Pop-Rock
+- Funk
+- Indie Rock
+description: 'Вторая запись группы, упомянутая в истории коллектива - сделана с обновлённым
+  составом после выступления на большом совместном концерте в ДКХ (4 января 2003 года)
+  вместе с «Криками Мартина» и «Ko Band». Композиции найдены в веб-архиве (web.archive.org)
+  личной страницы группы на сайте zanoza.lv, где они подписаны как «музыка периода
+  2002-2003» в составе: Альбина П. (вокал), Дмитрий Д. (бас-гитара, вокал), Роман
+  К. (гитара, вокал), Владимир Р. (ударные), Артём П. (перкуссия, вокал), Валерий
+  К. (соло-гитара).'
+description_en: 'The band''s second recording, mentioned in the group''s own history
+  - made with an updated lineup following a major joint concert at the DKKh (January
+  4, 2003) alongside "Kriki Martina" and "Ko Band". Tracks recovered via the Wayback
+  Machine (web.archive.org) from the band''s page on zanoza.lv, where they are labeled
+  "music of the 2002-2003 period" with the lineup: Albina P. (vocals), Dmitry D. (bass
+  guitar, vocals), Roman K. (guitar, vocals), Vladimir R. (drums), Artyom P. (percussion,
+  vocals), Valery K. (lead guitar).'
+sameAs:
+- https://web.archive.org/web/20061206181826/http://www.zanoza.lv/art/view/2
+- https://archive.org/details/daugavpils-fans-drugaia-storona-2003-vtoraia-zapis
+- https://archive.org/download/daugavpils-fans-drugaia-storona-2003-vtoraia-zapis/daugavpils-fans-drugaia-storona-2003-vtoraia-zapis_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Боссанова
+  alternateName: Bossanova
+  audio:
+    contentUrl: 01-bossanova.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6d48e81701ac59f1603bdfc2d614838da9e6ce3499857664d61def28a44f2f83
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M11S
+- '@type': MusicRecording
+  position: 2
+  name: Диско
+  alternateName: Disco
+  audio:
+    contentUrl: 02-disko.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 41a471519714d1246b16a2336624918fc889d8f90d63d610e0421a10272c93ba
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M39S
+- '@type': MusicRecording
+  position: 3
+  name: Flies
+  audio:
+    contentUrl: 03-flies.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ea11f97ed2535f315b3ebd49d943cda38f4f37b8240cf5aeab8370263d8a5c24
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M10S
+- '@type': MusicRecording
+  position: 4
+  name: Ласточка
+  audio:
+    contentUrl: 04-lastochka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 72907345a2dc17185f3349a195c2a206e005674154f6542021736a8070d7ca49
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M2S
+- '@type': MusicRecording
+  position: 5
+  name: Life
+  audio:
+    contentUrl: 05-life.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: eac5d0d93def08894f562eee16eb4a7fae853078d261cde342a0cd8385a2075f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M2S
+- '@type': MusicRecording
+  position: 6
+  name: Забей
+  audio:
+    contentUrl: 06-zabei.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f9d8da966fab72d5d8a15cf7dd8c7bbf2d099530819a8201a7e7169c46f120b7
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M10S
+image:
+- contentUrl: bike-show-2003-5.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 6ba0da72cabbab49103c1831159e5a6395c670fbe98f029b737774959e520f66
+  '@type': ImageObject
+  caption: Байк-шоу, 2003
+  caption_en: Bike show, 2003
+  depicts: []
+video: []
+creditText:
+- Альбина П. - вокал
+- Дмитрий Д. - бас-гитара, вокал
+- Роман К. - гитара, вокал
+- Владимир Р. - ударные
+- Артём П. - перкуссия, вокал
+- Валерий К. - соло-гитара
+creditText_en:
+- Albina P. - vocals
+- Dmitry D. - bass guitar, vocals
+- Roman K. - guitar, vocals
+- Vladimir R. - drums
+- Artyom P. - percussion, vocals
+- Valery K. - lead guitar

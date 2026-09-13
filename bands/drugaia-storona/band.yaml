@@ -203,7 +203,17 @@ description_en: 'The vocal-instrumental ensemble "Drugaia Storona" (The Other Si
 sameAs:
 - https://archive.org/details/daugavpils-fans-drugaia-storona
 - https://archive.org/download/daugavpils-fans-drugaia-storona/daugavpils-fans-drugaia-storona_archive.torrent
-image: []
+image:
+- contentUrl: media/drugaia-storona-vse-poiut.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 6f83b994b78f84bbd7aed2b8097de8a6ed0811e9761aa2c569abc99b4ece0137
+  '@type': ImageObject
+  caption: Все поют (zanoza.lv)
+  caption_en: Everyone singing (zanoza.lv)
+  depicts: []
 video:
 - contentUrl: media/drugaia-storona-blues-bikers-day-2006.mp4
   encodingFormat: video/mp4

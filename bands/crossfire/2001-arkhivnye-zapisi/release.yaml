@@ -1,0 +1,162 @@
+'@type': MusicAlbum
+name: Архивные записи
+slug: 2001-arkhivnye-zapisi
+datePublished: '2001'
+byArtist: crossfire
+genre:
+- Thrash Metal
+- Heavy Metal
+description: '10 композиций, найденных в веб-архиве (web.archive.org) личной страницы
+  группы на сайте zanoza.lv - это единственное сохранившееся аудио группы. Сама страница
+  не даёт никакой дополнительной информации ("из всей информации о группе у нас, к
+  сожалению, есть только mp3"): ни дат, ни привязки к одному из двух известных альбомов
+  группы, «Reduced to Zero» (1999) или «Control Is Lost» (2001). Год издания указан
+  условно, по году распада группы (последний год, когда обе пластинки уже существовали)
+  - фактическая дата записи каждой композиции неизвестна.'
+description_en: '10 tracks recovered via the Wayback Machine (web.archive.org) from
+  the band''s page on zanoza.lv - the only surviving audio for this band. The page
+  itself gives no further information ("of everything we know about the band, unfortunately
+  all we have is the mp3s"): no dates, and no way to tell which of the band''s two
+  known albums, "Reduced to Zero" (1999) or "Control Is Lost" (2001), any given track
+  belongs to. The publication year is a placeholder - the band''s dissolution year,
+  by which both records already existed - not an actual known recording date for any
+  individual track.'
+sameAs:
+- https://web.archive.org/web/20070125022451/http://www.zanoza.lv/art/view/4
+- https://archive.org/details/daugavpils-fans-crossfire-2001-arkhivnye-zapisi
+- https://archive.org/download/daugavpils-fans-crossfire-2001-arkhivnye-zapisi/daugavpils-fans-crossfire-2001-arkhivnye-zapisi_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Dangerous Minds
+  audio:
+    contentUrl: 01-dangerous-minds.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5eef52e36972d9cb0e6dd138cc3572f2fd476e1fd3fee83358c80cf893bb350a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M51S
+- '@type': MusicRecording
+  position: 2
+  name: Devil for Children
+  audio:
+    contentUrl: 02-devil-for-children.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a993c7923609eeb0e87b7c6e992756b7ae0cd1fa9390b6c787f946af12739f7b
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M25S
+- '@type': MusicRecording
+  position: 3
+  name: Dog House
+  audio:
+    contentUrl: 03-dog-house.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f45c1a9cb3cc1306bb04a8edda68dbf04c196d521f33b46c88ea6f95c2dbb9e5
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M37S
+- '@type': MusicRecording
+  position: 4
+  name: Down
+  audio:
+    contentUrl: 04-down.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fffee8c006419d26c962a9b4230ee4ec58d43b4ab9b60e6f6f5262fbd4a06301
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M13S
+- '@type': MusicRecording
+  position: 5
+  name: Fatal Add
+  audio:
+    contentUrl: 05-fatal-add.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7566c8fb0051f0c1cd4f53c253e74ea121b78de8cf966d2e6f077919d00d8ec9
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M37S
+- '@type': MusicRecording
+  position: 6
+  name: It Seems to Me
+  audio:
+    contentUrl: 06-it-seems-to-me.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7b3a1fdf26fe8096cb2a7fe6a92683f570dd07a717dd95569bbcd690a4d29432
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M36S
+- '@type': MusicRecording
+  position: 7
+  name: Music-X
+  audio:
+    contentUrl: 07-music-x.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 010598c401e0f54e19631db852601e424f471fd3b2ae802b923d7e5f8420319a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M20S
+- '@type': MusicRecording
+  position: 8
+  name: Mysery
+  audio:
+    contentUrl: 08-mysery.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2703be40e5dbddffc2e634bcf10577c86a992345d7552329fdcf3d20f55fb997
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M50S
+- '@type': MusicRecording
+  position: 9
+  name: Stars
+  audio:
+    contentUrl: 09-stars.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c8612978b22d28b03dfec401da18903c14d50a928b9ced57d48726839042a11f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M59S
+- '@type': MusicRecording
+  position: 10
+  name: U-Wa-U-Wa-Wa
+  audio:
+    contentUrl: 10-u-wa-u-wa-wa.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d85725b824941c248f235fa02da34c93849674b18391b8aab2c56dffe53378e2
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M30S
+image: []
+video: []
+creditText: []
+creditText_en: []

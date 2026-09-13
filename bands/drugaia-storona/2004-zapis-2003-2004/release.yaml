@@ -1,0 +1,131 @@
+'@type': MusicAlbum
+name: Запись 2003-2004
+slug: 2004-zapis-2003-2004
+datePublished: '2004'
+byArtist: drugaia-storona
+genre:
+- Pop-Rock
+- Funk
+- Indie Rock
+description: 'Третья по счёту запись, не упомянутая по имени в собственной истории
+  группы (та ограничивается «первой» 2002 года и «второй» 2003 года, а затем сразу
+  переходит к альбому «Радуга» 2004 года). Композиции найдены в веб-архиве (web.archive.org)
+  личной страницы группы на сайте zanoza.lv, где они подписаны как «музыка периода
+  2003-2004» в составе: Альбина П. (вокал), Евгений Е. (бас-гитара, вокал), Роман
+  К. (гитара, вокал), Владимир Р. (ударные), Артём П. (перкуссия, вокал). Трек «Instrumental»
+  был указан на той же странице, но его mp3-файл так и не был сохранён краулером web.archive.org
+  - считается утраченным. Файл «Summertime» сам по себе повреждён/оборван в архиве:
+  оба сохранённых архивом слепка (январь и март 2007) содержат идентичный, но обрезанный
+  файл - реально декодируется только около 7 секунд звука, хотя ID3-заголовок заявляет
+  длительность 2:46.'
+description_en: 'A third recording, not named as such in the band''s own history (which
+  only calls out the "first" 2002 recording and "second" 2003 recording, then jumps
+  straight to the 2004 album "Raduga"). Tracks recovered via the Wayback Machine (web.archive.org)
+  from the band''s page on zanoza.lv, where they are labeled "music of the 2003-2004
+  period" with the lineup: Albina P. (vocals), Evgeny E. (bass guitar, vocals), Roman
+  K. (guitar, vocals), Vladimir R. (drums), Artyom P. (percussion, vocals). The track
+  "Instrumental" was listed on the same page, but its mp3 file was never actually
+  captured by the web.archive.org crawler - considered lost. The "Summertime" file
+  itself is damaged/truncated in the archive: both preserved crawl snapshots (January
+  and March 2007) contain the identical but cut-off file - only about 7 seconds of
+  audio actually decode, even though the ID3 header claims a 2:46 duration.'
+sameAs:
+- https://web.archive.org/web/20061206181826/http://www.zanoza.lv/art/view/2
+- https://archive.org/details/daugavpils-fans-drugaia-storona-2004-zapis-2003-2004
+- https://archive.org/download/daugavpils-fans-drugaia-storona-2004-zapis-2003-2004/daugavpils-fans-drugaia-storona-2004-zapis-2003-2004_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Suddenly
+  audio:
+    contentUrl: 01-suddenly.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 459543fdd6ef43003a5489ff02e72b102138077ee5c495d52c57dd84bd929a39
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M34S
+- '@type': MusicRecording
+  position: 2
+  name: Тварь
+  audio:
+    contentUrl: 02-tvar.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a336f667a657fd66d84f86488ca0be6267554b8b61da60a00d18e0ba99f3784a
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M33S
+- '@type': MusicRecording
+  position: 3
+  name: Summertime
+  audio:
+    contentUrl: 03-summertime.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5f614b978396fe54a66b2bbc9dbabbfe84286db723387eea3adf3cd24e9af895
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT7S
+- '@type': MusicRecording
+  position: 4
+  name: Bluzzz
+  audio:
+    contentUrl: 04-bluzzz.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 62bcbf2950bf693b529031c0b544ec70d784be2b99da4073e9f9f98b6420bd06
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M15S
+- '@type': MusicRecording
+  position: 5
+  name: New History
+  audio:
+    contentUrl: 05-new-history.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d9b9777c94b692c00c719ecbcb430e9d43c7cde95890e37348d14ce2b438535f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M17S
+- '@type': MusicRecording
+  position: 6
+  name: Instrumental
+- '@type': MusicRecording
+  position: 7
+  name: Zamtaria
+  audio:
+    contentUrl: 06-zamtaria.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3cfd2ab58117df807f16dd88c6ca8dc0a73c80411a6d8bbf7465b0b669c7dc2b
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M53S
+image: []
+video: []
+creditText:
+- Альбина П. - вокал
+- Евгений Е. - бас-гитара, вокал
+- Роман К. - гитара, вокал
+- Владимир Р. - ударные
+- Артём П. - перкуссия, вокал
+creditText_en:
+- Albina P. - vocals
+- Evgeny E. - bass guitar, vocals
+- Roman K. - guitar, vocals
+- Vladimir R. - drums
+- Artyom P. - percussion, vocals

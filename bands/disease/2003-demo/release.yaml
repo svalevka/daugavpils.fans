@@ -1,0 +1,51 @@
+'@type': MusicAlbum
+name: Demo 2003
+slug: 2003-demo
+datePublished: '2003'
+byArtist: disease
+genre:
+- Symphonic Metal
+- Instrumental Symphonic Metal
+description: Демо-кассета/диск 2003 года, упомянутая в истории группы. Композиции
+  найдены в веб-архиве (web.archive.org) личной страницы группы на сайте zanoza.lv,
+  где были подписаны как «из альбома "Demo 2003"» - других сведений об этой записи
+  не сохранилось.
+description_en: The "Demo 2003" tape/disc mentioned in the band's own history. Tracks
+  recovered via the Wayback Machine (web.archive.org) from the band's page on zanoza.lv,
+  where they were labeled "from album Demo 2003" - no further details about this recording
+  survive.
+sameAs:
+- https://web.archive.org/web/20070125022438/http://www.zanoza.lv/art/view/1
+- https://archive.org/details/daugavpils-fans-disease-2003-demo
+- https://archive.org/download/daugavpils-fans-disease-2003-demo/daugavpils-fans-disease-2003-demo_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Doom
+  audio:
+    contentUrl: 01-doom.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 46242ba7e2e130ae49467085fca284bd8ceac56d1df8dd7709ca463219f3d194
+    '@type': AudioObject
+    bitrate: 56 kbps
+    duration: PT2M19S
+- '@type': MusicRecording
+  position: 2
+  name: Triangle
+  audio:
+    contentUrl: 02-triangle.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6fed9f01a44bad8b582904aedc470afd94b8f062af2a6b5ff652a3b448572e44
+    '@type': AudioObject
+    bitrate: 56 kbps
+    duration: PT5M12S
+image: []
+video: []
+creditText: []
+creditText_en: []
