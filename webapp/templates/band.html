@@ -61,6 +61,9 @@
   </li>
   {% endfor %}
 </ul>
+{% if not base_path %}
+<p class="view-all"><a href="https://review.daugavpils.fans/submit/{{ band.slug }}/add-release?lang={{ lang }}">+ {{ t.propose_album }}</a></p>
+{% endif %}
 {% endif %}
 
 {% if visible_same_as %}

@@ -9,6 +9,7 @@
 {% for release in releases %}
   <li><a href="/submit/{{ band_slug }}/{{ release.slug }}">{{ release.name }}</a></li>
 {% endfor %}
+  <li><a href="/submit/{{ band_slug }}/add-release"><strong>+ {{ t.add_new_release }}</strong></a></li>
 </ul>
 
 <h2>{{ t.section_members }}</h2>

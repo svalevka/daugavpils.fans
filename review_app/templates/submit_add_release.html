@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ t.add_release_title }}{% endblock %}
+{% block content %}
+<h1>{{ t.add_release_heading }}</h1>
+<p class="meta">{{ band_name }}</p>
+<p>{{ t.add_release_desc }}</p>
+
+<form method="post" action="/submit-release" enctype="multipart/form-data" data-album-form>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="band_slug" value="{{ band_slug }}">
+
+  <div class="field">
+    <label for="name">{{ t.album_name }} *</label>
+    <input type="text" id="name" name="name" required placeholder="e.g. Карманный Мир">
+  </div>
+
+  <div class="field">
+    <label for="date_published">{{ t.album_year }} *</label>
+    <input type="text" id="date_published" name="date_published" required pattern="[0-9]{4}" placeholder="1993">
+  </div>
+
+  <div class="field">
+    <label for="genre">{{ t.album_genre }}</label>
+    <input type="text" id="genre" name="genre" placeholder="Hard Rock, Heavy Metal">
+  </div>
+
+  <div class="field">
+    <label for="license">{{ t.album_license }}</label>
+    <select id="license" name="license">
+      {% for lic_url, lic_label in licenses %}
+        <option value="{{ lic_url }}" {% if lic_url == default_license %}selected{% endif %}>{{ lic_label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="cover">{{ t.album_cover }}</label>
+    <input type="file" id="cover" name="cover" accept="image/jpeg,image/png,image/webp" data-album-cover-input>
+    <div data-album-cover-preview></div>
+  </div>
+
+  <div class="field">
+    <label>{{ t.album_tracks }} *</label>
+    <input type="file" multiple accept="audio/mpeg,audio/flac,audio/wav,audio/ogg,.mp3,.flac,.wav,.ogg" data-album-audio-input hidden>
+    <button type="button" class="btn" data-album-add-audio>+ {{ t.album_tracks }}</button>
+    <div data-album-track-list style="margin-top: 10px;"></div>
+  </div>
+
+  <div class="field">
+    <label for="description">{{ t.album_description }}</label>
+    <textarea id="description" name="description" rows="4" placeholder="История записи, состав, примечания..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="description_en">{{ t.album_description_en }}</label>
+    <textarea id="description_en" name="description_en" rows="3" placeholder="Recording history, liner notes..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="submitter_name">{{ t.submitter_name }}</label>
+    <input type="text" id="submitter_name" name="submitter_name">
+  </div>
+
+  <div class="field">
+    <label for="submitter_contact">{{ t.submitter_contact_media }}</label>
+    <input type="text" id="submitter_contact" name="submitter_contact">
+  </div>
+
+  <!-- honeypot: hidden from real visitors via CSS, never filled by a human -->
+  <div class="field honeypot" aria-hidden="true">
+    <label for="website">{{ t.honeypot_label }}</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+  </div>
+
+  <button type="submit" data-album-submit disabled data-loading-text="Uploading...">{{ t.submit_button }}</button>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='album_upload.js') }}"></script>
+{% endblock %}

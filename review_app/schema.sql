@@ -153,3 +153,37 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 CREATE INDEX IF NOT EXISTS idx_analytics_created ON analytics_events(created_at);
 CREATE INDEX IF NOT EXISTS idx_analytics_type ON analytics_events(event_type, created_at);
 CREATE INDEX IF NOT EXISTS idx_analytics_band ON analytics_events(band_slug, created_at);
+
+-- New album proposals (GitHub issue #20):
+-- Allows proposing a brand-new release with audio tracks and optional cover art
+-- under an existing band. Similar to media_proposals, approving one dispatches
+-- apply-album-proposal.yml which uploads audio/cover to archive.org, creates
+-- release.yaml, commits to git, and unlinks staged files.
+CREATE TABLE IF NOT EXISTS album_proposals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    band_slug TEXT NOT NULL,
+    release_slug TEXT NOT NULL,
+    name TEXT NOT NULL,
+    date_published TEXT NOT NULL,
+    genre TEXT,                                  -- JSON list[str]
+    license TEXT NOT NULL,
+    description TEXT,
+    description_en TEXT,
+    cover_stored_filename TEXT,
+    tracks_json TEXT NOT NULL,                   -- JSON list of track dicts
+    submitter_name TEXT,
+    submitter_contact TEXT,
+    submitter_ip TEXT NOT NULL,
+    submitted_by_approver_id INTEGER REFERENCES approvers(id),
+    status TEXT NOT NULL DEFAULT 'pending',      -- pending | approved | rejected | publishing | published | publish_failed
+    decided_by INTEGER REFERENCES approvers(id),
+    decided_at TEXT,
+    github_run_id TEXT,
+    published_at TEXT,
+    publish_error TEXT,
+    ai_decision TEXT,
+    ai_confidence REAL,
+    ai_reasoning TEXT,
+    ai_evaluated_at TEXT
+);

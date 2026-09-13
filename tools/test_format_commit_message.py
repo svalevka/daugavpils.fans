@@ -1,7 +1,10 @@
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from format_commit_message import format_commit_message, format_step_summary
 
@@ -67,6 +70,26 @@ class FormatCommitMessageTest(unittest.TestCase):
         self.assertIn("AI Decision: approved (90% confidence)", msg)
         self.assertIn("AI Reasoning: Authentic band photo.", msg)
         self.assertIn("Media-Proposal-ID: 5", msg)
+
+    def test_album_proposal_formatting(self):
+        proposal = {
+            "id": 42,
+            "band_slug": "degradanti",
+            "release_slug": "1998-live",
+            "name": "Live in Riga 1998",
+            "tracks": [{"position": 1, "name": "Track 1"}, {"position": 2, "name": "Track 2"}],
+            "decided_by_name": "AI Approval Agent",
+            "ai_decision": "approved",
+            "ai_confidence": 0.95,
+            "ai_reasoning": "Authentic live bootleg.",
+        }
+        msg = format_commit_message(proposal, is_album=True)
+        self.assertIn("Apply approved album proposal #42", msg)
+        self.assertIn("Target: degradanti/1998-live (Live in Riga 1998 - 2 tracks)", msg)
+        self.assertIn("Decided by: AI Approval Agent", msg)
+        self.assertIn("AI Decision: approved (95% confidence)", msg)
+        self.assertIn("AI Reasoning: Authentic live bootleg.", msg)
+        self.assertIn("Album-Proposal-ID: 42", msg)
 
     def test_step_summary_markdown(self):
         proposal = {

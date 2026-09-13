@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ t.thank_you_title }}{% endblock %}
+{% block content %}
+<h1>{{ t.thank_you_heading }}</h1>
+<p>{{ t.album_submitted_msg.format(title=title, count=count) }}</p>
+<p><a href="/submit">{{ t.pick_band_heading }}</a></p>
+{% endblock %}

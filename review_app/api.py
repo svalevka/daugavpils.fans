@@ -245,6 +245,141 @@ def media_publish_result(proposal_id: int):
     return jsonify({"status": new_status})
 
 
+@bp.get("/album-proposals/<int:proposal_id>")
+def get_album_proposal(proposal_id: int):
+    _require_callback_key()
+    conn = db.get_connection()
+
+    cur = conn.execute(
+        "UPDATE album_proposals SET status = 'publishing' "
+        "WHERE id = ? AND status IN ('approved', 'publishing', 'publish_failed')",
+        (proposal_id,),
+    )
+    conn.commit()
+    if cur.rowcount != 1:
+        row = conn.execute("SELECT id FROM album_proposals WHERE id = ?", (proposal_id,)).fetchone()
+        abort(404 if row is None else 409)
+
+    row = conn.execute(
+        """
+        SELECT a.id, a.band_slug, a.release_slug, a.name, a.date_published, a.genre,
+               a.license, a.description, a.description_en, a.cover_stored_filename,
+               a.tracks_json, a.ai_decision, a.ai_confidence, a.ai_reasoning,
+               ap.display_name AS decided_by_name
+        FROM album_proposals a
+        LEFT JOIN approvers ap ON a.decided_by = ap.id
+        WHERE a.id = ?
+        """,
+        (proposal_id,),
+    ).fetchone()
+    return jsonify(
+        {
+            "id": row["id"],
+            "band_slug": row["band_slug"],
+            "release_slug": row["release_slug"],
+            "name": row["name"],
+            "date_published": row["date_published"],
+            "genre": json.loads(row["genre"]) if row["genre"] else [],
+            "license": row["license"],
+            "description": row["description"],
+            "description_en": row["description_en"],
+            "has_cover": bool(row["cover_stored_filename"]),
+            "tracks": json.loads(row["tracks_json"]) if row["tracks_json"] else [],
+            "decided_by_name": row["decided_by_name"] if "decided_by_name" in row.keys() else None,
+            "ai_decision": row["ai_decision"] if "ai_decision" in row.keys() else None,
+            "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
+            "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
+        }
+    )
+
+
+@bp.get("/album-proposals/<int:proposal_id>/cover")
+def get_album_proposal_cover(proposal_id: int):
+    _require_callback_key()
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT cover_stored_filename FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None or not row["cover_stored_filename"]:
+        abort(404)
+    uploads_path = current_app.config["MEDIA_UPLOADS_PATH"]
+    path = Path(uploads_path) / row["cover_stored_filename"]
+    if not path.exists():
+        abort(404)
+    return send_file(path)
+
+
+@bp.get("/album-proposals/<int:proposal_id>/tracks/<int:position>/file")
+def get_album_proposal_track_file(proposal_id: int, position: int):
+    _require_callback_key()
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT tracks_json FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None or not row["tracks_json"]:
+        abort(404)
+    tracks = json.loads(row["tracks_json"])
+    track = next((t for t in tracks if t.get("position") == position), None)
+    if track is None or not track.get("stored_filename"):
+        abort(404)
+    uploads_path = current_app.config["MEDIA_UPLOADS_PATH"]
+    path = Path(uploads_path) / track["stored_filename"]
+    if not path.exists():
+        abort(404)
+    return send_file(path, mimetype=track.get("content_type", "audio/mpeg"))
+
+
+@bp.get("/album-proposals/approved")
+def list_approved_album_proposals():
+    _require_callback_key()
+    conn = db.get_connection()
+    rows = conn.execute(
+        "SELECT id FROM album_proposals WHERE status IN ('approved', 'publishing') ORDER BY id"
+    ).fetchall()
+    return jsonify([row["id"] for row in rows])
+
+
+@bp.post("/album-proposals/<int:proposal_id>/result")
+def record_album_publish_result(proposal_id: int):
+    _require_callback_key()
+    payload = request.get_json(silent=True) or {}
+    success = bool(payload.get("success"))
+    new_status = "published" if success else "publish_failed"
+
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT cover_stored_filename, tracks_json FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None:
+        abort(404)
+
+    if success:
+        conn.execute(
+            "UPDATE album_proposals SET status = 'published', published_at = datetime('now'), "
+            "github_run_id = ?, publish_error = NULL WHERE id = ?",
+            (payload.get("run_id"), proposal_id),
+        )
+        conn.commit()
+
+        uploads_path = current_app.config["MEDIA_UPLOADS_PATH"]
+        if row["cover_stored_filename"]:
+            (Path(uploads_path) / row["cover_stored_filename"]).unlink(missing_ok=True)
+        if row["tracks_json"]:
+            tracks = json.loads(row["tracks_json"])
+            for t in tracks:
+                if "stored_filename" in t:
+                    (Path(uploads_path) / t["stored_filename"]).unlink(missing_ok=True)
+    else:
+        conn.execute(
+            "UPDATE album_proposals SET status = 'publish_failed', "
+            "github_run_id = ?, publish_error = ? WHERE id = ?",
+            (payload.get("run_id"), payload.get("error"), proposal_id),
+        )
+        conn.commit()
+
+    return jsonify({"status": new_status})
+
+
 @bp.get("/backup")
 def get_backup_bundle():
     """Stream an atomic compressed snapshot of review.db and uploads/ to authorized caller."""

@@ -30,6 +30,7 @@ from config import Config, GithubConfig, SmtpConfig  # noqa: E402
 JPEG_BYTES = b"\xff\xd8\xff\xe0" + b"\x00" * 128
 PNG_BYTES = b"\x89PNG\r\n\x1a\n" + b"\x00" * 128
 MP4_BYTES = b"\x00\x00\x00\x18ftypmp42" + b"\x00" * 128
+MP3_BYTES = b"ID3\x03\x00\x00\x00\x00\x00\x00" + b"\xff\xfb\x90\x00" * 32
 UNRECOGNIZED_BYTES = b"this is not an image or video file" * 4
 
 
@@ -86,6 +87,7 @@ class ReviewAppTestCase(unittest.TestCase):
         self.mock_send_magic_link = self._patch("auth.mail.send_magic_link")
         self.mock_trigger_apply = self._patch("dashboard.github_dispatch.trigger_apply")
         self.mock_trigger_media_apply = self._patch("dashboard.github_dispatch.trigger_media_apply")
+        self.mock_trigger_album_apply = self._patch("dashboard.github_dispatch.trigger_album_apply")
         self.mock_send_media_approved = self._patch("dashboard.mail.send_media_approved_notification")
 
     def _patch(self, target: str) -> mock.MagicMock:
@@ -153,6 +155,14 @@ class ReviewAppTestCase(unittest.TestCase):
         finally:
             conn.close()
 
+    def fetch_album_proposals(self) -> list[sqlite3.Row]:
+        conn = sqlite3.connect(self.database_path)
+        conn.row_factory = sqlite3.Row
+        try:
+            return conn.execute("SELECT * FROM album_proposals ORDER BY id").fetchall()
+        finally:
+            conn.close()
+
     def callback_headers(self) -> dict[str, str]:
         """Auth header the GitHub Action uses against /api/* - see
         api.py's _require_callback_key()."""
@@ -204,3 +214,29 @@ class ReviewAppTestCase(unittest.TestCase):
         base.update(form)
         base["files"] = [(io.BytesIO(data), filename) for filename, data in file_tuples]
         return self.client.post("/submit-media", data=base, content_type="multipart/form-data")
+
+    def submit_album(
+        self,
+        track_tuples: list[tuple[str, bytes]] | None = None,
+        cover_tuple: tuple[str, bytes] | None = None,
+        **form,
+    ):
+        if track_tuples is None:
+            track_tuples = [("01-track.mp3", MP3_BYTES)]
+        base = {
+            "band_slug": self.fx.band_slug,
+            "name": "New Album",
+            "date_published": "1995",
+            "genre": "Rock",
+            "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+            "description": "Liner notes",
+            "description_en": "",
+            "submitter_name": "",
+            "submitter_contact": "",
+            "website": "",
+        }
+        base.update(form)
+        base["tracks"] = [(io.BytesIO(data), filename) for filename, data in track_tuples]
+        if cover_tuple:
+            base["cover"] = (io.BytesIO(cover_tuple[1]), cover_tuple[0])
+        return self.client.post("/submit-release", data=base, content_type="multipart/form-data")

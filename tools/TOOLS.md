@@ -188,6 +188,31 @@ content type, caption) and the downloaded media binary file:
 - `--bands-dir PATH` -- point it at a test fixture tree.
 - `--skip-upload` or `--dry-run` -- test without communicating with archive.org.
 
+## `apply_album_proposal.py`
+
+**Problem it solves:** turning an approved new album proposal (tracklist, audio files,
+cover art, metadata) into a published release on archive.org and creating
+`bands/<band-slug>/<release-slug>/release.yaml` automatically in git. Replaces
+the complex manual process of staging, probing, checksumming, and publishing a
+new release with a single deterministic pipeline.
+
+**How:** given a proposal JSON (band slug, release slug, name, year, genre, license,
+description, tracklist metadata), the downloaded track audio files, and an optional cover image:
+- Validates the band exists and ensures the release directory does not already exist.
+- Standardizes cover art as `cover.jpg` (or `.png`/`.webp`), copies it, and computes its sha256.
+- Standardizes each audio track filename as `<position:02d>-<slugified-track-title>.<ext>`.
+- Extracts duration (ISO 8601) and bitrate via `ffprobe`, and computes sha256 checksums.
+- Builds a fully-validated Pydantic `MusicAlbum` model and serializes it to `release.yaml`.
+- Uploads the release item directly to archive.org (`daugavpils-fans-<band>-<release>`),
+  syncs item metadata, and updates the consolidated metadata backup bundle (`daugavpils-fans-metadata`).
+
+**When you'd run it:**
+- `python tools/apply_album_proposal.py --proposal-file proposal.json --tracks-dir /path/to/tracks/ [--cover-file cover.jpg]`
+  -- executed automatically by `.github/workflows/apply-album-proposal.yml`
+  when an approver clicks "Upload & Publish" in `review_app`, or via AI auto-approval.
+- `--bands-dir PATH` -- point it at a test fixture tree.
+- `--skip-upload` or `--dry-run` -- test without communicating with archive.org.
+
 ## `archive_org.py`
 
 **Problem it solves:** the publish tool and the website both need to agree

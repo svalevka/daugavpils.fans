@@ -121,11 +121,44 @@ def view_pending():
         }
         (media_pending if row["status"] == "pending" else media_awaiting_publish).append(item)
 
+    album_rows = conn.execute(
+        "SELECT * FROM album_proposals WHERE status IN ('pending', 'approved', 'publishing', 'publish_failed') ORDER BY created_at"
+    ).fetchall()
+    album_pending = []
+    album_awaiting_publish = []
+    for row in album_rows:
+        item = {
+            "id": row["id"],
+            "band_slug": row["band_slug"],
+            "release_slug": row["release_slug"],
+            "name": row["name"],
+            "date_published": row["date_published"],
+            "genre": json.loads(row["genre"]) if row["genre"] else [],
+            "license": row["license"],
+            "description": row["description"],
+            "description_en": row["description_en"],
+            "cover_stored_filename": row["cover_stored_filename"],
+            "tracks": json.loads(row["tracks_json"]) if row["tracks_json"] else [],
+            "submitter_name": row["submitter_name"],
+            "submitter_contact": row["submitter_contact"],
+            "is_own_submission": row["submitted_by_approver_id"] == g.approver["id"],
+            "status": row["status"],
+            "github_run_id": row["github_run_id"] if "github_run_id" in row.keys() else None,
+            "publish_error": row["publish_error"] if "publish_error" in row.keys() else None,
+            "ai_decision": row["ai_decision"] if "ai_decision" in row.keys() else None,
+            "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
+            "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
+            "ai_evaluated_at": row["ai_evaluated_at"] if "ai_evaluated_at" in row.keys() else None,
+        }
+        (album_pending if row["status"] == "pending" else album_awaiting_publish).append(item)
+
     return render_template(
         "dashboard.html",
         proposals=proposals,
         media_pending=media_pending,
         media_awaiting_publish=media_awaiting_publish,
+        album_pending=album_pending,
+        album_awaiting_publish=album_awaiting_publish,
         approver=g.approver,
         can_view_stats=roles.user_has_role(conn, g.approver["id"], roles.ROLE_STATS),
     )
@@ -370,3 +403,160 @@ def media_file(proposal_id: int):
     if not path.exists():
         abort(404)
     return send_file(path, mimetype=row["content_type"])
+
+
+def _decide_album(proposal_id: int, new_status: str) -> tuple[bool, str]:
+    conn = db.get_connection()
+    approver_id = g.approver["id"]
+    cur = conn.execute(
+        """
+        UPDATE album_proposals
+        SET status = ?, decided_by = ?, decided_at = datetime('now')
+        WHERE id = ? AND status = 'pending'
+          AND (submitted_by_approver_id IS NULL OR submitted_by_approver_id != ?)
+        """,
+        (new_status, approver_id, proposal_id, approver_id),
+    )
+    conn.commit()
+    if cur.rowcount == 1:
+        return True, ""
+
+    row = conn.execute(
+        "SELECT status, submitted_by_approver_id FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None:
+        return False, "not_found"
+    if row["submitted_by_approver_id"] == approver_id:
+        return False, "self_approval"
+    return False, "already_decided"
+
+
+@bp.post("/album-proposals/<int:proposal_id>/approve")
+@require_approver
+def approve_album(proposal_id: int):
+    ok, reason = _decide_album(proposal_id, "approved")
+    if not ok:
+        _abort_for_reason(reason)
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.post("/album-proposals/<int:proposal_id>/reject")
+@require_approver
+def reject_album(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT cover_stored_filename, tracks_json FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    ok, reason = _decide_album(proposal_id, "rejected")
+    if not ok:
+        _abort_for_reason(reason)
+
+    if row is not None:
+        if row["cover_stored_filename"]:
+            _media_file_path(row["cover_stored_filename"]).unlink(missing_ok=True)
+        if row["tracks_json"]:
+            tracks = json.loads(row["tracks_json"])
+            for t in tracks:
+                if "stored_filename" in t:
+                    _media_file_path(t["stored_filename"]).unlink(missing_ok=True)
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.post("/album-proposals/<int:proposal_id>/upload")
+@require_approver
+def upload_album(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT id, status FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None:
+        abort(404)
+    if row["status"] not in ("approved", "publishing", "publish_failed"):
+        abort(409)
+
+    conn.execute(
+        "UPDATE album_proposals SET status = 'publishing', publish_error = NULL WHERE id = ?",
+        (proposal_id,),
+    )
+    conn.commit()
+
+    try:
+        github_dispatch.trigger_album_apply(current_app.config["GITHUB_CONFIG"], proposal_id)
+    except OSError:
+        current_app.logger.exception(
+            "failed to dispatch apply-album-proposal.yml for proposal %s", proposal_id
+        )
+        conn.execute(
+            "UPDATE album_proposals SET status = 'publish_failed', publish_error = ? WHERE id = ?",
+            ("Failed to dispatch upload workflow to GitHub Actions", proposal_id),
+        )
+        conn.commit()
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.post("/album-proposals/<int:proposal_id>/publish")
+@require_approver
+def publish_album(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT cover_stored_filename, tracks_json FROM album_proposals WHERE id = ? AND status IN ('approved', 'publish_failed')",
+        (proposal_id,),
+    ).fetchone()
+    if row is None:
+        existing = conn.execute("SELECT id FROM album_proposals WHERE id = ?", (proposal_id,)).fetchone()
+        abort(404 if existing is None else 409)
+
+    cur = conn.execute(
+        "UPDATE album_proposals SET status = 'published', published_at = datetime('now') "
+        "WHERE id = ? AND status IN ('approved', 'publish_failed')",
+        (proposal_id,),
+    )
+    conn.commit()
+    if cur.rowcount != 1:
+        abort(409)
+
+    if row["cover_stored_filename"]:
+        _media_file_path(row["cover_stored_filename"]).unlink(missing_ok=True)
+    if row["tracks_json"]:
+        tracks = json.loads(row["tracks_json"])
+        for t in tracks:
+            if "stored_filename" in t:
+                _media_file_path(t["stored_filename"]).unlink(missing_ok=True)
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.get("/album-proposals/<int:proposal_id>/cover")
+@require_approver
+def album_cover_file(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT cover_stored_filename FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None or not row["cover_stored_filename"]:
+        abort(404)
+    path = _media_file_path(row["cover_stored_filename"])
+    if not path.exists():
+        abort(404)
+    return send_file(path)
+
+
+@bp.get("/album-proposals/<int:proposal_id>/tracks/<int:position>/file")
+@require_approver
+def album_track_audio_file(proposal_id: int, position: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT tracks_json FROM album_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None or not row["tracks_json"]:
+        abort(404)
+    tracks = json.loads(row["tracks_json"])
+    track = next((t for t in tracks if t.get("position") == position), None)
+    if track is None or not track.get("stored_filename"):
+        abort(404)
+    path = _media_file_path(track["stored_filename"])
+    if not path.exists():
+        abort(404)
+    return send_file(path, mimetype=track.get("content_type", "audio/mpeg"))

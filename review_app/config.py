@@ -91,6 +91,9 @@ class Config:
     media_uploads_path: Path | None = None
     max_photo_upload_bytes: int = 25 * 1024 * 1024
     max_video_upload_bytes: int = 500 * 1024 * 1024
+    max_track_upload_bytes: int = 50 * 1024 * 1024
+    max_album_total_bytes: int = 350 * 1024 * 1024
+    max_cover_upload_bytes: int = 15 * 1024 * 1024
     max_total_upload_storage_bytes: int = 2 * 1024 * 1024 * 1024
     min_disk_free_bytes: int = 1024 * 1024 * 1024
     ai: AiConfig = AiConfig()

@@ -41,12 +41,22 @@ def _sniff(head: bytes) -> tuple[str, str, str] | None:
         return "image", "image/gif", ".gif"
     if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
         return "image", "image/webp", ".webp"
+    if head[:4] == b"RIFF" and head[8:12] == b"WAVE":
+        return "audio", "audio/wav", ".wav"
+    if head[:3] == b"ID3" or (len(head) >= 2 and head[0] == 0xFF and (head[1] & 0xE0) == 0xE0):
+        return "audio", "audio/mpeg", ".mp3"
+    if head[:4] == b"fLaC":
+        return "audio", "audio/flac", ".flac"
+    if head[:4] == b"OggS":
+        return "audio", "audio/ogg", ".ogg"
     if head[4:8] == b"ftyp":
         brand = head[8:12]
         if brand in (b"heic", b"heix", b"heim", b"heis", b"hevc", b"hevm", b"hevs", b"mif1", b"msf1"):
             return "image", "image/heic", ".heic"
         if brand == b"qt  ":
             return "video", "video/quicktime", ".mov"
+        if brand in (b"M4A ", b"M4B "):
+            return "audio", "audio/mp4", ".m4a"
         # Every other ISO-base-media-file ftyp brand in practical use
         # (isom/iso2/mp41/mp42 from encoders, avc1/M4V /M4A  from Apple
         # devices, 3gp*/3g2* from older phones) is video/mp4-compatible

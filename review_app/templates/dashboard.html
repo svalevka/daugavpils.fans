@@ -172,4 +172,98 @@
   </div>
 </article>
 {% endfor %}
+
+<h2>Pending albums ({{ album_pending | length }})</h2>
+{% if not album_pending %}
+<p>Nothing pending.</p>
+{% endif %}
+{% for a in album_pending %}
+<article class="proposal">
+  <span class="status-badge status-pending">Pending review</span>
+  <h2>#{{ a.id }} — {{ a.band_slug }} — {{ a.name }} ({{ a.date_published }})</h2>
+  <p class="meta">Slug: <code>{{ a.release_slug }}</code> | License: {{ a.license }}{% if a.genre %} | Genre: {{ a.genre | join(', ') }}{% endif %}</p>
+  {% if a.submitter_name or a.submitter_contact %}
+  <p class="meta">Submitted by {{ a.submitter_name or "(no name given)" }}{% if a.submitter_contact %} &lt;{{ a.submitter_contact }}&gt;{% endif %}</p>
+  {% endif %}
+  {% if a.description %}<p><strong>Description:</strong> {{ a.description }}</p>{% endif %}
+  {% if a.description_en %}<p><strong>Description (EN):</strong> {{ a.description_en }}</p>{% endif %}
+
+  {% if a.cover_stored_filename %}
+  <div style="margin: 0.5rem 0;">
+    <img src="/album-proposals/{{ a.id }}/cover" alt="Cover art" style="max-width: 140px; border-radius: 4px;">
+  </div>
+  {% endif %}
+
+  <h3>Tracklist ({{ a.tracks | length }} tracks)</h3>
+  <ol style="margin-left: 1.5rem; margin-bottom: 1rem;">
+    {% for t in a.tracks %}
+    <li style="margin-bottom: 0.5rem;">
+      <strong>{{ t.name }}</strong> ({{ t.duration }}, {{ t.bitrate }})
+      <div>
+        <audio controls preload="none" src="/album-proposals/{{ a.id }}/tracks/{{ t.position }}/file" style="height: 32px; margin-top: 4px;"></audio>
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+
+  {% if a.ai_decision %}
+  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if a.ai_decision in ('approved', 'approve') %}#2da44e{% elif a.ai_decision in ('escalated', 'escalate') %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
+    <strong>AI Agent:</strong>
+    <span class="status-badge" style="font-size: 0.8em; margin-left: 0.25rem;">
+      {{ a.ai_decision | upper }}{% if a.ai_confidence is not none %} ({{ (a.ai_confidence * 100) | round | int }}% confidence){% endif %}
+    </span>
+    {% if a.ai_reasoning %}<p style="margin: 0.25rem 0 0 0; color: #555;">{{ a.ai_reasoning }}</p>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if a.is_own_submission %}
+  <p class="note"><em>You submitted this album - another approver must decide on it.</em></p>
+  {% else %}
+  <div class="actions">
+    <form method="post" action="/album-proposals/{{ a.id }}/approve">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit">Approve</button>
+    </form>
+    <form method="post" action="/album-proposals/{{ a.id }}/reject">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit">Reject</button>
+    </form>
+  </div>
+  {% endif %}
+</article>
+{% endfor %}
+
+<h2>Ready to publish albums ({{ album_awaiting_publish | length }})</h2>
+{% if not album_awaiting_publish %}
+<p>Nothing ready to publish.</p>
+{% endif %}
+{% for a in album_awaiting_publish %}
+<article class="proposal">
+  <span class="status-badge {% if a.status == 'approved' %}status-approved{% elif a.status == 'publishing' %}status-pending{% else %}status-rejected{% endif %}">
+    {{ a.status | capitalize }}
+  </span>
+  <h2>#{{ a.id }} — {{ a.band_slug }} — {{ a.name }} ({{ a.date_published }})</h2>
+  <p class="meta">Slug: <code>{{ a.release_slug }}</code> | {{ a.tracks | length }} tracks</p>
+  {% if a.publish_error %}
+  <p class="error-banner" style="color: #cf222e; background: #ffebe9; padding: 0.5rem; border-radius: 4px;">
+    <strong>Publish error:</strong> {{ a.publish_error }}
+  </p>
+  {% endif %}
+
+  <div class="actions">
+    {% if a.status == 'publishing' %}
+    <p class="note"><em>Upload to archive.org and git commit in progress...</em></p>
+    {% else %}
+    <form method="post" action="/album-proposals/{{ a.id }}/upload">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit">{% if a.status == 'publish_failed' %}Retry upload{% else %}Upload & Publish{% endif %}</button>
+    </form>
+    <form method="post" action="/album-proposals/{{ a.id }}/publish">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="button-secondary">Mark published manually</button>
+    </form>
+    {% endif %}
+  </div>
+</article>
+{% endfor %}
 {% endblock %}

@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import csrf  # noqa: E402
 import db  # noqa: E402
 from admin import bp as admin_bp  # noqa: E402
+from album_submissions import bp as album_submissions_bp  # noqa: E402
 from analytics import bp as analytics_bp  # noqa: E402
 from api import bp as api_bp  # noqa: E402
 from auth import bp as auth_bp  # noqa: E402
@@ -46,7 +47,11 @@ def create_app(config: Config) -> Flask:
     app.config["MAX_UPLOAD_BYTES"] = {
         "image": config.max_photo_upload_bytes,
         "video": config.max_video_upload_bytes,
+        "audio": config.max_track_upload_bytes,
     }
+    app.config["MAX_TRACK_UPLOAD_BYTES"] = config.max_track_upload_bytes
+    app.config["MAX_ALBUM_TOTAL_BYTES"] = config.max_album_total_bytes
+    app.config["MAX_COVER_UPLOAD_BYTES"] = config.max_cover_upload_bytes
     app.config["MAX_TOTAL_UPLOAD_STORAGE_BYTES"] = config.max_total_upload_storage_bytes
     app.config["MIN_DISK_FREE_BYTES"] = config.min_disk_free_bytes
     app.config["AI_CONFIG"] = config.ai
@@ -69,6 +74,7 @@ def create_app(config: Config) -> Flask:
     csrf.init_app(app)
     app.register_blueprint(submissions_bp)
     app.register_blueprint(media_submissions_bp)
+    app.register_blueprint(album_submissions_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(api_bp)
