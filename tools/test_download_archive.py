@@ -17,7 +17,8 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from archive_fixture import DEFAULT_AUDIO_BYTES, build_valid_archive
-from download_archive import download_release, load_band, load_release, main
+from download_archive import download_release, load_band, load_release, main, media_items_for_release
+from models import MusicAlbum, MusicRecording
 
 
 def fake_urlretrieve_writing(data: bytes):
@@ -122,6 +123,29 @@ class DownloadArchiveTest(unittest.TestCase):
 
             self.assertEqual(exit_code, 1)
             urlretrieve.assert_called_once()  # only band-b's missing file triggers a fetch attempt
+
+    def test_media_items_for_release_skips_lost_tracks(self):
+        # A track with no audio (a known-but-unpreserved recording, e.g.
+        # ko-band's "Репетиционная запись") must not crash or produce a
+        # None entry that fetch_one() would later choke on.
+        release = MusicAlbum(
+            name="Test Release",
+            slug="1999-test-release",
+            datePublished="1999",
+            byArtist="test-band",
+            track=[
+                MusicRecording(position=1, name="Lost Track"),
+                MusicRecording(
+                    position=2,
+                    name="Preserved Track",
+                    audio={"contentUrl": "02-preserved-track.mp3", "encodingFormat": "audio/mpeg"},
+                ),
+            ],
+        )
+
+        items = media_items_for_release(release)
+
+        self.assertEqual([item.contentUrl for item in items], ["02-preserved-track.mp3"])
 
 
 if __name__ == "__main__":

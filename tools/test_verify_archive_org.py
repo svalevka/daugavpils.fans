@@ -12,6 +12,8 @@ from unittest.mock import MagicMock, patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from archive_fixture import build_valid_archive
+from models import MusicAlbum, MusicRecording
+from publish_to_archive_org import media_files
 from verify_archive_org import _is_ia_generated, audit_item, audit_metadata_bundle, local_md5
 
 
@@ -55,6 +57,50 @@ class VerifyArchiveOrgTest(unittest.TestCase):
 
         self.assertEqual(len(problems), 1)
         self.assertIn("METADATA DRIFT: 'description'", problems[0])
+
+    def test_none_expected_value_does_not_crash(self):
+        # release_metadata() always includes "licenseurl", even as None for
+        # a release with no license set - audit_item must treat that as an
+        # absent field (matching archive.org's own "" default), not crash
+        # on re.sub(None) like it used to.
+        mock_item = MagicMock()
+        mock_item.exists = True
+        mock_item.files = []
+        mock_item.metadata = {}
+
+        with patch("internetarchive.get_item", return_value=mock_item):
+            problems = audit_item("item-123", {}, {"licenseurl": None})
+
+        self.assertEqual(problems, [])
+
+    def test_release_with_lost_track_does_not_crash_media_files(self):
+        # main() builds `[t.audio for t in release.track if t.audio is not
+        # None] + release.image + release.video` before calling
+        # media_files() - a release with a known-but-unpreserved track
+        # (audio=None, e.g. ko-band's "Репетиционная запись") used to leave
+        # a bare None in that list and crash media_files() with
+        # AttributeError before any archive.org call was even made.
+        release = MusicAlbum(
+            name="Test Release",
+            slug="1999-test-release",
+            datePublished="1999",
+            byArtist="test-band",
+            track=[
+                MusicRecording(position=1, name="Lost Track"),
+                MusicRecording(
+                    position=2,
+                    name="Preserved Track",
+                    audio={"contentUrl": "02-preserved-track.mp3", "encodingFormat": "audio/mpeg"},
+                ),
+            ],
+        )
+
+        files = media_files(
+            Path("/fake/release/dir"),
+            [t.audio for t in release.track if t.audio is not None] + release.image + release.video,
+        )
+
+        self.assertEqual(list(files), ["02-preserved-track.mp3"])
 
     def test_metadata_bundle_audit(self):
         with tempfile.TemporaryDirectory() as tmp:

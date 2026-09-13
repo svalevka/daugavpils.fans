@@ -85,7 +85,7 @@ def media_items_for_band(band: MusicGroup) -> list[MediaObject]:
 
 
 def media_items_for_release(release: MusicAlbum) -> list[MediaObject]:
-    return [t.audio for t in release.track] + [*release.image, *release.video]
+    return [t.audio for t in release.track if t.audio is not None] + [*release.image, *release.video]
 
 
 def fetch_one(item_id: str, base_dir: Path, media_item: MediaObject, source_yaml: Path) -> DownloadFailure | None:

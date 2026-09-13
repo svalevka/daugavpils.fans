@@ -134,8 +134,11 @@ def audit_item(item_id: str, expected_files: dict[str, Path], expected_metadata:
     for key, expected_value in expected_metadata.items():
         actual_value = item.metadata.get(key, "")
         # archive.org may re-wrap/re-encode whitespace; compare on
-        # normalized text, not byte-for-byte, to avoid noise.
-        if _normalize(expected_value) != _normalize(str(actual_value)):
+        # normalized text, not byte-for-byte, to avoid noise. A None
+        # expected_value (e.g. a release with no license set) means the
+        # field was never sent to archive.org in the first place, so it
+        # compares as empty rather than crashing on re.sub(None).
+        if _normalize(str(expected_value or "")) != _normalize(str(actual_value)):
             problems.append(f"METADATA DRIFT: '{key}' on archive.org doesn't match the local YAML")
 
     return problems
@@ -215,7 +218,10 @@ def main() -> int:
             release = load_release(release_dir)
             item_id = release_item_id(band.slug, release.slug)
             print(f"  {release.name} ({item_id})")
-            files = media_files(release_dir, [t.audio for t in release.track] + release.image + release.video)
+            files = media_files(
+                release_dir,
+                [t.audio for t in release.track if t.audio is not None] + release.image + release.video,
+            )
             problems = audit_item(item_id, files, release_metadata(release, band))
             if problems:
                 any_problems = True
