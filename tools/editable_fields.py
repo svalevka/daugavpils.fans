@@ -71,34 +71,40 @@ class EditableField:
     target: Target
     field: str
     kind: Kind
-    label: str  # human-readable, for the submission form
+    label: str  # human-readable, for the submission form (English)
+    label_ru: str = ""  # human-readable, for the submission form (Russian)
+
+    def get_label(self, lang: str = "en") -> str:
+        if lang == "ru" and self.label_ru:
+            return self.label_ru
+        return self.label
 
 
 EDITABLE_FIELDS: tuple[EditableField, ...] = (
-    EditableField("band", "description", "scalar", "Biography"),
-    EditableField("band", "description_en", "scalar", "Biography (English translation)"),
-    EditableField("band", "location", "scalar", "Location"),
-    EditableField("band", "alternateName", "list", "Alternate names"),
-    EditableField("band", "genre", "list", "Genres"),
-    EditableField("member", "name", "scalar", "Member name"),
-    EditableField("member", "name_en", "scalar", "Member name (transliteration)"),
-    EditableField("member", "role", "scalar", "Member role"),
-    EditableField("member", "role_en", "scalar", "Member role (English translation)"),
-    EditableField("member", "period", "scalar", "Member period, e.g. '1994-1996'"),
-    EditableField("release", "description", "scalar", "Provenance / liner notes"),
-    EditableField("release", "description_en", "scalar", "Provenance / liner notes (English translation)"),
-    EditableField("release", "genre", "list", "Genres"),
-    EditableField("track", "alternateName", "scalar", "Alternate track title"),
-    EditableField("band_image", "caption", "scalar", "Photo caption"),
-    EditableField("band_image", "caption_en", "scalar", "Photo caption (English translation)"),
-    EditableField("band_image", "contentLocation", "scalar", "Photo location"),
-    EditableField("band_image", "depicts", "list", "Who/what is shown"),
-    EditableField("release_image", "caption", "scalar", "Photo caption"),
-    EditableField("release_image", "caption_en", "scalar", "Photo caption (English translation)"),
-    EditableField("release_image", "contentLocation", "scalar", "Photo location"),
-    EditableField("release_image", "depicts", "list", "Who/what is shown"),
-    EditableField("band_video", "name", "scalar", "Video title"),
-    EditableField("release_video", "name", "scalar", "Video title"),
+    EditableField("band", "description", "scalar", "Biography", "Биография / описание"),
+    EditableField("band", "description_en", "scalar", "Biography (English translation)", "Биография (перевод на английский)"),
+    EditableField("band", "location", "scalar", "Location", "Город / место"),
+    EditableField("band", "alternateName", "list", "Alternate names", "Другие названия"),
+    EditableField("band", "genre", "list", "Genres", "Жанры"),
+    EditableField("member", "name", "scalar", "Member name", "Имя участника"),
+    EditableField("member", "name_en", "scalar", "Member name (transliteration)", "Имя участника (латинская транслитерация)"),
+    EditableField("member", "role", "scalar", "Member role", "Роль / инструменты"),
+    EditableField("member", "role_en", "scalar", "Member role (English translation)", "Роль (на английском)"),
+    EditableField("member", "period", "scalar", "Member period, e.g. '1994-1996'", "Период участия, например «1994–1996»"),
+    EditableField("release", "description", "scalar", "Provenance / liner notes", "История записи / описание"),
+    EditableField("release", "description_en", "scalar", "Provenance / liner notes (English translation)", "История записи (перевод на английский)"),
+    EditableField("release", "genre", "list", "Genres", "Жанры"),
+    EditableField("track", "alternateName", "scalar", "Alternate track title", "Альтернативное название трека"),
+    EditableField("band_image", "caption", "scalar", "Photo caption", "Подпись к фотографии"),
+    EditableField("band_image", "caption_en", "scalar", "Photo caption (English translation)", "Подпись к фотографии (на английском)"),
+    EditableField("band_image", "contentLocation", "scalar", "Photo location", "Место съемки"),
+    EditableField("band_image", "depicts", "list", "Who/what is shown", "Кто/что изображено"),
+    EditableField("release_image", "caption", "scalar", "Photo caption", "Подпись к фотографии"),
+    EditableField("release_image", "caption_en", "scalar", "Photo caption (English translation)", "Подпись к фотографии (на английском)"),
+    EditableField("release_image", "contentLocation", "scalar", "Photo location", "Место съемки"),
+    EditableField("release_image", "depicts", "list", "Who/what is shown", "Кто/что изображено"),
+    EditableField("band_video", "name", "scalar", "Video title", "Название видео"),
+    EditableField("release_video", "name", "scalar", "Video title", "Название видео"),
 )
 
 # Pseudo-target for proposing a brand new band member rather than editing

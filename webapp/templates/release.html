@@ -32,7 +32,7 @@
 {% else %}
 <div class="unpreserved-banner">
   <p><strong>{{ t.unpreserved_title }}</strong></p>
-  <p>{{ t.unpreserved_desc }} <a href="https://review.daugavpils.fans/submit/{{ band.slug }}/{{ release.slug }}">{{ t.unpreserved_cta }}</a>.</p>
+  <p>{{ t.unpreserved_desc }} <a href="https://review.daugavpils.fans/submit/{{ band.slug }}/{{ release.slug }}?lang={{ lang }}">{{ t.unpreserved_cta }}</a>.</p>
 </div>
 {% endif %}
 <table class="tracklist">
@@ -75,7 +75,7 @@
 {% endif %}
 
 {% if not base_path %}
-<div class="propose-edit"><a href="https://review.daugavpils.fans/submit/{{ band.slug }}/{{ release.slug }}">{{ t.propose_edit }}</a></div>
+<div class="propose-edit"><a href="https://review.daugavpils.fans/submit/{{ band.slug }}/{{ release.slug }}?lang={{ lang }}">{{ t.propose_edit }}</a></div>
 {% endif %}
 
 <script type="application/ld+json">{{ jsonld.replace("</", "<\/") | safe }}</script>

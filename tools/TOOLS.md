@@ -81,7 +81,8 @@ doesn't fit the per-field `lookup()` allowlist above (there's no
 list_index yet, since the item doesn't exist) - these instead name the
 `"new_member"` pseudo-target and the whole-record field set it accepts,
 derived from this same file's `member` entries so the two can't drift
-apart.
+apart. Each `EditableField` also holds bilingual labels (`label`, `label_ru`)
+for human-readable form rendering in the review app (GitHub issue #41).
 
 ## `apply_proposal.py`
 

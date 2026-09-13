@@ -52,7 +52,7 @@
         } else {
           var placeholder = document.createElement("div");
           placeholder.className = "media-item-preview media-item-preview-video";
-          placeholder.textContent = "Video";
+          placeholder.textContent = list.getAttribute("data-i18n-video") || "Video";
           row.appendChild(placeholder);
         }
 
@@ -66,7 +66,7 @@
 
         var captionLabel = document.createElement("label");
         captionLabel.setAttribute("for", "caption_" + index);
-        captionLabel.textContent = "Caption or note (optional)";
+        captionLabel.textContent = list.getAttribute("data-i18n-caption") || "Caption or note (optional)";
         details.appendChild(captionLabel);
 
         var captionInput = document.createElement("input");
@@ -84,7 +84,8 @@
         var removeButton = document.createElement("button");
         removeButton.type = "button";
         removeButton.className = "media-item-remove";
-        removeButton.setAttribute("aria-label", "Remove " + item.file.name);
+        var removePrefix = list.getAttribute("data-i18n-remove") || "Remove";
+        removeButton.setAttribute("aria-label", removePrefix + " " + item.file.name);
         removeButton.textContent = "✕";
         removeButton.addEventListener("click", function () {
           removeItem(index);

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Propose an edit — daugavpils.fans{% endblock %}
+{% block title %}{{ t.pick_band_title }}{% endblock %}
 {% block content %}
-<h1>Propose an edit</h1>
-<p class="meta">Pick a band to correct or extend.</p>
+<h1>{{ t.pick_band_heading }}</h1>
+<p class="meta">{{ t.pick_band_meta }}</p>
 <ul class="item-list">
 {% for band in bands %}
   <li><a href="/submit/{{ band.slug }}">{{ band.name }}</a></li>

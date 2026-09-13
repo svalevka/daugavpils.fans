@@ -21,6 +21,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 import archive_read  # noqa: E402
 import db  # noqa: E402
+import i18n  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
 from editable_fields import (  # noqa: E402
@@ -43,7 +44,7 @@ class TargetOption:
     label: str
 
 
-def _item_label(target: str, index: int, item) -> str:
+def _item_label(target: str, index: int, item, lang: str = "en") -> str:
     """A human-readable prefix identifying one nested list entry: the
     item's own name for members/tracks (both have a `.name`), else a
     numbered "Photo N"/"Video N" (VideoObject has an optional `.name`
@@ -52,11 +53,15 @@ def _item_label(target: str, index: int, item) -> str:
     name = getattr(item, "name", None)
     if name:
         return name
-    return f"{'Photo' if 'image' in target else 'Video'} {index + 1}"
+    prefix = i18n.get_text("photo_prefix", lang) if "image" in target else i18n.get_text("video_prefix", lang)
+    return f"{prefix} {index + 1}"
 
 
 def _target_options(
-    parent: MusicGroup | MusicAlbum, singleton_target: str, nested_targets: frozenset[str]
+    parent: MusicGroup | MusicAlbum,
+    singleton_target: str,
+    nested_targets: frozenset[str],
+    lang: str = "en",
 ) -> list[TargetOption]:
     """Every editable field applicable to `parent` - its own top-level
     fields plus one entry per item in each of its nested lists.
@@ -70,20 +75,22 @@ def _target_options(
     check alone can't tell a band's photos from a release's."""
     options: list[TargetOption] = []
     for ef in EDITABLE_FIELDS:
+        label = ef.get_label(lang)
         if ef.target == singleton_target:
-            options.append(TargetOption(singleton_target, ef.field, None, ef.label))
+            options.append(TargetOption(singleton_target, ef.field, None, label))
         elif ef.target in nested_targets:
             for i, item in enumerate(getattr(parent, NESTED_LIST_ATTR[ef.target])):
-                options.append(TargetOption(ef.target, ef.field, i, f"{_item_label(ef.target, i, item)}: {ef.label}"))
+                item_label = _item_label(ef.target, i, item, lang)
+                options.append(TargetOption(ef.target, ef.field, i, f"{item_label}: {label}"))
     return options
 
 
-def _band_target_options(band: MusicGroup) -> list[TargetOption]:
-    return _target_options(band, "band", frozenset({"member", "band_image", "band_video"}))
+def _band_target_options(band: MusicGroup, lang: str = "en") -> list[TargetOption]:
+    return _target_options(band, "band", frozenset({"member", "band_image", "band_video"}), lang)
 
 
-def _release_target_options(release: MusicAlbum) -> list[TargetOption]:
-    return _target_options(release, "release", frozenset({"track", "release_image", "release_video"}))
+def _release_target_options(release: MusicAlbum, lang: str = "en") -> list[TargetOption]:
+    return _target_options(release, "release", frozenset({"track", "release_image", "release_video"}), lang)
 
 
 @bp.get("/submit")
@@ -101,12 +108,13 @@ def pick_band_scope(band_slug: str):
         releases = archive_read.list_releases(checkout, band_slug)
     except archive_read.ApplyError:
         abort(404)
+    lang = i18n.get_locale()
     return render_template(
         "submit_pick_target.html",
         band_slug=band_slug,
         release_slug=None,
         releases=releases,
-        options=_band_target_options(band),
+        options=_band_target_options(band, lang=lang),
     )
 
 
@@ -117,12 +125,13 @@ def pick_release_scope(band_slug: str, release_slug: str):
         release = archive_read.get_release(checkout, band_slug, release_slug)
     except archive_read.ApplyError:
         abort(404)
+    lang = i18n.get_locale()
     return render_template(
         "submit_pick_target.html",
         band_slug=band_slug,
         release_slug=release_slug,
         releases=None,
-        options=_release_target_options(release),
+        options=_release_target_options(release, lang=lang),
     )
 
 
@@ -155,6 +164,7 @@ def _edit_form(band_slug: str, release_slug: str | None):
     except archive_read.ApplyError:
         abort(404)
 
+    lang = i18n.get_locale()
     current_text = "\n".join(value) if editable.kind == "list" else (value or "")
     return render_template(
         "submit_edit.html",
@@ -163,7 +173,7 @@ def _edit_form(band_slug: str, release_slug: str | None):
         target=target,
         field=field,
         list_index=list_index,
-        label=editable.label,
+        label=editable.get_label(lang),
         current_text=current_text,
     )
 

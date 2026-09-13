@@ -1,28 +1,28 @@
 {% extends "base.html" %}
-{% block title %}What would you like to correct? — daugavpils.fans{% endblock %}
+{% block title %}{{ t.pick_target_title }}{% endblock %}
 {% block content %}
-<h1>What would you like to correct?</h1>
+<h1>{{ t.pick_target_heading }}</h1>
 
 {% if releases is not none %}
-<h2>Releases</h2>
+<h2>{{ t.section_releases }}</h2>
 <ul class="item-list compact">
 {% for release in releases %}
   <li><a href="/submit/{{ band_slug }}/{{ release.slug }}">{{ release.name }}</a></li>
 {% endfor %}
 </ul>
 
-<h2>Members</h2>
+<h2>{{ t.section_members }}</h2>
 <ul class="item-list compact">
-  <li><a href="/submit/{{ band_slug }}/add-member">Add a new member</a></li>
+  <li><a href="/submit/{{ band_slug }}/add-member">{{ t.add_new_member }}</a></li>
 </ul>
 {% endif %}
 
-<h2>Media</h2>
+<h2>{{ t.section_media }}</h2>
 <ul class="item-list compact">
-  <li><a href="{% if release_slug %}/submit/{{ band_slug }}/{{ release_slug }}/media{% else %}/submit/{{ band_slug }}/media{% endif %}">Add photos or videos</a></li>
+  <li><a href="{% if release_slug %}/submit/{{ band_slug }}/{{ release_slug }}/media{% else %}/submit/{{ band_slug }}/media{% endif %}">{{ t.add_photos_or_videos }}</a></li>
 </ul>
 
-<h2>Fields</h2>
+<h2>{{ t.section_fields }}</h2>
 <ul class="item-list compact">
 {% for opt in options %}
   <li>

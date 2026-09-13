@@ -27,14 +27,47 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 header.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 1.5rem 1.5rem 1rem;
   border-bottom: 1px solid var(--border);
+  gap: 1rem;
 }
 
 header.site-header .site-title {
   font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.support-link {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.lang-switch {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.lang-switch a {
+  color: var(--text-dim);
+  margin-left: 0.5rem;
+}
+
+.lang-switch a.active {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  pointer-events: none;
 }
 
 main {

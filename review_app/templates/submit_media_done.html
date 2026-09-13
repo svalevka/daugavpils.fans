@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Thank you — daugavpils.fans{% endblock %}
+{% block title %}{{ t.thank_you_title }}{% endblock %}
 {% block content %}
-<h1>Thank you</h1>
+<h1>{{ t.thank_you_heading }}</h1>
 {% if saved %}
-<p>{{ saved }} file{{ "s" if saved != 1 else "" }} submitted for review by a curated approver. Nothing goes live automatically - you'll only see the change if it's approved.</p>
+<p>{{ t.media_submitted_msg.format(count=saved) }}</p>
 {% else %}
-<p>Nothing was submitted.</p>
+<p>{{ t.media_empty_msg }}</p>
 {% endif %}
 {% if skipped %}
-<p>The following couldn't be accepted:</p>
+<p>{{ t.media_skipped_heading }}</p>
 <ul class="item-list compact">
 {% for reason in skipped %}
   <li>{{ reason }}</li>

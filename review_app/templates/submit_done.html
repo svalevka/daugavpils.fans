@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Thank you — daugavpils.fans{% endblock %}
+{% block title %}{{ t.thank_you_title }}{% endblock %}
 {% block content %}
-<h1>Thank you</h1>
-<p>Your proposal has been submitted for review by a curated approver. Nothing goes live automatically - you'll only see the change if it's approved.</p>
+<h1>{{ t.thank_you_heading }}</h1>
+<p>{{ t.proposal_submitted_msg }}</p>
 {% endblock %}

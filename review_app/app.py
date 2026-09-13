@@ -26,6 +26,7 @@ from config import Config  # noqa: E402
 from dashboard import bp as dashboard_bp  # noqa: E402
 from media_submissions import bp as media_submissions_bp  # noqa: E402
 from submissions import bp as submissions_bp  # noqa: E402
+import i18n  # noqa: E402
 
 
 def create_app(config: Config) -> Flask:
@@ -60,6 +61,15 @@ def create_app(config: Config) -> Flask:
     app.register_blueprint(api_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(analytics_bp)
+
+    @app.context_processor
+    def inject_i18n():
+        lang = i18n.get_locale()
+        return {
+            "lang": lang,
+            "t": i18n.STRINGS.get(lang, i18n.STRINGS[i18n.DEFAULT_LANG]),
+            "lang_switch_url": i18n.lang_switch_url,
+        }
 
     # Behind nginx (see webapp/deploy/nginx/daugavpils.conf's `proxy_set_header
     # X-Forwarded-*` lines), only one hop of forwarding headers is ever
