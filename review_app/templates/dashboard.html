@@ -36,7 +36,7 @@
   <pre>{{ p.proposed_value }}</pre>
 
   {% if p.ai_decision %}
-  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if p.ai_decision == 'approved' %}#2da44e{% elif p.ai_decision == 'escalated' %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
+  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if p.ai_decision in ('approved', 'approve') %}#2da44e{% elif p.ai_decision in ('escalated', 'escalate') %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
     <strong>AI Agent:</strong>
     <span class="status-badge" style="font-size: 0.8em; margin-left: 0.25rem;">
       {{ p.ai_decision | upper }}{% if p.ai_confidence is not none %} ({{ (p.ai_confidence * 100) | round | int }}% confidence){% endif %}
@@ -83,7 +83,7 @@
   {% endif %}
 
   {% if m.ai_decision %}
-  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if m.ai_decision == 'approved' %}#2da44e{% elif m.ai_decision == 'escalated' %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
+  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if m.ai_decision in ('approved', 'approve') %}#2da44e{% elif m.ai_decision in ('escalated', 'escalate') %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
     <strong>AI Agent:</strong>
     <span class="status-badge" style="font-size: 0.8em; margin-left: 0.25rem;">
       {{ m.ai_decision | upper }}{% if m.ai_confidence is not none %} ({{ (m.ai_confidence * 100) | round | int }}% confidence){% endif %}

@@ -15,6 +15,7 @@ from __future__ import annotations
 import base64
 import json
 import logging
+import os
 import re
 import threading
 from dataclasses import dataclass
@@ -22,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
-from flask import Flask, url_for
+from flask import Flask
 
 import archive_read
 import db
@@ -208,6 +209,11 @@ def build_media_proposal_prompt(
     )
 
 
+def _get_dashboard_url(app: Flask) -> str:
+    base = app.config.get("BASE_URL") or os.environ.get("REVIEW_APP_BASE_URL", "https://review.daugavpils.fans")
+    return f"{base.rstrip('/')}/dashboard"
+
+
 def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
     """Evaluates a text proposal and performs autonomous approval or escalation."""
     with app.app_context():
@@ -305,7 +311,7 @@ def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
         # Send escalation email
         try:
             recipients = roles.get_approver_recipients(conn, app.config.get("MAINTAINER_EMAIL"))
-            dashboard_url = url_for("dashboard.view_pending", _external=True)
+            dashboard_url = _get_dashboard_url(app)
             scope = (
                 f"{proposal_dict['band_slug']}/{proposal_dict['release_slug']}"
                 if proposal_dict.get("release_slug")
@@ -472,7 +478,7 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
         # Send escalation email
         try:
             recipients = roles.get_approver_recipients(conn, app.config.get("MAINTAINER_EMAIL"))
-            dashboard_url = url_for("dashboard.view_pending", _external=True)
+            dashboard_url = _get_dashboard_url(app)
             scope = (
                 f"{proposal_dict['band_slug']}/{proposal_dict['release_slug']}"
                 if proposal_dict.get("release_slug")

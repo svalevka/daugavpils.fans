@@ -225,6 +225,32 @@ class AiAgentTextProposalTest(ReviewAppTestCase):
         self.mock_ai_trigger_apply.assert_not_called()
         self.mock_ai_escalation.assert_called_once()
 
+    def test_evaluation_outside_request_context_builds_dashboard_url(self):
+        """Verifies process_proposal_with_ai runs cleanly outside an HTTP request context."""
+        import ai_agent
+
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+        self.mock_ai_api.return_value = json.dumps(
+            {
+                "decision": "escalate",
+                "confidence": 0.50,
+                "reasoning": "Ambiguous content requiring human judgment.",
+                "spam_or_vandalism": False,
+            }
+        )
+
+        resp = self.submit(proposed_value="Needs escalation")
+        self.assertEqual(resp.status_code, 201)
+        proposals = self.fetch_proposals()
+        pid = proposals[0]["id"]
+
+        # Run process_proposal_with_ai directly outside any request context
+        ai_agent.process_proposal_with_ai(self.app, pid)
+
+        self.mock_ai_escalation.assert_called()
+        call_kwargs = self.mock_ai_escalation.call_args[1]
+        self.assertTrue(call_kwargs["dashboard_url"].endswith("/dashboard"))
+
 
 class AiAgentMediaProposalTest(ReviewAppTestCase):
     def setUp(self):

@@ -50,6 +50,7 @@ def create_app(config: Config) -> Flask:
     app.config["MAX_TOTAL_UPLOAD_STORAGE_BYTES"] = config.max_total_upload_storage_bytes
     app.config["MIN_DISK_FREE_BYTES"] = config.min_disk_free_bytes
     app.config["AI_CONFIG"] = config.ai
+    app.config["BASE_URL"] = os.environ.get("REVIEW_APP_BASE_URL", "https://review.daugavpils.fans")
     # Hardened session cookie attributes (SEC-06)
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
