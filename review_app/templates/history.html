@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Decision History — daugavpils.fans{% endblock %}
+{% block main_class %}main-wide{% endblock %}
+{% block content %}
+<div class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+  <div>
+    <h1>Decision History</h1>
+    <p class="meta">Logged in as {{ approver.display_name }} ({{ approver.email }})</p>
+  </div>
+  <div class="admin-header-actions" style="display: flex; gap: 0.5rem;">
+    <a href="/dashboard" class="button-secondary btn">← Back to Dashboard</a>
+    {% if can_view_stats %}
+    <a href="/admin/" class="button-secondary btn">Site Statistics</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="history-filters" style="background: var(--bg-raised); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
+  <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between;">
+    <!-- Timeframe filter -->
+    <div>
+      <span class="note" style="font-weight: 600; margin-right: 0.5rem;">Timeframe:</span>
+      <div style="display: inline-flex; gap: 0.35rem;">
+        {% for d in [7, 14, 30, 90] %}
+          <a href="{{ url_for('dashboard.decision_history', days=d, status=selected_status, type=selected_type) }}"
+             class="btn"
+             style="padding: 0.25rem 0.6rem; font-size: 0.8rem; {% if days == d %}background: rgba(226, 177, 60, 0.2); border-color: var(--accent); color: var(--accent); font-weight: 600;{% endif %}">
+            {{ d }} days
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Status filter -->
+    <div>
+      <span class="note" style="font-weight: 600; margin-right: 0.5rem;">Status:</span>
+      <div style="display: inline-flex; gap: 0.35rem;">
+        {% for st, label in [('all', 'All Decisions'), ('approved', 'Approved'), ('rejected', 'Rejected')] %}
+          <a href="{{ url_for('dashboard.decision_history', days=days, status=st, type=selected_type) }}"
+             class="btn"
+             style="padding: 0.25rem 0.6rem; font-size: 0.8rem; {% if selected_status == st %}background: rgba(226, 177, 60, 0.2); border-color: var(--accent); color: var(--accent); font-weight: 600;{% endif %}">
+            {{ label }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Type filter -->
+    <div>
+      <span class="note" style="font-weight: 600; margin-right: 0.5rem;">Type:</span>
+      <div style="display: inline-flex; gap: 0.35rem;">
+        {% for tp, label in [('all', 'All'), ('edit', 'Edits'), ('media', 'Media'), ('album', 'Albums'), ('band', 'Bands')] %}
+          <a href="{{ url_for('dashboard.decision_history', days=days, status=selected_status, type=tp) }}"
+             class="btn"
+             style="padding: 0.25rem 0.6rem; font-size: 0.8rem; {% if selected_type == tp %}background: rgba(226, 177, 60, 0.2); border-color: var(--accent); color: var(--accent); font-weight: 600;{% endif %}">
+            {{ label }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="history-summary" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+  <p class="note" style="margin: 0;">
+    Showing <strong>{{ counts.total }}</strong> decisions from the last <strong>{{ days }}</strong> days
+    ({{ counts.approved }} approved, {{ counts.rejected }} rejected).
+    <span style="opacity: 0.7;">Logs are rotated after 90 days.</span>
+  </p>
+</div>
+
+{% if not items %}
+<div style="padding: 3rem 1rem; text-align: center; border: 1px dashed var(--border); border-radius: 6px; color: var(--text-dim); margin-top: 1rem;">
+  <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">No decisions found for the selected criteria.</p>
+  <p class="note" style="margin: 0;">Try adjusting the timeframe or filters above.</p>
+</div>
+{% endif %}
+
+<div class="history-feed">
+  {% for item in items %}
+  <article class="proposal" style="background: var(--bg-raised); margin-bottom: 1.25rem; border-left: 4px solid {% if item.status == 'approved' %}#5ab478{% else %}#dc3c3c{% endif %};">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
+      <div>
+        <span class="status-badge" style="background: rgba(255, 255, 255, 0.08); color: var(--text-dim); margin-right: 0.35rem;">
+          {{ item.type_label }}
+        </span>
+        <span class="status-badge {% if item.status == 'approved' %}status-approved{% else %}status-rejected{% endif %}">
+          {{ item.status | capitalize }}
+        </span>
+        <h2 style="display: inline; font-size: 1.1rem; margin-left: 0.5rem; vertical-align: middle;">
+          #{{ item.id }} — {{ item.target_title }}
+        </h2>
+      </div>
+      <div style="text-align: right; white-space: nowrap;">
+        <time class="note" datetime="{{ item.decided_at }}">{{ item.decided_at }}</time>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--text-dim);">
+      <div>
+        <strong>Decided by:</strong>
+        {% if item.is_ai %}
+          <span class="status-badge" style="background: rgba(130, 80, 220, 0.15); color: #a371f7; text-transform: none; font-size: 0.8rem; margin: 0 0 0 0.25rem;">🤖 AI Approval Agent</span>
+        {% else %}
+          <span>{{ item.decider_name }}</span>
+        {% endif %}
+      </div>
+      {% if item.submitter_name or item.submitter_contact %}
+      <div>
+        <strong>Submitted by:</strong> {{ item.submitter_name or "(anonymous)" }}
+        {% if item.submitter_contact %}&lt;{{ item.submitter_contact }}&gt;{% endif %}
+      </div>
+      {% endif %}
+      <div>
+        <strong>Submitted:</strong> {{ item.created_at }}
+      </div>
+    </div>
+
+    {% if item.ai_reasoning %}
+    <div style="margin: 0.5rem 0; padding: 0.5rem 0.75rem; background: rgba(0,0,0,0.2); border-left: 3px solid {% if item.ai_decision in ('approved', 'approve') %}#5ab478{% elif item.ai_decision in ('escalated', 'escalate') %}#e2b13c{% else %}#dc3c3c{% endif %}; font-size: 0.85rem;">
+      <strong>AI Reasoning:</strong> {{ item.ai_reasoning }}
+      {% if item.ai_confidence is not none %}<span class="note">(Confidence: {{ "%.2f"|format(item.ai_confidence) }})</span>{% endif %}
+    </div>
+    {% endif %}
+
+    <details style="margin-top: 0.75rem;">
+      <summary style="cursor: pointer; color: var(--accent); font-size: 0.85rem; font-weight: 500;">
+        View proposal details & diff
+      </summary>
+      <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border);">
+        {% if item.type == 'edit' %}
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <h3 style="margin-top: 0; font-size: 0.85rem;">Original</h3>
+              <pre style="max-height: 250px;">{{ item.details.original_value }}</pre>
+            </div>
+            <div>
+              <h3 style="margin-top: 0; font-size: 0.85rem;">Proposed</h3>
+              <pre style="max-height: 250px;">{{ item.details.proposed_value }}</pre>
+            </div>
+          </div>
+        {% elif item.type == 'media' %}
+          <p><strong>Filename:</strong> {{ item.details.original_filename }} ({{ "%.1f"|format(item.details.size_bytes / 1024 / 1024) }} MB)</p>
+          {% if item.details.caption %}
+          <p><strong>Caption:</strong> {{ item.details.caption }}</p>
+          {% endif %}
+        {% elif item.type == 'album' %}
+          <p><strong>Album:</strong> {{ item.details.name }} ({{ item.details.date_published }})</p>
+          <p><strong>Genre:</strong> {{ item.details.genres }}</p>
+          {% if item.details.description %}
+          <p><strong>Description:</strong> {{ item.details.description }}</p>
+          {% endif %}
+          <p><strong>Tracks ({{ item.details.tracks_count }}):</strong></p>
+          <ol style="margin-top: 0.25rem; padding-left: 1.25rem; font-size: 0.9rem;">
+            {% for tr in item.details.tracks %}
+            <li>{{ tr.name }} <span class="note">({{ tr.duration or '—' }})</span></li>
+            {% endfor %}
+          </ol>
+        {% elif item.type == 'band' %}
+          <p><strong>Band Name:</strong> {{ item.details.name }} (Slug: <code>{{ item.details.band_slug }}</code>)</p>
+          <p><strong>Location:</strong> {{ item.details.location or 'Daugavpils, Latvia' }}</p>
+          {% if item.details.genres %}<p><strong>Genres:</strong> {{ item.details.genres }}</p>{% endif %}
+          {% if item.details.description %}
+          <p><strong>Description:</strong> {{ item.details.description }}</p>
+          {% endif %}
+          {% if item.details.has_release %}
+          <p><strong>Included Debut Release:</strong> {{ item.details.release_name }} ({{ item.details.tracks_count }} tracks)</p>
+          {% endif %}
+        {% endif %}
+      </div>
+    </details>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

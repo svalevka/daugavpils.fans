@@ -7,11 +7,12 @@
     <h1>Pending proposals</h1>
     <p class="meta">Logged in as {{ approver.display_name }} ({{ approver.email }})</p>
   </div>
-  {% if can_view_stats %}
   <div class="admin-header-actions">
+    <a href="/dashboard/history" class="button-secondary">Decision History</a>
+    {% if can_view_stats %}
     <a href="/admin/" class="button-secondary">Site Statistics</a>
+    {% endif %}
   </div>
-  {% endif %}
 </div>
 
 {% if not proposals %}

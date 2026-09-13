@@ -49,8 +49,37 @@ def init_schema(database_path: Path, maintainer_email: str | None = None) -> Non
                 pass
         conn.commit()
         roles.ensure_default_roles(conn, maintainer_email)
+        prune_old_decided_proposals(conn, retention_days=90)
     finally:
         conn.close()
+
+
+def prune_old_decided_proposals(conn: sqlite3.Connection, retention_days: int = 90) -> dict[str, int]:
+    """Rotates/prunes decided proposals older than retention_days.
+    Only deletes completed/closed proposals ('applied', 'published', 'rejected').
+    Pending or in-flight proposals are never deleted."""
+    cutoff = f"-{int(retention_days)} days"
+    deleted: dict[str, int] = {}
+    for table, stat_clause in [
+        ("proposals", "status IN ('applied', 'rejected')"),
+        ("media_proposals", "status IN ('published', 'rejected')"),
+        ("album_proposals", "status IN ('published', 'rejected')"),
+        ("band_proposals", "status IN ('published', 'rejected')"),
+    ]:
+        try:
+            cur = conn.execute(
+                f"""
+                DELETE FROM {table}
+                WHERE {stat_clause}
+                  AND datetime(COALESCE(decided_at, created_at)) < datetime('now', ?)
+                """,
+                (cutoff,),
+            )
+            deleted[table] = cur.rowcount
+        except sqlite3.OperationalError:
+            pass
+    conn.commit()
+    return deleted
 
 
 def get_connection() -> sqlite3.Connection:

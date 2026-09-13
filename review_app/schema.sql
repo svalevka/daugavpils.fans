@@ -239,3 +239,9 @@ CREATE INDEX IF NOT EXISTS idx_band_proposals_status ON band_proposals(status, c
 CREATE INDEX IF NOT EXISTS idx_band_proposals_slug ON band_proposals(band_slug);
 CREATE INDEX IF NOT EXISTS idx_band_proposals_published ON band_proposals(published_at);
 
+-- Decision history indexes (filtering by status and decided_at)
+CREATE INDEX IF NOT EXISTS idx_proposals_decided ON proposals(status, decided_at);
+CREATE INDEX IF NOT EXISTS idx_media_proposals_decided ON media_proposals(status, decided_at);
+CREATE INDEX IF NOT EXISTS idx_album_proposals_decided ON album_proposals(status, decided_at);
+CREATE INDEX IF NOT EXISTS idx_band_proposals_decided ON band_proposals(status, decided_at);
+

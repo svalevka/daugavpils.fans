@@ -896,3 +896,298 @@ def band_release_track_audio_file(proposal_id: int, position: int):
         abort(404)
     return send_file(path, mimetype=track.get("content_type", "audio/mpeg"))
 
+
+@bp.get("/dashboard/history")
+@require_approver
+def decision_history():
+    conn = db.get_connection()
+    db.prune_old_decided_proposals(conn, retention_days=90)
+
+    raw_days = request.args.get("days", "7")
+    try:
+        days = int(raw_days)
+        if days not in (7, 14, 30, 90):
+            days = 7
+    except ValueError:
+        days = 7
+
+    selected_status = request.args.get("status", "all").strip().lower()
+    if selected_status not in ("all", "approved", "rejected"):
+        selected_status = "all"
+
+    selected_type = request.args.get("type", "all").strip().lower()
+    if selected_type not in ("all", "edit", "media", "album", "band"):
+        selected_type = "all"
+
+    timeframe_filter = f"-{days} days"
+    items: list[dict] = []
+
+    # 1. Field edits (proposals)
+    if selected_type in ("all", "edit"):
+        status_clause = ""
+        params: list[str] = [timeframe_filter]
+        if selected_status == "approved":
+            status_clause = "AND p.status IN ('applied', 'approved')"
+        elif selected_status == "rejected":
+            status_clause = "AND p.status = 'rejected'"
+        else:
+            status_clause = "AND p.status IN ('applied', 'approved', 'rejected')"
+
+        query = f"""
+            SELECT p.*, a.display_name AS decider_name, a.email AS decider_email
+            FROM proposals p
+            LEFT JOIN approvers a ON p.decided_by = a.id
+            WHERE p.decided_at IS NOT NULL
+              AND datetime(p.decided_at) >= datetime('now', ?)
+              {status_clause}
+            ORDER BY p.decided_at DESC
+        """
+        for r in conn.execute(query, params).fetchall():
+            target_scope = f"{r['band_slug']}/{r['release_slug']}" if r["release_slug"] else r["band_slug"]
+            norm_status = "approved" if r["status"] in ("applied", "approved") else "rejected"
+            field_name = "new band member" if r["target"] == "new_member" else f"{r['target']}.{r['field']}"
+            if r["list_index"] is not None:
+                field_name += f"[{r['list_index']}]"
+
+            orig_val = r["original_value"]
+            prop_val = r["proposed_value"]
+            try:
+                orig_json = json.loads(orig_val)
+                if isinstance(orig_json, (list, dict)):
+                    orig_val = json.dumps(orig_json, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
+            try:
+                prop_json = json.loads(prop_val)
+                if isinstance(prop_json, (list, dict)):
+                    prop_val = json.dumps(prop_json, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
+
+            items.append({
+                "id": r["id"],
+                "type": "edit",
+                "type_label": "Field Edit",
+                "target_title": f"{target_scope} — {field_name}",
+                "status": norm_status,
+                "raw_status": r["status"],
+                "created_at": r["created_at"],
+                "decided_at": r["decided_at"],
+                "decider_name": r["decider_name"] or ("AI Approval Agent" if (r["decider_email"] == roles.AI_APPROVER_EMAIL or not r["decided_by"]) else "Approver"),
+                "decider_email": r["decider_email"],
+                "is_ai": bool(r["decider_email"] == roles.AI_APPROVER_EMAIL or r["decider_name"] == roles.AI_APPROVER_NAME),
+                "submitter_name": r["submitter_name"],
+                "submitter_contact": r["submitter_contact"],
+                "ai_decision": r["ai_decision"],
+                "ai_confidence": r["ai_confidence"],
+                "ai_reasoning": r["ai_reasoning"],
+                "details": {
+                    "field": field_name,
+                    "original_value": orig_val,
+                    "proposed_value": prop_val,
+                    "applied_at": r["applied_at"],
+                    "github_run_id": r["github_run_id"],
+                },
+            })
+
+    # 2. Media proposals
+    if selected_type in ("all", "media"):
+        status_clause = ""
+        params = [timeframe_filter]
+        if selected_status == "approved":
+            status_clause = "AND m.status IN ('published', 'approved')"
+        elif selected_status == "rejected":
+            status_clause = "AND m.status = 'rejected'"
+        else:
+            status_clause = "AND m.status IN ('published', 'approved', 'rejected')"
+
+        query = f"""
+            SELECT m.*, a.display_name AS decider_name, a.email AS decider_email
+            FROM media_proposals m
+            LEFT JOIN approvers a ON m.decided_by = a.id
+            WHERE m.decided_at IS NOT NULL
+              AND datetime(m.decided_at) >= datetime('now', ?)
+              {status_clause}
+            ORDER BY m.decided_at DESC
+        """
+        for r in conn.execute(query, params).fetchall():
+            target_scope = f"{r['band_slug']}/{r['release_slug']}" if r["release_slug"] else r["band_slug"]
+            norm_status = "approved" if r["status"] in ("published", "approved") else "rejected"
+            items.append({
+                "id": r["id"],
+                "type": "media",
+                "type_label": f"Media ({r['media_type'].capitalize()})",
+                "target_title": f"{target_scope} — {r['media_type']} ({r['original_filename']})",
+                "status": norm_status,
+                "raw_status": r["status"],
+                "created_at": r["created_at"],
+                "decided_at": r["decided_at"],
+                "decider_name": r["decider_name"] or ("AI Approval Agent" if (r["decider_email"] == roles.AI_APPROVER_EMAIL or not r["decided_by"]) else "Approver"),
+                "decider_email": r["decider_email"],
+                "is_ai": bool(r["decider_email"] == roles.AI_APPROVER_EMAIL or r["decider_name"] == roles.AI_APPROVER_NAME),
+                "submitter_name": r["submitter_name"],
+                "submitter_contact": r["submitter_contact"],
+                "ai_decision": r["ai_decision"],
+                "ai_confidence": r["ai_confidence"],
+                "ai_reasoning": r["ai_reasoning"],
+                "details": {
+                    "media_type": r["media_type"],
+                    "caption": r["caption"],
+                    "original_filename": r["original_filename"],
+                    "size_bytes": r["size_bytes"],
+                    "published_at": r["published_at"],
+                    "github_run_id": r["github_run_id"],
+                },
+            })
+
+    # 3. Album proposals
+    if selected_type in ("all", "album"):
+        status_clause = ""
+        params = [timeframe_filter]
+        if selected_status == "approved":
+            status_clause = "AND ap.status IN ('published', 'approved')"
+        elif selected_status == "rejected":
+            status_clause = "AND ap.status = 'rejected'"
+        else:
+            status_clause = "AND ap.status IN ('published', 'approved', 'rejected')"
+
+        query = f"""
+            SELECT ap.*, a.display_name AS decider_name, a.email AS decider_email
+            FROM album_proposals ap
+            LEFT JOIN approvers a ON ap.decided_by = a.id
+            WHERE ap.decided_at IS NOT NULL
+              AND datetime(ap.decided_at) >= datetime('now', ?)
+              {status_clause}
+            ORDER BY ap.decided_at DESC
+        """
+        for r in conn.execute(query, params).fetchall():
+            norm_status = "approved" if r["status"] in ("published", "approved") else "rejected"
+            try:
+                tracks = json.loads(r["tracks_json"]) if r["tracks_json"] else []
+            except Exception:
+                tracks = []
+            try:
+                genres = json.loads(r["genre"]) if r["genre"] else []
+            except Exception:
+                genres = []
+            items.append({
+                "id": r["id"],
+                "type": "album",
+                "type_label": "New Album",
+                "target_title": f"{r['band_slug']} — {r['name']} ({r['date_published']})",
+                "status": norm_status,
+                "raw_status": r["status"],
+                "created_at": r["created_at"],
+                "decided_at": r["decided_at"],
+                "decider_name": r["decider_name"] or ("AI Approval Agent" if (r["decider_email"] == roles.AI_APPROVER_EMAIL or not r["decided_by"]) else "Approver"),
+                "decider_email": r["decider_email"],
+                "is_ai": bool(r["decider_email"] == roles.AI_APPROVER_EMAIL or r["decider_name"] == roles.AI_APPROVER_NAME),
+                "submitter_name": r["submitter_name"],
+                "submitter_contact": r["submitter_contact"],
+                "ai_decision": r["ai_decision"],
+                "ai_confidence": r["ai_confidence"],
+                "ai_reasoning": r["ai_reasoning"],
+                "details": {
+                    "name": r["name"],
+                    "release_slug": r["release_slug"],
+                    "date_published": r["date_published"],
+                    "genres": ", ".join(genres) if genres else "—",
+                    "license": r["license"],
+                    "description": r["description"],
+                    "tracks": tracks,
+                    "tracks_count": len(tracks),
+                    "published_at": r["published_at"],
+                    "github_run_id": r["github_run_id"],
+                },
+            })
+
+    # 4. Band proposals
+    if selected_type in ("all", "band"):
+        status_clause = ""
+        params = [timeframe_filter]
+        if selected_status == "approved":
+            status_clause = "AND bp.status IN ('published', 'approved')"
+        elif selected_status == "rejected":
+            status_clause = "AND bp.status = 'rejected'"
+        else:
+            status_clause = "AND bp.status IN ('published', 'approved', 'rejected')"
+
+        query = f"""
+            SELECT bp.*, a.display_name AS decider_name, a.email AS decider_email
+            FROM band_proposals bp
+            LEFT JOIN approvers a ON bp.decided_by = a.id
+            WHERE bp.decided_at IS NOT NULL
+              AND datetime(bp.decided_at) >= datetime('now', ?)
+              {status_clause}
+            ORDER BY bp.decided_at DESC
+        """
+        for r in conn.execute(query, params).fetchall():
+            norm_status = "approved" if r["status"] in ("published", "approved") else "rejected"
+            try:
+                tracks = json.loads(r["release_tracks_json"]) if r["release_tracks_json"] else []
+            except Exception:
+                tracks = []
+            try:
+                genres = json.loads(r["genre"]) if r["genre"] else []
+            except Exception:
+                genres = []
+            items.append({
+                "id": r["id"],
+                "type": "band",
+                "type_label": "New Band",
+                "target_title": f"{r['name']} ({r['band_slug']})",
+                "status": norm_status,
+                "raw_status": r["status"],
+                "created_at": r["created_at"],
+                "decided_at": r["decided_at"],
+                "decider_name": r["decider_name"] or ("AI Approval Agent" if (r["decider_email"] == roles.AI_APPROVER_EMAIL or not r["decided_by"]) else "Approver"),
+                "decider_email": r["decider_email"],
+                "is_ai": bool(r["decider_email"] == roles.AI_APPROVER_EMAIL or r["decider_name"] == roles.AI_APPROVER_NAME),
+                "submitter_name": r["submitter_name"],
+                "submitter_contact": r["submitter_contact"],
+                "ai_decision": r["ai_decision"],
+                "ai_confidence": r["ai_confidence"],
+                "ai_reasoning": r["ai_reasoning"],
+                "details": {
+                    "name": r["name"],
+                    "band_slug": r["band_slug"],
+                    "founding_date": r["founding_date"],
+                    "location": r["location"],
+                    "genres": ", ".join(genres) if genres else "—",
+                    "description": r["description"],
+                    "has_release": bool(r["has_release"]),
+                    "release_name": r["release_name"],
+                    "tracks": tracks,
+                    "tracks_count": len(tracks),
+                    "published_at": r["published_at"],
+                    "github_run_id": r["github_run_id"],
+                },
+            })
+
+    # Sort unified feed by decided_at DESC
+    items.sort(key=lambda x: x["decided_at"] or "", reverse=True)
+
+    counts = {
+        "total": len(items),
+        "approved": sum(1 for i in items if i["status"] == "approved"),
+        "rejected": sum(1 for i in items if i["status"] == "rejected"),
+    }
+
+    return render_template(
+        "history.html",
+        items=items,
+        counts=counts,
+        days=days,
+        selected_status=selected_status,
+        selected_type=selected_type,
+        approver=g.approver,
+        can_view_stats=roles.user_has_role(conn, g.approver["id"], roles.ROLE_STATS),
+    )
+
+
+@bp.get("/history")
+@require_approver
+def history_alias():
+    return redirect(url_for("dashboard.decision_history", **request.args))
+
+
