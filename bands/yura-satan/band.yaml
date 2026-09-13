@@ -32,4 +32,14 @@ sameAs:
 - https://archive.org/details/daugavpils-fans-yura-satan
 - https://archive.org/download/daugavpils-fans-yura-satan/daugavpils-fans-yura-satan_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/yura-satan-satan.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 9f872808283adb30b410de8e4b108a09daf72231ccdfdf8d9f6d551333c93faf
+  '@type': VideoObject
+  name: Концерт в клубе железнодорожников
+  bitrate: 999 kbps
+  duration: PT3M31S

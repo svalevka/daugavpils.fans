@@ -1,0 +1,185 @@
+'@type': MusicGroup
+name: Soya Peace Orchestra
+slug: soya-peace-orchestra
+alternateName:
+- Соевая Благодать
+- Soya Peace Or Chest Ra
+- Soya Peace OrChestRa
+- TheSoyapeace
+foundingDate: '2007'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Experimental Rock
+- Punk Rock
+- Heavy Metal
+member:
+- name: Владимир Куранов
+  name_en: Vladimir Kuranov
+  role: музыка, гитара, бас
+  role_en: music, guitar, bass
+- name: Александр Гридасов
+  name_en: Alexander Gridasov
+  role: слова, запись звука
+  role_en: lyrics, sound recording
+- name: Виктория Чиннова
+  name_en: Victoria Chinnova
+  role: вокал
+  role_en: vocals
+description: 'Музыкальный коллектив из Даугавпилса, основанный в 2007 году семью музыкантами.
+  В название заложена игра слов: «Soya Peace Or Chest Ra» («Соевая благодать или Сундук
+  Ра / Сундук Солнца»).
+
+
+  Группа активно выступала на фестивалях Chemical Reaction (2008, 2009), в даугавпилсских
+  клубах «Улитка» (Gliemezis, 2008) и «Banzai» (2011), на Празднике города Даугавпилса
+  (2010), а также давала живые эфиры на телевидении Dautkom TV. В 2019–2020 годах
+  коллектив снял в Динабургской крепости клип на сингл «Двое у колыбели» (слова Александра
+  Гридасова, музыка Владимира Куранова, вокал Виктории Чинновой).'
+description_en: 'Musical collective from Daugavpils, founded in 2007 by seven musicians.
+  The band''s name contains a bilingual pun: "Soya Peace Or Chest Ra" ("Soy Grace,
+  or the Sun God Ra''s Chest").
+
+
+  The band actively performed at the Chemical Reaction festivals (2008, 2009), at
+  Daugavpils underground clubs "Ulitka" (Gliemezis, 2008) and "Banzai" (2011), during
+  the Daugavpils City Festival (2010), and performed live in-studio sessions on Dautkom
+  TV. In 2019–2020, the group filmed a music video inside the Dinaburg fortress for
+  the single "Two at the Cradle" (lyrics by Alexander Gridasov, music by Vladimir
+  Kuranov, vocals by Victoria Chinnova).'
+sameAs:
+- https://www.youtube.com/@TheSoyapeace
+- https://archive.org/details/daugavpils-fans-soya-peace-orchestra
+- https://archive.org/download/daugavpils-fans-soya-peace-orchestra/daugavpils-fans-soya-peace-orchestra_archive.torrent
+image:
+- contentUrl: media/soya-peace-or-chest-ra-logo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3ff623530efafac8076f57d233290d63aea7a0d5c4f6d510340dda90f91a5a68
+  '@type': ImageObject
+  caption: Логотип группы Soya Peace Or Chest Ra
+  caption_en: Logo of Soya Peace Or Chest Ra
+  depicts: []
+video:
+- contentUrl: media/soya-peace-chemical-reaction-2008.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 81107d2ce906d11d830a10ade4a4c6d4375d4895c91389fb267bfc663b3c4d36
+  '@type': VideoObject
+  name: Выступление на фестивале «Chemical Reaction» (05.12.2008)
+  bitrate: 595 kbps
+  duration: PT9M42S
+- contentUrl: media/soya-peace-chemical-reaction-2009.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 6710c7a5ddd6b874c1d5ef5f774dce82f6d2a504f0e6e6baa2e38ed938e11bda
+  '@type': VideoObject
+  name: Выступление на фестивале «Chemical Reaction» (2009)
+  bitrate: 550 kbps
+  duration: PT13M6S
+- contentUrl: media/soya-peace-dautkom-tv-part-1.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 455c645339c00e84b62038b46a019d179f6eee83d581929695c9b06f417db5a2
+  '@type': VideoObject
+  name: Живое выступление на Dautkom TV (Часть 1)
+  bitrate: 433 kbps
+  duration: PT9M3S
+- contentUrl: media/soya-peace-dautkom-tv-part-2.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c41c0cc9f35dd2eae56f233f945d369d0ba0356086cba91bc22a963bfa74d9a2
+  '@type': VideoObject
+  name: Живое выступление на Dautkom TV (Часть 2)
+  bitrate: 474 kbps
+  duration: PT8M54S
+- contentUrl: media/soya-peace-dautkom-tv-part-3.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e70fd21912459a50c3674d0c9217e28b9283883625512639004035ba149ef19d
+  '@type': VideoObject
+  name: Живое выступление на Dautkom TV (Часть 3)
+  bitrate: 473 kbps
+  duration: PT10M41S
+- contentUrl: media/soya-peace-live-ulitka-2008-kolhoz.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 69764d1c4655247a8f3718c8328e40051d1e8e9c7cd1b29157933f3d714bf2a6
+  '@type': VideoObject
+  name: Колхоз (Live в клубе «Улитка», 22.11.2008)
+  bitrate: 360 kbps
+  duration: PT3M1S
+- contentUrl: media/soya-peace-live-ulitka-2008-morning-blues.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3b4b748ab0476b32d5260c902f2b907d7254b78b10dfe6b839b4e2fd5a2ab7a8
+  '@type': VideoObject
+  name: Утренний блюз (Live в клубе «Улитка», 22.11.2008)
+  bitrate: 320 kbps
+  duration: PT5M30S
+- contentUrl: media/soya-peace-live-ulitka-2008-svalka-otkritok.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 28a4efb21d1bf3f734ce1ef14ad88a4e51462f5d2bdff01a9e3fee93d8c3b4e3
+  '@type': VideoObject
+  name: Свалка открыток (Live в клубе «Улитка», 22.11.2008)
+  bitrate: 369 kbps
+  duration: PT2M57S
+- contentUrl: media/soya-peace-live-ulitka-2008-otricalovo.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c790027095ba993c106cba865908cf36d08aa63005bc687818e20b429b739e68
+  '@type': VideoObject
+  name: Отрицалово (Live в клубе «Улитка», 22.11.2008)
+  bitrate: 403 kbps
+  duration: PT2M36S
+- contentUrl: media/soya-peace-live-banzai-2011-ne-pokhoronyat.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: f673d9618916ced973d9071190574551458c27ae8b572d2d38793d1b23789bb5
+  '@type': VideoObject
+  name: Не похоронят! (Live в клубе «Banzai», 2011)
+  bitrate: 588 kbps
+  duration: PT3M9S
+- contentUrl: media/soya-peace-live-banzai-2011-guru-fury.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 9b5fee5e2a5ccdac861dfa6609c8ea67fdb31e04bf22968fd2bdf2e792af1a44
+  '@type': VideoObject
+  name: Гуру фуры (Live в клубе «Banzai», 2011)
+  bitrate: 603 kbps
+  duration: PT4M42S
+- contentUrl: media/soya-peace-dvoe-u-kolybeli-video.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 8306efdc5f9d117ba86e1a16cbf02ee93b7ae4eb794fe856a4af1bb54cac9721
+  '@type': VideoObject
+  name: Двое у колыбели (Клип в Динабургской крепости, 2019–2020)
+  bitrate: 428 kbps
+  duration: PT6M23S
