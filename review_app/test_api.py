@@ -48,10 +48,13 @@ class GetProposalTest(ReviewAppTestCase):
 
         self.assertEqual(response.status_code, 200)
         body = response.get_json()
+        self.assertEqual(body["id"], proposal_id)
         self.assertEqual(body["band_slug"], self.fx.band_slug)
         self.assertEqual(body["target"], "band")
         self.assertEqual(body["field"], "description")
         self.assertEqual(body["proposed_value"], "Corrected biography text.")
+        self.assertIn("decided_by_name", body)
+        self.assertIn("ai_decision", body)
 
     def test_fetching_flips_status_to_applying(self):
         approver_id = self.seed_approver("approver@example.com")

@@ -1,0 +1,92 @@
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from format_commit_message import format_commit_message, format_step_summary
+
+
+class FormatCommitMessageTest(unittest.TestCase):
+    def test_text_proposal_with_ai_audit_info(self):
+        proposal = {
+            "id": 26,
+            "band_slug": "m-spirit",
+            "release_slug": None,
+            "target": "band",
+            "field": "description",
+            "decided_by_name": "AI Approval Agent",
+            "ai_decision": "approved",
+            "ai_confidence": 0.95,
+            "ai_reasoning": "Minimal punctuation cleanup.",
+        }
+        msg = format_commit_message(proposal)
+        self.assertIn("Apply approved proposal #26", msg)
+        self.assertIn("Target: m-spirit (band.description)", msg)
+        self.assertIn("Decided by: AI Approval Agent", msg)
+        self.assertIn("AI Decision: approved (95% confidence)", msg)
+        self.assertIn("AI Reasoning: Minimal punctuation cleanup.", msg)
+        self.assertIn("Proposal-ID: 26", msg)
+
+    def test_human_approved_proposal(self):
+        proposal = {
+            "id": 14,
+            "band_slug": "degradanti",
+            "release_slug": "demo",
+            "target": "release",
+            "field": "year",
+            "decided_by_name": "Sergei Valevka",
+            "ai_decision": None,
+            "ai_confidence": None,
+            "ai_reasoning": None,
+        }
+        msg = format_commit_message(proposal)
+        self.assertIn("Apply approved proposal #14", msg)
+        self.assertIn("Target: degradanti/demo (release.year)", msg)
+        self.assertIn("Decided by: Sergei Valevka", msg)
+        self.assertNotIn("AI Decision", msg)
+        self.assertIn("Proposal-ID: 14", msg)
+
+    def test_media_proposal_formatting(self):
+        proposal = {
+            "id": 5,
+            "band_slug": "m-spirit",
+            "release_slug": None,
+            "media_type": "image",
+            "original_filename": "live.jpg",
+            "caption": "Live in Riga 2008",
+            "decided_by_name": "AI Approval Agent",
+            "ai_decision": "approved",
+            "ai_confidence": 0.90,
+            "ai_reasoning": "Authentic band photo.",
+        }
+        msg = format_commit_message(proposal, is_media=True)
+        self.assertIn("Apply approved media proposal #5", msg)
+        self.assertIn("Target: m-spirit (image: live.jpg)", msg)
+        self.assertIn("Caption: Live in Riga 2008", msg)
+        self.assertIn("Decided by: AI Approval Agent", msg)
+        self.assertIn("AI Decision: approved (90% confidence)", msg)
+        self.assertIn("AI Reasoning: Authentic band photo.", msg)
+        self.assertIn("Media-Proposal-ID: 5", msg)
+
+    def test_step_summary_markdown(self):
+        proposal = {
+            "id": 26,
+            "band_slug": "m-spirit",
+            "release_slug": None,
+            "target": "band",
+            "field": "description",
+            "decided_by_name": "AI Approval Agent",
+            "ai_decision": "approved",
+            "ai_confidence": 0.95,
+            "ai_reasoning": "Minimal punctuation cleanup.",
+        }
+        summary = format_step_summary(proposal)
+        self.assertIn("### Applied Proposal #26", summary)
+        self.assertIn("`m-spirit (band.description)`", summary)
+        self.assertIn("**AI Approval Agent**", summary)
+        self.assertIn("`approved` (95% confidence)", summary)
+        self.assertIn("> **AI Reasoning**: Minimal punctuation cleanup.", summary)
+
+
+if __name__ == "__main__":
+    unittest.main()

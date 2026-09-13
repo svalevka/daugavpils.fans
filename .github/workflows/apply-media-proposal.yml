@@ -99,7 +99,8 @@ jobs:
               if git diff --cached --quiet; then
                 success=1
               else
-                git commit -m "Apply approved media proposal #$id"
+                python tools/format_commit_message.py --is-media --proposal-file proposal.json --output commit_msg.txt --summary-file "${GITHUB_STEP_SUMMARY:-}"
+                git commit -F commit_msg.txt
                 pushed=0
                 for attempt in 1 2 3 4 5; do
                   if git push origin main; then

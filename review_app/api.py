@@ -49,12 +49,19 @@ def get_proposal(proposal_id: int):
         abort(404 if row is None else 409)
 
     row = conn.execute(
-        "SELECT band_slug, release_slug, target, list_index, field, original_value, proposed_value "
-        "FROM proposals WHERE id = ?",
+        """
+        SELECT p.id, p.band_slug, p.release_slug, p.target, p.list_index, p.field,
+               p.original_value, p.proposed_value, p.ai_decision, p.ai_confidence,
+               p.ai_reasoning, a.display_name AS decided_by_name
+        FROM proposals p
+        LEFT JOIN approvers a ON p.decided_by = a.id
+        WHERE p.id = ?
+        """,
         (proposal_id,),
     ).fetchone()
     return jsonify(
         {
+            "id": row["id"],
             "band_slug": row["band_slug"],
             "release_slug": row["release_slug"],
             "target": row["target"],
@@ -62,6 +69,10 @@ def get_proposal(proposal_id: int):
             "field": row["field"],
             "original_value": json.loads(row["original_value"]),
             "proposed_value": json.loads(row["proposed_value"]),
+            "decided_by_name": row["decided_by_name"] if "decided_by_name" in row.keys() else None,
+            "ai_decision": row["ai_decision"] if "ai_decision" in row.keys() else None,
+            "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
+            "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
         }
     )
 
@@ -136,8 +147,14 @@ def get_media_proposal(proposal_id: int):
         abort(404 if row is None else 409)
 
     row = conn.execute(
-        "SELECT id, band_slug, release_slug, media_type, original_filename, content_type, size_bytes, caption "
-        "FROM media_proposals WHERE id = ?",
+        """
+        SELECT m.id, m.band_slug, m.release_slug, m.media_type, m.original_filename,
+               m.content_type, m.size_bytes, m.caption, m.ai_decision, m.ai_confidence,
+               m.ai_reasoning, a.display_name AS decided_by_name
+        FROM media_proposals m
+        LEFT JOIN approvers a ON m.decided_by = a.id
+        WHERE m.id = ?
+        """,
         (proposal_id,),
     ).fetchone()
     return jsonify(
@@ -150,6 +167,10 @@ def get_media_proposal(proposal_id: int):
             "content_type": row["content_type"],
             "size_bytes": row["size_bytes"],
             "caption": row["caption"],
+            "decided_by_name": row["decided_by_name"] if "decided_by_name" in row.keys() else None,
+            "ai_decision": row["ai_decision"] if "ai_decision" in row.keys() else None,
+            "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
+            "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
         }
     )
 
