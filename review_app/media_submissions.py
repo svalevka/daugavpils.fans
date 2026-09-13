@@ -135,7 +135,7 @@ def create_media_proposal():
     saved_ids: list[int] = []
     skipped: list[str] = []
     for index, file_storage in enumerate(files):
-        caption = request.form.get(f"caption_{index}", "").strip() or None
+        caption = (request.form.get(f"caption_{index}") or request.form.get("caption", "")).strip() or None
         try:
             stored_filename, content_type, media_type, size = media_uploads.save_upload(
                 file_storage,
