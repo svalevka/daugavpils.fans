@@ -176,10 +176,10 @@ mapfile -t all_checkouts < <(ls -1dt "$CHECKOUT_ROOT"/*/ 2>/dev/null | sed 's:/$
 if [ "${#all_checkouts[@]}" -gt "$KEEP_CHECKOUTS" ]; then
   for old in "${all_checkouts[@]:$KEEP_CHECKOUTS}"; do
     echo "pruning old checkout $old"
-    git -C "$REPO_DIR" worktree remove --force "$old" 2>/dev/null || rm -rf "$old"
+    git -C "$REPO_DIR" worktree remove --force "$old" 2>/dev/null || rm -rf "$old" 2>/dev/null || true
   done
 fi
-git -C "$REPO_DIR" worktree prune
+git -C "$REPO_DIR" worktree prune 2>/dev/null || true
 
 if [ -n "${HEARTBEAT_URL:-}" ]; then
   curl -fsS -m 10 --retry 2 "$HEARTBEAT_URL" >/dev/null 2>&1 || echo "WARNING: failed to ping HEARTBEAT_URL" >&2
