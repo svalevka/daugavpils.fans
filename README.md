@@ -264,26 +264,22 @@ distribution instead of centralized paid hosting.
 A public website now exists (see `webapp/` and ADR-0001) - a static site
 built from the same archive, streaming media directly from archive.org
 rather than hosting a copy of it (see `tools/publish_to_archive_org.py`),
-not a replacement for the archive.org distribution model above. Adding a
-whole new band or release still goes through a pull request and quorum
-review (see "Adding a new band, step by step" below) - what's now open to
-the public, with no account or git knowledge needed, is proposing a
-correction to an *existing* band's or release's text, or contributing a
-new photo/video to one (see "Public proposals" below).
+not a replacement for the archive.org distribution model above. Adding new
+bands, releases, media, or corrections can now be done directly by the public
+with no account or git knowledge needed (see "Public proposals" below), as
+well as through the direct pull-request flow (see "Adding a new band, step by step"
+below).
 
 ## Public proposals (review app)
 
-Anyone can propose a change to an *existing* band or release at
-**[review.daugavpils.fans/submit](https://review.daugavpils.fans/submit)**, no
-GitHub account or pull request needed - a curated approver (any one of
-them, no quorum) decides on it. This is a deliberately lighter-weight,
-lower-rigor review path than the "Quorum review" PR flow above -
-appropriate for corrections and contributed media, not for adding a
-whole new band or release (that still needs a PR). See ADR-0003 for why
+Anyone can propose a change, a new album, or a brand-new band at
+**[review.daugavpils.fans/submit](https://review.daugavpils.fans/submit)**, with no
+GitHub account or pull request needed. Submissions are reviewed by an autonomous
+AI approval agent or human curators on the `/dashboard`. See ADR-0003 for why
 this exists as a live server process alongside an otherwise fully static
-Site, and GitHub issue #8 for the original design.
+Site, and GitHub issues #8, #20, #21, #22, #36, #43.
 
-Two kinds of proposal, with genuinely different mechanics behind them:
+Four kinds of proposals, handled by automated pipelines:
 
 - **Text corrections** - biography, member role/period, photo caption,
   genres, alternate names (see `tools/editable_fields.py` for the exact
@@ -293,17 +289,31 @@ Two kinds of proposal, with genuinely different mechanics behind them:
   anyone.
 - **New photos/videos** - contributing a new `image`/`video` entry to an
   existing band or release (GitHub issue #21, automated in #36).
-  Approving just moves the upload to a "ready to publish" list on the
-  dashboard; from there a curator clicks "Upload" to dispatch
-  `apply-media-proposal.yml` (GitHub issue #36), which fetches the file,
+  Approving moves the upload to the dashboard queue where an approver
+  clicks "Upload" (or the AI agent auto-approves high-confidence items),
+  dispatching `apply-media-proposal.yml`. That Action fetches the file,
   computes its checksum and (for video) duration/bitrate, appends the
   `image`/`video` entry to `band.yaml`/`release.yaml`, uploads the file
-  to archive.org, and commits/pushes to `main` - no maintainer machine
-  or local media tree involved. A "Mark published manually" fallback
-  button still exists on the dashboard for a curator who publishes the
-  file by hand instead (`scp`/`rsync` off the server, the same way as
-  "Adding a new band, step by step" below). See `webapp/deploy/README.md`'s
-  "Photo/video proposals" section for both paths.
+  to archive.org, and commits/pushes to `main`.
+- **New album / release** (`/submit/<band-slug>/add-release`, GitHub issue #20) -
+  proposing a complete new album for an existing band with multi-track audio files
+  (MP3, FLAC, WAV, AAC, OGG, M4A), per-track titles, drag-and-drop track order,
+  metadata (year, genre, description, license), and optional cover art. The backend
+  validates audio streams with `ffprobe`. Evaluated autonomously by the AI agent
+  (confidence $\ge 0.90$) or reviewed on `/dashboard`. Approval dispatches
+  `apply-album-proposal.yml` which runs `tools/apply_album_proposal.py` to create
+  `bands/<band-slug>/<release-slug>/release.yaml`, probe audio properties, compute
+  SHA-256 checksums, upload to archive.org (`daugavpils-fans-<band>-<release>`),
+  update the metadata backup bundle, and commit to `main`.
+- **New band profile** (`/submit/add-band`, GitHub issue #22) - proposing an entirely
+  new band profile with name, active years, genres, biography/testimony narrative,
+  optional band photo, and optional first release (tracks + cover art). Evaluated by
+  the AI review agent (confidence $\ge 0.95$ with prompt injection pre-filtering and
+  AI slop detection) or reviewed on `/dashboard`. Enforces a rolling 24-hour rate limit
+  (at most 1 new band published per rolling 24 hours). Approval dispatches
+  `apply-band-proposal.yml` which runs `tools/apply_band_proposal.py` to create
+  `bands/<band-slug>/band.yaml`, place media files, optionally create the first release,
+  publish to archive.org, update the metadata backup bundle, and commit to `main`.
 
 This feature only exists on the primary domain - the GitHub Pages mirror
 below has no such app; visiting it there won't find a proposal form.
@@ -452,14 +462,20 @@ python -m unittest discover -s review_app -p 'test_*.py'
 
 Running the `tools/` tests requires `ffmpeg` / `ffprobe` installed on your `PATH` (used by `tools/archive_fixture.py` to construct valid synthetic test media files).
 
-## Adding a new band, step by step
+## Adding a new band or release, step by step
 
-This walks through the actual sequence, end to end. `tools/models.py` is
-the authoritative field list (required vs. optional); this is a minimal
-worked example, not the full field reference. For a real, fleshed-out
-example to copy from, look at an existing band - e.g.
-`bands/m-spirit/band.yaml` and
-`bands/m-spirit/1995-zadushevnie-pesenki-ms-pankukhina/release.yaml`.
+There are two ways to contribute new content to the archive:
+1. **Via the Review App (Recommended for community contributors)**:
+   - To propose a new band: visit **[review.daugavpils.fans/submit/add-band](https://review.daugavpils.fans/submit/add-band)** (or click "Предложить группу" in the website header).
+   - To propose a new album for an existing band: click "Предложить альбом" on that band's page.
+   - You do not need git, Python, command-line tools, or local filesystems. Audio files are validated, checksummed, uploaded to archive.org, and committed automatically upon approval.
+2. **Via Git and local tooling (Maintainer / developer path)**:
+   The sequence below walks through authoring files directly in the repository. `tools/models.py` is
+   the authoritative field list (required vs. optional); this is a minimal
+   worked example, not the full field reference. For a real, fleshed-out
+   example to copy from, look at an existing band - e.g.
+   `bands/m-spirit/band.yaml` and
+   `bands/m-spirit/1995-zadushevnie-pesenki-ms-pankukhina/release.yaml`.
 
 ### Prerequisites
 

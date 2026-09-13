@@ -145,6 +145,8 @@ def publish_item(
 ) -> bool:
     import internetarchive as ia
 
+    metadata = {k: v for k, v in metadata.items() if v is not None}
+
     if not files:
         if not ia.get_item(item_id).exists:
             print(f"  {item_id}: no media files and item does not exist on archive.org, skipping individual item publish")
@@ -285,8 +287,9 @@ def release_metadata(release: MusicAlbum, band: MusicGroup) -> dict[str, str]:
         "title": release.name,
         "creator": band.name,
         "date": release.datePublished,
-        "licenseurl": release.license,
     }
+    if release.license:
+        metadata["licenseurl"] = release.license
     if release.genre:
         metadata["subject"] = "; ".join(release.genre)
     if release.description:

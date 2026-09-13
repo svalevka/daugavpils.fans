@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from archive_fixture import build_valid_archive
 from publish_to_archive_org import (
     publish_item,
+    release_metadata,
     sync_metadata,
     validate_metadata_schemas,
 )
@@ -102,6 +103,46 @@ class PublishMetadataOnlyTest(unittest.TestCase):
             ok = sync_metadata("daugavpils-fans-test", {"title": "Test"})
 
         self.assertFalse(ok)
+
+    def test_publish_item_metadata_only_handles_none_values_gracefully(self):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+
+        with tempfile.TemporaryDirectory() as tmp:
+            yaml_path = Path(tmp) / "release.yaml"
+            yaml_path.write_text("name: Test\nsameAs: []\n")
+
+            with patch("internetarchive.get_item") as mock_get_item:
+                mock_get_item.return_value.exists = True
+                with patch("internetarchive.modify_metadata", return_value=mock_response) as mock_modify:
+                    ok = publish_item(
+                        item_id="daugavpils-fans-test-release",
+                        files={"track.mp3": Path(tmp) / "track.mp3"},
+                        metadata={"title": "Test", "licenseurl": None, "description": "Desc"},
+                        dry_run=False,
+                        yaml_path=yaml_path,
+                        metadata_only=True,
+                    )
+
+            self.assertTrue(ok)
+            mock_modify.assert_called_once_with(
+                "daugavpils-fans-test-release",
+                metadata={"title": "Test", "description": "Desc"},
+            )
+
+    def test_release_metadata_omits_unset_license(self):
+        from publish_to_archive_org import load_band, load_release
+
+        with tempfile.TemporaryDirectory() as tmp:
+            bands_dir = Path(tmp) / "bands"
+            fx = build_valid_archive(bands_dir)
+            release = load_release(fx.release_dir)
+            band = load_band(fx.band_dir)
+            release.license = None
+
+            meta = release_metadata(release, band)
+            self.assertNotIn("licenseurl", meta)
+            self.assertEqual(meta["title"], release.name)
 
 
 if __name__ == "__main__":

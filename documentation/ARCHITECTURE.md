@@ -101,12 +101,11 @@ through nginx (`review.daugavpils.fans`), with its own SQLite database
 credential that can push to git, and never holds archive.org credentials
 at all.
 
-It handles two kinds of proposal, decided the same way on the same
-`/dashboard` (one curated approver, no quorum, self-approval blocked -
-see ADR-0003's Consequences) but applied completely differently once
-approved:
+It handles four kinds of proposals, decided on `/dashboard` (or by the
+autonomous AI agent; one curated approver, no quorum, self-approval blocked -
+see ADR-0003's Consequences) and applied via dedicated GitHub Actions workflows:
 
-- **Text proposals** (issue #13, #33) - approving dispatches
+- **Text proposals** (issues #13, #33) - approving dispatches
   `apply-proposal.yml` with just the proposal's id. That Action fetches
   the actual content from `review_app`'s authenticated callback API,
   commits it, and pushes to `main`. Because a workflow's own commit can't
@@ -117,25 +116,25 @@ approved:
   item metadata and `daugavpils-fans-metadata` backup bundle immediately
   reflect the updated golden source of truth in git. The VPS's timer
   picks the same push up on its own next poll, no dispatch needed there.
-- **Media proposals** (issue #21, automated in issue #36) - approving
-  itself never dispatches anything; it only moves the upload to a "ready
-  to publish" list on the dashboard. From there a curator normally
-  clicks "Upload", which dispatches `apply-media-proposal.yml` with the
-  proposal's id, the same `workflow_dispatch (id only)` shape as the
-  text-proposal path. That Action fetches the file and metadata from
-  `review_app`'s callback API, runs `tools/apply_media_proposal.py` to
-  derive a filename, compute its checksum (and, for video,
-  duration/bitrate via `ffprobe`), write the `image`/`video` entry into
-  `band.yaml`/`release.yaml`, upload the file to the item on
-  archive.org, sync metadata, and commit/push to `main` - then reports
-  success/failure back so the dashboard can show "published" or "upload
-  failed". A "Mark published manually" fallback still exists for a
-  curator who'd rather do it by hand: retrieve the file (`scp`/`rsync`
-  from `review-app-data/uploads/` on the VPS - see
-  `webapp/deploy/README.md`), write the YAML entry, run
-  `tools/validate.py --write` then `tools/publish_to_archive_org.py`,
-  and commit/push directly - the same manual process as "Adding a new
-  band, release, or media" below.
+- **Media proposals** (issues #21, #36) - approving moves the upload to a
+  "ready to publish" list where clicking "Upload" (or AI agent auto-approval)
+  dispatches `apply-media-proposal.yml`. That Action fetches the file and
+  metadata from `review_app`'s callback API, runs `tools/apply_media_proposal.py`
+  to derive a filename, compute its checksum (and, for video, duration/bitrate via
+  `ffprobe`), write the `image`/`video` entry into `band.yaml`/`release.yaml`,
+  upload the file to the item on archive.org, sync metadata, and commit/push to
+  `main`. A "Mark published manually" fallback still exists for a curator who'd
+  rather do it by hand.
+- **Album proposals** (issue #20) - community submission of new releases
+  (`/submit/<band>/add-release`) with multi-track audio upload and cover art.
+  Approving dispatches `apply-album-proposal.yml`, which downloads tracks, probes
+  audio with `ffprobe`, computes SHA-256 checksums, writes `release.yaml`, uploads
+  to archive.org (`daugavpils-fans-<band>-<release>`), and commits/pushes to `main`.
+- **Band proposals** (issue #22) - community submission of brand-new bands
+  (`/submit/add-band`) with biography, photo, and optional first release.
+  Enforces a 24-hour rate limit (max 1 new band published per rolling 24 hours).
+  Approving dispatches `apply-band-proposal.yml`, which creates `band.yaml`, media,
+  optional release, uploads to archive.org, and commits/pushes to `main`.
 
 ### AI Approval Agent (issue #43)
 
@@ -183,12 +182,14 @@ This is a separate story from *redeploying* the Site (everything above),
 and doesn't touch this deploy pipeline at all - it's how content gets
 into the two homes the pipeline then serves from:
 
-- **Metadata (git)**: a contributor opens a PR with a new/edited
-  `band.yaml`/`release.yaml`; quorum review merges it to `main` like any
-  other PR. `review_app`'s lighter-weight `/submit` flow (above) covers
-  *correcting* an existing field or contributing a new photo/video to an
-  *existing* band/release, never adding a whole new band or release -
-  that still needs a PR.
+- **Community contributions (review_app)**: anyone can propose text corrections,
+  photos/videos, brand-new releases (`/submit/<band>/add-release`), or entirely new
+  bands (`/submit/add-band`). Approved submissions automatically trigger GitHub Actions
+  workflows that upload media directly to archive.org, compute checksums/properties,
+  and commit changes to `main`.
+- **Direct PR workflow (git)**: a contributor or maintainer can also open a PR
+  with a new/edited `band.yaml`/`release.yaml` authored locally; quorum review
+  merges it to `main` like any other PR.
 - **Media (archive.org)**: after the PR is merged (or, for a `review_app`
   media proposal, after a maintainer's picked it up from the "ready to
   publish" queue - same step either way), whoever holds the project's
