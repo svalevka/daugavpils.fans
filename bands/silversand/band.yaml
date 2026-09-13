@@ -3,7 +3,6 @@ name: Silversand
 slug: silversand
 alternateName: []
 foundingDate: '2004'
-dissolutionDate: null
 location: Daugavpils, Latvia
 genre:
 - Electronic Rock
@@ -38,6 +37,48 @@ description_en: 'Daugavpils electronic rock and synth-rock project Silversand, w
   Vladimir D. (vocals, guitars)
 
   Diana D. (keyboards)'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-silversand
+- https://archive.org/download/daugavpils-fans-silversand/daugavpils-fans-silversand_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/silversand-live-2003-01.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 5a9801a2edfbcdceea44666e3139ba47e4af8adab86ec4331b05585762332f09
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 1
+  bitrate: 555 kbps
+  duration: PT3M58S
+- contentUrl: media/silversand-live-2003-02.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7ee3c7c41413bb67f98ccfa3c7d3f4349633fade9b08391f830064ba9bb71e49
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 2
+  bitrate: 607 kbps
+  duration: PT3M42S
+- contentUrl: media/silversand-live-2003-03.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 5657a2dc29132b6f85f70a8f9bd5486a2891c449c0c8c1d6bab285897d098e99
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 3
+  bitrate: 770 kbps
+  duration: PT4M42S
+- contentUrl: media/silversand-live-2003-04.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 8fdeafb7303b894205d731587043b52cd0a985298116266f7ad5acfd779f87c1
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 4
+  bitrate: 572 kbps
+  duration: PT6M16S

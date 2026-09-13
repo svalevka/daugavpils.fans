@@ -70,7 +70,10 @@ WEBAPP_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = WEBAPP_DIR / "templates"
 STATIC_DIR = WEBAPP_DIR / "static"
 DIST_DIR = WEBAPP_DIR / "dist"
-MAINTENANCE_MD = REPO_ROOT / "MAINTENANCE.md"
+MAINTENANCE_MD = {
+    "ru": REPO_ROOT / "MAINTENANCE.md",
+    "en": REPO_ROOT / "MAINTENANCE-EN.md",
+}
 BASE_PATH = os.environ.get("SITE_BASE_PATH", "").rstrip("/")
 
 # How much media a band/release page shows inline before linking out to its
@@ -121,18 +124,19 @@ def license_label(url: str) -> str:
     return url
 
 
-def render_maintenance_html() -> str:
-    """MAINTENANCE.md, rendered to HTML for the on-site /support/ page (see
-    README's Support section) - same content, so it stays reachable even to
-    people who'd never think to look on GitHub. Mermaid fences are pulled out
-    before the markdown pass and reinserted as <pre class="mermaid"> blocks
-    (HTML-escaped, so embedded diagram markup like `<br/>` survives as text
-    for mermaid.js to parse - see templates/support.html) rather than being
-    left for Python-Markdown's fenced-code handling, which would wrap them in
-    <code> and defeat mermaid.js's `.mermaid` selector. Relative links to
-    other repo files (e.g. `README.md`) are rewritten to GitHub blob URLs,
-    since they'd otherwise resolve relative to /support/ on the Site."""
-    text = MAINTENANCE_MD.read_text()
+def render_maintenance_html(lang: str) -> str:
+    """MAINTENANCE.md (or its MAINTENANCE-EN.md translation), rendered to HTML
+    for the on-site /support/ page (see README's Support section) - same
+    content, so it stays reachable even to people who'd never think to look
+    on GitHub. Mermaid fences are pulled out before the markdown pass and
+    reinserted as <pre class="mermaid"> blocks (HTML-escaped, so embedded
+    diagram markup like `<br/>` survives as text for mermaid.js to parse -
+    see templates/support.html) rather than being left for Python-Markdown's
+    fenced-code handling, which would wrap them in <code> and defeat
+    mermaid.js's `.mermaid` selector. Relative links to other repo files
+    (e.g. `README.md`) are rewritten to GitHub blob URLs, since they'd
+    otherwise resolve relative to /support/ on the Site."""
+    text = MAINTENANCE_MD[lang].read_text()
     text = RELATIVE_MD_LINK_RE.sub(lambda m: f"]({GITHUB_BLOB_BASE}{m.group(1)})", text)
 
     diagrams: list[str] = []
@@ -244,7 +248,7 @@ def require_media_published(bands: list[MusicGroup], releases_by_band: dict[str,
                 _missing_from_item(band_item_id(band.slug), [m.contentUrl for m in band.image + band.video])
             )
             for release in releases_by_band[band.slug]:
-                content_urls = [t.audio.contentUrl for t in release.track]
+                content_urls = [t.audio.contentUrl for t in release.track if t.audio is not None]
                 content_urls += [m.contentUrl for m in release.image + release.video]
                 missing.extend(_missing_from_item(release_item_id(band.slug, release.slug), content_urls))
     except ArchiveOrgUnavailableError:
@@ -401,21 +405,22 @@ def build() -> None:
         print(f"  built [{lang}]: {len(bands)} band(s)")
 
     support_tmpl = env.get_template("support.html")
-    support_out_dir = DIST_DIR / "support"
-    support_out_dir.mkdir(parents=True, exist_ok=True)
-    (support_out_dir / "index.html").write_text(
-        support_tmpl.render(
-            lang=DEFAULT_LANG,
-            t=STRINGS[DEFAULT_LANG],
-            lang_prefix=lang_prefix(DEFAULT_LANG),
-            base_path=BASE_PATH,
-            ru_url=f"{BASE_PATH}/support/",
-            en_url=f"{BASE_PATH}/support/",
-            home_url=home_url(DEFAULT_LANG, BASE_PATH),
-            content=render_maintenance_html(),
+    for lang in LANGS:
+        support_out_dir = (DIST_DIR if lang == DEFAULT_LANG else DIST_DIR / lang) / "support"
+        support_out_dir.mkdir(parents=True, exist_ok=True)
+        (support_out_dir / "index.html").write_text(
+            support_tmpl.render(
+                lang=lang,
+                t=STRINGS[lang],
+                lang_prefix=lang_prefix(lang),
+                base_path=BASE_PATH,
+                ru_url=f"{BASE_PATH}/{lang_prefix('ru')}support/",
+                en_url=f"{BASE_PATH}/{lang_prefix('en')}support/",
+                home_url=home_url(lang, BASE_PATH),
+                content=render_maintenance_html(lang),
+            )
         )
-    )
-    print("  built: /support/ (from MAINTENANCE.md)")
+        print(f"  built [{lang}]: /support/ (from {MAINTENANCE_MD[lang].name})")
 
     print(f"\nBuilt site into {DIST_DIR}")
 

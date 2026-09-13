@@ -110,14 +110,14 @@ class ValidatorFailureModeTest(unittest.TestCase):
             bands_dir = Path(tmp) / "bands"
             fx = build_valid_archive(bands_dir)
             data = load_yaml(fx.release_yaml)
-            del data["license"]  # required field, no default
+            del data["byArtist"]  # required field, no default
             dump_yaml(fx.release_yaml, data)
 
             result = run_validate(bands_dir)
 
             self.assertEqual(result.returncode, 1)
             self.assertIn("schema validation failed", result.stdout)
-            self.assertIn("license", result.stdout)
+            self.assertIn("byArtist", result.stdout)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,66 @@
+'@type': MusicAlbum
+name: Кожанное Воскресенье
+slug: 2003-kozhannoe-voskresenye
+datePublished: '2003'
+byArtist: ko-band
+genre:
+- Blues Rock
+- Underground Rock
+description: 'После первой записи Эд уехал в Ригу, Гоблин — в Чикаго. Из Лондона вернулся Слоик, и группа собралась в новом составе: репетиции, тусовки и запись альбома «Кожанное Воскресенье».
+
+
+  Состав:
+
+  Слоик (вокал)
+
+  Кузя (гитара)
+
+  Варик (бас)
+
+  Вадим Сидоров (ударные)'
+description_en: 'After the first recording, Ed left for Riga and Goblin left for Chicago. Sloik returned from London, and the band recorded the album "Kozhannoye Voskresenye" (Leather Sunday).
+
+
+  Lineup:
+
+  Sloik (vocals)
+
+  Kuzya (guitar)
+
+  Varik (bass)
+
+  Vadim Sidorov (drums)'
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Jimm Morrison (cover)
+- '@type': MusicRecording
+  position: 2
+  name: I see you
+- '@type': MusicRecording
+  position: 3
+  name: Блюз
+- '@type': MusicRecording
+  position: 4
+  name: Город
+- '@type': MusicRecording
+  position: 5
+  name: Дамочка с сумочкой
+- '@type': MusicRecording
+  position: 6
+  name: Долой
+- '@type': MusicRecording
+  position: 7
+  name: Как это просто
+- '@type': MusicRecording
+  position: 8
+  name: Маки
+- '@type': MusicRecording
+  position: 9
+  name: Немного скучно
+- '@type': MusicRecording
+  position: 10
+  name: Негр
+sameAs: []
+image: []
+video: []

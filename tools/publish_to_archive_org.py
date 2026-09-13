@@ -346,7 +346,7 @@ def main() -> int:
             if not release_yaml.exists():
                 continue
             release = load_release(release_dir)
-            files = media_files(release_dir, [t.audio for t in release.track] + release.image + release.video)
+            files = media_files(release_dir, [t.audio for t in release.track if t.audio is not None] + release.image + release.video)
             ok = publish_item(
                 release_item_id(band.slug, release.slug),
                 files,

@@ -173,13 +173,21 @@
           "title": "Alternatename"
         },
         "audio": {
-          "$ref": "#/$defs/AudioObject"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AudioObject"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Audio file on disk; None if the recording is lost/unpreserved"
         }
       },
       "required": [
         "position",
-        "name",
-        "audio"
+        "name"
       ],
       "title": "MusicRecording",
       "type": "object"
@@ -317,9 +325,17 @@
       "type": "array"
     },
     "license": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
       "description": "License URL, e.g. a Creative Commons license URL",
-      "title": "License",
-      "type": "string"
+      "title": "License"
     },
     "description": {
       "anyOf": [
@@ -384,7 +400,6 @@
     "slug",
     "datePublished",
     "byArtist",
-    "license",
     "track"
   ],
   "title": "MusicAlbum",

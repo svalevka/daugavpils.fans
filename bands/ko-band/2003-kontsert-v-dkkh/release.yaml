@@ -1,0 +1,26 @@
+'@type': MusicAlbum
+name: Концерт в ДКХ (04.01.2003)
+slug: 2003-kontsert-v-dkkh
+datePublished: '2003'
+byArtist: ko-band
+genre:
+- Blues Rock
+- Underground Rock
+description: 'Выступление Ko Band на концерте во Дворце культуры химиков (ДКХ) в Даугавпилсе 4 января 2003 года.'
+description_en: 'Ko Band live performance at the Palace of Culture of Chemists (DKKh) in Daugavpils on January 4, 2003.'
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Jimm Morrison (cover)
+- '@type': MusicRecording
+  position: 2
+  name: Маки
+- '@type': MusicRecording
+  position: 3
+  name: Зайцы
+- '@type': MusicRecording
+  position: 4
+  name: Город
+sameAs: []
+image: []
+video: []

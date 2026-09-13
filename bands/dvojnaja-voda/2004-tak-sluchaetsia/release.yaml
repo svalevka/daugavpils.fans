@@ -1,0 +1,149 @@
+'@type': MusicAlbum
+name: Так Случается
+slug: 2004-tak-sluchaetsia
+datePublished: '2004'
+byArtist: dvojnaja-voda
+genre:
+- Rock
+- Alternative Rock
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: Дебютный студийный альбом даугавпилсской группы «Двойная Вода», записывавшийся
+  в течение 2000–2004 годов. Все песни записаны и сведены звукорежиссером Атисом Аузансом.
+description_en: Debut studio album of Daugavpils rock band "Dvojnaja Voda", recorded
+  between 2000 and 2004. All tracks recorded and mixed by sound engineer Atis Auzāns.
+sameAs:
+- https://archive.org/details/daugavpils-fans-dvojnaja-voda-2004-tak-sluchaetsia
+- https://archive.org/download/daugavpils-fans-dvojnaja-voda-2004-tak-sluchaetsia/daugavpils-fans-dvojnaja-voda-2004-tak-sluchaetsia_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Так случается
+  audio:
+    contentUrl: 01-tak-sluchaetsia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 44dfb389162868666f36b10dfe482d7102e239f284981f5e0db5e32e6f141787
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT4M24S
+- '@type': MusicRecording
+  position: 2
+  name: Сын огня
+  audio:
+    contentUrl: 02-syn-ognia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7520093f304ae42d0af04ee279c25c4ac17a506191e0304935a180fb6389f0a7
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT3M15S
+- '@type': MusicRecording
+  position: 3
+  name: Ты не даешь
+  audio:
+    contentUrl: 03-ty-ne-daesh.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4dfb762f8cc57e2b2b2263f4bc416398fa305959ed059d6bf63e2e95c9b767f9
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT2M55S
+- '@type': MusicRecording
+  position: 4
+  name: Письмо
+  audio:
+    contentUrl: 04-pismo.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9778dc18530dda9eb4f1ef09d58cf4971895766b251441d53741f7cb9d654c91
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT3M40S
+- '@type': MusicRecording
+  position: 5
+  name: Моя подруга
+  audio:
+    contentUrl: 05-moia-podruga.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 763f5eed0dae2000927af6a899c4458af4d3d9edb45462d58472a165a93d67ba
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT3M41S
+- '@type': MusicRecording
+  position: 6
+  name: Уходя...
+  audio:
+    contentUrl: 06-ukhodia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d79e6cf09e2dc672a8fe6cd8917b74c320b61dce4cc1a50e44a08dc1a41433eb
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT5M36S
+- '@type': MusicRecording
+  position: 7
+  name: Пустота
+  audio:
+    contentUrl: 07-pustota.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 88b51ced2d71a7a711b0f3dbaa3fed2644590ed3989fe976f21966c79d9e4f68
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT3M20S
+- '@type': MusicRecording
+  position: 8
+  name: Надежда есть
+  audio:
+    contentUrl: 08-nadezhda-est.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2c4cdb287e5e0b1c02fead6c762fa324b2dde3c2b4cef85f1267c762ec020f27
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT5M30S
+- '@type': MusicRecording
+  position: 9
+  name: День и ночь
+  audio:
+    contentUrl: 09-den-i-noch.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 003296277d0afd9c0292be46f825a8419105879ba8d0bf8015e6a9f93a1db0b6
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT3M2S
+- '@type': MusicRecording
+  position: 10
+  name: Двойная вода
+  audio:
+    contentUrl: 10-dvojnaja-voda.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 70fda67ce3d6d8844c7784706f80575d5970743fb0ff03ca7835480241358049
+    '@type': AudioObject
+    bitrate: 256 kbps
+    duration: PT2M57S
+image: []
+video: []

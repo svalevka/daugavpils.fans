@@ -4,7 +4,6 @@ slug: megality-podzemnykh-rek
 alternateName:
 - Megaliths of Underground River
 foundingDate: '1996'
-dissolutionDate: null
 location: Daugavpils, Latvia
 genre:
 - Underground Rock
@@ -78,6 +77,18 @@ description_en: 'Daugavpils underground experimental rock project "Megality podz
   Kuzya (bass)
 
   Plechkin (double bass)'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-megality-podzemnykh-rek
+- https://archive.org/download/daugavpils-fans-megality-podzemnykh-rek/daugavpils-fans-megality-podzemnykh-rek_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/megality-podzemnykh-rek-bashnya-deda-1996.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 4946bdd8c37e959e59071bb0a602576e9529205b10784355be22e4d9a0fbe0f6
+  '@type': VideoObject
+  name: Выступление на фестивале «Башня Деда» (1996)
+  bitrate: 532 kbps
+  duration: PT4M39S

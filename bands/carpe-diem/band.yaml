@@ -78,6 +78,68 @@ description_en: 'Carpe Diem was founded in 1996. Following the breakup of Quasim
 
   In 2000, the band recorded their second album "Ty Sdokh" (You Croaked) with the
   lineup: Kuzya (vocals, guitar), Pasha Petrov (bass), and Andrei Zelch (drums).'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-carpe-diem
+- https://archive.org/download/daugavpils-fans-carpe-diem/daugavpils-fans-carpe-diem_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/carpe-diem-prikol-tslk-2000.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0c292d9b83a41a44e4327f2639efc69972609700ffd8b8d0be2d1069d49a9386
+  '@type': VideoObject
+  name: Прикол (концерт в Ц.Л.К., 2000)
+  bitrate: 915 kbps
+  duration: PT3M38S
+- contentUrl: media/carpe-diem-solnechnyi-shtorm-bikers-day-2006.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e369ec34c86508824602ec1a7613bbcbffb0ba83899b43a28a2c281dfbe88144
+  '@type': VideoObject
+  name: Солнечный шторм (Daugavpils Summer Bikers Day, 15.07.2006)
+  bitrate: 357 kbps
+  duration: PT4M31S
+- contentUrl: media/carpe-diem-baltic-summer-reaction-2006.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: fb35977c7eb49871a5a238e9f2e6ac497d3f80e84740939605e97a451aa79ef2
+  '@type': VideoObject
+  name: Выступление на фестивале Baltic Summer Reaction (2006)
+  bitrate: 879 kbps
+  duration: PT17M28S
+- contentUrl: media/carpe-diem-gruziia.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e8810fc0f124006052503796b6b726d4404b7ab8c01eb1e26b1949fedd17a670
+  '@type': VideoObject
+  name: Грузия
+  bitrate: 948 kbps
+  duration: PT5M13S
+- contentUrl: media/carpe-diem-mechta.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c3a6e32f43e403d44afe72a3d2c0c2eab161572d5d6c3f105e21c06482daf16b
+  '@type': VideoObject
+  name: Мечта
+  bitrate: 823 kbps
+  duration: PT4M5S
+- contentUrl: media/carpe-diem-kogda-menia-ne-stanet.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7ad8570bccf87bbdff738bd30da4b987e44e4d77f9ed9c5f19c5b45e1911ca20
+  '@type': VideoObject
+  name: Когда меня не станет
+  bitrate: 507 kbps
+  duration: PT3M0S

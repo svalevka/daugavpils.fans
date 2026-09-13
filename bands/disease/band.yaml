@@ -119,4 +119,14 @@ image:
   caption: Disease
   caption_en: Disease
   depicts: []
-video: []
+video:
+- contentUrl: media/disease-krabis-1998.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e735dedf4b8ccd3cda09c0723c50a60e220ab7e1a341b388d9413710e4675824
+  '@type': VideoObject
+  name: Выступление на фестивале «Krabis» (19.10.1998, ЦЛК, Даугавпилс)
+  bitrate: 503 kbps
+  duration: PT16M53S

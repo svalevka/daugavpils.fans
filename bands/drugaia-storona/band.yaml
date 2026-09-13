@@ -200,6 +200,108 @@ description_en: 'The vocal-instrumental ensemble "Drugaia Storona" (The Other Si
   Konstantin "Ko" Dzedzel (violin)
 
   Vladimir Rakovsky (drums)'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-drugaia-storona
+- https://archive.org/download/daugavpils-fans-drugaia-storona/daugavpils-fans-drugaia-storona_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/drugaia-storona-blues-bikers-day-2006.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a117b53589cc53e6584573b2ed14c6acbcdaa16e3085ad5e408d5642be5d8586
+  '@type': VideoObject
+  name: Blues (Daugavpils Summer Bikers Day, 15.07.2006)
+  bitrate: 750 kbps
+  duration: PT1M24S
+- contentUrl: media/drugaia-storona-track-2-bikers-day-2006.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 57854a813a1beabd0f02b4ac39a4c80ee21aec60b87c91872dea1494a4bada3b
+  '@type': VideoObject
+  name: Daugavpils Summer Bikers Day (15.07.2006) — Трек 2
+  bitrate: 540 kbps
+  duration: PT2M48S
+- contentUrl: media/drugaia-storona-track-3-bikers-day-2006.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 26ba7ac7fcb1e1fac5e35b2c7aa170d891251287ce341e8b3762f46e3d7f59c6
+  '@type': VideoObject
+  name: Daugavpils Summer Bikers Day (15.07.2006) — Трек 3
+  bitrate: 662 kbps
+  duration: PT2M32S
+- contentUrl: media/drugaia-storona-feat-redd-after-dark-2006.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 5d5456986b2f8b6f18121b2fa0a8aad978ab7d300a0f6fadb3f284cd6709ca66
+  '@type': VideoObject
+  name: After Dark (feat. Redd) (Daugavpils Summer Bikers Day, 15.07.2006)
+  bitrate: 337 kbps
+  duration: PT4M11S
+- contentUrl: media/drugaia-storona-bossanova-2003.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 996acf4bec7a8fbac7706c3d9dde8a954a039940d2bf322745bc4e6e838f5b43
+  '@type': VideoObject
+  name: Боссанова (14.03.2003)
+  bitrate: 651 kbps
+  duration: PT3M23S
+- contentUrl: media/drugaia-storona-mukhi-2003.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 5cbb6223a7ec2a0a090ba75a49a64c05c6905ff720b770aea532852a05696809
+  '@type': VideoObject
+  name: Мухи (14.03.2003)
+  bitrate: 546 kbps
+  duration: PT4M32S
+- contentUrl: media/drugaia-storona-solnechnyi-den-2003.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: cfa3b4e9423cbe2c6d9175e825237e7dfe2b4498dc4308421d84e2207a5e9934
+  '@type': VideoObject
+  name: Солнечный день (Chemical reaction 2003)
+  bitrate: 568 kbps
+  duration: PT4M42S
+- contentUrl: media/drugaia-storona-pachka-primy.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 8bcb4f3fbcac79417431288fbf4da109891492aadb2296f50b32a2f7e59bcd4f
+  '@type': VideoObject
+  name: Пачка "Примы"
+  bitrate: 481 kbps
+  duration: PT4M33S
+- contentUrl: media/drugaia-storona-rok-n-roll.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: e28910447a44b089d1fb6908976db9e18a19a6b1ad42b5dfda07167f5701ef65
+  '@type': VideoObject
+  name: Рок-н-ролл
+  bitrate: 982 kbps
+  duration: PT3M14S
+- contentUrl: media/drugaia-storona-live-2005.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d238c748b32a0856925eb8713e6f1e8c8bbd0a0cb23b65b977251539c41c8846
+  '@type': VideoObject
+  name: Выступление 10.12.2005
+  bitrate: 248 kbps
+  duration: PT19M48S

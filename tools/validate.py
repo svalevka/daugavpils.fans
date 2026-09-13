@@ -134,9 +134,10 @@ def check_release(release_dir: Path, band_slug: str, write: bool) -> list[str]:
 
     changed = False
     for track in album.track:
-        e, c = check_media(release_dir, track.audio, f"{release_yaml}: track {track.position} audio", True, write)
-        errors.extend(e)
-        changed = changed or c
+        if track.audio is not None:
+            e, c = check_media(release_dir, track.audio, f"{release_yaml}: track {track.position} audio", True, write)
+            errors.extend(e)
+            changed = changed or c
     for i, img in enumerate(album.image):
         e, c = check_media(release_dir, img, f"{release_yaml}: image[{i}]", False, write)
         errors.extend(e)

@@ -3,7 +3,6 @@ name: Black Vanilla
 slug: black-vanilla
 alternateName: []
 foundingDate: '2003'
-dissolutionDate: null
 location: Daugavpils, Latvia
 genre:
 - Rock
@@ -53,6 +52,58 @@ description_en: 'Daugavpils rock band Black Vanilla (2003).
   Kostya (bass)
 
   Oleg (drums)'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-black-vanilla
+- https://archive.org/download/daugavpils-fans-black-vanilla/daugavpils-fans-black-vanilla_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/black-vanilla-live-2003-01.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 420219b3966a25114ba16cdcaa3407cab44f9ec4767667a8c2ab034399d91af1
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 1
+  bitrate: 903 kbps
+  duration: PT2M41S
+- contentUrl: media/black-vanilla-live-2003-02.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7a96a925b963db7b6d14dc85aca781915f57a942d41dbdedddea6a8f80432f34
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 2
+  bitrate: 804 kbps
+  duration: PT3M57S
+- contentUrl: media/black-vanilla-live-2003-03.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a4baf5b81ed235751f8c1dffaec5c3e85abbd980c368ed8b2bc34cdebdc5e1c7
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 3
+  bitrate: 962 kbps
+  duration: PT5M19S
+- contentUrl: media/black-vanilla-live-2003-04.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c928362b1720b6b729506f8a2520e4d69f27922e58491aa0f419b36ccf09ed38
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 4
+  bitrate: 957 kbps
+  duration: PT4M11S
+- contentUrl: media/black-vanilla-live-2003-05.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0db8ddd5866fc4f6ebe3012de547dacd3cec3419c4c7479a6135f008ecaec4e4
+  '@type': VideoObject
+  name: Концерт 14.03.2003 — Трек 5
+  bitrate: 638 kbps
+  duration: PT4M46S

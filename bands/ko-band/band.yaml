@@ -173,6 +173,18 @@ description_en: '"I have a couple of tunes. Shall we try working them out?"
 
 
   Afterwards Olita left the band and Varik departed for England. And what next???'
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-ko-band
+- https://archive.org/download/daugavpils-fans-ko-band/daugavpils-fans-ko-band_archive.torrent
 image: []
-video: []
+video:
+- contentUrl: media/ko-band-live-2004.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 8edec5de3fdd6b6a33f9cdc989a3d3c07b4e1fd8caba81decca0e1c2255992c9
+  '@type': VideoObject
+  name: Концерт (08.10.2004)
+  bitrate: 291 kbps
+  duration: PT10M19S

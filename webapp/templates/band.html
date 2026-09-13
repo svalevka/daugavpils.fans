@@ -57,6 +57,7 @@
   <li>
     <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ band.slug }}/{{ release.slug }}/">{{ release.name }}</a>
     <span class="meta">({{ release.datePublished }})</span>
+    {% if not release.has_audio %} <span class="badge-unpreserved">[{{ t.unpreserved_badge }}]</span>{% endif %}
   </li>
   {% endfor %}
 </ul>

@@ -1,0 +1,49 @@
+'@type': MusicAlbum
+name: Egor Home Studio
+slug: 1997-egor-home-studio
+datePublished: '1997'
+byArtist: dissident
+genre:
+- Rock
+- Grunge
+- Underground Rock
+description: 'Студийная запись 1997 года, записанная на студии "Egor Home Studio".
+
+
+  Состав:
+
+  Слоик (ритм-гитара, вокал)
+
+  Эд (лидер-гитара)
+
+  Пабло (бас)
+
+  Билли (ударные)'
+description_en: '1997 studio session recorded at "Egor Home Studio".
+
+
+  Lineup:
+
+  Sloik (rhythm guitar, vocals)
+
+  Ed (lead guitar)
+
+  Pablo (bass)
+
+  Billy (drums)'
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Эй, молчи
+- '@type': MusicRecording
+  position: 2
+  name: Ещё
+- '@type': MusicRecording
+  position: 3
+  name: Весенняя
+- '@type': MusicRecording
+  position: 4
+  name: Место для змей
+sameAs: []
+image: []
+video: []

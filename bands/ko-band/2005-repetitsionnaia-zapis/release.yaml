@@ -1,0 +1,48 @@
+'@type': MusicAlbum
+name: Репетиционная запись
+slug: 2005-repetitsionnaia-zapis
+datePublished: '2005'
+byArtist: ko-band
+genre:
+- Blues Rock
+- Underground Rock
+description: 'Третий состав Ko Band. Уехавшего обратно в Лондон Слоика заменила Олита Кузьмина, вместо Кузи на гитаре играл Арманд Озолиньш. Наброски нескольких вещей, записанные в режиме репетиции.
+
+
+  Состав:
+
+  Олита (вокал)
+
+  Арманд (гитара)
+
+  Варик (бас)
+
+  Вадя (ударные)'
+description_en: 'Third lineup of Ko Band. Sloik returned to London and was replaced on vocals by Olita Kuzmina, with Armand Ozoliņš taking over guitar from Kuzya. Rough sketches of several tunes recorded in rehearsal mode.
+
+
+  Lineup:
+
+  Olita (vocals)
+
+  Armand (guitar)
+
+  Varik (bass)
+
+  Vadya (drums)'
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Track 01
+- '@type': MusicRecording
+  position: 2
+  name: Track 02
+- '@type': MusicRecording
+  position: 3
+  name: Track 03
+- '@type': MusicRecording
+  position: 4
+  name: Track 04
+sameAs: []
+image: []
+video: []

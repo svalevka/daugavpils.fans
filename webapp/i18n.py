@@ -24,6 +24,11 @@ STRINGS = {
         "view_all_photos": "Смотреть все фото ({n})",
         "view_all_videos": "Смотреть все видео ({n})",
         "photos_and_video": "Фото и видео",
+        "unpreserved_badge": "запись не найдена",
+        "unpreserved_title": "Аудиозапись пока не найдена в архиве",
+        "unpreserved_desc": "Если у вас сохранилась эта кассета, компакт-диск или оцифровка,",
+        "unpreserved_cta": "поделитесь записью с архивом",
+        "unpreserved_track": "запись не сохранилась",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -43,6 +48,11 @@ STRINGS = {
         "view_all_photos": "View all photos ({n})",
         "view_all_videos": "View all videos ({n})",
         "photos_and_video": "Photos & Video",
+        "unpreserved_badge": "unpreserved",
+        "unpreserved_title": "Audio recording is not yet in the archive",
+        "unpreserved_desc": "If you have a tape, CD, or digital copy of this recording,",
+        "unpreserved_cta": "please share it with the archive",
+        "unpreserved_track": "audio missing",
     },
 }
 

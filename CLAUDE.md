@@ -27,15 +27,37 @@ Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agent
 
 ### Where documentation lives
 
-`README.md` and `MAINTENANCE.md` stay at the repo root - they're the two
-audience-facing entry points (technical contributors, and listeners/
-non-technical readers, respectively) and people expect to find them
-there. `CONTEXT.md` and `docs/adr/` also stay at the root, per "Domain
-docs" above - don't move those into `documentation/` either. Everything
-else documentation-shaped (runbooks, recovery procedures, and similar)
-goes under `documentation/` - e.g. `documentation/RECOVERY.md`. When
-adding a new doc, ask which of these three buckets it belongs to rather
-than defaulting to the root.
+`README.md` and `MAINTENANCE.md` (plus its `MAINTENANCE-EN.md`
+translation - see "Keeping MAINTENANCE.md and MAINTENANCE-EN.md in
+sync" below) stay at the repo root - they're the two audience-facing
+entry points (technical contributors, and listeners/non-technical
+readers, respectively) and people expect to find them there. `CONTEXT.md`
+and `docs/adr/` also stay at the root, per "Domain docs" above - don't
+move those into `documentation/` either. Everything else
+documentation-shaped (runbooks, recovery procedures, and similar) goes
+under `documentation/` - e.g. `documentation/RECOVERY.md`. When adding
+a new doc, ask which of these three buckets it belongs to rather than
+defaulting to the root.
+
+### Keeping MAINTENANCE.md and MAINTENANCE-EN.md in sync
+
+`MAINTENANCE.md` (Russian) is the canonical version of the site's
+non-technical "how this archive works" page; `MAINTENANCE-EN.md` is its
+English translation. `webapp/build.py` renders each into its own
+language of the on-site `/support/` page (`/support/` from
+`MAINTENANCE.md`, `/en/support/` from `MAINTENANCE-EN.md` - see
+`render_maintenance_html()` and the `MAINTENANCE_MD` dict in
+`webapp/build.py`), the same way band/release pages get a `ru` and `en`
+variant. Whenever you edit one file's content (not just fix a typo),
+update the other in the same change - a change to one and not the other
+is exactly the "support link is English-labeled but Russian-content"
+bug this was written to fix (see git history). Keep both files'
+structure (heading order, section count) parallel so a reader switching
+`RU`/`EN` on the support page lands on the equivalent section - link
+targets referenced in both (e.g. `documentation/RECOVERY.md`,
+`documentation/BACKUP.md`) should stay identical relative paths in
+both files, since `webapp/build.py` rewrites them to the same GitHub
+blob URL regardless of language.
 
 ### Tools inventory
 

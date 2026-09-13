@@ -88,7 +88,9 @@ class MusicRecording(BaseModel):
     alternateName: Optional[str] = Field(
         default=None, description="Other known title, e.g. from a differing filename"
     )
-    audio: AudioObject
+    audio: Optional[AudioObject] = Field(
+        default=None, description="Audio file on disk; None if the recording is lost/unpreserved"
+    )
 
 
 class GroupMember(BaseModel):
@@ -143,7 +145,9 @@ class MusicAlbum(BaseModel):
     datePublished: str = Field(description="Year or ISO date")
     byArtist: str = Field(description="Slug of the MusicGroup this release belongs to")
     genre: list[str] = Field(default_factory=list)
-    license: str = Field(description="License URL, e.g. a Creative Commons license URL")
+    license: Optional[str] = Field(
+        default=None, description="License URL, e.g. a Creative Commons license URL"
+    )
     description: Optional[str] = Field(default=None, description="Provenance / liner notes")
     description_en: Optional[str] = Field(
         default=None, description="English translation of description (editorial/provenance text, not lyrics)"
@@ -154,3 +158,7 @@ class MusicAlbum(BaseModel):
     video: list[VideoObject] = Field(
         default_factory=list, description="e.g. an official music video, or live footage from this release's era"
     )
+
+    @property
+    def has_audio(self) -> bool:
+        return any(t.audio is not None for t in self.track)

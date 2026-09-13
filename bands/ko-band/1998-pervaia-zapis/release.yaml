@@ -1,0 +1,66 @@
+'@type': MusicAlbum
+name: Первая запись
+slug: 1998-pervaia-zapis
+datePublished: '1998'
+byArtist: ko-band
+genre:
+- Blues Rock
+- Underground Rock
+description: '- У меня есть пару вещей. Попробуем сделать?
+
+  - Почему бы и нет? Давай.
+
+  Вот так на кухне Эда и было посажено семя, из которого в дальнейшем вырастет Ko Band. Изначально группа была задумана как временный проект: собрались ребята, поиграли, записали и баста.
+
+
+  Состав первой записи (1998 год):
+
+  Эд (вокал, гитара)
+
+  Варик (вокал, бас)
+
+  Руслан "Гоблин" Кондрусь (гитара)
+
+  Кузя (гитара, аккордеон)
+
+  Вадим Сидоров (ударные)'
+description_en: '"I have a couple of tunes. Shall we try working them out?"
+
+  "Why not? Let''s do it."
+
+  And so, in Ed''s kitchen, the seed was planted from which Ko Band would eventually grow.
+
+
+  Lineup for the first recording (1998):
+
+  Ed (vocals, guitar)
+
+  Varik (vocals, bass)
+
+  Ruslan "Goblin" Kondrus (guitar)
+
+  Kuzya (guitar, accordion)
+
+  Vadim Sidorov (drums)'
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Время философов
+- '@type': MusicRecording
+  position: 2
+  name: 8.08.98
+- '@type': MusicRecording
+  position: 3
+  name: Скоростное шоссе
+- '@type': MusicRecording
+  position: 4
+  name: И беда не беда
+- '@type': MusicRecording
+  position: 5
+  name: Come on
+- '@type': MusicRecording
+  position: 6
+  name: Самое тихое утро
+sameAs: []
+image: []
+video: []

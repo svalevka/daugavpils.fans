@@ -196,4 +196,14 @@ image:
   caption: Статья в Даугавпилсской прессе
   caption_en: Article in the Daugavpils press
   depicts: []
-video: []
+video:
+- contentUrl: media/m-spirit-kontsert-v-klube-zheleznodorozhnikov.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 9f872808283adb30b410de8e4b108a09daf72231ccdfdf8d9f6d551333c93faf
+  '@type': VideoObject
+  name: Концерт в клубе железнодорожников
+  bitrate: 999 kbps
+  duration: PT3M31S

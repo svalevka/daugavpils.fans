@@ -24,20 +24,31 @@
 {% endif %}
 
 <h2>{{ t.tracklist }}</h2>
+{% if release.has_audio %}
 <label class="autoplay-control">
   <input type="checkbox" data-autoplay-toggle>
   {{ t.autoplay_toggle }}
 </label>
+{% else %}
+<div class="unpreserved-banner">
+  <p><strong>{{ t.unpreserved_title }}</strong></p>
+  <p>{{ t.unpreserved_desc }} <a href="https://review.daugavpils.fans/submit/{{ band.slug }}/{{ release.slug }}">{{ t.unpreserved_cta }}</a>.</p>
+</div>
+{% endif %}
 <table class="tracklist">
   {% for track in release.track %}
-  <tr>
+  <tr{% if not track.audio %} class="track-unpreserved"{% endif %}>
     <td class="track-position">{{ track.position }}</td>
     <td>
       {{ track.name }}
       {% if track.alternateName %}<div class="meta">{{ track.alternateName }}</div>{% endif %}
     </td>
+    {% if track.audio %}
     <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
     <td class="track-duration">{{ track.audio.duration | duration }}</td>
+    {% else %}
+    <td colspan="2" class="track-status-cell"><span class="unpreserved-badge">{{ t.unpreserved_track }}</span></td>
+    {% endif %}
   </tr>
   {% endfor %}
 </table>
@@ -50,7 +61,9 @@
 {% endif %}
 {% endif %}
 
+{% if release.license %}
 <p class="license">{{ t.licensed_under }}: <a href="{{ release.license }}">{{ release.license | license_label }}</a>.</p>
+{% endif %}
 
 {% if visible_same_as %}
 <h2>{{ t.elsewhere }}</h2>

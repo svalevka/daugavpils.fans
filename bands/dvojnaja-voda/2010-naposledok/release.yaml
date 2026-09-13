@@ -1,0 +1,190 @@
+'@type': MusicAlbum
+name: Напоследок...
+slug: 2010-naposledok
+datePublished: '2010'
+byArtist: dvojnaja-voda
+genre:
+- Rock
+- Alternative Rock
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: Второй студийный альбом даугавпилсской группы «Двойная Вода», записанный
+  в середине 2000-х годов и опубликованный для свободного скачивания на сайте группы
+  в июне 2010 года. Все песни записаны и сведены Атисом Аузансом.
+description_en: Second studio album of Daugavpils rock band "Dvojnaja Voda", recorded
+  in the mid-2000s and released for free download on the band's website in June 2010.
+  Recorded and mixed by Atis Auzāns.
+sameAs:
+- https://archive.org/details/daugavpils-fans-dvojnaja-voda-2010-naposledok
+- https://archive.org/download/daugavpils-fans-dvojnaja-voda-2010-naposledok/daugavpils-fans-dvojnaja-voda-2010-naposledok_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Бабье Лето
+  audio:
+    contentUrl: 01-babe-leto.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 425112d3e7281cbfd0b794fc51c4a889962cdb6375bf5dcdc2d8954d928b3403
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M20S
+- '@type': MusicRecording
+  position: 2
+  name: Гроза
+  audio:
+    contentUrl: 02-groza.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c491f1dafff491eb8964ccf577a79bb48b2c6ae361fc0c51629c1dc899f22a3a
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M24S
+- '@type': MusicRecording
+  position: 3
+  name: Стрекоза
+  audio:
+    contentUrl: 03-strekoza.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 983b6b6c852a5e372ea6c473f59f4b18db59c1328c3a0149c453b104be646f3a
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M41S
+- '@type': MusicRecording
+  position: 4
+  name: Смеркается
+  audio:
+    contentUrl: 04-smerkaetsia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7da25c9599913bff72e55f96017da25b90f6268f46898fc76ec2e9a10b1c66d7
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M27S
+- '@type': MusicRecording
+  position: 5
+  name: Ночная Подруга
+  audio:
+    contentUrl: 05-nochnaia-podruga.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9c5ff0e3a1b618d49ca81bbe5b8d1184489773397705d1b05023ee1ef4caf2d8
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M42S
+- '@type': MusicRecording
+  position: 6
+  name: Отрывная
+  audio:
+    contentUrl: 06-otryvnaia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8f36917b7c24d1f9824c29026472ca8a2b53ae48d33dc4f23fc0f89c3d7e6545
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M12S
+- '@type': MusicRecording
+  position: 7
+  name: Сны
+  audio:
+    contentUrl: 07-sny.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6081776aad35a8e6e8a1590e878a8947207a5c4013527b844653155ba052eca4
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT4M6S
+- '@type': MusicRecording
+  position: 8
+  name: Так Случается
+  audio:
+    contentUrl: 08-tak-sluchaetsia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ba48be8067299f05877ff219a57936a408febf9c251103a54c2d671c2a4e9f8f
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT4M12S
+- '@type': MusicRecording
+  position: 9
+  name: Весна v.2
+  audio:
+    contentUrl: 09-vesna-v2.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e6028208220395305b527aeae26320f0e7b8362920eefada9122db12ca04b4b3
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M35S
+- '@type': MusicRecording
+  position: 10
+  name: Метелица
+  audio:
+    contentUrl: 10-metelitsa.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 69603bed9340bd128dd364f443f5a21010a116e69adf2466c7f1094f5a333bca
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT3M11S
+- '@type': MusicRecording
+  position: 11
+  name: Откровение
+  audio:
+    contentUrl: 11-otkrovenie.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9f23fa356a439406a5c520197e0513f905a5845a8a94600412c8f54ec22103d3
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT2M47S
+- '@type': MusicRecording
+  position: 12
+  name: Напоследок...
+  audio:
+    contentUrl: 12-naposledok.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 60c2f919d2f432a3c5d3899a45aa1ccf1e3250d00c6c12622c2cf8a115a1f2d6
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT5M12S
+- '@type': MusicRecording
+  position: 13
+  name: Уходя...
+  audio:
+    contentUrl: 13-ukhodia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 758ea854b391ca3484a858aa345c9e3126b71e39de28f0a34aff31a3f2b520f7
+    '@type': AudioObject
+    bitrate: 320 kbps
+    duration: PT5M37S
+image: []
+video: []

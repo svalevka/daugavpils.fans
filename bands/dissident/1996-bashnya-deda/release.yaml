@@ -1,0 +1,46 @@
+'@type': MusicAlbum
+name: Концерт в Башне Деда
+slug: 1996-bashnya-deda
+datePublished: '1996'
+byArtist: dissident
+genre:
+- Rock
+- Grunge
+- Underground Rock
+description: 'Выступление на концерте в Башне Деда в конце 1996 года.
+
+
+  Состав:
+
+  Слоик (вокал, гитара)
+
+  Эд (гитара)
+
+  Павло (бас)
+
+  Билл (ударные)'
+description_en: 'Live performance at the landmark Bashnya Deda concert in late 1996.
+
+
+  Lineup:
+
+  Sloik (vocals, guitar)
+
+  Ed (guitar)
+
+  Pavlo (bass)
+
+  Bill (drums)'
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Track 1
+- '@type': MusicRecording
+  position: 2
+  name: Track 2
+- '@type': MusicRecording
+  position: 3
+  name: Track 3
+sameAs: []
+image: []
+video: []
