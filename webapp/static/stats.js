@@ -96,6 +96,9 @@
         mediaPlayState.get(target).lastTime = Date.now();
       }
     },
+    true
+  );
+
   // 3. Media error beacon (tracks archive.org playback failures)
   var reportedErrors = new Set();
   document.addEventListener("daugavpils:media-error", function (event) {

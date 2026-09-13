@@ -101,5 +101,18 @@ class LightboxCaptionTest(unittest.TestCase):
         self.assertIn('<a href="#band-video-2" class="lightbox-next" aria-label="Next video">&#10095;</a>', rendered)
 
 
+class StaticFilesTest(unittest.TestCase):
+    def test_javascript_files_syntax(self) -> None:
+        import subprocess
+
+        static_dir = Path(__file__).resolve().parent / "static"
+        js_files = list(static_dir.glob("*.js"))
+        self.assertGreater(len(js_files), 0)
+        for js_file in js_files:
+            with self.subTest(file=js_file.name):
+                res = subprocess.run(["node", "-c", str(js_file)], capture_output=True, text=True)
+                self.assertEqual(res.returncode, 0, f"{js_file.name} syntax error: {res.stderr}")
+
+
 if __name__ == "__main__":
     unittest.main()
