@@ -22,6 +22,7 @@ import csrf  # noqa: E402
 import db  # noqa: E402
 from admin import bp as admin_bp  # noqa: E402
 from album_submissions import bp as album_submissions_bp  # noqa: E402
+from band_submissions import bp as band_submissions_bp  # noqa: E402
 from analytics import bp as analytics_bp  # noqa: E402
 from api import bp as api_bp  # noqa: E402
 from auth import bp as auth_bp  # noqa: E402
@@ -75,6 +76,7 @@ def create_app(config: Config) -> Flask:
     app.register_blueprint(submissions_bp)
     app.register_blueprint(media_submissions_bp)
     app.register_blueprint(album_submissions_bp)
+    app.register_blueprint(band_submissions_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(api_bp)

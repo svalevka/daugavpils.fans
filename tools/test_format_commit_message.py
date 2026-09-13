@@ -110,6 +110,40 @@ class FormatCommitMessageTest(unittest.TestCase):
         self.assertIn("`approved` (95% confidence)", summary)
         self.assertIn("> **AI Reasoning**: Minimal punctuation cleanup.", summary)
 
+    def test_band_proposal_formatting(self):
+        proposal = {
+            "id": 88,
+            "name": "Новая Группа",
+            "band_slug": "novaya-gruppa",
+            "has_release": True,
+            "release_name": "Первый Альбом",
+            "decided_by_name": "AI Approval Agent",
+            "ai_decision": "approved",
+            "ai_confidence": 0.98,
+            "ai_reasoning": "Authentic Daugavpils band from 1990s.",
+        }
+        msg = format_commit_message(proposal, is_band=True)
+        self.assertIn("Apply approved band proposal #88", msg)
+        self.assertIn("Target: bands/novaya-gruppa (Новая Группа + release Первый Альбом)", msg)
+        self.assertIn("Decided by: AI Approval Agent", msg)
+        self.assertIn("AI Decision: approved (98% confidence)", msg)
+        self.assertIn("AI Reasoning: Authentic Daugavpils band from 1990s.", msg)
+        self.assertIn("Band-Proposal-ID: 88", msg)
+
+    def test_step_summary_band_proposal(self):
+        proposal = {
+            "id": 88,
+            "name": "Новая Группа",
+            "band_slug": "novaya-gruppa",
+            "has_release": False,
+            "decided_by_name": "Curator",
+        }
+        summary = format_step_summary(proposal, is_band=True)
+        self.assertIn("### Applied Band Proposal #88", summary)
+        self.assertIn("`bands/novaya-gruppa (Новая Группа)`", summary)
+        self.assertIn("**Curator**", summary)
+
 
 if __name__ == "__main__":
     unittest.main()
+

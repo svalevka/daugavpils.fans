@@ -246,11 +246,12 @@ def apply_album_proposal(
         if not ok:
             raise AlbumApplyError(f"archive.org upload failed for {item_id}")
 
-        # Update consolidated metadata bundle
+        # Update consolidated metadata backup bundle
         print("Updating consolidated metadata backup bundle on archive.org...")
-        bundle_ok = publish_metadata_bundle(bands_dir, dry_run=dry_run)
-        if not bundle_ok:
-            raise AlbumApplyError("archive.org metadata bundle sync failed")
+        try:
+            publish_metadata_bundle(bands_dir, dry_run=dry_run)
+        except Exception as exc:
+            raise AlbumApplyError(f"archive.org metadata bundle sync failed: {exc}") from exc
 
     print(f"Successfully applied album {release_slug} under {band_slug}.")
     return release_yaml_path

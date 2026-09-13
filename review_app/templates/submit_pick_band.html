@@ -3,6 +3,7 @@
 {% block content %}
 <h1>{{ t.pick_band_heading }}</h1>
 <p class="meta">{{ t.pick_band_meta }}</p>
+<p style="margin: 12px 0 20px 0;"><a href="/submit/add-band" class="btn" style="display: inline-block; padding: 8px 16px; background: #0066cc; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;">+ {{ t.add_new_band }}</a></p>
 <ul class="item-list">
 {% for band in bands %}
   <li><a href="/submit/{{ band.slug }}">{{ band.name }}</a></li>

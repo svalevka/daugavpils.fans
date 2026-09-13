@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ t.add_band_title }}{% endblock %}
+{% block content %}
+<h1>{{ t.add_band_heading }}</h1>
+<p>{{ t.add_band_desc }}</p>
+
+<form method="post" action="/submit-band" enctype="multipart/form-data" data-band-form>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <h2>{{ t.band_name }}</h2>
+  <div class="field">
+    <label for="name">{{ t.band_name }} *</label>
+    <input type="text" id="name" name="name" required placeholder="e.g. CrossFire, Двинск">
+  </div>
+
+  <div class="field" style="display: flex; gap: 16px;">
+    <div style="flex: 1;">
+      <label for="founding_date">{{ t.band_founding_date }}</label>
+      <input type="text" id="founding_date" name="founding_date" pattern="[0-9]{4}" placeholder="1993">
+    </div>
+    <div style="flex: 1;">
+      <label for="dissolution_date">{{ t.band_dissolution_date }}</label>
+      <input type="text" id="dissolution_date" name="dissolution_date" pattern="[0-9]{4}" placeholder="2001">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="location">{{ t.band_location }}</label>
+    <input type="text" id="location" name="location" value="Daugavpils, Latvia">
+  </div>
+
+  <div class="field">
+    <label for="genre">{{ t.band_genre }}</label>
+    <input type="text" id="genre" name="genre" placeholder="Punk Rock, Heavy Metal, Thrash Metal">
+  </div>
+
+  <div class="field">
+    <label for="description">{{ t.band_description }}</label>
+    <textarea id="description" name="description" rows="5" placeholder="История группы, участники, воспоминания..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="description_en">{{ t.band_description_en }}</label>
+    <textarea id="description_en" name="description_en" rows="4" placeholder="Band history and biography in English..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="photo">{{ t.band_photo }}</label>
+    <input type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp" data-band-photo-input>
+    <img data-band-photo-preview style="display: none; max-width: 200px; max-height: 200px; margin-top: 8px; border-radius: 4px;" alt="Band photo preview">
+  </div>
+
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
+
+  <div class="field">
+    <label style="font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+      <input type="checkbox" id="has_release" name="has_release" value="1" data-band-has-release-toggle>
+      {{ t.band_has_release_toggle }}
+    </label>
+  </div>
+
+  <div data-band-release-section style="display: none; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.08); border-radius: 6px; padding: 16px; margin-bottom: 20px;">
+    <h3>{{ t.band_release_section_heading }}</h3>
+
+    <div class="field">
+      <label for="release_name">{{ t.album_name }} *</label>
+      <input type="text" id="release_name" name="release_name" placeholder="e.g. Карманный Мир, Reduced to Zero">
+    </div>
+
+    <div class="field">
+      <label for="release_date_published">{{ t.album_year }} *</label>
+      <input type="text" id="release_date_published" name="release_date_published" pattern="[0-9]{4}" placeholder="1999">
+    </div>
+
+    <div class="field">
+      <label for="release_genre">{{ t.album_genre }}</label>
+      <input type="text" id="release_genre" name="release_genre" placeholder="Thrash Metal, Heavy Metal">
+    </div>
+
+    <div class="field">
+      <label for="release_license">{{ t.album_license }}</label>
+      <select id="release_license" name="release_license">
+        {% for lic_url, lic_label in licenses %}
+          <option value="{{ lic_url }}" {% if lic_url == default_license %}selected{% endif %}>{{ lic_label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="cover">{{ t.album_cover }}</label>
+      <input type="file" id="cover" name="cover" accept="image/jpeg,image/png,image/webp" data-band-cover-input>
+      <img data-band-cover-preview style="display: none; max-width: 150px; max-height: 150px; margin-top: 8px; border-radius: 4px;" alt="Cover preview">
+    </div>
+
+    <div class="field">
+      <label>{{ t.album_tracks }} *</label>
+      <input type="file" multiple accept="audio/mpeg,audio/flac,audio/wav,audio/ogg,.mp3,.flac,.wav,.ogg" data-band-audio-input hidden>
+      <button type="button" class="btn" data-band-add-audio>+ {{ t.album_tracks }}</button>
+      <div data-band-track-list style="margin-top: 10px;"></div>
+    </div>
+
+    <div class="field">
+      <label for="release_description">{{ t.album_description }}</label>
+      <textarea id="release_description" name="release_description" rows="3" placeholder="Liner notes, track details..."></textarea>
+    </div>
+
+    <div class="field">
+      <label for="release_description_en">{{ t.album_description_en }}</label>
+      <textarea id="release_description_en" name="release_description_en" rows="2" placeholder="Liner notes in English..."></textarea>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="submitter_name">{{ t.submitter_name }}</label>
+    <input type="text" id="submitter_name" name="submitter_name">
+  </div>
+
+  <div class="field">
+    <label for="submitter_contact">{{ t.submitter_contact_media }}</label>
+    <input type="text" id="submitter_contact" name="submitter_contact">
+  </div>
+
+  <!-- honeypot: hidden from real visitors via CSS, never filled by a human -->
+  <div class="field honeypot" aria-hidden="true">
+    <label for="website">{{ t.honeypot_label }}</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+  </div>
+
+  <button type="submit" data-band-submit disabled data-loading-text="Uploading...">{{ t.submit_button }}</button>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='band_upload.js') }}"></script>
+{% endblock %}

@@ -27,10 +27,22 @@ AI_TEXT_SYNTAX_PATTERNS = [
 ]
 
 SLUG_RE = re.compile(r"^[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*$")
+BAND_SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
 class AudioValidationError(Exception):
     """Raised when an audio file cannot be validated or has invalid properties."""
+
+
+def generate_band_slug(band_name: str) -> str:
+    """Generate a deterministic, URL-safe band slug: <transliterated-name>.
+    e.g. 'CrossFire' -> 'crossfire', 'Крики Мартина' -> 'kriki-martina'
+    """
+    transliterated = unidecode.unidecode(band_name).lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", transliterated).strip("-")
+    if not slug or not BAND_SLUG_RE.match(slug):
+        raise AudioValidationError(f"Could not derive a valid slug from band name {band_name!r}")
+    return slug
 
 
 def sha256_of(path: Path) -> str:

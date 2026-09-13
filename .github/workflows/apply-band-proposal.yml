@@ -1,0 +1,196 @@
+name: Apply approved band proposal
+
+# Triggered by review_app (github_dispatch.py) when an approver clicks "Upload & Publish"
+# on an approved band proposal (see GitHub issue #22), or automatically via AI approval.
+#
+# Only the proposal id crosses into this workflow; metadata, band photo, and optional
+# release audio/cover files are fetched from review_app's authenticated callback API using
+# secrets.REVIEW_APP_CALLBACK_KEY.
+#
+# Media is uploaded directly to archive.org using secrets.IA_ACCESS_KEY_ID /
+# secrets.IA_SECRET_ACCESS_KEY, and YAML metadata changes are committed to main.
+
+on:
+  workflow_dispatch:
+    inputs:
+      proposal_id:
+        description: >-
+          A specific approved band proposal's id to apply. Leave blank to sweep
+          the oldest unthrottled approved band proposal instead.
+        required: false
+        type: string
+  schedule:
+    # Self-healing sweep every 15 minutes for queued / unthrottled band proposals
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: apply-archive-mutations
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r tools/requirements.txt
+          which ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Determine which band proposal(s) to apply
+        id: targets
+        env:
+          INPUT_PROPOSAL_ID: ${{ github.event.inputs.proposal_id }}
+        run: |
+          if [ -n "$INPUT_PROPOSAL_ID" ]; then
+            if ! [[ "$INPUT_PROPOSAL_ID" =~ ^[0-9]+$ ]]; then
+              echo "::error::Invalid proposal_id format (must be an integer)"
+              exit 1
+            fi
+            echo "ids=$INPUT_PROPOSAL_ID" >> "$GITHUB_OUTPUT"
+          else
+            ids=$(curl -fsSL \
+              -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+              "${{ vars.REVIEW_APP_BASE_URL }}/api/band-proposals/approved" \
+              | python3 -c "import json,sys; print(' '.join(str(i) for i in json.load(sys.stdin)))")
+            echo "ids=$ids" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply each band proposal
+        if: steps.targets.outputs.ids != ''
+        shell: bash --noprofile --norc -o pipefail {0}
+        env:
+          PROPOSAL_IDS: ${{ steps.targets.outputs.ids }}
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: |
+          git config user.name "daugavpils-fans-bot"
+          git config user.email "daugavpils@gmail.com"
+          overall_failed=0
+          for id in $PROPOSAL_IDS; do
+            if ! [[ "$id" =~ ^[0-9]+$ ]]; then
+              echo "::error::invalid proposal id format: $id"
+              overall_failed=1
+              continue
+            fi
+            echo "::group::Band proposal #$id"
+            success=0
+            error=""
+
+            rm -rf staged_tracks proposal.json photo_file.bin cover_file.bin
+            mkdir -p staged_tracks
+
+            if curl -fsSL \
+                 -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+                 "${{ vars.REVIEW_APP_BASE_URL }}/api/band-proposals/$id" \
+                 -o proposal.json; then
+
+              has_photo=$(python3 -c "import json; print('true' if json.load(open('proposal.json')).get('has_photo') else 'false')")
+              photo_arg=""
+              if [ "$has_photo" = "true" ]; then
+                curl -fsSL \
+                  -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+                  "${{ vars.REVIEW_APP_BASE_URL }}/api/band-proposals/$id/photo" \
+                  -o photo_file.bin
+                photo_arg="--photo-file photo_file.bin"
+              fi
+
+              has_release=$(python3 -c "import json; print('true' if json.load(open('proposal.json')).get('has_release') else 'false')")
+              cover_arg=""
+              tracks_arg=""
+              download_failed=0
+
+              if [ "$has_release" = "true" ]; then
+                has_cover=$(python3 -c "import json; print('true' if json.load(open('proposal.json')).get('has_release_cover') else 'false')")
+                if [ "$has_cover" = "true" ]; then
+                  curl -fsSL \
+                    -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+                    "${{ vars.REVIEW_APP_BASE_URL }}/api/band-proposals/$id/cover" \
+                    -o cover_file.bin
+                  cover_arg="--cover-file cover_file.bin"
+                fi
+
+                track_positions=$(python3 -c "import json; print(' '.join(str(t['position']) for t in json.load(open('proposal.json')).get('tracks', [])))")
+                for pos in $track_positions; do
+                  if ! curl -fsSL \
+                       -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+                       "${{ vars.REVIEW_APP_BASE_URL }}/api/band-proposals/$id/tracks/$pos/file" \
+                       -o "staged_tracks/track_${pos}.bin"; then
+                    echo "::error::failed to download track $pos for proposal #$id"
+                    download_failed=1
+                    break
+                  fi
+                done
+                tracks_arg="--tracks-dir staged_tracks"
+              fi
+
+              if [ "$download_failed" = "0" ] && python tools/apply_band_proposal.py --proposal-file proposal.json $photo_arg $cover_arg $tracks_arg; then
+                git add -A -- bands
+                if git diff --cached --quiet; then
+                  success=1
+                else
+                  python tools/format_commit_message.py --is-band --proposal-file proposal.json --output commit_msg.txt --summary-file "${GITHUB_STEP_SUMMARY:-}"
+                  git commit -F commit_msg.txt
+                  pushed=0
+                  for attempt in 1 2 3 4 5; do
+                    if git push origin main; then
+                      pushed=1
+                      break
+                    fi
+                    echo "push rejected (attempt $attempt/5) - fetching and rebasing before retrying"
+                    git fetch origin main
+                    git rebase origin/main
+                    sleep $((RANDOM % 4 + 1))
+                  done
+                  if [ "$pushed" = "1" ]; then
+                    success=1
+                  else
+                    error="git push kept getting rejected after 5 attempts"
+                  fi
+                fi
+              else
+                error="apply_band_proposal failed - see the Action run logs"
+              fi
+            else
+              error="failed to fetch band proposal metadata from review_app"
+            fi
+
+            if [ "$success" = "1" ]; then
+              payload="{\"success\": true, \"run_id\": \"${{ github.run_id }}\"}"
+            else
+              echo "::error::band proposal #$id failed: $error"
+              payload="{\"success\": false, \"run_id\": \"${{ github.run_id }}\", \"error\": \"$error\"}"
+              overall_failed=1
+            fi
+
+            curl -fsSL -X POST \
+              -H "Authorization: Bearer ${{ secrets.REVIEW_APP_CALLBACK_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d "$payload" \
+              "${{ vars.REVIEW_APP_BASE_URL }}/api/band-proposals/$id/result"
+
+            rm -rf staged_tracks proposal.json photo_file.bin cover_file.bin
+            echo "::endgroup::"
+          done
+          exit $overall_failed
+
+      - name: Trigger Pages mirror rebuild
+        if: always() && steps.targets.outputs.ids != ''
+        run: gh workflow run pages.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Trigger metadata sync to archive.org
+        if: always() && steps.targets.outputs.ids != ''
+        run: gh workflow run sync-metadata.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -213,6 +213,32 @@ description, tracklist metadata), the downloaded track audio files, and an optio
 - `--bands-dir PATH` -- point it at a test fixture tree.
 - `--skip-upload` or `--dry-run` -- test without communicating with archive.org.
 
+## `apply_band_proposal.py`
+
+**Problem it solves:** turning an approved new band proposal (band profile, biography/testimony,
+optional band photo, and optional first release with tracks and cover art) into a published band
+profile and archive.org item, creating `bands/<band-slug>/band.yaml` (and optional `release.yaml`)
+automatically in git.
+
+**How:** given a proposal JSON (band name, slug, founding date, genres, biography, optional photo,
+and optional first release metadata/tracks):
+- Validates the band slug format and ensures the band directory does not already exist.
+- Standardizes band photo into `bands/<band-slug>/media/<band-slug>-photo.<ext>` and computes sha256.
+- Builds a fully-validated Pydantic `MusicGroup` model and serializes it to `band.yaml`.
+- If a first release is included: creates `bands/<band-slug>/<release-slug>/`, copies cover art as
+  `cover.jpg`, copies/renames audio tracks, probes duration/bitrate with `ffprobe`, computes sha256
+  checksums, builds a Pydantic `MusicAlbum` model, and serializes it to `release.yaml`.
+- Uploads band photo to `daugavpils-fans-<band-slug>` on archive.org (if photo exists), uploads release
+  item `daugavpils-fans-<band-slug>-<release-slug>` (if release included), and updates the consolidated
+  metadata backup bundle (`daugavpils-fans-metadata`).
+
+**When you'd run it:**
+- `python tools/apply_band_proposal.py --proposal-file proposal.json [--photo-file photo.jpg] [--cover-file cover.jpg] [--tracks-dir /path/to/tracks/]`
+  -- executed automatically by `.github/workflows/apply-band-proposal.yml`
+  when an approver clicks "Upload & Publish" in `review_app`, or via AI auto-approval.
+- `--bands-dir PATH` -- point it at a test fixture tree.
+- `--skip-upload` or `--dry-run` -- test without communicating with archive.org.
+
 ## `archive_org.py`
 
 **Problem it solves:** the publish tool and the website both need to agree

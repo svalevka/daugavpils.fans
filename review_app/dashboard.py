@@ -27,6 +27,7 @@ import db  # noqa: E402
 import github_dispatch  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
+import audio_validation  # noqa: E402
 
 bp = Blueprint("dashboard", __name__)
 
@@ -60,6 +61,20 @@ def require_approver(view):
         return view(*args, **kwargs)
 
     return wrapped
+
+
+def is_band_publishing_throttled(conn) -> tuple[bool, str | None]:
+    """Checks if a new band was published within the last 24 hours.
+    Returns (True, last_published_at_str) if throttled; (False, None) if publishing is permitted.
+    """
+    row = conn.execute(
+        "SELECT published_at FROM band_proposals WHERE status = 'published' "
+        "AND datetime(published_at) >= datetime('now', '-24 hours') "
+        "ORDER BY published_at DESC LIMIT 1"
+    ).fetchone()
+    if row is None or not row["published_at"]:
+        return False, None
+    return True, row["published_at"]
 
 
 @bp.get("/dashboard")
@@ -152,6 +167,48 @@ def view_pending():
         }
         (album_pending if row["status"] == "pending" else album_awaiting_publish).append(item)
 
+    band_rows = conn.execute(
+        "SELECT * FROM band_proposals WHERE status IN ('pending', 'approved', 'publishing', 'publish_failed') ORDER BY created_at"
+    ).fetchall()
+    band_pending = []
+    band_awaiting_publish = []
+    for row in band_rows:
+        item = {
+            "id": row["id"],
+            "name": row["name"],
+            "band_slug": row["band_slug"],
+            "founding_date": row["founding_date"],
+            "dissolution_date": row["dissolution_date"],
+            "location": row["location"],
+            "genre": json.loads(row["genre"]) if row["genre"] else [],
+            "description": row["description"],
+            "description_en": row["description_en"],
+            "band_photo_stored_filename": row["band_photo_stored_filename"],
+            "has_release": bool(row["has_release"]),
+            "release_name": row["release_name"],
+            "release_slug": row["release_slug"],
+            "release_date_published": row["release_date_published"],
+            "release_genre": json.loads(row["release_genre"]) if row["release_genre"] else [],
+            "release_license": row["release_license"],
+            "release_description": row["release_description"],
+            "release_description_en": row["release_description_en"],
+            "release_cover_stored_filename": row["release_cover_stored_filename"],
+            "tracks": json.loads(row["release_tracks_json"]) if row["release_tracks_json"] else [],
+            "submitter_name": row["submitter_name"],
+            "submitter_contact": row["submitter_contact"],
+            "is_own_submission": row["submitted_by_approver_id"] == g.approver["id"],
+            "status": row["status"],
+            "github_run_id": row["github_run_id"] if "github_run_id" in row.keys() else None,
+            "publish_error": row["publish_error"] if "publish_error" in row.keys() else None,
+            "ai_decision": row["ai_decision"] if "ai_decision" in row.keys() else None,
+            "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
+            "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
+            "ai_evaluated_at": row["ai_evaluated_at"] if "ai_evaluated_at" in row.keys() else None,
+        }
+        (band_pending if row["status"] == "pending" else band_awaiting_publish).append(item)
+
+    is_band_throttled, last_band_published_at = is_band_publishing_throttled(conn)
+
     return render_template(
         "dashboard.html",
         proposals=proposals,
@@ -159,6 +216,10 @@ def view_pending():
         media_awaiting_publish=media_awaiting_publish,
         album_pending=album_pending,
         album_awaiting_publish=album_awaiting_publish,
+        band_pending=band_pending,
+        band_awaiting_publish=band_awaiting_publish,
+        is_band_throttled=is_band_throttled,
+        last_band_published_at=last_band_published_at,
         approver=g.approver,
         can_view_stats=roles.user_has_role(conn, g.approver["id"], roles.ROLE_STATS),
     )
@@ -203,7 +264,9 @@ def _abort_for_reason(reason: str) -> None:
         abort(404)
     if reason == "self_approval":
         abort(403)
-    abort(409)  # already decided by someone else
+    if reason.startswith("invalid_"):
+        abort(400)
+    abort(409)  # already decided by someone else or collision
 
 
 @bp.post("/proposals/<int:proposal_id>/approve")
@@ -560,3 +623,244 @@ def album_track_audio_file(proposal_id: int, position: int):
     if not path.exists():
         abort(404)
     return send_file(path, mimetype=track.get("content_type", "audio/mpeg"))
+
+
+def _decide_band(
+    proposal_id: int,
+    new_status: str,
+    new_band_slug: str | None = None,
+    new_release_slug: str | None = None,
+) -> tuple[bool, str]:
+    conn = db.get_connection()
+    approver_id = g.approver["id"]
+
+    if new_band_slug:
+        if not audio_validation.BAND_SLUG_RE.match(new_band_slug):
+            return False, "invalid_band_slug"
+        checkout = current_app.config["ARCHIVE_CHECKOUT_PATH"]
+        if (Path(checkout) / "bands" / new_band_slug / "band.yaml").exists():
+            return False, "collision_band_slug"
+        collision = conn.execute(
+            "SELECT id FROM band_proposals WHERE band_slug = ? AND id != ? AND status IN ('pending', 'approved', 'publishing')",
+            (new_band_slug, proposal_id),
+        ).fetchone()
+        if collision:
+            return False, "collision_band_slug"
+
+    if new_release_slug:
+        if not audio_validation.SLUG_RE.match(new_release_slug):
+            return False, "invalid_release_slug"
+
+    updates = ["status = ?", "decided_by = ?", "decided_at = datetime('now')"]
+    params: list[Any] = [new_status, approver_id]
+    if new_band_slug:
+        updates.append("band_slug = ?")
+        params.append(new_band_slug)
+    if new_release_slug:
+        updates.append("release_slug = ?")
+        params.append(new_release_slug)
+
+    params.extend([proposal_id, approver_id])
+    cur = conn.execute(
+        f"""
+        UPDATE band_proposals
+        SET {', '.join(updates)}
+        WHERE id = ? AND status = 'pending'
+          AND (submitted_by_approver_id IS NULL OR submitted_by_approver_id != ?)
+        """,
+        tuple(params),
+    )
+    conn.commit()
+    if cur.rowcount == 1:
+        return True, ""
+
+    row = conn.execute(
+        "SELECT status, submitted_by_approver_id FROM band_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None:
+        return False, "not_found"
+    if row["submitted_by_approver_id"] == approver_id:
+        return False, "self_approval"
+    return False, "already_decided"
+
+
+@bp.post("/band-proposals/<int:proposal_id>/approve")
+@require_approver
+def approve_band(proposal_id: int):
+    new_band_slug = request.form.get("band_slug", "").strip() or None
+    new_release_slug = request.form.get("release_slug", "").strip() or None
+
+    ok, reason = _decide_band(
+        proposal_id, "approved", new_band_slug=new_band_slug, new_release_slug=new_release_slug
+    )
+    if not ok:
+        _abort_for_reason(reason)
+
+    conn = db.get_connection()
+    is_throttled, _ = is_band_publishing_throttled(conn)
+    if not is_throttled:
+        conn.execute(
+            "UPDATE band_proposals SET status = 'publishing', publish_error = NULL WHERE id = ?",
+            (proposal_id,),
+        )
+        conn.commit()
+        try:
+            github_dispatch.trigger_band_apply(current_app.config["GITHUB_CONFIG"], proposal_id)
+        except OSError:
+            current_app.logger.exception(
+                "failed to dispatch apply-band-proposal.yml for proposal %s", proposal_id
+            )
+            conn.execute(
+                "UPDATE band_proposals SET status = 'publish_failed', publish_error = ? WHERE id = ?",
+                ("Failed to dispatch upload workflow to GitHub Actions", proposal_id),
+            )
+            conn.commit()
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.post("/band-proposals/<int:proposal_id>/reject")
+@require_approver
+def reject_band(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT band_photo_stored_filename, release_cover_stored_filename, release_tracks_json FROM band_proposals WHERE id = ?",
+        (proposal_id,),
+    ).fetchone()
+    ok, reason = _decide_band(proposal_id, "rejected")
+    if not ok:
+        _abort_for_reason(reason)
+
+    if row is not None:
+        if row["band_photo_stored_filename"]:
+            _media_file_path(row["band_photo_stored_filename"]).unlink(missing_ok=True)
+        if row["release_cover_stored_filename"]:
+            _media_file_path(row["release_cover_stored_filename"]).unlink(missing_ok=True)
+        if row["release_tracks_json"]:
+            tracks = json.loads(row["release_tracks_json"])
+            for t in tracks:
+                if "stored_filename" in t:
+                    _media_file_path(t["stored_filename"]).unlink(missing_ok=True)
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.post("/band-proposals/<int:proposal_id>/upload")
+@require_approver
+def upload_band(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT id, status FROM band_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None:
+        abort(404)
+    if row["status"] not in ("approved", "publishing", "publish_failed"):
+        abort(409)
+
+    is_throttled, _ = is_band_publishing_throttled(conn)
+    if is_throttled:
+        abort(429)
+
+    conn.execute(
+        "UPDATE band_proposals SET status = 'publishing', publish_error = NULL WHERE id = ?",
+        (proposal_id,),
+    )
+    conn.commit()
+
+    try:
+        github_dispatch.trigger_band_apply(current_app.config["GITHUB_CONFIG"], proposal_id)
+    except OSError:
+        current_app.logger.exception(
+            "failed to dispatch apply-band-proposal.yml for proposal %s", proposal_id
+        )
+        conn.execute(
+            "UPDATE band_proposals SET status = 'publish_failed', publish_error = ? WHERE id = ?",
+            ("Failed to dispatch upload workflow to GitHub Actions", proposal_id),
+        )
+        conn.commit()
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.post("/band-proposals/<int:proposal_id>/publish")
+@require_approver
+def publish_band(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT band_photo_stored_filename, release_cover_stored_filename, release_tracks_json FROM band_proposals WHERE id = ? AND status IN ('approved', 'publish_failed')",
+        (proposal_id,),
+    ).fetchone()
+    if row is None:
+        existing = conn.execute("SELECT id FROM band_proposals WHERE id = ?", (proposal_id,)).fetchone()
+        abort(404 if existing is None else 409)
+
+    cur = conn.execute(
+        "UPDATE band_proposals SET status = 'published', published_at = datetime('now') "
+        "WHERE id = ? AND status IN ('approved', 'publish_failed')",
+        (proposal_id,),
+    )
+    conn.commit()
+    if cur.rowcount != 1:
+        abort(409)
+
+    if row["band_photo_stored_filename"]:
+        _media_file_path(row["band_photo_stored_filename"]).unlink(missing_ok=True)
+    if row["release_cover_stored_filename"]:
+        _media_file_path(row["release_cover_stored_filename"]).unlink(missing_ok=True)
+    if row["release_tracks_json"]:
+        tracks = json.loads(row["release_tracks_json"])
+        for t in tracks:
+            if "stored_filename" in t:
+                _media_file_path(t["stored_filename"]).unlink(missing_ok=True)
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.get("/band-proposals/<int:proposal_id>/photo")
+@require_approver
+def band_photo_file(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT band_photo_stored_filename FROM band_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None or not row["band_photo_stored_filename"]:
+        abort(404)
+    path = _media_file_path(row["band_photo_stored_filename"])
+    if not path.exists():
+        abort(404)
+    return send_file(path)
+
+
+@bp.get("/band-proposals/<int:proposal_id>/cover")
+@require_approver
+def band_release_cover_file(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT release_cover_stored_filename FROM band_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None or not row["release_cover_stored_filename"]:
+        abort(404)
+    path = _media_file_path(row["release_cover_stored_filename"])
+    if not path.exists():
+        abort(404)
+    return send_file(path)
+
+
+@bp.get("/band-proposals/<int:proposal_id>/tracks/<int:position>/file")
+@require_approver
+def band_release_track_audio_file(proposal_id: int, position: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT release_tracks_json FROM band_proposals WHERE id = ?", (proposal_id,)
+    ).fetchone()
+    if row is None or not row["release_tracks_json"]:
+        abort(404)
+    tracks = json.loads(row["release_tracks_json"])
+    track = next((t for t in tracks if t.get("position") == position), None)
+    if track is None or not track.get("stored_filename"):
+        abort(404)
+    path = _media_file_path(track["stored_filename"])
+    if not path.exists():
+        abort(404)
+    return send_file(path, mimetype=track.get("content_type", "audio/mpeg"))
+

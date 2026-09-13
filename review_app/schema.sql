@@ -187,3 +187,53 @@ CREATE TABLE IF NOT EXISTS album_proposals (
     ai_reasoning TEXT,
     ai_evaluated_at TEXT
 );
+
+CREATE INDEX IF NOT EXISTS idx_album_proposals_status ON album_proposals(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_album_proposals_slug ON album_proposals(band_slug, release_slug);
+
+-- New band proposals (GitHub issue #22):
+-- Allows proposing a brand-new band (MusicGroup) with optional band photo,
+-- and optional first release (MusicAlbum + audio tracks + cover art).
+-- Publishing is throttled to at most 1 new band per rolling 24 hours.
+CREATE TABLE IF NOT EXISTS band_proposals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    name TEXT NOT NULL,
+    band_slug TEXT NOT NULL,
+    founding_date TEXT,
+    dissolution_date TEXT,
+    location TEXT DEFAULT 'Daugavpils, Latvia',
+    genre TEXT,                                  -- JSON list[str]
+    description TEXT,
+    description_en TEXT,
+    band_photo_stored_filename TEXT,
+    has_release INTEGER NOT NULL DEFAULT 0,
+    release_name TEXT,
+    release_slug TEXT,
+    release_date_published TEXT,
+    release_genre TEXT,                          -- JSON list[str]
+    release_license TEXT,
+    release_description TEXT,
+    release_description_en TEXT,
+    release_cover_stored_filename TEXT,
+    release_tracks_json TEXT,                    -- JSON list of track dicts
+    submitter_name TEXT,
+    submitter_contact TEXT,
+    submitter_ip TEXT NOT NULL,
+    submitted_by_approver_id INTEGER REFERENCES approvers(id),
+    status TEXT NOT NULL DEFAULT 'pending',      -- pending | approved | rejected | publishing | published | publish_failed
+    decided_by INTEGER REFERENCES approvers(id),
+    decided_at TEXT,
+    github_run_id TEXT,
+    published_at TEXT,
+    publish_error TEXT,
+    ai_decision TEXT,
+    ai_confidence REAL,
+    ai_reasoning TEXT,
+    ai_evaluated_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_band_proposals_status ON band_proposals(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_band_proposals_slug ON band_proposals(band_slug);
+CREATE INDEX IF NOT EXISTS idx_band_proposals_published ON band_proposals(published_at);
+

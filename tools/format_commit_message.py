@@ -16,14 +16,24 @@ from typing import Any
 
 
 def format_commit_message(
-    proposal: dict[str, Any], is_media: bool = False, is_album: bool = False
+    proposal: dict[str, Any],
+    is_media: bool = False,
+    is_album: bool = False,
+    is_band: bool = False,
 ) -> str:
     pid = proposal.get("id") or "unknown"
     band_slug = proposal.get("band_slug", "")
     release_slug = proposal.get("release_slug")
     scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
 
-    if is_album:
+    if is_band:
+        title = f"Apply approved band proposal #{pid}"
+        band_name = proposal.get("name", band_slug)
+        has_rel = proposal.get("has_release")
+        rel_suffix = f" + release {proposal.get('release_name')}" if has_rel else ""
+        target_line = f"Target: bands/{band_slug} ({band_name}{rel_suffix})"
+        caption = None
+    elif is_album:
         title = f"Apply approved album proposal #{pid}"
         album_name = proposal.get("name", "")
         tracks_count = len(proposal.get("tracks", []))
@@ -70,7 +80,9 @@ def format_commit_message(
     if ai_reasoning:
         lines.append(f"AI Reasoning: {ai_reasoning}")
 
-    if is_album:
+    if is_band:
+        tag_name = "Band-Proposal-ID"
+    elif is_album:
         tag_name = "Album-Proposal-ID"
     elif is_media:
         tag_name = "Media-Proposal-ID"
@@ -82,14 +94,23 @@ def format_commit_message(
 
 
 def format_step_summary(
-    proposal: dict[str, Any], is_media: bool = False, is_album: bool = False
+    proposal: dict[str, Any],
+    is_media: bool = False,
+    is_album: bool = False,
+    is_band: bool = False,
 ) -> str:
     pid = proposal.get("id") or "unknown"
     band_slug = proposal.get("band_slug", "")
     release_slug = proposal.get("release_slug")
     scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
 
-    if is_album:
+    if is_band:
+        title = f"Applied Band Proposal #{pid}"
+        band_name = proposal.get("name", band_slug)
+        has_rel = proposal.get("has_release")
+        rel_suffix = f" + release {proposal.get('release_name')}" if has_rel else ""
+        target_str = f"bands/{band_slug} ({band_name}{rel_suffix})"
+    elif is_album:
         title = f"Applied Album Proposal #{pid}"
         album_name = proposal.get("name", "")
         tracks_count = len(proposal.get("tracks", []))
@@ -133,12 +154,15 @@ def main() -> int:
     parser.add_argument("--summary-file", type=str, help="Path to append step summary markdown")
     parser.add_argument("--is-media", action="store_true", help="Whether this is a media proposal")
     parser.add_argument("--is-album", action="store_true", help="Whether this is an album proposal")
+    parser.add_argument("--is-band", action="store_true", help="Whether this is a band proposal")
 
     args = parser.parse_args()
 
     data = json.loads(args.proposal_file.read_text(encoding="utf-8"))
 
-    commit_msg = format_commit_message(data, is_media=args.is_media, is_album=args.is_album)
+    commit_msg = format_commit_message(
+        data, is_media=args.is_media, is_album=args.is_album, is_band=args.is_band
+    )
 
     if args.output:
         args.output.write_text(commit_msg, encoding="utf-8")
@@ -147,7 +171,9 @@ def main() -> int:
 
     if args.summary_file and args.summary_file.strip():
         summary_path = Path(args.summary_file.strip())
-        summary_md = format_step_summary(data, is_media=args.is_media, is_album=args.is_album)
+        summary_md = format_step_summary(
+            data, is_media=args.is_media, is_album=args.is_album, is_band=args.is_band
+        )
         with summary_path.open("a", encoding="utf-8") as f:
             f.write(summary_md)
 

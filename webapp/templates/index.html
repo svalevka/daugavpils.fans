@@ -16,4 +16,7 @@
   </li>
   {% endfor %}
 </ul>
+{% if not base_path %}
+<p class="view-all"><a href="https://review.daugavpils.fans/submit/add-band?lang={{ lang }}">+ {{ t.propose_band }}</a></p>
+{% endif %}
 {% endblock %}

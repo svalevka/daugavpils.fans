@@ -266,4 +266,128 @@
   </div>
 </article>
 {% endfor %}
+
+<h2>Pending new bands ({{ band_pending | length }})</h2>
+{% if not band_pending %}
+<p>No new band proposals waiting for review.</p>
+{% endif %}
+{% for b in band_pending %}
+<article class="proposal">
+  <span class="status-badge status-pending">Pending review</span>
+  <h2>#{{ b.id }} — {{ b.name }} {% if b.founding_date %}({{ b.founding_date }}{% if b.dissolution_date %}–{{ b.dissolution_date }}{% endif %}){% endif %}</h2>
+  <p class="meta">{{ b.location }}{% if b.genre %} | Genre: {{ b.genre | join(', ') }}{% endif %}</p>
+  {% if b.submitter_name or b.submitter_contact %}
+  <p class="meta">Submitted by {{ b.submitter_name or "(no name given)" }}{% if b.submitter_contact %} &lt;{{ b.submitter_contact }}&gt;{% endif %}</p>
+  {% endif %}
+  {% if b.description %}<p><strong>Description:</strong> {{ b.description }}</p>{% endif %}
+  {% if b.description_en %}<p><strong>Description (EN):</strong> {{ b.description_en }}</p>{% endif %}
+
+  {% if b.band_photo_stored_filename %}
+  <div style="margin: 0.5rem 0;">
+    <p><strong>Band photo:</strong></p>
+    <img src="/band-proposals/{{ b.id }}/photo" alt="Band photo" style="max-width: 180px; border-radius: 4px;">
+  </div>
+  {% endif %}
+
+  {% if b.has_release %}
+  <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.08); border-radius: 4px;">
+    <h3>First release: {{ b.release_name }} ({{ b.release_date_published }})</h3>
+    <p class="meta">License: {{ b.release_license }}{% if b.release_genre %} | Genre: {{ b.release_genre | join(', ') }}{% endif %}</p>
+    {% if b.release_description %}<p>{{ b.release_description }}</p>{% endif %}
+    {% if b.release_cover_stored_filename %}
+    <div style="margin: 0.5rem 0;">
+      <img src="/band-proposals/{{ b.id }}/cover" alt="Release cover" style="max-width: 120px; border-radius: 4px;">
+    </div>
+    {% endif %}
+
+    <h4>Tracklist ({{ b.tracks | length }} tracks)</h4>
+    <ol style="margin-left: 1.5rem; margin-bottom: 0.5rem;">
+      {% for t in b.tracks %}
+      <li style="margin-bottom: 0.5rem;">
+        <strong>{{ t.name }}</strong> ({{ t.duration }}, {{ t.bitrate }})
+        <div>
+          <audio controls preload="none" src="/band-proposals/{{ b.id }}/tracks/{{ t.position }}/file" style="height: 32px; margin-top: 4px;"></audio>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+
+  {% if b.ai_decision %}
+  <div class="ai-eval-box" style="margin: 0.75rem 0; padding: 0.5rem 0.75rem; background: #f8f9fa; border-left: 3px solid {% if b.ai_decision in ('approved', 'approve') %}#2da44e{% elif b.ai_decision in ('escalated', 'escalate') %}#bf8700{% else %}#cf222e{% endif %}; font-size: 0.9em;">
+    <strong>AI Agent:</strong>
+    <span class="status-badge" style="font-size: 0.8em; margin-left: 0.25rem;">
+      {{ b.ai_decision | upper }}{% if b.ai_confidence is not none %} ({{ (b.ai_confidence * 100) | round | int }}% confidence){% endif %}
+    </span>
+    {% if b.ai_reasoning %}<p style="margin: 0.25rem 0 0 0; color: #555;">{{ b.ai_reasoning }}</p>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if b.is_own_submission %}
+  <p class="note"><em>You submitted this band - another approver must decide on it.</em></p>
+  {% else %}
+  <form method="post" action="/band-proposals/{{ b.id }}/approve" style="margin-top: 1rem;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+      <label style="font-size: 0.9em;">Band slug:
+        <input type="text" name="band_slug" value="{{ b.band_slug }}" required style="font-family: monospace; padding: 2px 6px;">
+      </label>
+      {% if b.has_release %}
+      <label style="font-size: 0.9em;">Release slug:
+        <input type="text" name="release_slug" value="{{ b.release_slug }}" required style="font-family: monospace; padding: 2px 6px;">
+      </label>
+      {% endif %}
+    </div>
+    <div class="actions">
+      <button type="submit">Approve</button>
+      <button type="submit" formaction="/band-proposals/{{ b.id }}/reject" formmethod="post" class="button-secondary">Reject</button>
+    </div>
+  </form>
+  {% endif %}
+</article>
+{% endfor %}
+
+<h2>Ready to publish bands ({{ band_awaiting_publish | length }})</h2>
+{% if is_band_throttled %}
+<p class="note" style="background: #fff8c5; border-left: 3px solid #bf8700; padding: 0.5rem 0.75rem; margin-bottom: 1rem;">
+  <strong>Publishing Throttled:</strong> A new band was published recently (last: {{ last_band_published_at }}). The archive throttles publication to 1 new band per rolling 24 hours. Queued bands will be published by schedule once 24 hours have elapsed.
+</p>
+{% endif %}
+{% if not band_awaiting_publish %}
+<p>Nothing ready to publish.</p>
+{% endif %}
+{% for b in band_awaiting_publish %}
+<article class="proposal">
+  <span class="status-badge {% if b.status == 'approved' %}status-approved{% elif b.status == 'publishing' %}status-pending{% else %}status-rejected{% endif %}">
+    {{ b.status | capitalize }}
+  </span>
+  <h2>#{{ b.id }} — {{ b.name }} (<code>{{ b.band_slug }}</code>)</h2>
+  {% if b.has_release %}
+  <p class="meta">First release: {{ b.release_name }} (<code>{{ b.release_slug }}</code>, {{ b.tracks | length }} tracks)</p>
+  {% endif %}
+  {% if b.publish_error %}
+  <p class="error-banner" style="color: #cf222e; background: #ffebe9; padding: 0.5rem; border-radius: 4px;">
+    <strong>Publish error:</strong> {{ b.publish_error }}
+  </p>
+  {% endif %}
+
+  <div class="actions">
+    {% if b.status == 'publishing' %}
+    <p class="note"><em>Upload to archive.org and git commit in progress...</em></p>
+    {% else %}
+    <form method="post" action="/band-proposals/{{ b.id }}/upload">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" {% if is_band_throttled %}disabled title="Publishing throttled: 24h must elapse"{% endif %}>
+        {% if b.status == 'publish_failed' %}Retry upload{% else %}Upload & Publish{% endif %}
+      </button>
+    </form>
+    <form method="post" action="/band-proposals/{{ b.id }}/publish">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="button-secondary">Mark published manually</button>
+    </form>
+    {% endif %}
+  </div>
+</article>
+{% endfor %}
 {% endblock %}

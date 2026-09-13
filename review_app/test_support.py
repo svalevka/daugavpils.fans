@@ -88,6 +88,7 @@ class ReviewAppTestCase(unittest.TestCase):
         self.mock_trigger_apply = self._patch("dashboard.github_dispatch.trigger_apply")
         self.mock_trigger_media_apply = self._patch("dashboard.github_dispatch.trigger_media_apply")
         self.mock_trigger_album_apply = self._patch("dashboard.github_dispatch.trigger_album_apply")
+        self.mock_trigger_band_apply = self._patch("dashboard.github_dispatch.trigger_band_apply")
         self.mock_send_media_approved = self._patch("dashboard.mail.send_media_approved_notification")
 
     def _patch(self, target: str) -> mock.MagicMock:
@@ -160,6 +161,14 @@ class ReviewAppTestCase(unittest.TestCase):
         conn.row_factory = sqlite3.Row
         try:
             return conn.execute("SELECT * FROM album_proposals ORDER BY id").fetchall()
+        finally:
+            conn.close()
+
+    def fetch_band_proposals(self) -> list[sqlite3.Row]:
+        conn = sqlite3.connect(self.database_path)
+        conn.row_factory = sqlite3.Row
+        try:
+            return conn.execute("SELECT * FROM band_proposals ORDER BY id").fetchall()
         finally:
             conn.close()
 
@@ -240,3 +249,39 @@ class ReviewAppTestCase(unittest.TestCase):
         if cover_tuple:
             base["cover"] = (io.BytesIO(cover_tuple[1]), cover_tuple[0])
         return self.client.post("/submit-release", data=base, content_type="multipart/form-data")
+
+    def submit_band(
+        self,
+        photo_tuple: tuple[str, bytes] | None = None,
+        cover_tuple: tuple[str, bytes] | None = None,
+        track_tuples: list[tuple[str, bytes]] | None = None,
+        **form,
+    ):
+        base = {
+            "name": "Новая Группа",
+            "founding_date": "1994",
+            "dissolution_date": "",
+            "location": "Daugavpils, Latvia",
+            "genre": "Rock",
+            "description": "Band history description.",
+            "description_en": "",
+            "submitter_name": "Fan",
+            "submitter_contact": "fan@example.com",
+            "website": "",
+        }
+        base.update(form)
+        if photo_tuple:
+            base["photo"] = (io.BytesIO(photo_tuple[1]), photo_tuple[0])
+        if cover_tuple:
+            base["cover"] = (io.BytesIO(cover_tuple[1]), cover_tuple[0])
+        if track_tuples is not None:
+            base["has_release"] = "on"
+            base["tracks"] = [(io.BytesIO(data), filename) for filename, data in track_tuples]
+            if "release_name" not in base:
+                base["release_name"] = "Первый Альбом"
+            if "release_date_published" not in base:
+                base["release_date_published"] = "1995"
+            if "release_license" not in base:
+                base["release_license"] = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        return self.client.post("/submit-band", data=base, content_type="multipart/form-data")
+
