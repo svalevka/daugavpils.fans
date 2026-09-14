@@ -159,6 +159,10 @@ The curation dashboard includes a dedicated decision history and audit log at `/
 - **Filtering**: Curators can filter the audit log by timeframe (past 7 days, 30 days, 90 days, or all time), status (`approved`, `rejected`), and proposal type (`text`, `media`, `album`, `band`).
 - **90-Day automatic retention**: Completed decisions (`applied`, `published`, or `rejected`) are rotated out after 90 days (`prune_old_decided_proposals()` in `review_app/db.py`). The routine is executed automatically during database initialization and whenever `/dashboard/history` is queried. Pending or in-flight proposals are never pruned.
 
+### Outbound email delivery (Resend SMTP)
+
+`review_app` uses **Resend** (`smtp.resend.com:587`) as its outbound SMTP relay for approver/admin magic login links and proposal notification alerts. Emails originate from `noreply@daugavpils.fans` (authenticated via DKIM and SPF records in Cloudflare DNS). Using a dedicated transactional relay completely decouples server notifications from personal maintainer email accounts.
+
 `apply-proposal.yml`, `apply-media-proposal.yml`, and `pages.yml` each
 use their own `concurrency:` group (`apply-proposal`,
 `apply-media-proposal`, and `pages` respectively) so that proposals
