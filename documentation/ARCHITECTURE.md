@@ -163,6 +163,8 @@ The curation dashboard includes a dedicated decision history and audit log at `/
 
 `review_app` uses **Resend** (`smtp.resend.com:587`) as its outbound SMTP relay for approver/admin magic login links and proposal notification alerts. Emails originate from `noreply@daugavpils.fans` (authenticated via DKIM and SPF records in Cloudflare DNS). Using a dedicated transactional relay completely decouples server notifications from personal maintainer email accounts.
 
+### Workflow concurrency and recovery sweeps
+
 `apply-proposal.yml`, `apply-media-proposal.yml`, and `pages.yml` each
 use their own `concurrency:` group (`apply-proposal`,
 `apply-media-proposal`, and `pages` respectively) so that proposals
