@@ -29,16 +29,19 @@ def _send(smtp_config: SmtpConfig, to_addr: str, subject: str, body: str) -> Non
     msg["To"] = to_addr
     msg.set_content(body)
 
-    with smtplib.SMTP(smtp_config.host, smtp_config.port) as smtp:
+    client_cls = smtplib.SMTP_SSL if smtp_config.port == 465 else smtplib.SMTP
+    with client_cls(smtp_config.host, smtp_config.port, timeout=30) as smtp:
         # Gated on `user` rather than a separate "use TLS" flag: every
         # real relay this project sends through requires authentication,
         # and none of them accept plaintext AUTH, so "configured to
         # authenticate" and "needs STARTTLS first" are the same condition
-        # in practice here. Local/dev config simply omits `user`, giving
-        # a plain unauthenticated connection (e.g. to a local mail
-        # sink) - not a third real-world case this needs to distinguish.
+        # in practice here (unless already on port 465 SSL). Local/dev config
+        # simply omits `user`, giving a plain unauthenticated connection
+        # (e.g. to a local mail sink) - not a third real-world case this
+        # needs to distinguish.
         if smtp_config.user:
-            smtp.starttls()
+            if smtp_config.port != 465:
+                smtp.starttls()
             smtp.login(smtp_config.user, smtp_config.password)
         smtp.send_message(msg)
 
