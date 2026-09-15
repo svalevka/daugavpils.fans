@@ -225,13 +225,3 @@ video:
   name: Выступление в клубе железнодорожников (1998)
   bitrate: 537 kbps
   duration: PT2M25S
-- contentUrl: media/disease-live-zeldor-1998.mp4
-  encodingFormat: video/mp4
-  identifier:
-  - '@type': PropertyValue
-    propertyID: sha256
-    value: df3a8414277415f5b74c2c9a26c00bd3f4f9f06d688562f990e9f44a7ed2dae9
-  '@type': VideoObject
-  name: Disease ( Live ZelDor 1998)
-  bitrate: 534 kbps
-  duration: PT2M25S
