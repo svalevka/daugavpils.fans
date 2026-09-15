@@ -97,6 +97,16 @@ class Config:
     max_total_upload_storage_bytes: int = 2 * 1024 * 1024 * 1024
     min_disk_free_bytes: int = 1024 * 1024 * 1024
     ai: AiConfig = AiConfig()
+    # Path to a Netscape-format cookies.txt for a dedicated YouTube
+    # account, used only by youtube_fetch.py (see GitHub issue #49) to
+    # get past YouTube's "Sign in to confirm you're not a bot" challenge,
+    # which datacenter/VPS IPs increasingly hit even for ordinary public
+    # videos. Optional - without it, YouTube-link submissions still work
+    # for high-traffic videos but fail (with a submitter/approver
+    # notification) for smaller, less-trafficked ones, which is most of
+    # what this archive actually collects. Never committed - same
+    # secrets-file handling as review-app.env/cloudflare.ini.
+    youtube_cookies_path: Path | None = None
 
     def resolved_media_uploads_path(self) -> Path:
         return self.media_uploads_path or (self.database_path.parent / "uploads")
@@ -147,5 +157,8 @@ class Config:
                 model=os.environ.get("ZAI_MODEL", "glm-5.1"),
                 confidence_threshold=float(os.environ.get("AI_CONFIDENCE_THRESHOLD", "0.80")),
                 timeout_seconds=float(os.environ.get("AI_TIMEOUT_SECONDS", "30.0")),
+            ),
+            youtube_cookies_path=(
+                Path(os.environ["YOUTUBE_COOKIES_PATH"]) if "YOUTUBE_COOKIES_PATH" in os.environ else None
             ),
         )

@@ -215,6 +215,44 @@ service (no `ports:`, only `expose:`) and
    lands on `main`, and confirm both the Pages mirror and (within one
    timer interval) the primary domain pick it up.
 
+### YouTube cookies (optional, GitHub issue #49)
+
+YouTube-link video submissions (`/submit/<band>/media`'s YouTube URL
+field) are fetched server-side with `yt-dlp`. Datacenter/VPS IPs like
+this box's increasingly hit YouTube's "Sign in to confirm you're not a
+bot" challenge - reliably for smaller, less-trafficked videos (exactly
+what this archive collects), even though the same IP fetches high-traffic
+videos fine. There's no cookie-less fix for this (player-client spoofing,
+`--force-ipv4`/`--force-ipv6` were all tried and don't help - see the
+issue). The supported workaround is cookies from a real, **dedicated**
+YouTube account (not your personal one - some risk of that account
+getting rate-limited/flagged by YouTube comes with automating it this
+way, so it should be one you don't mind losing):
+
+1. Create a dedicated Google/YouTube account.
+2. Log into it in a real browser, in a private/incognito window (so nothing
+   else's session gets mixed in), and confirm you can play a video normally.
+3. Export cookies with a browser extension - e.g. [Get cookies.txt LOCALLY](https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc) (allow it in incognito) - as a Netscape-format `cookies.txt`.
+4. Place the file inside the existing `review-app-data/` volume (already
+   mounted at `/data` in the container - no `docker-compose.yml` change
+   needed), and lock it down:
+   ```bash
+   scp cookies.txt cherry:/opt/daugavpils-fans/review-app-data/youtube-cookies.txt
+   ssh cherry chmod 600 /opt/daugavpils-fans/review-app-data/youtube-cookies.txt
+   ```
+5. Set `YOUTUBE_COOKIES_PATH=/data/youtube-cookies.txt` in `review-app.env`
+   and restart: `docker compose up -d review-app` (no rebuild needed - this
+   is read at request time, not baked into the image).
+
+This file is **not** included in the automated B2 backup (`/api/backup`
+only ever archives `review.db` and `uploads/` - see `review_app/api.py`),
+and isn't backed up anywhere else either, same as everything under
+`review-app-data/`. Cookies can expire or get invalidated by YouTube
+faster when used from a datacenter IP than from a real browsing session -
+if YouTube-link fetches start failing broadly again (visible via the
+fetch-failure notification emails to submitters/approvers), re-export a
+fresh `cookies.txt` from step 3 and re-place it the same way.
+
 ### Photo/video proposals (GitHub issue #21, automated in #36)
 
 Approving a photo/video on `/dashboard` never touches git or

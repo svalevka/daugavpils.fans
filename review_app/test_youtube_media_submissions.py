@@ -62,9 +62,11 @@ class _FakeYoutubeDL:
 
     info = FAKE_INFO
     fail_download = False
+    captured_opts: list = []
 
     def __init__(self, opts):
         self.opts = opts
+        type(self).captured_opts.append(opts)
 
     def __enter__(self):
         return self
@@ -97,6 +99,7 @@ class YoutubeMediaSubmissionTestCase(ReviewAppTestCase):
         self.addCleanup(self._patch_ydl.stop)
         _FakeYoutubeDL.info = dict(FAKE_INFO)
         _FakeYoutubeDL.fail_download = False
+        _FakeYoutubeDL.captured_opts = []
 
     def submit_youtube(self, **form):
         base = {
@@ -177,6 +180,22 @@ class HappyPathTest(YoutubeMediaSubmissionTestCase):
         self.assertEqual(self.fetch_media_proposals(), [])
         self.mock_fetch_failed_submitter.assert_called_once()
         self.mock_fetch_failed_admin.assert_called_once()
+
+
+class CookiesConfigTest(YoutubeMediaSubmissionTestCase):
+    def test_cookiefile_passed_through_when_configured(self):
+        self.app.config["YOUTUBE_COOKIES_PATH"] = "/data/youtube-cookies.txt"
+        self.submit_youtube()
+        self.assertTrue(_FakeYoutubeDL.captured_opts)
+        for opts in _FakeYoutubeDL.captured_opts:
+            self.assertEqual(opts.get("cookiefile"), "/data/youtube-cookies.txt")
+
+    def test_no_cookiefile_key_when_not_configured(self):
+        self.app.config["YOUTUBE_COOKIES_PATH"] = None
+        self.submit_youtube()
+        self.assertTrue(_FakeYoutubeDL.captured_opts)
+        for opts in _FakeYoutubeDL.captured_opts:
+            self.assertNotIn("cookiefile", opts)
 
 
 class DedupeTest(YoutubeMediaSubmissionTestCase):

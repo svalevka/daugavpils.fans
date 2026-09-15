@@ -60,8 +60,22 @@ def is_youtube_url(url: str) -> bool:
     return bool(YOUTUBE_URL_RE.match((url or "").strip()))
 
 
-def _extract_info(url: str) -> dict[str, Any]:
-    opts = {"quiet": True, "no_warnings": True, "noplaylist": True, "skip_download": True}
+def _base_opts(cookiefile: str | None) -> dict[str, Any]:
+    opts: dict[str, Any] = {"quiet": True, "no_warnings": True, "noplaylist": True}
+    if cookiefile:
+        # A dedicated account's exported cookies (see GitHub issue #49) -
+        # without this, YouTube's bot-check ("Sign in to confirm you're
+        # not a bot") increasingly blocks datacenter/VPS IPs like this
+        # server's for anything but high-traffic videos. Optional: falls
+        # back to cookie-less requests, which still work for popular
+        # videos.
+        opts["cookiefile"] = cookiefile
+    return opts
+
+
+def _extract_info(url: str, cookiefile: str | None) -> dict[str, Any]:
+    opts = _base_opts(cookiefile)
+    opts["skip_download"] = True
     with yt_dlp.YoutubeDL(opts) as ydl:
         return ydl.extract_info(url, download=False)
 
@@ -99,18 +113,12 @@ def _pick_format(info: dict[str, Any], max_bytes: int) -> str:
     return chosen["format_id"]
 
 
-def _download(url: str, format_id: str, dest_dir: Path, max_bytes: int) -> Path:
+def _download(url: str, format_id: str, dest_dir: Path, max_bytes: int, cookiefile: str | None) -> Path:
     dest_dir.mkdir(parents=True, exist_ok=True)
     token = secrets.token_hex(16)
     outtmpl = str(dest_dir / f"{token}.%(ext)s")
-    opts = {
-        "format": format_id,
-        "outtmpl": outtmpl,
-        "max_filesize": max_bytes,
-        "quiet": True,
-        "no_warnings": True,
-        "noplaylist": True,
-    }
+    opts = _base_opts(cookiefile)
+    opts.update({"format": format_id, "outtmpl": outtmpl, "max_filesize": max_bytes})
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.download([url])
 
@@ -146,13 +154,15 @@ def fetch_and_store(app, media_proposal_id: int) -> None:
         url = proposal["source_url"]
         uploads_dir = Path(app.config["MEDIA_UPLOADS_PATH"])
         max_bytes = app.config["MAX_UPLOAD_BYTES"]["video"]
+        cookies_path = app.config.get("YOUTUBE_COOKIES_PATH")
+        cookiefile = str(cookies_path) if cookies_path else None
 
         try:
-            info = _extract_info(url)
+            info = _extract_info(url, cookiefile)
             if info.get("is_live") or info.get("live_status") == "is_live":
                 raise FetchError("this is a live stream, not a finished video")
             format_id = _pick_format(info, max_bytes)
-            downloaded_path = _download(url, format_id, uploads_dir, max_bytes)
+            downloaded_path = _download(url, format_id, uploads_dir, max_bytes, cookiefile)
             content_type, media_type = _sniff_downloaded(downloaded_path)
             size_bytes = downloaded_path.stat().st_size
         except Exception as exc:  # yt_dlp raises its own broad DownloadError, etc.
