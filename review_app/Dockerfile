@@ -8,6 +8,16 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# Deno - yt-dlp (see GitHub issue #49) needs an external JavaScript runtime
+# to solve YouTube's "n challenge" (anti-throttling puzzle); without one,
+# extraction succeeds but returns no real video/audio formats, only
+# storyboard thumbnails - see https://github.com/yt-dlp/yt-dlp/wiki/EJS.
+# Installed to /usr/local/bin (already on PATH for appuser below) before
+# any pip install, so it's cached independently of Python dependency churn.
+RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-certificates && \
+    curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh && \
+    apt-get purge -y curl unzip && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+
 COPY tools/requirements.txt tools/requirements.txt
 COPY review_app/requirements.txt review_app/requirements.txt
 RUN pip install --no-cache-dir -r tools/requirements.txt -r review_app/requirements.txt
