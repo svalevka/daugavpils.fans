@@ -2,7 +2,9 @@
 {% block title %}{{ t.thank_you_title }}{% endblock %}
 {% block content %}
 <h1>{{ t.thank_you_heading }}</h1>
-{% if saved %}
+{% if fetching %}
+<p>{{ t.media_youtube_fetching_msg }}</p>
+{% elif saved %}
 <p>{{ t.media_submitted_msg.format(count=saved) }}</p>
 {% else %}
 <p>{{ t.media_empty_msg }}</p>

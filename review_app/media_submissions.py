@@ -24,6 +24,7 @@ import db  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
+import youtube_fetch  # noqa: E402
 from config import AiConfig  # noqa: E402
 
 bp = Blueprint("media_submissions", __name__)
@@ -81,6 +82,70 @@ def release_media_form(band_slug: str, release_slug: str):
     )
 
 
+def _create_youtube_media_proposal(
+    conn,
+    ip: str,
+    band_slug: str,
+    release_slug: str | None,
+    youtube_url: str,
+    submitter_name: str | None,
+    submitter_contact: str | None,
+    submitted_by_approver_id: int | None,
+):
+    if not youtube_fetch.is_youtube_url(youtube_url):
+        abort(400)
+    if not request.form.get("rights_attested"):
+        abort(400)
+
+    # Dedupe at submission time (see GitHub issue #49) - a re-submission
+    # of the same link for the same band/release is redundant to fetch
+    # again while one is already fetching/pending/approved/published, or
+    # already sits in the queue. A previously-rejected one is fine to
+    # resubmit (an approver's earlier "no" isn't meant to be permanent).
+    existing = conn.execute(
+        """
+        SELECT id FROM media_proposals
+        WHERE band_slug = ? AND COALESCE(release_slug, '') = COALESCE(?, '')
+          AND source_url = ? AND status != 'rejected'
+        """,
+        (band_slug, release_slug, youtube_url),
+    ).fetchone()
+    if existing is not None:
+        return (
+            render_template(
+                "submit_media_done.html",
+                saved=0,
+                skipped=[f"{youtube_url}: already submitted for this band/release"],
+            ),
+            201,
+        )
+
+    cur = conn.execute(
+        """
+        INSERT INTO media_proposals (
+            band_slug, release_slug, media_type, original_filename, stored_filename,
+            content_type, size_bytes, source_type, source_url, rights_attested,
+            submitter_name, submitter_contact, submitter_ip, submitted_by_approver_id, status
+        ) VALUES (?, ?, 'video', ?, '', '', 0, 'youtube', ?, 1, ?, ?, ?, ?, 'fetching')
+        """,
+        (
+            band_slug,
+            release_slug,
+            youtube_url,
+            youtube_url,
+            submitter_name,
+            submitter_contact,
+            ip,
+            submitted_by_approver_id,
+        ),
+    )
+    conn.commit()
+
+    youtube_fetch.dispatch_fetch(current_app._get_current_object(), cur.lastrowid)
+
+    return render_template("submit_media_done.html", saved=0, skipped=[], fetching=True), 201
+
+
 @bp.post("/submit-media")
 def create_media_proposal():
     conn = db.get_connection()
@@ -116,15 +181,26 @@ def create_media_proposal():
     except archive_read.ApplyError:
         abort(400)
 
-    files = [f for f in request.files.getlist("files") if f and f.filename]
-    if not files:
-        abort(400)
-
     submitter_name = request.form.get("submitter_name", "").strip() or None
     submitter_contact = request.form.get("submitter_contact", "").strip() or None
     submitted_by_approver_id = _resolve_submitted_by_approver_id(
         conn, session.get("approver_id"), submitter_contact
     )
+
+    # Mutually exclusive with the file list in the UI (see GitHub issue
+    # #49) - a submission is either N uploaded files, or one YouTube
+    # link, never both. If a youtube_url is present, files are ignored
+    # rather than combined, since nothing in the UI can produce both.
+    youtube_url = (request.form.get("youtube_url") or "").strip()
+    if youtube_url:
+        return _create_youtube_media_proposal(
+            conn, ip, band_slug, release_slug, youtube_url, submitter_name, submitter_contact,
+            submitted_by_approver_id,
+        )
+
+    files = [f for f in request.files.getlist("files") if f and f.filename]
+    if not files:
+        abort(400)
 
     uploads_dir = current_app.config["MEDIA_UPLOADS_PATH"]
     max_bytes_by_type = current_app.config["MAX_UPLOAD_BYTES"]

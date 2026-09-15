@@ -195,11 +195,33 @@ def get_media_proposal_file(proposal_id: int):
 @bp.get("/media-proposals/approved")
 def list_approved_media_proposals():
     _require_callback_key()
+    from dashboard import is_youtube_video_publishing_throttled
+
     conn = db.get_connection()
-    rows = conn.execute(
-        "SELECT id FROM media_proposals WHERE status IN ('approved', 'publishing') ORDER BY id"
-    ).fetchall()
-    return jsonify({"ids": [row["id"] for row in rows]})
+    # Direct-upload media is never throttled - only source_type =
+    # 'youtube' is subject to the rolling-24h cap (see GitHub issue #49,
+    # decision 14), same pattern as list_approved_album_proposals above.
+    ids = [
+        row["id"]
+        for row in conn.execute(
+            "SELECT id FROM media_proposals WHERE source_type != 'youtube' "
+            "AND status IN ('approved', 'publishing') ORDER BY id"
+        ).fetchall()
+    ]
+
+    is_throttled, count, _ = is_youtube_video_publishing_throttled(conn)
+    if not is_throttled:
+        remaining_quota = max(0, 3 - count)
+        ids.extend(
+            row["id"]
+            for row in conn.execute(
+                "SELECT id FROM media_proposals WHERE source_type = 'youtube' "
+                "AND status IN ('approved', 'publishing') ORDER BY id LIMIT ?",
+                (remaining_quota,),
+            ).fetchall()
+        )
+
+    return jsonify({"ids": sorted(ids)})
 
 
 @bp.post("/media-proposals/<int:proposal_id>/publish-result")

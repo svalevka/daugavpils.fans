@@ -72,6 +72,11 @@
   <span class="status-badge status-pending">Pending review</span>
   <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
   <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
+  {% if m.source_type == "youtube" %}
+  <p class="meta">Source: <a href="{{ m.source_url }}" target="_blank" rel="noopener">YouTube</a>
+    {% if m.youtube_channel %} — {{ m.youtube_channel }}{% endif %}
+    {% if m.youtube_duration_seconds %} — {{ (m.youtube_duration_seconds // 60) }}:{{ "%02d" | format(m.youtube_duration_seconds % 60) }}{% endif %}</p>
+  {% endif %}
   {% if m.submitter_name or m.submitter_contact %}
   <p class="meta">Submitted by {{ m.submitter_name or "(no name given)" }}{% if m.submitter_contact %} &lt;{{ m.submitter_contact }}&gt;{% endif %}</p>
   {% endif %}
@@ -129,6 +134,14 @@
 
   <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
   <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
+  {% if m.source_type == "youtube" %}
+  <p class="meta">Source: <a href="{{ m.source_url }}" target="_blank" rel="noopener">YouTube</a>
+    {% if m.youtube_channel %} — {{ m.youtube_channel }}{% endif %}
+    {% if m.youtube_duration_seconds %} — {{ (m.youtube_duration_seconds // 60) }}:{{ "%02d" | format(m.youtube_duration_seconds % 60) }}{% endif %}</p>
+  {% if m.status == 'approved' and is_youtube_video_throttled %}
+  <p class="note">YouTube video publishing is throttled to 3 per rolling 24 hours - this will upload automatically once quota frees up.</p>
+  {% endif %}
+  {% endif %}
   {% if m.submitter_name or m.submitter_contact %}
   <p class="meta">Submitted by {{ m.submitter_name or "(no name given)" }}{% if m.submitter_contact %} &lt;{{ m.submitter_contact }}&gt;{% endif %}</p>
   {% endif %}

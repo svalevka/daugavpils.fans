@@ -105,6 +105,38 @@ def send_media_approved_notification(smtp_config: SmtpConfig, to_addr: str, desc
     )
 
 
+def send_youtube_fetch_failed_notification(
+    smtp_config: SmtpConfig, to_addr: str, scope: str, error: str
+) -> None:
+    """Sent to the submitter when a YouTube-link submission's download
+    fails (private/removed/age-restricted/live/too-large video, etc.) -
+    see GitHub issue #49. There is no proposal left at that point for
+    them to check on later, so this is the only signal they'll get."""
+    _send(
+        smtp_config,
+        to_addr,
+        "Your daugavpils.fans video link could not be fetched",
+        f"Your YouTube video submission for {scope} could not be fetched:\n\n"
+        f"{error}\n\n"
+        "If this was a temporary issue (e.g. the video was age-restricted or "
+        "region-locked), you're welcome to try a different link or upload the "
+        "video file directly instead.",
+    )
+
+
+def send_youtube_fetch_failed_admin_notification(
+    smtp_config: SmtpConfig, recipients: list[str], scope: str, source_url: str, error: str
+) -> None:
+    """Sent to approvers alongside send_youtube_fetch_failed_notification
+    (see GitHub issue #49) - the proposal never reaches the approval
+    queue, so without this an approver would have no way to know a
+    submission was ever attempted."""
+    subject = f"YouTube video fetch failed for {scope}"
+    body = f"A YouTube video submission for {scope} could not be fetched.\n\nURL: {source_url}\nError: {error}\n"
+    for to_addr in recipients:
+        _send(smtp_config, to_addr, subject, body)
+
+
 def send_ai_escalation_notification(
     smtp_config: SmtpConfig,
     recipients: list[str],

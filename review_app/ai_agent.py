@@ -314,10 +314,23 @@ def build_media_proposal_prompt(
     submitter_name = proposal.get("submitter_name") or "(anonymous)"
     submitter_contact = proposal.get("submitter_contact") or "(none)"
 
+    source_context = ""
+    if proposal.get("source_type") == "youtube":
+        # Context only, same text-only treatment as any other video (see
+        # GitHub issue #49) - the AI never sees the video's actual frames,
+        # just what YouTube itself reports about it.
+        source_context = (
+            f"Source: YouTube ({proposal.get('source_url') or '(unknown URL)'})\n"
+            f"YouTube Title: {proposal.get('youtube_title') or '(unknown)'}\n"
+            f"YouTube Channel: {proposal.get('youtube_channel') or '(unknown)'}\n"
+            f"Duration: {proposal.get('youtube_duration_seconds') or '(unknown)'} seconds\n"
+        )
+
     return (
         f"Media Proposal Scope: {scope}\n"
         f"Media Type: {media_type}\n"
         f"Original Filename: {original_filename}\n"
+        f"{source_context}"
         f"<submitter_metadata>\n"
         f"Name: {submitter_name}\n"
         f"Contact: {submitter_contact}\n"
@@ -604,15 +617,34 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
 
         if should_auto_approve:
             ai_approver_id = roles.ensure_ai_approver(conn)
+
+            # Global pacing cap on YouTube-sourced videos only (see
+            # GitHub issue #49, decision 14) - same shape as
+            # is_band_publishing_throttled/is_album_publishing_throttled:
+            # a throttled proposal still gets marked 'approved' (the
+            # submitter is told "yes"), it just doesn't dispatch the
+            # publish workflow immediately - the existing 15-minute
+            # apply-media-proposal.yml sweep (via its
+            # /api/media-proposals/approved endpoint, which applies the
+            # same cap) picks it up once quota frees up. Direct file
+            # uploads are never throttled - only source_type == 'youtube'.
+            from dashboard import is_youtube_video_publishing_throttled
+
+            is_throttled = (
+                proposal_dict.get("source_type") == "youtube"
+                and is_youtube_video_publishing_throttled(conn)[0]
+            )
+            new_status = "approved" if is_throttled else "publishing"
+
             cur = conn.execute(
                 """
                 UPDATE media_proposals
-                SET status = 'publishing', decided_by = ?, decided_at = datetime('now'),
+                SET status = ?, decided_by = ?, decided_at = datetime('now'),
                     ai_decision = 'approved', ai_confidence = ?, ai_reasoning = ?,
                     ai_evaluated_at = datetime('now')
                 WHERE id = ? AND status = 'pending'
                 """,
-                (ai_approver_id, result.confidence, result.reasoning, media_proposal_id),
+                (new_status, ai_approver_id, result.confidence, result.reasoning, media_proposal_id),
             )
             conn.commit()
             if cur.rowcount == 1:
@@ -636,24 +668,27 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
                             media_proposal_id,
                         )
 
-                # Dispatch apply-media-proposal.yml
-                try:
-                    github_dispatch.trigger_media_apply(
-                        app.config["GITHUB_CONFIG"], media_proposal_id
-                    )
-                except OSError:
-                    logger.exception(
-                        "failed to dispatch apply-media-proposal.yml for proposal %s",
-                        media_proposal_id,
-                    )
-                    conn.execute(
-                        "UPDATE media_proposals SET status = 'publish_failed', publish_error = ? WHERE id = ?",
-                        (
-                            "Failed to dispatch upload workflow to GitHub Actions",
+                # Dispatch apply-media-proposal.yml - skipped when
+                # throttled; the proposal stays 'approved' for the
+                # scheduled sweep to pick up once quota frees up.
+                if new_status == "publishing":
+                    try:
+                        github_dispatch.trigger_media_apply(
+                            app.config["GITHUB_CONFIG"], media_proposal_id
+                        )
+                    except OSError:
+                        logger.exception(
+                            "failed to dispatch apply-media-proposal.yml for proposal %s",
                             media_proposal_id,
-                        ),
-                    )
-                    conn.commit()
+                        )
+                        conn.execute(
+                            "UPDATE media_proposals SET status = 'publish_failed', publish_error = ? WHERE id = ?",
+                            (
+                                "Failed to dispatch upload workflow to GitHub Actions",
+                                media_proposal_id,
+                            ),
+                        )
+                        conn.commit()
                 return
 
         # Record evaluation for escalation or shadow mode

@@ -47,6 +47,18 @@ def init_schema(database_path: Path, maintainer_email: str | None = None) -> Non
                 conn.execute(f"ALTER TABLE media_proposals ADD COLUMN {col} {col_type}")
             except sqlite3.OperationalError:
                 pass
+        for col, col_type in [
+            ("source_type", "TEXT NOT NULL DEFAULT 'upload'"),
+            ("source_url", "TEXT"),
+            ("youtube_title", "TEXT"),
+            ("youtube_channel", "TEXT"),
+            ("youtube_duration_seconds", "INTEGER"),
+            ("rights_attested", "INTEGER NOT NULL DEFAULT 0"),
+        ]:
+            try:
+                conn.execute(f"ALTER TABLE media_proposals ADD COLUMN {col} {col_type}")
+            except sqlite3.OperationalError:
+                pass
         conn.commit()
         roles.ensure_default_roles(conn, maintainer_email)
         prune_old_decided_proposals(conn, retention_days=90)

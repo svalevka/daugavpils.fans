@@ -21,13 +21,42 @@
     var form = input ? input.closest("form") : null;
     if (!input || !addButton || !list || !submitButton || !form) return;
 
+    // Optional: only present on the media submission form (GitHub issue
+    // #49) - the YouTube-link path, mutually exclusive with the file
+    // list above. Guarded with `if` throughout since other pages using
+    // this script (there are none today, but nothing enforces that)
+    // might not have these elements.
+    var youtubeUrlInput = document.querySelector("[data-media-youtube-url]");
+    var rightsCheckbox = document.querySelector("[data-media-rights-attested]");
+
     // {file: File, previewUrl: string|null, caption: string} per item.
     // caption/previewUrl live here, not just in the DOM, so they survive
     // the full re-render every add/remove triggers.
     var items = [];
 
+    function youtubeUrlFilled() {
+      return !!(youtubeUrlInput && youtubeUrlInput.value.trim());
+    }
+
+    function updateMutualExclusion() {
+      if (!youtubeUrlInput) return;
+      addButton.disabled = youtubeUrlFilled();
+      var youtubeDisabled = items.length > 0;
+      youtubeUrlInput.disabled = youtubeDisabled;
+      if (rightsCheckbox) rightsCheckbox.disabled = youtubeDisabled;
+    }
+
     function updateSubmitState() {
-      submitButton.disabled = items.length === 0;
+      var youtubeReady = youtubeUrlFilled() && !!(rightsCheckbox && rightsCheckbox.checked);
+      submitButton.disabled = items.length === 0 && !youtubeReady;
+      updateMutualExclusion();
+    }
+
+    if (youtubeUrlInput) {
+      youtubeUrlInput.addEventListener("input", updateSubmitState);
+    }
+    if (rightsCheckbox) {
+      rightsCheckbox.addEventListener("change", updateSubmitState);
     }
 
     function removeItem(index) {

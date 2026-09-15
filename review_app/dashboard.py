@@ -77,6 +77,28 @@ def is_band_publishing_throttled(conn) -> tuple[bool, str | None]:
     return True, row["published_at"]
 
 
+def is_youtube_video_publishing_throttled(conn) -> tuple[bool, int, str | None]:
+    """Checks if publishing a YouTube-sourced video proposal is throttled
+    (max 3 per rolling 24 hours) - see GitHub issue #49, decision 14.
+    Scoped to media_proposals with source_type = 'youtube' only; direct
+    file uploads are never throttled by this. Same shape as
+    is_album_publishing_throttled above.
+    Returns (True, count, oldest_blocking_published_at) if throttled
+    (count >= 3); (False, count, None) if publishing is permitted."""
+    rows = conn.execute(
+        """
+        SELECT published_at FROM media_proposals
+        WHERE source_type = 'youtube' AND status = 'published'
+          AND datetime(published_at) >= datetime('now', '-24 hours')
+        ORDER BY datetime(published_at) ASC
+        """
+    ).fetchall()
+    count = len(rows)
+    if count >= 3:
+        return True, count, rows[count - 3]["published_at"]
+    return False, count, None
+
+
 def is_album_publishing_throttled(conn) -> tuple[bool, int, str | None]:
     """Checks if album/release publishing is throttled (max 3 releases per rolling 24 hours).
     Counts releases published via album_proposals as well as releases included in band_proposals (has_release=1).
@@ -157,6 +179,12 @@ def view_pending():
             "ai_confidence": row["ai_confidence"] if "ai_confidence" in row.keys() else None,
             "ai_reasoning": row["ai_reasoning"] if "ai_reasoning" in row.keys() else None,
             "ai_evaluated_at": row["ai_evaluated_at"] if "ai_evaluated_at" in row.keys() else None,
+            "source_type": row["source_type"] if "source_type" in row.keys() else "upload",
+            "source_url": row["source_url"] if "source_url" in row.keys() else None,
+            "youtube_channel": row["youtube_channel"] if "youtube_channel" in row.keys() else None,
+            "youtube_duration_seconds": (
+                row["youtube_duration_seconds"] if "youtube_duration_seconds" in row.keys() else None
+            ),
         }
         (media_pending if row["status"] == "pending" else media_awaiting_publish).append(item)
 
@@ -233,6 +261,7 @@ def view_pending():
 
     is_band_throttled, last_band_published_at = is_band_publishing_throttled(conn)
     is_album_throttled, album_published_count, last_album_published_at = is_album_publishing_throttled(conn)
+    is_youtube_video_throttled, _, _ = is_youtube_video_publishing_throttled(conn)
 
     return render_template(
         "dashboard.html",
@@ -248,6 +277,7 @@ def view_pending():
         is_album_throttled=is_album_throttled,
         album_published_count=album_published_count,
         last_album_published_at=last_album_published_at,
+        is_youtube_video_throttled=is_youtube_video_throttled,
         approver=g.approver,
         can_view_stats=roles.user_has_role(conn, g.approver["id"], roles.ROLE_STATS),
     )
@@ -418,12 +448,15 @@ def reject_media(proposal_id: int):
 def upload_media(proposal_id: int):
     conn = db.get_connection()
     row = conn.execute(
-        "SELECT id, status FROM media_proposals WHERE id = ?", (proposal_id,)
+        "SELECT id, status, source_type FROM media_proposals WHERE id = ?", (proposal_id,)
     ).fetchone()
     if row is None:
         abort(404)
     if row["status"] not in ("approved", "publishing", "publish_failed"):
         abort(409)
+
+    if row["source_type"] == "youtube" and is_youtube_video_publishing_throttled(conn)[0]:
+        abort(429)
 
     conn.execute(
         "UPDATE media_proposals SET status = 'publishing', publish_error = NULL WHERE id = ?",

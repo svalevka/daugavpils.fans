@@ -298,6 +298,78 @@ class AiAgentTextProposalTest(ReviewAppTestCase):
         self.assertEqual(p["status"], "approved")
 
 
+class AiAgentYoutubeThrottleTest(ReviewAppTestCase):
+    """The global 3-per-rolling-24h publishing throttle on YouTube-sourced
+    video proposals only (see GitHub issue #49, decision 14) - direct
+    uploads are covered by AiAgentMediaProposalTest above and must never
+    be throttled by this."""
+
+    def setUp(self):
+        super().setUp()
+        self.mock_ai_trigger_media = self._patch("ai_agent.github_dispatch.trigger_media_apply")
+        self.mock_ai_api = self._patch("ai_agent.call_ai_api")
+        self._patch("ai_agent.mail.send_ai_escalation_notification")
+        self._patch("ai_agent.mail.send_media_approved_notification")
+        self.app.config["AI_SYNC_EVALUATION"] = True
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+        self.mock_ai_api.return_value = json.dumps(
+            {"decision": "approve", "confidence": 0.95, "reasoning": "Clearly the band's own upload.", "spam_or_vandalism": False}
+        )
+
+    def _insert_pending_youtube_proposal(self) -> int:
+        import sqlite3
+
+        conn = sqlite3.connect(self.database_path)
+        cur = conn.execute(
+            """
+            INSERT INTO media_proposals (
+                band_slug, media_type, original_filename, stored_filename, content_type,
+                size_bytes, submitter_ip, status, source_type, source_url
+            ) VALUES (?, 'video', 'x', 'x', 'video/mp4', 1, '127.0.0.1', 'pending', 'youtube', 'https://youtu.be/x')
+            """,
+            (self.fx.band_slug,),
+        )
+        conn.commit()
+        proposal_id = cur.lastrowid
+        conn.close()
+        return proposal_id
+
+    def _seed_published_youtube_videos(self, n: int) -> None:
+        import sqlite3
+
+        conn = sqlite3.connect(self.database_path)
+        for i in range(n):
+            conn.execute(
+                """
+                INSERT INTO media_proposals (
+                    band_slug, media_type, original_filename, stored_filename, content_type,
+                    size_bytes, submitter_ip, status, source_type, source_url, published_at
+                ) VALUES (?, 'video', 'x', 'x', 'video/mp4', 1, '127.0.0.1', 'published', 'youtube', ?,
+                          datetime('now', '-1 hours'))
+                """,
+                (self.fx.band_slug, f"https://youtu.be/seed{i}"),
+            )
+        conn.commit()
+        conn.close()
+
+    def test_dispatches_immediately_when_not_throttled(self):
+        proposal_id = self._insert_pending_youtube_proposal()
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "publishing")
+        self.mock_ai_trigger_media.assert_called_once_with(self.app.config["GITHUB_CONFIG"], proposal_id)
+
+    def test_stays_approved_without_dispatch_when_throttled(self):
+        self._seed_published_youtube_videos(3)
+        proposal_id = self._insert_pending_youtube_proposal()
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[-1]
+        self.assertEqual(row["status"], "approved")
+        self.mock_ai_trigger_media.assert_not_called()
+
+
 class AiAgentMediaProposalTest(ReviewAppTestCase):
     def setUp(self):
         super().setUp()

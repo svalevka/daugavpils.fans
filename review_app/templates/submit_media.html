@@ -10,7 +10,7 @@
   <input type="hidden" name="band_slug" value="{{ band_slug }}">
   {% if release_slug %}<input type="hidden" name="release_slug" value="{{ release_slug }}">{% endif %}
 
-  <div class="field">
+  <div class="field" data-media-file-field>
     <label for="files">{{ t.media_field_label }}</label>
     <!-- Hidden: the visible trigger is the button below, so repeated
          picks can be accumulated in JS instead of each one replacing
@@ -25,6 +25,22 @@
          data-i18n-caption="{{ t.media_js_caption }}"
          data-i18n-remove="{{ t.media_js_remove }}"
          class="media-file-list"></div>
+  </div>
+
+  <p class="meta">{{ t.media_or_youtube }}</p>
+
+  <!-- Mutually exclusive with the file list above (see GitHub issue
+       #49) - a submission is either uploaded files, or one YouTube
+       link, never both; media_upload.js disables whichever isn't in
+       use once the other has something in it. -->
+  <div class="field" data-media-youtube-field>
+    <label for="youtube_url">{{ t.media_youtube_url_label }}</label>
+    <input type="url" id="youtube_url" name="youtube_url" data-media-youtube-url
+           placeholder="https://www.youtube.com/watch?v=...">
+    <label class="checkbox-label">
+      <input type="checkbox" id="rights_attested" name="rights_attested" value="1" data-media-rights-attested>
+      {{ t.media_rights_attested_label }}
+    </label>
   </div>
 
   <div class="field">

@@ -101,7 +101,12 @@ CREATE TABLE IF NOT EXISTS media_proposals (
     submitter_contact TEXT,
     submitter_ip TEXT NOT NULL,
     submitted_by_approver_id INTEGER REFERENCES approvers(id),
-    status TEXT NOT NULL DEFAULT 'pending',      -- pending | approved | rejected | publishing | published | publish_failed
+    -- pending | fetching | approved | rejected | publishing | published | publish_failed
+    -- ('fetching' is a source_type='youtube'-only transient state: a
+    -- background thread is downloading the video - see youtube_fetch.py.
+    -- It never reaches the approval queue; on failure the row is
+    -- deleted rather than surfaced as a status, per GitHub issue #49.)
+    status TEXT NOT NULL DEFAULT 'pending',
     decided_by INTEGER REFERENCES approvers(id),
     decided_at TEXT,
     github_run_id TEXT,
@@ -110,7 +115,18 @@ CREATE TABLE IF NOT EXISTS media_proposals (
     ai_decision TEXT,
     ai_confidence REAL,
     ai_reasoning TEXT,
-    ai_evaluated_at TEXT
+    ai_evaluated_at TEXT,
+    -- 'upload' (direct file, the original flow) | 'youtube' (see GitHub
+    -- issue #49). source_url/youtube_* are populated only for 'youtube'.
+    source_type TEXT NOT NULL DEFAULT 'upload',
+    source_url TEXT,
+    youtube_title TEXT,
+    youtube_channel TEXT,
+    youtube_duration_seconds INTEGER,
+    -- The submitter's required attestation checkbox for the YouTube path
+    -- only (see issue #49) - not proof of anything, but an explicit,
+    -- on-record claim rather than leaving provenance entirely implicit.
+    rights_attested INTEGER NOT NULL DEFAULT 0
 );
 
 -- Admin authentication for site maintainer statistics (/admin/):
