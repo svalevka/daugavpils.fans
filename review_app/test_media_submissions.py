@@ -9,6 +9,7 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -71,6 +72,17 @@ class ValidSubmissionTest(ReviewAppTestCase):
 
         row = self.fetch_media_proposals()[0]
         self.assertEqual(row["submitted_by_approver_id"], approver_id)
+
+    @patch("duplicate_detection.probe_video_duration", return_value=145)
+    def test_video_upload_probes_duration_and_saves_it(self, mock_probe):
+        response = self.submit_media(file_tuples=[("concert.mp4", MP4_BYTES)])
+        self.assertEqual(response.status_code, 201)
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["media_type"], "video")
+        self.assertEqual(row["duration_seconds"], 145)
+        self.assertEqual(row["youtube_duration_seconds"], 145)
+        mock_probe.assert_called_once()
 
 
 class UnrecognizedAndOversizedFileTest(ReviewAppTestCase):

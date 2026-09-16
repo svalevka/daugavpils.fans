@@ -76,6 +76,8 @@
   <p class="meta">Source: <a href="{{ m.source_url }}" target="_blank" rel="noopener">YouTube</a>
     {% if m.youtube_channel %} — {{ m.youtube_channel }}{% endif %}
     {% if m.youtube_duration_seconds %} — {{ (m.youtube_duration_seconds // 60) }}:{{ "%02d" | format(m.youtube_duration_seconds % 60) }}{% endif %}</p>
+  {% elif m.media_type == "video" and m.duration_seconds %}
+  <p class="meta">Duration: {{ (m.duration_seconds // 60) }}:{{ "%02d" | format(m.duration_seconds % 60) }}</p>
   {% endif %}
   {% if m.duplicate_match %}
   <p class="note" style="color: #bf8700;"><strong>Possible duplicate:</strong> existing video
@@ -147,6 +149,8 @@
   {% if m.status == 'approved' and is_youtube_video_throttled %}
   <p class="note">YouTube video publishing is throttled to 3 per rolling 24 hours - this will upload automatically once quota frees up.</p>
   {% endif %}
+  {% elif m.media_type == "video" and m.duration_seconds %}
+  <p class="meta">Duration: {{ (m.duration_seconds // 60) }}:{{ "%02d" | format(m.duration_seconds % 60) }}</p>
   {% endif %}
   {% if m.duplicate_match %}
   <p class="note" style="color: #bf8700;"><strong>Possible duplicate:</strong> existing video

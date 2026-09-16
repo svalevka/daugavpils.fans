@@ -123,6 +123,7 @@ CREATE TABLE IF NOT EXISTS media_proposals (
     youtube_title TEXT,
     youtube_channel TEXT,
     youtube_duration_seconds INTEGER,
+    duration_seconds INTEGER,
     -- The submitter's required attestation checkbox for the YouTube path
     -- only (see issue #49) - not proof of anything, but an explicit,
     -- on-record claim rather than leaving provenance entirely implicit.

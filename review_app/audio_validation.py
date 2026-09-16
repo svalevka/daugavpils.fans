@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -78,10 +79,18 @@ def detect_ai_text_syntax(text: str) -> list[str]:
     return flags
 
 
+def check_ffprobe_available() -> bool:
+    """Returns True if ffprobe executable is found on PATH."""
+    return shutil.which("ffprobe") is not None
+
+
 def probe_audio_file(path: Path) -> dict[str, Any]:
     """Run ffprobe to verify audio integrity, duration, bitrate, and tags.
     Raises AudioValidationError if the file is invalid, zero-length, or ffprobe fails.
     """
+    if not check_ffprobe_available():
+        raise AudioValidationError("ffprobe binary is not available on PATH")
+
     try:
         out = subprocess.run(
             [

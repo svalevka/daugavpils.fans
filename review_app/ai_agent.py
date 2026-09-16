@@ -326,6 +326,8 @@ def build_media_proposal_prompt(
             f"YouTube Channel: {proposal.get('youtube_channel') or '(unknown)'}\n"
             f"Duration: {proposal.get('youtube_duration_seconds') or '(unknown)'} seconds\n"
         )
+    elif media_type == "video" and proposal.get("duration_seconds"):
+        source_context = f"Duration: {proposal.get('duration_seconds')} seconds\n"
 
     return (
         f"Media Proposal Scope: {scope}\n"
@@ -618,8 +620,13 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
         # seconds to clear; a missed duplicate is a permanent archive
         # error.
         if proposal_dict.get("media_type") == "video":
+            video_duration = (
+                proposal_dict.get("duration_seconds")
+                if proposal_dict.get("duration_seconds") is not None
+                else proposal_dict.get("youtube_duration_seconds")
+            )
             duplicate_match = duplicate_detection.find_duplicate_video(
-                checkout, proposal_dict["band_slug"], proposal_dict.get("youtube_duration_seconds")
+                checkout, proposal_dict["band_slug"], video_duration
             )
             if duplicate_match is not None:
                 result = EvaluationResult(

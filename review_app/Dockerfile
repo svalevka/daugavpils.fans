@@ -14,7 +14,9 @@ WORKDIR /app
 # storyboard thumbnails - see https://github.com/yt-dlp/yt-dlp/wiki/EJS.
 # Installed to /usr/local/bin (already on PATH for appuser below) before
 # any pip install, so it's cached independently of Python dependency churn.
-RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-certificates && \
+# ffmpeg/ffprobe (GitHub issue #52) provides audio inspection and video
+# duration probing for community submissions.
+RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-certificates ffmpeg && \
     curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh && \
     apt-get purge -y curl unzip && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 

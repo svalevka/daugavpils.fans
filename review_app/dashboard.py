@@ -165,7 +165,9 @@ def view_pending():
         duplicate_match = None
         if row["media_type"] == "video":
             candidate_duration = (
-                row["youtube_duration_seconds"] if "youtube_duration_seconds" in row.keys() else None
+                row["duration_seconds"]
+                if ("duration_seconds" in row.keys() and row["duration_seconds"] is not None)
+                else (row["youtube_duration_seconds"] if "youtube_duration_seconds" in row.keys() else None)
             )
             duplicate_match = duplicate_detection.find_duplicate_video(
                 checkout, row["band_slug"], candidate_duration
@@ -194,6 +196,11 @@ def view_pending():
             "youtube_channel": row["youtube_channel"] if "youtube_channel" in row.keys() else None,
             "youtube_duration_seconds": (
                 row["youtube_duration_seconds"] if "youtube_duration_seconds" in row.keys() else None
+            ),
+            "duration_seconds": (
+                row["duration_seconds"]
+                if ("duration_seconds" in row.keys() and row["duration_seconds"] is not None)
+                else (row["youtube_duration_seconds"] if "youtube_duration_seconds" in row.keys() else None)
             ),
             "duplicate_match": duplicate_match,
         }

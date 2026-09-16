@@ -21,6 +21,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 import ai_agent  # noqa: E402
 import archive_read  # noqa: E402
 import db  # noqa: E402
+import duplicate_detection  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
@@ -224,14 +225,21 @@ def create_media_proposal():
             skipped.append(f"{file_storage.filename}: {exc}")
             continue
 
+        duration_seconds = None
+        if media_type == "video":
+            duration_seconds = duplicate_detection.probe_video_duration(
+                Path(uploads_dir) / stored_filename
+            )
+
         cur = conn.execute(
             """
             INSERT INTO media_proposals (
                 band_slug, release_slug, media_type, original_filename, stored_filename,
                 content_type, size_bytes, caption,
                 submitter_name, submitter_contact, submitter_ip,
-                submitted_by_approver_id, status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+                submitted_by_approver_id, status,
+                youtube_duration_seconds, duration_seconds
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
             """,
             (
                 band_slug,
@@ -246,6 +254,8 @@ def create_media_proposal():
                 submitter_contact,
                 ip,
                 submitted_by_approver_id,
+                duration_seconds,
+                duration_seconds,
             ),
         )
         saved_ids.append(cur.lastrowid)

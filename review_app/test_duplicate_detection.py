@@ -10,6 +10,7 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
@@ -135,6 +136,33 @@ class FindDuplicateVideoTest(ReviewAppTestCase):
             self.config.archive_checkout_path, "does-not-exist", 145
         )
         self.assertIsNone(match)
+
+
+class ProbeVideoDurationTest(unittest.TestCase):
+    @patch("subprocess.run")
+    def test_probe_video_duration_success(self, mock_run):
+        mock_run.return_value = MagicMock(
+            stdout='{"format": {"duration": "145.4"}}', check=True
+        )
+        dur = duplicate_detection.probe_video_duration(Path("/fake/video.mp4"))
+        self.assertEqual(dur, 145)
+
+    @patch("subprocess.run", side_effect=FileNotFoundError("ffprobe not found"))
+    def test_probe_video_duration_ffprobe_missing_returns_none(self, mock_run):
+        dur = duplicate_detection.probe_video_duration(Path("/fake/video.mp4"))
+        self.assertIsNone(dur)
+
+    @patch("subprocess.run")
+    def test_probe_video_duration_invalid_json_returns_none(self, mock_run):
+        mock_run.return_value = MagicMock(stdout="not json", check=True)
+        dur = duplicate_detection.probe_video_duration(Path("/fake/video.mp4"))
+        self.assertIsNone(dur)
+
+    @patch("subprocess.run")
+    def test_probe_video_duration_missing_duration_returns_none(self, mock_run):
+        mock_run.return_value = MagicMock(stdout='{"format": {}}', check=True)
+        dur = duplicate_detection.probe_video_duration(Path("/fake/video.mp4"))
+        self.assertIsNone(dur)
 
 
 if __name__ == "__main__":

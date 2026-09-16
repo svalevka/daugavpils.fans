@@ -13,18 +13,17 @@ landing outside DURATION_TOLERANCE_SECONDS needs real content
 fingerprinting (e.g. audio fingerprinting) to catch - deliberately out of
 scope here; see the issue for that tradeoff.
 
-Only source_type == 'youtube' submissions have a duration available at
-review time today (youtube_duration_seconds, already fetched for free -
-see youtube_fetch.py). Direct file uploads have no duration until
-tools/apply_media_proposal.py's ffprobe step, which only runs after
-publish - review_app itself has no ffprobe. find_duplicate_video simply
-has nothing to compare for those and returns None; making this cover
-direct uploads too would mean adding ffmpeg to review_app's own Docker
-image, a separate, bigger change.
+Video submissions have a duration available at review time (fetched via
+youtube_fetch.py for YouTube submissions, or probed with ffprobe via
+probe_video_duration() on direct file uploads - see GitHub issue #52).
+find_duplicate_video compares candidate duration against all published
+videos under the band.
 """
 from __future__ import annotations
 
+import json
 import re
+import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -60,6 +59,33 @@ def parse_iso8601_duration_seconds(duration: str | None) -> int | None:
     minutes = int(m.group("minutes") or 0)
     seconds = int(m.group("seconds") or 0)
     return hours * 3600 + minutes * 60 + seconds
+
+
+def probe_video_duration(path: Path) -> int | None:
+    """Probes a video file on disk with ffprobe and returns rounded integer seconds.
+    Returns None if ffprobe is not installed, fails, or duration is unreadable."""
+    try:
+        out = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "quiet",
+                "-show_entries",
+                "format=duration",
+                "-of",
+                "json",
+                str(path),
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        data = json.loads(out.stdout).get("format", {})
+        if "duration" in data and data["duration"]:
+            return round(float(data["duration"]))
+    except Exception:
+        return None
+    return None
 
 
 @dataclass

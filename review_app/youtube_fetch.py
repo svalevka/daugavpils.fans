@@ -176,7 +176,8 @@ def fetch_and_store(app, media_proposal_id: int) -> None:
             UPDATE media_proposals
             SET status = 'pending', original_filename = ?, stored_filename = ?,
                 content_type = ?, media_type = ?, size_bytes = ?,
-                youtube_title = ?, youtube_channel = ?, youtube_duration_seconds = ?
+                youtube_title = ?, youtube_channel = ?, youtube_duration_seconds = ?,
+                duration_seconds = ?
             WHERE id = ? AND status = 'fetching'
             """,
             (
@@ -187,6 +188,7 @@ def fetch_and_store(app, media_proposal_id: int) -> None:
                 size_bytes,
                 info.get("title"),
                 info.get("uploader") or info.get("channel"),
+                info.get("duration"),
                 info.get("duration"),
                 media_proposal_id,
             ),

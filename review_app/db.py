@@ -53,6 +53,7 @@ def init_schema(database_path: Path, maintainer_email: str | None = None) -> Non
             ("youtube_title", "TEXT"),
             ("youtube_channel", "TEXT"),
             ("youtube_duration_seconds", "INTEGER"),
+            ("duration_seconds", "INTEGER"),
             ("rights_attested", "INTEGER NOT NULL DEFAULT 0"),
         ]:
             try:
