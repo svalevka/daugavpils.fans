@@ -1,0 +1,14 @@
+[Unit]
+Description=Automated Let's Encrypt TLS certificate renewal (see renew-cert.sh, GitHub issue #46)
+After=network-online.target docker.service
+Wants=network-online.target docker.service
+
+[Service]
+Type=oneshot
+User=root
+Environment=BASE_DIR=/opt/daugavpils-fans
+Environment=CERTBOT_DIR=/opt/daugavpils-fans/certbot
+Environment=CLOUDFLARE_INI=/opt/daugavpils-fans/cloudflare.ini
+Environment=DOCKER_COMPOSE_FILE=/opt/daugavpils-fans/docker-compose.yml
+Environment=CERT_FILE=/opt/daugavpils-fans/certbot/conf/live/daugavpils.fans/fullchain.pem
+ExecStart=/opt/daugavpils-fans/renew-cert.sh

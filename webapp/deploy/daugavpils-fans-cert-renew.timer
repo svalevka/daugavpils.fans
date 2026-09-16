@@ -1,0 +1,10 @@
+[Unit]
+Description=Run daugavpils-fans-cert-renew.service twice daily (see GitHub issue #46)
+
+[Timer]
+OnCalendar=*-*-* 03,15:00:00
+RandomizedDelaySec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

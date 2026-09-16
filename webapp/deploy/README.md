@@ -305,18 +305,51 @@ archive.org by itself - it only moves the upload to the dashboard's
 
 ## Cert renewal
 
-The cert expires 90 days after issuance and renewal is currently manual.
-Its SAN list now includes `review.daugavpils.fans` too (see above), but
-only nginx ever reads the cert files - it terminates TLS and proxies
-plaintext to `review-app` internally (see its `proxy_pass` in
-`nginx/daugavpils.conf`) - so only nginx needs restarting:
+The Let's Encrypt cert expires 90 days after issuance. Its SAN list includes `daugavpils.fans`, `www.daugavpils.fans`, and `review.daugavpils.fans` (see above).
+Only nginx reads the cert files — it terminates TLS and proxies plaintext to `review-app` internally (see its `proxy_pass` in `nginx/daugavpils.conf`).
+
+### Automated Renewal (Systemd Timer)
+
+Renewal is automated via `renew-cert.sh` triggered twice daily by `daugavpils-fans-cert-renew.timer` (see GitHub issue #46):
+- Runs `certbot/dns-cloudflare renew`.
+- Compares the checksum of `fullchain.pem` before and after the run.
+- When a new certificate is issued, gracefully reloads nginx (`docker compose exec -T nginx nginx -s reload`) without dropping active connections.
+- If no renewal occurred or if it was a dry-run, nginx reload is skipped.
+- Optionally sends a ping to `HEARTBEAT_URL` upon check completion.
+
+Install the timer and service on `cherry`:
+
+```bash
+sudo cp renew-cert.sh /opt/daugavpils-fans/renew-cert.sh
+sudo chmod +x /opt/daugavpils-fans/renew-cert.sh
+sudo cp daugavpils-fans-cert-renew.service daugavpils-fans-cert-renew.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now daugavpils-fans-cert-renew.timer
+```
+
+Verify the timer and logs:
+
+```bash
+systemctl status daugavpils-fans-cert-renew.timer
+systemctl list-timers --all | grep cert-renew
+journalctl -u daugavpils-fans-cert-renew.service -n 50
+```
+
+### Manual Renewal / Dry Run
+
+To test renewal without modifying existing certificates:
+
+```bash
+/opt/daugavpils-fans/renew-cert.sh --dry-run
+```
+
+Or run certbot directly:
 
 ```bash
 docker run --rm \
   -v /opt/daugavpils-fans/certbot/conf:/etc/letsencrypt \
   -v /opt/daugavpils-fans/cloudflare.ini:/cloudflare.ini:ro \
-  certbot/dns-cloudflare renew
-docker compose restart nginx
+  certbot/dns-cloudflare renew --dry-run
 ```
 
 ## Stale media proxy cache (`/media-stream/`)
