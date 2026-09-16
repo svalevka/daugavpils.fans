@@ -57,7 +57,9 @@ CREATE TABLE IF NOT EXISTS proposals (
     ai_decision TEXT,
     ai_confidence REAL,
     ai_reasoning TEXT,
-    ai_evaluated_at TEXT
+    ai_evaluated_at TEXT,
+    review_notes TEXT,
+    lang TEXT DEFAULT 'ru'
 );
 
 CREATE TABLE IF NOT EXISTS submission_log (
@@ -127,7 +129,9 @@ CREATE TABLE IF NOT EXISTS media_proposals (
     -- The submitter's required attestation checkbox for the YouTube path
     -- only (see issue #49) - not proof of anything, but an explicit,
     -- on-record claim rather than leaving provenance entirely implicit.
-    rights_attested INTEGER NOT NULL DEFAULT 0
+    rights_attested INTEGER NOT NULL DEFAULT 0,
+    review_notes TEXT,
+    lang TEXT DEFAULT 'ru'
 );
 
 -- Admin authentication for site maintainer statistics (/admin/):
@@ -203,7 +207,9 @@ CREATE TABLE IF NOT EXISTS album_proposals (
     ai_decision TEXT,
     ai_confidence REAL,
     ai_reasoning TEXT,
-    ai_evaluated_at TEXT
+    ai_evaluated_at TEXT,
+    review_notes TEXT,
+    lang TEXT DEFAULT 'ru'
 );
 
 CREATE INDEX IF NOT EXISTS idx_album_proposals_status ON album_proposals(status, created_at);
@@ -249,7 +255,9 @@ CREATE TABLE IF NOT EXISTS band_proposals (
     ai_decision TEXT,
     ai_confidence REAL,
     ai_reasoning TEXT,
-    ai_evaluated_at TEXT
+    ai_evaluated_at TEXT,
+    review_notes TEXT,
+    lang TEXT DEFAULT 'ru'
 );
 
 CREATE INDEX IF NOT EXISTS idx_band_proposals_status ON band_proposals(status, created_at);

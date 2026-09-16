@@ -54,8 +54,9 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Approve</button>
     </form>
-    <form method="post" action="/proposals/{{ p.id }}/reject">
+    <form method="post" action="/proposals/{{ p.id }}/reject" style="display: inline-flex; gap: 0.5rem; align-items: center;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="reason" placeholder="Reason (optional)" style="width: 170px; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
       <button type="submit">Reject</button>
     </form>
   </div>
@@ -114,8 +115,9 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Approve</button>
     </form>
-    <form method="post" action="/media-proposals/{{ m.id }}/reject">
+    <form method="post" action="/media-proposals/{{ m.id }}/reject" style="display: inline-flex; gap: 0.5rem; align-items: center;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="reason" placeholder="Reason (optional)" style="width: 170px; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
       <button type="submit">Reject</button>
     </form>
   </div>
@@ -254,8 +256,9 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Approve</button>
     </form>
-    <form method="post" action="/album-proposals/{{ a.id }}/reject">
+    <form method="post" action="/album-proposals/{{ a.id }}/reject" style="display: inline-flex; gap: 0.5rem; align-items: center;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="reason" placeholder="Reason (optional)" style="width: 170px; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
       <button type="submit">Reject</button>
     </form>
   </div>
@@ -374,8 +377,9 @@
       </label>
       {% endif %}
     </div>
-    <div class="actions">
+    <div class="actions" style="display: flex; gap: 0.5rem; align-items: center;">
       <button type="submit">Approve</button>
+      <input type="text" name="reason" placeholder="Reason if rejecting (optional)" style="width: 190px; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
       <button type="submit" formaction="/band-proposals/{{ b.id }}/reject" formmethod="post" class="button-secondary">Reject</button>
     </div>
   </form>

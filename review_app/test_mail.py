@@ -116,6 +116,110 @@ class MailTest(unittest.TestCase):
             self.assertIn("#42", mock_send.call_args[0][2])
             self.assertIn("Needs manual confirmation", mock_send.call_args[0][3])
 
+    def test_send_proposal_decision_notification_approved_ru(self):
+        smtp_cfg = SmtpConfig(host="localhost", port=25, from_addr="noreply@daugavpils.fans")
+        with patch("mail._send") as mock_send:
+            mail.send_proposal_decision_notification(
+                smtp_cfg,
+                "fan@example.com",
+                decision="approved",
+                proposal_type="edit",
+                target_summary="Dvinsk (band.genre)",
+                review_notes="Отличное уточнение!",
+                live_url="https://daugavpils.fans/bands/dvinsk/",
+                lang="ru",
+            )
+            mock_send.assert_called_once()
+            _, to_addr, subject, body = mock_send.call_args[0]
+            self.assertEqual(to_addr, "fan@example.com")
+            self.assertIn("Ваше предложение принято", subject)
+            self.assertIn("Dvinsk (band.genre)", body)
+            self.assertIn("текстовые правки", body)
+            self.assertIn("https://daugavpils.fans/bands/dvinsk/", body)
+            self.assertIn("Отличное уточнение!", body)
+
+    def test_send_proposal_decision_notification_approved_en(self):
+        smtp_cfg = SmtpConfig(host="localhost", port=25, from_addr="noreply@daugavpils.fans")
+        with patch("mail._send") as mock_send:
+            mail.send_proposal_decision_notification(
+                smtp_cfg,
+                "fan@example.com",
+                decision="approved",
+                proposal_type="album",
+                target_summary="Dvinsk — Demo",
+                live_url="https://daugavpils.fans/en/bands/dvinsk/demo/",
+                lang="en",
+            )
+            mock_send.assert_called_once()
+            _, to_addr, subject, body = mock_send.call_args[0]
+            self.assertEqual(to_addr, "fan@example.com")
+            self.assertIn("Your contribution was approved", subject)
+            self.assertIn("Dvinsk — Demo", body)
+            self.assertIn("new album", body)
+            self.assertIn("https://daugavpils.fans/en/bands/dvinsk/demo/", body)
+
+    def test_send_proposal_decision_notification_rejected_ru_with_notes(self):
+        smtp_cfg = SmtpConfig(host="localhost", port=25, from_addr="noreply@daugavpils.fans")
+        with patch("mail._send") as mock_send:
+            mail.send_proposal_decision_notification(
+                smtp_cfg,
+                "fan@example.com",
+                decision="rejected",
+                proposal_type="media",
+                target_summary="Dvinsk (video)",
+                review_notes="дубликат видео 2004 года",
+                lang="ru",
+            )
+            mock_send.assert_called_once()
+            _, to_addr, subject, body = mock_send.call_args[0]
+            self.assertEqual(to_addr, "fan@example.com")
+            self.assertIn("Ваше предложение на daugavpils.fans", subject)
+            self.assertIn("Dvinsk (video)", body)
+            self.assertIn("фото / видео", body)
+            self.assertIn("дубликат видео 2004 года", body)
+
+    def test_send_proposal_decision_notification_rejected_en_without_notes(self):
+        smtp_cfg = SmtpConfig(host="localhost", port=25, from_addr="noreply@daugavpils.fans")
+        with patch("mail._send") as mock_send:
+            mail.send_proposal_decision_notification(
+                smtp_cfg,
+                "fan@example.com",
+                decision="rejected",
+                proposal_type="band",
+                target_summary="Unknown Band",
+                review_notes=None,
+                lang="en",
+            )
+            mock_send.assert_called_once()
+            _, to_addr, subject, body = mock_send.call_args[0]
+            self.assertEqual(to_addr, "fan@example.com")
+            self.assertIn("Your submission status", subject)
+            self.assertIn("Unknown Band", body)
+            self.assertIn("new band", body)
+            self.assertNotIn("Curator notes", body)
+
+    def test_send_proposal_decision_notification_invalid_or_empty_contact(self):
+        smtp_cfg = SmtpConfig(host="localhost", port=25, from_addr="noreply@daugavpils.fans")
+        with patch("mail._send") as mock_send:
+            mail.send_proposal_decision_notification(
+                smtp_cfg,
+                "",
+                decision="approved",
+                proposal_type="edit",
+                target_summary="Dvinsk",
+            )
+            mock_send.assert_not_called()
+
+        with patch("mail._send") as mock_send:
+            mail.send_proposal_decision_notification(
+                smtp_cfg,
+                "invalidaddress",
+                decision="rejected",
+                proposal_type="edit",
+                target_summary="Dvinsk",
+            )
+            mock_send.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -60,6 +60,15 @@ def init_schema(database_path: Path, maintainer_email: str | None = None) -> Non
                 conn.execute(f"ALTER TABLE media_proposals ADD COLUMN {col} {col_type}")
             except sqlite3.OperationalError:
                 pass
+        for table in ["proposals", "media_proposals", "album_proposals", "band_proposals"]:
+            try:
+                conn.execute(f"ALTER TABLE {table} ADD COLUMN review_notes TEXT")
+            except sqlite3.OperationalError:
+                pass
+            try:
+                conn.execute(f"ALTER TABLE {table} ADD COLUMN lang TEXT DEFAULT 'ru'")
+            except sqlite3.OperationalError:
+                pass
         conn.commit()
         roles.ensure_default_roles(conn, maintainer_email)
         prune_old_decided_proposals(conn, retention_days=90)

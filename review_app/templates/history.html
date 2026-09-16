@@ -124,6 +124,12 @@
     </div>
     {% endif %}
 
+    {% if item.review_notes %}
+    <div style="margin: 0.5rem 0; padding: 0.5rem 0.75rem; background: rgba(0,0,0,0.2); border-left: 3px solid #e2b13c; font-size: 0.85rem;">
+      <strong>Curator Notes:</strong> {{ item.review_notes }}
+    </div>
+    {% endif %}
+
     <details style="margin-top: 0.75rem;">
       <summary style="cursor: pointer; color: var(--accent); font-size: 0.85rem; font-weight: 500;">
         View proposal details & diff

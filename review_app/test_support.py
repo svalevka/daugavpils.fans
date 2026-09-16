@@ -92,6 +92,17 @@ class ReviewAppTestCase(unittest.TestCase):
         self.mock_trigger_album_apply = self._patch("dashboard.github_dispatch.trigger_album_apply")
         self.mock_trigger_band_apply = self._patch("dashboard.github_dispatch.trigger_band_apply")
         self.mock_send_media_approved = self._patch("dashboard.mail.send_media_approved_notification")
+        self.mock_send_proposal_decision = self._patch("dashboard.mail.send_proposal_decision_notification")
+        self.mock_probe_audio = self._patch(
+            "audio_validation.probe_audio_file",
+            return_value={
+                "duration_iso": "PT3M15S",
+                "duration_seconds": 195.0,
+                "bitrate": "320 kbps",
+                "tags": {"title": "Track Title"},
+                "ai_flags": [],
+            },
+        )
 
     def _patch(self, target: str, **kwargs) -> mock.MagicMock:
         patcher = mock.patch(target, **kwargs)

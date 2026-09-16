@@ -281,14 +281,15 @@ def create_proposal():
         conn, session.get("approver_id"), submitter_contact
     )
 
+    lang = i18n.get_locale()
     cur = conn.execute(
         """
         INSERT INTO proposals (
             band_slug, release_slug, target, list_index, field,
             original_value, proposed_value,
             submitter_name, submitter_contact, submitter_ip,
-            submitted_by_approver_id, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+            submitted_by_approver_id, status, lang
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
         """,
         (
             band_slug,
@@ -302,6 +303,7 @@ def create_proposal():
             submitter_contact,
             ip,
             submitted_by_approver_id,
+            lang,
         ),
     )
     conn.commit()

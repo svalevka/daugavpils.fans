@@ -19,6 +19,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 import ai_agent  # noqa: E402
 import audio_validation  # noqa: E402
 import db  # noqa: E402
+import i18n  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
@@ -275,6 +276,7 @@ def create_band_proposal():
         conn, session_approver_id, submitter_contact
     )
 
+    lang = i18n.get_locale()
     cur = conn.execute(
         """
         INSERT INTO band_proposals (
@@ -283,8 +285,8 @@ def create_band_proposal():
             has_release, release_name, release_slug, release_date_published,
             release_genre, release_license, release_description, release_description_en,
             release_cover_stored_filename, release_tracks_json,
-            submitter_name, submitter_contact, submitter_ip, submitted_by_approver_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            submitter_name, submitter_contact, submitter_ip, submitted_by_approver_id, lang
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             band_name,
@@ -310,6 +312,7 @@ def create_band_proposal():
             submitter_contact,
             ip,
             submitted_by_approver_id,
+            lang,
         ),
     )
     conn.commit()

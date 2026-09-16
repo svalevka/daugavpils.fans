@@ -167,3 +167,110 @@ def send_ai_escalation_notification(
     for to_addr in recipients:
         _send(smtp_config, to_addr, subject, body)
 
+
+TYPE_LABELS = {
+    "edit": {"ru": "текстовые правки", "en": "text edit"},
+    "media": {"ru": "фото / видео", "en": "photo / video"},
+    "album": {"ru": "новый альбом", "en": "new album"},
+    "band": {"ru": "новая группа", "en": "new band"},
+}
+
+
+def send_proposal_decision_notification(
+    smtp_config: SmtpConfig,
+    to_addr: str,
+    *,
+    decision: str,
+    proposal_type: str,
+    target_summary: str,
+    review_notes: str | None = None,
+    live_url: str | None = None,
+    lang: str = "ru",
+) -> None:
+    """Notify a submitter who provided an email address about the decision
+    (approved or rejected) on their proposal.
+    """
+    if not to_addr or "@" not in to_addr:
+        return
+
+    is_en = lang == "en"
+    type_info = TYPE_LABELS.get(proposal_type, {})
+    type_label = type_info.get("en" if is_en else "ru", proposal_type)
+
+    if decision == "approved":
+        if is_en:
+            subject = "Your contribution was approved — daugavpils.fans"
+            body_lines = [
+                "Hello!",
+                "",
+                f"Your proposal for {target_summary} ({type_label}) has been approved and added to the archive.",
+            ]
+            if live_url:
+                body_lines.extend(["", f"You can view it on the site:\n{live_url}"])
+            if review_notes:
+                body_lines.extend(["", f"Curator notes:\n{review_notes}"])
+            body_lines.extend([
+                "",
+                "Thank you for contributing to the Daugavpils music archive!",
+                "",
+                "Best regards,",
+                "The daugavpils.fans team",
+            ])
+        else:
+            subject = "Ваше предложение принято — daugavpils.fans"
+            body_lines = [
+                "Здравствуйте!",
+                "",
+                f"Ваше предложение для {target_summary} ({type_label}) было принято и добавлено в архив.",
+            ]
+            if live_url:
+                body_lines.extend(["", f"Вы можете увидеть обновления на сайте:\n{live_url}"])
+            if review_notes:
+                body_lines.extend(["", f"Комментарий куратора:\n{review_notes}"])
+            body_lines.extend([
+                "",
+                "Спасибо за ваш вклад в сохранение музыкального архива Даугавпилса!",
+                "",
+                "С уважением,",
+                "Команда daugavpils.fans",
+            ])
+    else:  # rejected
+        if is_en:
+            subject = "Your submission status — daugavpils.fans"
+            body_lines = [
+                "Hello!",
+                "",
+                "Thank you for your interest in daugavpils.fans.",
+                "",
+                f"Unfortunately, your proposal for {target_summary} ({type_label}) could not be accepted.",
+            ]
+            if review_notes:
+                body_lines.extend(["", f"Reason / curator notes:\n{review_notes}"])
+            body_lines.extend([
+                "",
+                "If you have additional materials or questions, feel free to submit an updated proposal on the site.",
+                "",
+                "Best regards,",
+                "The daugavpils.fans team",
+            ])
+        else:
+            subject = "Ваше предложение на daugavpils.fans"
+            body_lines = [
+                "Здравствуйте!",
+                "",
+                "Спасибо за интерес к проекту daugavpils.fans.",
+                "",
+                f"К сожалению, ваше предложение для {target_summary} ({type_label}) не было принято.",
+            ]
+            if review_notes:
+                body_lines.extend(["", f"Причина / комментарий куратора:\n{review_notes}"])
+            body_lines.extend([
+                "",
+                "Если у вас есть дополнительные материалы, уточнения или вопросы, вы можете отправить новую заявку на сайте.",
+                "",
+                "С уважением,",
+                "Команда daugavpils.fans",
+            ])
+
+    _send(smtp_config, to_addr, subject, "\n".join(body_lines))
+

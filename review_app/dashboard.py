@@ -301,7 +301,7 @@ def view_pending():
     )
 
 
-def _decide(proposal_id: int, new_status: str) -> tuple[bool, str]:
+def _decide(proposal_id: int, new_status: str, review_notes: str | None = None) -> tuple[bool, str]:
     """Atomic check-and-set: a proposal only flips out of `pending` once,
     to whoever's UPDATE actually matches the WHERE clause first - two
     simultaneous decisions can't both win, and the proposal's own stamped
@@ -315,11 +315,11 @@ def _decide(proposal_id: int, new_status: str) -> tuple[bool, str]:
     cur = conn.execute(
         """
         UPDATE proposals
-        SET status = ?, decided_by = ?, decided_at = datetime('now')
+        SET status = ?, decided_by = ?, decided_at = datetime('now'), review_notes = ?
         WHERE id = ? AND status = 'pending'
           AND (submitted_by_approver_id IS NULL OR submitted_by_approver_id != ?)
         """,
-        (new_status, approver_id, proposal_id, approver_id),
+        (new_status, approver_id, review_notes, proposal_id, approver_id),
     )
     conn.commit()
     if cur.rowcount == 1:
@@ -348,9 +348,36 @@ def _abort_for_reason(reason: str) -> None:
 @bp.post("/proposals/<int:proposal_id>/approve")
 @require_approver
 def approve(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT band_slug, release_slug, target, field, submitter_contact, lang FROM proposals WHERE id = ?",
+        (proposal_id,),
+    ).fetchone()
     ok, reason = _decide(proposal_id, "approved")
     if not ok:
         _abort_for_reason(reason)
+
+    if row and row["submitter_contact"]:
+        scope = f"{row['band_slug']}/{row['release_slug']}" if row["release_slug"] else row["band_slug"]
+        target_summary = f"{scope} ({row['target']}.{row['field']})"
+        lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+        live_prefix = "https://daugavpils.fans/en" if lang == "en" else "https://daugavpils.fans"
+        live_path = f"/bands/{row['band_slug']}/{row['release_slug']}/" if row["release_slug"] else f"/bands/{row['band_slug']}/"
+        live_url = f"{live_prefix}{live_path}"
+        try:
+            mail.send_proposal_decision_notification(
+                current_app.config["SMTP_CONFIG"],
+                row["submitter_contact"],
+                decision="approved",
+                proposal_type="edit",
+                target_summary=target_summary,
+                live_url=live_url,
+                lang=lang,
+            )
+        except OSError:
+            current_app.logger.exception(
+                "failed to send approval notification for proposal %s", proposal_id
+            )
 
     # The decision itself already succeeded and is durably recorded - a
     # dispatch failure (network blip, GitHub outage) shouldn't turn into
@@ -371,14 +398,39 @@ def approve(proposal_id: int):
 @bp.post("/proposals/<int:proposal_id>/reject")
 @require_approver
 def reject(proposal_id: int):
-    # Silent drop: no submitter notification, nothing further happens.
-    ok, reason = _decide(proposal_id, "rejected")
+    review_notes = request.form.get("review_notes", "").strip() or request.form.get("reason", "").strip() or None
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT band_slug, release_slug, target, field, submitter_contact, lang FROM proposals WHERE id = ?",
+        (proposal_id,),
+    ).fetchone()
+    ok, reason = _decide(proposal_id, "rejected", review_notes=review_notes)
     if not ok:
         _abort_for_reason(reason)
+
+    if row and row["submitter_contact"]:
+        scope = f"{row['band_slug']}/{row['release_slug']}" if row["release_slug"] else row["band_slug"]
+        target_summary = f"{scope} ({row['target']}.{row['field']})"
+        lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+        try:
+            mail.send_proposal_decision_notification(
+                current_app.config["SMTP_CONFIG"],
+                row["submitter_contact"],
+                decision="rejected",
+                proposal_type="edit",
+                target_summary=target_summary,
+                review_notes=review_notes,
+                lang=lang,
+            )
+        except OSError:
+            current_app.logger.exception(
+                "failed to send rejection notification for proposal %s", proposal_id
+            )
+
     return redirect(url_for("dashboard.view_pending"))
 
 
-def _decide_media(proposal_id: int, new_status: str) -> tuple[bool, str]:
+def _decide_media(proposal_id: int, new_status: str, review_notes: str | None = None) -> tuple[bool, str]:
     """Same atomic check-and-set as _decide() above, against
     media_proposals instead of proposals - see that function's
     docstring for the full reasoning. No github_dispatch call anywhere
@@ -390,11 +442,11 @@ def _decide_media(proposal_id: int, new_status: str) -> tuple[bool, str]:
     cur = conn.execute(
         """
         UPDATE media_proposals
-        SET status = ?, decided_by = ?, decided_at = datetime('now')
+        SET status = ?, decided_by = ?, decided_at = datetime('now'), review_notes = ?
         WHERE id = ? AND status = 'pending'
           AND (submitted_by_approver_id IS NULL OR submitted_by_approver_id != ?)
         """,
-        (new_status, approver_id, proposal_id, approver_id),
+        (new_status, approver_id, review_notes, proposal_id, approver_id),
     )
     conn.commit()
     if cur.rowcount == 1:
@@ -448,9 +500,13 @@ def approve_media(proposal_id: int):
 @bp.post("/media-proposals/<int:proposal_id>/reject")
 @require_approver
 def reject_media(proposal_id: int):
+    review_notes = request.form.get("review_notes", "").strip() or request.form.get("reason", "").strip() or None
     conn = db.get_connection()
-    row = conn.execute("SELECT stored_filename FROM media_proposals WHERE id = ?", (proposal_id,)).fetchone()
-    ok, reason = _decide_media(proposal_id, "rejected")
+    row = conn.execute(
+        "SELECT stored_filename, band_slug, release_slug, media_type, submitter_contact, lang FROM media_proposals WHERE id = ?",
+        (proposal_id,),
+    ).fetchone()
+    ok, reason = _decide_media(proposal_id, "rejected", review_notes=review_notes)
     if not ok:
         _abort_for_reason(reason)
     # Nothing else keeps this file (see GitHub issue #21's cleanup
@@ -458,6 +514,25 @@ def reject_media(proposal_id: int):
     # shouldn't linger.
     if row is not None:
         _media_file_path(row["stored_filename"]).unlink(missing_ok=True)
+        if row["submitter_contact"]:
+            scope = f"{row['band_slug']}/{row['release_slug']}" if row["release_slug"] else row["band_slug"]
+            target_summary = f"{scope} ({row['media_type']})"
+            lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+            try:
+                mail.send_proposal_decision_notification(
+                    current_app.config["SMTP_CONFIG"],
+                    row["submitter_contact"],
+                    decision="rejected",
+                    proposal_type="media",
+                    target_summary=target_summary,
+                    review_notes=review_notes,
+                    lang=lang,
+                )
+            except OSError:
+                current_app.logger.exception(
+                    "failed to send rejection notification for media proposal %s", proposal_id
+                )
+
     return redirect(url_for("dashboard.view_pending"))
 
 
@@ -506,7 +581,7 @@ def publish_media(proposal_id: int):
     self-approval the way approve/reject are."""
     conn = db.get_connection()
     row = conn.execute(
-        "SELECT stored_filename FROM media_proposals WHERE id = ? AND status IN ('approved', 'publish_failed')",
+        "SELECT stored_filename, band_slug, release_slug, media_type, submitter_contact, lang FROM media_proposals WHERE id = ? AND status IN ('approved', 'publish_failed')",
         (proposal_id,),
     ).fetchone()
     if row is None:
@@ -523,6 +598,29 @@ def publish_media(proposal_id: int):
         abort(409)  # raced with something else between the SELECT above and here
 
     _media_file_path(row["stored_filename"]).unlink(missing_ok=True)
+
+    if row and row["submitter_contact"]:
+        scope = f"{row['band_slug']}/{row['release_slug']}" if row["release_slug"] else row["band_slug"]
+        target_summary = f"{scope} ({row['media_type']})"
+        lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+        live_prefix = "https://daugavpils.fans/en" if lang == "en" else "https://daugavpils.fans"
+        live_path = f"/bands/{row['band_slug']}/{row['release_slug']}/" if row["release_slug"] else f"/bands/{row['band_slug']}/"
+        live_url = f"{live_prefix}{live_path}"
+        try:
+            mail.send_proposal_decision_notification(
+                current_app.config["SMTP_CONFIG"],
+                row["submitter_contact"],
+                decision="approved",
+                proposal_type="media",
+                target_summary=target_summary,
+                live_url=live_url,
+                lang=lang,
+            )
+        except OSError:
+            current_app.logger.exception(
+                "failed to send media published notification for proposal %s", proposal_id
+            )
+
     return redirect(url_for("dashboard.view_pending"))
 
 
@@ -547,17 +645,17 @@ def media_file(proposal_id: int):
     return send_file(path, mimetype=row["content_type"])
 
 
-def _decide_album(proposal_id: int, new_status: str) -> tuple[bool, str]:
+def _decide_album(proposal_id: int, new_status: str, review_notes: str | None = None) -> tuple[bool, str]:
     conn = db.get_connection()
     approver_id = g.approver["id"]
     cur = conn.execute(
         """
         UPDATE album_proposals
-        SET status = ?, decided_by = ?, decided_at = datetime('now')
+        SET status = ?, decided_by = ?, decided_at = datetime('now'), review_notes = ?
         WHERE id = ? AND status = 'pending'
           AND (submitted_by_approver_id IS NULL OR submitted_by_approver_id != ?)
         """,
-        (new_status, approver_id, proposal_id, approver_id),
+        (new_status, approver_id, review_notes, proposal_id, approver_id),
     )
     conn.commit()
     if cur.rowcount == 1:
@@ -576,20 +674,48 @@ def _decide_album(proposal_id: int, new_status: str) -> tuple[bool, str]:
 @bp.post("/album-proposals/<int:proposal_id>/approve")
 @require_approver
 def approve_album(proposal_id: int):
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT band_slug, release_slug, name, submitter_contact, lang FROM album_proposals WHERE id = ?",
+        (proposal_id,),
+    ).fetchone()
     ok, reason = _decide_album(proposal_id, "approved")
     if not ok:
         _abort_for_reason(reason)
+
+    if row and row["submitter_contact"]:
+        target_summary = f"{row['band_slug']} — {row['name']}"
+        lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+        live_prefix = "https://daugavpils.fans/en" if lang == "en" else "https://daugavpils.fans"
+        live_url = f"{live_prefix}/bands/{row['band_slug']}/{row['release_slug']}/"
+        try:
+            mail.send_proposal_decision_notification(
+                current_app.config["SMTP_CONFIG"],
+                row["submitter_contact"],
+                decision="approved",
+                proposal_type="album",
+                target_summary=target_summary,
+                live_url=live_url,
+                lang=lang,
+            )
+        except OSError:
+            current_app.logger.exception(
+                "failed to send approval notification for album proposal %s", proposal_id
+            )
+
     return redirect(url_for("dashboard.view_pending"))
 
 
 @bp.post("/album-proposals/<int:proposal_id>/reject")
 @require_approver
 def reject_album(proposal_id: int):
+    review_notes = request.form.get("review_notes", "").strip() or request.form.get("reason", "").strip() or None
     conn = db.get_connection()
     row = conn.execute(
-        "SELECT cover_stored_filename, tracks_json FROM album_proposals WHERE id = ?", (proposal_id,)
+        "SELECT cover_stored_filename, tracks_json, band_slug, release_slug, name, submitter_contact, lang FROM album_proposals WHERE id = ?",
+        (proposal_id,),
     ).fetchone()
-    ok, reason = _decide_album(proposal_id, "rejected")
+    ok, reason = _decide_album(proposal_id, "rejected", review_notes=review_notes)
     if not ok:
         _abort_for_reason(reason)
 
@@ -601,6 +727,24 @@ def reject_album(proposal_id: int):
             for t in tracks:
                 if "stored_filename" in t:
                     _media_file_path(t["stored_filename"]).unlink(missing_ok=True)
+
+        if row["submitter_contact"]:
+            target_summary = f"{row['band_slug']} — {row['name']}"
+            lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+            try:
+                mail.send_proposal_decision_notification(
+                    current_app.config["SMTP_CONFIG"],
+                    row["submitter_contact"],
+                    decision="rejected",
+                    proposal_type="album",
+                    target_summary=target_summary,
+                    review_notes=review_notes,
+                    lang=lang,
+                )
+            except OSError:
+                current_app.logger.exception(
+                    "failed to send rejection notification for album proposal %s", proposal_id
+                )
 
     return redirect(url_for("dashboard.view_pending"))
 
@@ -713,6 +857,7 @@ def _decide_band(
     new_status: str,
     new_band_slug: str | None = None,
     new_release_slug: str | None = None,
+    review_notes: str | None = None,
 ) -> tuple[bool, str]:
     conn = db.get_connection()
     approver_id = g.approver["id"]
@@ -734,8 +879,8 @@ def _decide_band(
         if not audio_validation.SLUG_RE.match(new_release_slug):
             return False, "invalid_release_slug"
 
-    updates = ["status = ?", "decided_by = ?", "decided_at = datetime('now')"]
-    params: list[Any] = [new_status, approver_id]
+    updates = ["status = ?", "decided_by = ?", "decided_at = datetime('now')", "review_notes = ?"]
+    params: list[Any] = [new_status, approver_id, review_notes]
     if new_band_slug:
         updates.append("band_slug = ?")
         params.append(new_band_slug)
@@ -773,13 +918,39 @@ def approve_band(proposal_id: int):
     new_band_slug = request.form.get("band_slug", "").strip() or None
     new_release_slug = request.form.get("release_slug", "").strip() or None
 
+    conn = db.get_connection()
+    row = conn.execute(
+        "SELECT name, band_slug, release_slug, submitter_contact, lang FROM band_proposals WHERE id = ?",
+        (proposal_id,),
+    ).fetchone()
+
     ok, reason = _decide_band(
         proposal_id, "approved", new_band_slug=new_band_slug, new_release_slug=new_release_slug
     )
     if not ok:
         _abort_for_reason(reason)
 
-    conn = db.get_connection()
+    if row and row["submitter_contact"]:
+        target_band_slug = new_band_slug or row["band_slug"]
+        target_summary = row["name"]
+        lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+        live_prefix = "https://daugavpils.fans/en" if lang == "en" else "https://daugavpils.fans"
+        live_url = f"{live_prefix}/bands/{target_band_slug}/"
+        try:
+            mail.send_proposal_decision_notification(
+                current_app.config["SMTP_CONFIG"],
+                row["submitter_contact"],
+                decision="approved",
+                proposal_type="band",
+                target_summary=target_summary,
+                live_url=live_url,
+                lang=lang,
+            )
+        except OSError:
+            current_app.logger.exception(
+                "failed to send approval notification for band proposal %s", proposal_id
+            )
+
     is_throttled, _ = is_band_publishing_throttled(conn)
     if not is_throttled:
         conn.execute(
@@ -805,12 +976,13 @@ def approve_band(proposal_id: int):
 @bp.post("/band-proposals/<int:proposal_id>/reject")
 @require_approver
 def reject_band(proposal_id: int):
+    review_notes = request.form.get("review_notes", "").strip() or request.form.get("reason", "").strip() or None
     conn = db.get_connection()
     row = conn.execute(
-        "SELECT band_photo_stored_filename, release_cover_stored_filename, release_tracks_json FROM band_proposals WHERE id = ?",
+        "SELECT band_photo_stored_filename, release_cover_stored_filename, release_tracks_json, name, band_slug, submitter_contact, lang FROM band_proposals WHERE id = ?",
         (proposal_id,),
     ).fetchone()
-    ok, reason = _decide_band(proposal_id, "rejected")
+    ok, reason = _decide_band(proposal_id, "rejected", review_notes=review_notes)
     if not ok:
         _abort_for_reason(reason)
 
@@ -824,6 +996,24 @@ def reject_band(proposal_id: int):
             for t in tracks:
                 if "stored_filename" in t:
                     _media_file_path(t["stored_filename"]).unlink(missing_ok=True)
+
+        if row["submitter_contact"]:
+            target_summary = row["name"]
+            lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+            try:
+                mail.send_proposal_decision_notification(
+                    current_app.config["SMTP_CONFIG"],
+                    row["submitter_contact"],
+                    decision="rejected",
+                    proposal_type="band",
+                    target_summary=target_summary,
+                    review_notes=review_notes,
+                    lang=lang,
+                )
+            except OSError:
+                current_app.logger.exception(
+                    "failed to send rejection notification for band proposal %s", proposal_id
+                )
 
     return redirect(url_for("dashboard.view_pending"))
 
@@ -1032,6 +1222,7 @@ def decision_history():
                 "ai_decision": r["ai_decision"],
                 "ai_confidence": r["ai_confidence"],
                 "ai_reasoning": r["ai_reasoning"],
+                "review_notes": r["review_notes"] if "review_notes" in r.keys() else None,
                 "details": {
                     "field": field_name,
                     "original_value": orig_val,
@@ -1081,6 +1272,7 @@ def decision_history():
                 "ai_decision": r["ai_decision"],
                 "ai_confidence": r["ai_confidence"],
                 "ai_reasoning": r["ai_reasoning"],
+                "review_notes": r["review_notes"] if "review_notes" in r.keys() else None,
                 "details": {
                     "media_type": r["media_type"],
                     "caption": r["caption"],
@@ -1138,6 +1330,7 @@ def decision_history():
                 "ai_decision": r["ai_decision"],
                 "ai_confidence": r["ai_confidence"],
                 "ai_reasoning": r["ai_reasoning"],
+                "review_notes": r["review_notes"] if "review_notes" in r.keys() else None,
                 "details": {
                     "name": r["name"],
                     "release_slug": r["release_slug"],
@@ -1199,6 +1392,7 @@ def decision_history():
                 "ai_decision": r["ai_decision"],
                 "ai_confidence": r["ai_confidence"],
                 "ai_reasoning": r["ai_reasoning"],
+                "review_notes": r["review_notes"] if "review_notes" in r.keys() else None,
                 "details": {
                     "name": r["name"],
                     "band_slug": r["band_slug"],

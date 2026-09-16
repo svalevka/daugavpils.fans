@@ -22,6 +22,7 @@ import ai_agent  # noqa: E402
 import archive_read  # noqa: E402
 import db  # noqa: E402
 import duplicate_detection  # noqa: E402
+import i18n  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
@@ -121,13 +122,14 @@ def _create_youtube_media_proposal(
             201,
         )
 
+    lang = i18n.get_locale()
     cur = conn.execute(
         """
         INSERT INTO media_proposals (
             band_slug, release_slug, media_type, original_filename, stored_filename,
             content_type, size_bytes, source_type, source_url, rights_attested,
-            submitter_name, submitter_contact, submitter_ip, submitted_by_approver_id, status
-        ) VALUES (?, ?, 'video', ?, '', '', 0, 'youtube', ?, 1, ?, ?, ?, ?, 'fetching')
+            submitter_name, submitter_contact, submitter_ip, submitted_by_approver_id, status, lang
+        ) VALUES (?, ?, 'video', ?, '', '', 0, 'youtube', ?, 1, ?, ?, ?, ?, 'fetching', ?)
         """,
         (
             band_slug,
@@ -138,6 +140,7 @@ def _create_youtube_media_proposal(
             submitter_contact,
             ip,
             submitted_by_approver_id,
+            lang,
         ),
     )
     conn.commit()
@@ -231,6 +234,7 @@ def create_media_proposal():
                 Path(uploads_dir) / stored_filename
             )
 
+        lang = i18n.get_locale()
         cur = conn.execute(
             """
             INSERT INTO media_proposals (
@@ -238,8 +242,8 @@ def create_media_proposal():
                 content_type, size_bytes, caption,
                 submitter_name, submitter_contact, submitter_ip,
                 submitted_by_approver_id, status,
-                youtube_duration_seconds, duration_seconds
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
+                youtube_duration_seconds, duration_seconds, lang
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)
             """,
             (
                 band_slug,
@@ -256,6 +260,7 @@ def create_media_proposal():
                 submitted_by_approver_id,
                 duration_seconds,
                 duration_seconds,
+                lang,
             ),
         )
         saved_ids.append(cur.lastrowid)

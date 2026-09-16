@@ -20,6 +20,7 @@ import ai_agent  # noqa: E402
 import archive_read  # noqa: E402
 import audio_validation  # noqa: E402
 import db  # noqa: E402
+import i18n  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
@@ -216,14 +217,15 @@ def create_album_proposal():
         conn, session.get("approver_id"), submitter_contact
     )
 
+    lang = i18n.get_locale()
     cur = conn.execute(
         """
         INSERT INTO album_proposals (
             band_slug, release_slug, name, date_published, genre, license,
             description, description_en, cover_stored_filename, tracks_json,
             submitter_name, submitter_contact, submitter_ip,
-            submitted_by_approver_id, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+            submitted_by_approver_id, status, lang
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
         """,
         (
             band_slug,
@@ -240,6 +242,7 @@ def create_album_proposal():
             submitter_contact,
             ip,
             submitted_by_approver_id,
+            lang,
         ),
     )
     proposal_id = cur.lastrowid
