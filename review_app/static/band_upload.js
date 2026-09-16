@@ -508,6 +508,9 @@
 
       xhr.onload = function () {
         if (xhr.status >= 200 && xhr.status < 400) {
+          if (window.DraftRecovery) {
+            window.DraftRecovery.clear(form);
+          }
           document.open();
           document.write(xhr.responseText);
           document.close();

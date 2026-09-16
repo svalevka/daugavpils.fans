@@ -12,9 +12,17 @@
       data-msg-rate-limit="{{ t.upload_rate_limit_error }}"
       data-msg-server-error="{{ t.upload_server_error }}"
       data-msg-preview="{{ t.preview_audio }}"
-      data-msg-pause="{{ t.pause_audio }}">
+      data-msg-pause="{{ t.pause_audio }}"
+      data-msg-draft-restored="{{ t.draft_restored }}"
+      data-msg-draft-clear="{{ t.draft_clear }}"
+      data-msg-draft-cleared="{{ t.draft_cleared }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="band_slug" value="{{ band_slug }}">
+
+  <div class="draft-banner" data-draft-banner style="display: none;">
+    <span class="draft-banner-text" data-draft-text></span>
+    <button type="button" class="draft-clear-btn" data-draft-clear>{{ t.draft_clear }}</button>
+  </div>
 
   <div class="field">
     <label for="name">{{ t.album_name }} *</label>
@@ -94,5 +102,6 @@
 </form>
 {% endblock %}
 {% block scripts %}
+<script src="{{ url_for('static', filename='draft_recovery.js') }}"></script>
 <script src="{{ url_for('static', filename='album_upload.js') }}"></script>
 {% endblock %}

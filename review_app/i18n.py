@@ -106,6 +106,9 @@ STRINGS: dict[str, dict[str, str]] = {
         "upload_network_error": "Ошибка сети при загрузке. Проверьте подключение к интернету и попробуйте снова.",
         "upload_rate_limit_error": "Слишком много запросов. Пожалуйста, подождите час перед повторной отправкой.",
         "upload_server_error": "Ошибка сервера ({status}). Пожалуйста, проверьте файлы и попробуйте снова.",
+        "draft_restored": "Восстановлен несохранённый черновик от {time}.",
+        "draft_clear": "Очистить черновик",
+        "draft_cleared": "Черновик очищен.",
     },
     "en": {
         "site_title": "daugavpils.fans",
@@ -197,6 +200,9 @@ STRINGS: dict[str, dict[str, str]] = {
         "upload_network_error": "Network error during upload. Please check your internet connection and try again.",
         "upload_rate_limit_error": "Too many submissions. Please wait an hour before submitting again.",
         "upload_server_error": "Server error ({status}). Please check your files and try again.",
+        "draft_restored": "Restored unsaved draft from {time}.",
+        "draft_clear": "Clear draft",
+        "draft_cleared": "Draft cleared.",
     },
 }
 

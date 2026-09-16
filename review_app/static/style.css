@@ -794,4 +794,36 @@ button:disabled:hover, .btn:disabled:hover {
   font-size: 0.9rem;
 }
 
+.draft-banner {
+  background: rgba(226, 177, 60, 0.1);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.draft-clear-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.draft-clear-btn:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+
 

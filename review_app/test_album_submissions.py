@@ -48,9 +48,13 @@ class AlbumSubmissionFormTest(ReviewAppTestCase):
         self.assertIn("data-album-progress", html)
         self.assertIn("data-album-progress-bar", html)
         self.assertIn("data-album-upload-error", html)
+        self.assertIn("data-draft-banner", html)
+        self.assertIn("data-draft-clear", html)
+        self.assertIn("draft_recovery.js", html)
         self.assertIn("noscript-tracks", html)
         self.assertIn("или перетащите аудиофайлы сюда", html)
         self.assertIn('data-msg-uploading="Загрузка...', html)
+        self.assertIn('data-msg-draft-restored="Восстановлен', html)
 
     def test_form_contains_english_i18n_data_attributes(self):
         resp = self.client.get(f"/submit/{self.fx.band_slug}/add-release?lang=en")
@@ -59,6 +63,7 @@ class AlbumSubmissionFormTest(ReviewAppTestCase):
         self.assertIn("or drag and drop audio files here", html)
         self.assertIn('data-msg-uploading="Uploading...', html)
         self.assertIn('data-msg-preview="Preview track"', html)
+        self.assertIn('data-msg-draft-restored="Restored', html)
 
 
 class AlbumSubmissionPostTest(ReviewAppTestCase):
