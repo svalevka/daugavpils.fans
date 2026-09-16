@@ -58,10 +58,19 @@ need a second step to fill those in from archive.org.
    so you know the copy you end up with is byte-identical to what was
    actually published, not silently corrupted or truncated.
 
+   If you only want a specific band or a single release rather than the
+   entire Archive, use `--band` or `--release`:
+
+   ```bash
+   python tools/download_archive.py --band <slug>
+   python tools/download_archive.py --release <band-slug>/<release-slug>
+   ```
+
 That's it. When it finishes with `OK: every referenced media file is
 present on disk and checksum-verified.`, `bands/` on your machine holds
-the complete Archive - the same tree this project itself works from,
-including every audio file, photo, and video, all checksum-verified.
+the complete Archive (or the selected band/release) - the same tree this
+project itself works from, including every audio file, photo, and video,
+all checksum-verified.
 
 ## If something fails partway through
 
@@ -80,12 +89,15 @@ laptop) only fetches what's still missing or still wrong.
 ## How big is this, and how long does it take
 
 The whole point of this being one command is that you don't need to think
-about this in advance - just run it and let it work. That said: this is
-every audio file, photo, and video across every band and release in the
-Archive, at full quality, so expect a real download (currently several
-gigabytes, and it only grows as more music is added) rather than a quick
-one. There's no way to fetch just one band or release yet - it's the whole
-Archive or nothing.
+about this in advance - just run it and let it work. That said: fetching
+the entire Archive means downloading every audio file, photo, and video
+across every band and release, at full quality, so expect a real download
+(currently several gigabytes, and it only grows as more music is added)
+rather than a quick one.
+
+If you don't need the whole archive and only want your own band's recordings
+or a specific album, use `--band <slug>` or `--release <band-slug>/<release-slug>`
+to download only those files in seconds.
 
 ## What you can do with the result
 

@@ -147,6 +147,99 @@ class DownloadArchiveTest(unittest.TestCase):
 
         self.assertEqual([item.contentUrl for item in items], ["02-preserved-track.mp3"])
 
+    def test_main_with_band_flag_downloads_only_selected_band(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bands_dir = Path(tmp) / "bands"
+            fx_a = build_valid_archive(bands_dir, band_slug="band-a", release_slug="1999-a")
+            fx_b = build_valid_archive(bands_dir, band_slug="band-b", release_slug="1999-b")
+            fx_a.audio_path.unlink()
+            fx_b.audio_path.unlink()
+
+            with (
+                patch("sys.argv", ["download_archive.py", "--bands-dir", str(bands_dir), "--band", "band-a"]),
+                patch(
+                    "download_archive.urllib.request.urlretrieve",
+                    side_effect=fake_urlretrieve_writing(DEFAULT_AUDIO_BYTES),
+                ) as urlretrieve,
+            ):
+                exit_code = main()
+
+            self.assertEqual(exit_code, 0)
+            self.assertTrue(fx_a.audio_path.exists())
+            self.assertFalse(fx_b.audio_path.exists())
+            # urlretrieve was called for band-a's release audio (and not band-b)
+            self.assertEqual(urlretrieve.call_count, 1)
+
+    def test_main_with_release_flag_downloads_only_selected_release(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bands_dir = Path(tmp) / "bands"
+            fx_a = build_valid_archive(bands_dir, band_slug="band-a", release_slug="1999-a")
+            fx_b = build_valid_archive(bands_dir, band_slug="band-b", release_slug="1999-b")
+            fx_a.audio_path.unlink()
+            fx_b.audio_path.unlink()
+
+            with (
+                patch("sys.argv", ["download_archive.py", "--bands-dir", str(bands_dir), "--release", "band-a/1999-a"]),
+                patch(
+                    "download_archive.urllib.request.urlretrieve",
+                    side_effect=fake_urlretrieve_writing(DEFAULT_AUDIO_BYTES),
+                ) as urlretrieve,
+            ):
+                exit_code = main()
+
+            self.assertEqual(exit_code, 0)
+            self.assertTrue(fx_a.audio_path.exists())
+            self.assertFalse(fx_b.audio_path.exists())
+            self.assertEqual(urlretrieve.call_count, 1)
+
+    def test_main_with_unknown_band_slug_exits_nonzero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bands_dir = Path(tmp) / "bands"
+            build_valid_archive(bands_dir, band_slug="band-a", release_slug="1999-a")
+
+            with (
+                patch("sys.argv", ["download_archive.py", "--bands-dir", str(bands_dir), "--band", "unknown-band"]),
+                patch("sys.stderr") as mock_stderr,
+            ):
+                exit_code = main()
+
+            self.assertEqual(exit_code, 1)
+            mock_stderr.write.assert_called()
+            err_msg = "".join(call.args[0] for call in mock_stderr.write.call_args_list)
+            self.assertIn("Error: band 'unknown-band' not found", err_msg)
+
+    def test_main_with_unknown_release_slug_exits_nonzero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bands_dir = Path(tmp) / "bands"
+            build_valid_archive(bands_dir, band_slug="band-a", release_slug="1999-a")
+
+            with (
+                patch("sys.argv", ["download_archive.py", "--bands-dir", str(bands_dir), "--release", "band-a/unknown-rel"]),
+                patch("sys.stderr") as mock_stderr,
+            ):
+                exit_code = main()
+
+            self.assertEqual(exit_code, 1)
+            mock_stderr.write.assert_called()
+            err_msg = "".join(call.args[0] for call in mock_stderr.write.call_args_list)
+            self.assertIn("Error: release 'band-a/unknown-rel' not found", err_msg)
+
+    def test_main_with_malformed_release_slug_exits_nonzero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bands_dir = Path(tmp) / "bands"
+            build_valid_archive(bands_dir, band_slug="band-a", release_slug="1999-a")
+
+            with (
+                patch("sys.argv", ["download_archive.py", "--bands-dir", str(bands_dir), "--release", "invalid-no-slash"]),
+                patch("sys.stderr") as mock_stderr,
+            ):
+                exit_code = main()
+
+            self.assertEqual(exit_code, 1)
+            mock_stderr.write.assert_called()
+            err_msg = "".join(call.args[0] for call in mock_stderr.write.call_args_list)
+            self.assertIn("Error: --release must be in '<band-slug>/<release-slug>' format", err_msg)
+
 
 if __name__ == "__main__":
     unittest.main()

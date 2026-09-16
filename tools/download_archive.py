@@ -24,6 +24,8 @@ interrupted or partially-failed run can just be run again.
 
 Usage:
     python tools/download_archive.py                  # download everything
+    python tools/download_archive.py --band SLUG      # download one band and its releases
+    python tools/download_archive.py --release BAND/REL # download one release only
     python tools/download_archive.py --bands-dir PATH  # a different tree
 """
 from __future__ import annotations
@@ -154,13 +156,30 @@ def main() -> int:
         default=REPO_ROOT / "bands",
         help="directory to download into (default: this repo's bands/)",
     )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--band",
+        metavar="SLUG",
+        help="download only this band's media and all releases under it",
+    )
+    group.add_argument(
+        "--release",
+        metavar="BAND_SLUG/RELEASE_SLUG",
+        help="download only this release's media (format: <band-slug>/<release-slug>)",
+    )
     args = parser.parse_args()
     bands_dir: Path = args.bands_dir
 
     all_failures: list[DownloadFailure] = []
-    band_dirs = sorted(p for p in bands_dir.iterdir() if p.is_dir() and (p / "band.yaml").exists())
 
-    for band_dir in band_dirs:
+    if args.band:
+        band_dir = bands_dir / args.band
+        if not band_dir.is_dir() or not (band_dir / "band.yaml").exists():
+            sys.stderr.write(
+                f"Error: band '{args.band}' not found under {bands_dir} (expected {band_dir / 'band.yaml'})\n"
+            )
+            return 1
+
         band = load_band(band_dir)
         print(f"{band.slug}:")
         all_failures.extend(download_band(band_dir, band))
@@ -170,6 +189,38 @@ def main() -> int:
             release = load_release(release_dir)
             print(f"{band.slug}/{release.slug}:")
             all_failures.extend(download_release(release_dir, band.slug, release))
+
+    elif args.release:
+        if "/" not in args.release:
+            sys.stderr.write(
+                f"Error: --release must be in '<band-slug>/<release-slug>' format, got '{args.release}'\n"
+            )
+            return 1
+
+        band_slug, release_slug = args.release.split("/", 1)
+        release_dir = bands_dir / band_slug / release_slug
+        if not release_dir.is_dir() or not (release_dir / "release.yaml").exists():
+            sys.stderr.write(
+                f"Error: release '{args.release}' not found under {bands_dir} (expected {release_dir / 'release.yaml'})\n"
+            )
+            return 1
+
+        release = load_release(release_dir)
+        print(f"{band_slug}/{release.slug}:")
+        all_failures.extend(download_release(release_dir, band_slug, release))
+
+    else:
+        band_dirs = sorted(p for p in bands_dir.iterdir() if p.is_dir() and (p / "band.yaml").exists())
+        for band_dir in band_dirs:
+            band = load_band(band_dir)
+            print(f"{band.slug}:")
+            all_failures.extend(download_band(band_dir, band))
+
+            release_dirs = sorted(p for p in band_dir.iterdir() if p.is_dir() and (p / "release.yaml").exists())
+            for release_dir in release_dirs:
+                release = load_release(release_dir)
+                print(f"{band.slug}/{release.slug}:")
+                all_failures.extend(download_release(release_dir, band.slug, release))
 
     print()
     if all_failures:

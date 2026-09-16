@@ -342,6 +342,10 @@ the end, with a non-zero exit if anything failed.
 **When you'd run it:**
 - `python tools/download_archive.py` - fill in every missing/incorrect
   media file under the repo's own `bands/`.
+- `python tools/download_archive.py --band <slug>` - download only one
+  band's media and all releases under it.
+- `python tools/download_archive.py --release <band-slug>/<release-slug>` -
+  download only one specific release's media.
 - `python tools/download_archive.py --bands-dir PATH` - point it at a
   directory other than the repo's own `bands/`. This is what the test
   suite uses to validate temporary fixture trees without touching real
