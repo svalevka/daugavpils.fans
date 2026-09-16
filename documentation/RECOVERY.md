@@ -191,3 +191,76 @@ published, but it does permanently freeze *that* account's ability to
 add to it - continuing forward means one deliberate, one-time migration
 to a new account and id prefix, not recovering write access to items you
 can't regain the login for.
+
+---
+
+## Restoring Review App and Uploads from Backblaze B2
+
+Nightly automated backups run via [`.github/workflows/backup-to-b2.yml`](../.github/workflows/backup-to-b2.yml) at 03:30 UTC. Each run captures an atomic snapshot of `review.db` (proposals, approver accounts, and curator history) and `/data/uploads/` (pending audio and photos), compressing them into `review-app-backup-<timestamp>.tar.gz` and uploading to the Backblaze B2 bucket (`daugavpils.fans`).
+
+If the primary VPS (`cherry`) suffers hardware failure, filesystem corruption, or requires a clean rebuild, restore review app data using `tools/restore_backup.py`:
+
+### 1. Download the latest backup from B2
+
+Configure `rclone` with Backblaze B2 credentials (`B2_APPLICATION_KEY_ID`, `B2_APPLICATION_KEY`):
+
+```bash
+export RCLONE_CONFIG_B2_TYPE=b2
+export RCLONE_CONFIG_B2_ACCOUNT="<your-key-id>"
+export RCLONE_CONFIG_B2_KEY="<your-application-key>"
+```
+
+List available backups in the bucket:
+
+```bash
+rclone lsf b2:daugavpils.fans
+```
+
+Download the newest archive:
+
+```bash
+rclone copyto b2:daugavpils.fans/review-app-backup-<TIMESTAMP>.tar.gz /tmp/review-backup.tar.gz
+```
+
+Alternatively, `tools/restore_backup.py` can list and download the latest archive automatically:
+
+```bash
+python3 tools/restore_backup.py --download-b2 --bucket daugavpils.fans --dry-run
+```
+
+### 2. Verify archive and database integrity (`--dry-run`)
+
+Before replacing live production files, inspect the tarball and test the embedded SQLite database consistency using `PRAGMA integrity_check;`:
+
+```bash
+python3 tools/restore_backup.py /tmp/review-backup.tar.gz --dry-run
+```
+
+The tool reports table row counts (approvers, proposals, user roles) and upload file counts without altering any local files.
+
+### 3. Restore to production data directory
+
+Extract the backup and atomically swap `review.db` and `/uploads/` into place:
+
+```bash
+python3 tools/restore_backup.py /tmp/review-backup.tar.gz --target-dir /opt/daugavpils-fans/review-app-data
+```
+
+- Any existing live `review.db` is backed up to `review.db.pre_restore.bak`.
+- The restored database is verified and atomically replaced using `os.replace`.
+- Pending uploaded media files are safely restored into `uploads/`.
+
+### 4. Restart review-app container
+
+Once restored, restart the review-app Docker container:
+
+```bash
+cd /opt/daugavpils-fans && docker compose restart review-app
+```
+
+Verify service health and database availability:
+
+```bash
+curl -fsS https://review.daugavpils.fans/login
+```
+

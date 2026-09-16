@@ -542,6 +542,31 @@ and sensitive device/personal tags (`Make`, `Model`, `MakerNote`, serial numbers
 while preserving image orientation (`Orientation` `0x0112`) and visual quality
 (`quality="keep"` for JPEG). Operates idempotently: leaves clean images untouched.
 
+## `restore_backup.py`
+
+**Problem it solves:** provides disaster recovery for the review app database
+(`review.db`) and pending proposal media uploads (`/data/uploads`) from offsite
+Backblaze B2 backups or local tarball archives (GitHub issue #60).
+
+**How:** validates gzip tarball integrity, runs SQLite database consistency
+checks (`PRAGMA integrity_check;`), audits table row counts across approvers,
+proposals, and user roles, and safely extracts files using atomic replacement
+(`os.replace`) with an automatic pre-restore backup of any live database.
+Supports downloading the latest remote backup from Backblaze B2 via `rclone`
+and non-destructive `--dry-run` inspection.
+
+**When you'd run it:** after server hardware failure, disk corruption, or when
+spinning up a replacement VPS instance from an offsite B2 snapshot.
+
+## `test_restore_backup.py`
+
+**Problem it solves:** verifies the disaster recovery restore workflow without
+modifying production data or making real Backblaze B2 network calls.
+
+**How:** uses synthetic backup tarballs to test valid database and upload extraction,
+atomic replacement, pre-restore backup preservation, `--dry-run` behavior,
+corrupted archive detection, and SQLite integrity check failures.
+
 ## `requirements.txt`
 
 **Problem it solves:** pins the Python dependencies these tools need
