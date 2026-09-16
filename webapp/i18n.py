@@ -45,6 +45,13 @@ STRINGS = {
         "download_zip": "Скачать архив (.zip)",
         "download_track": "Скачать трек",
         "download_archive_note": "Файлы предоставлены через Internet Archive для постоянного хранения, офлайн-прослушивания и раздачи по BitTorrent.",
+        "musicians": "Музыканты",
+        "all_musicians": "Все музыканты",
+        "bands_label": "Группы",
+        "roles_label": "Роли",
+        "collaborators": "Коллеги по группам",
+        "musicians_directory_title": "Музыканты музыкальной сцены Даугавпилса",
+        "musicians_directory_desc": "Музыканты, участники групп и их творческие траектории в андеграунде Даугавпилса.",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -85,6 +92,13 @@ STRINGS = {
         "download_zip": "Download archive (.zip)",
         "download_track": "Download track",
         "download_archive_note": "Files provided via the Internet Archive for preservation, offline listening, and BitTorrent seeding.",
+        "musicians": "Musicians",
+        "all_musicians": "All musicians",
+        "bands_label": "Bands",
+        "roles_label": "Roles",
+        "collaborators": "Collaborators",
+        "musicians_directory_title": "Musicians of the Daugavpils music scene",
+        "musicians_directory_desc": "Musicians, band members, and their musical paths across the Daugavpils underground scene.",
     },
 }
 
@@ -114,3 +128,11 @@ def band_media_page_url(lang: str, band_slug: str, base_path: str = "") -> str:
 
 def release_media_page_url(lang: str, band_slug: str, release_slug: str, base_path: str = "") -> str:
     return f"{base_path}/{lang_prefix(lang)}bands/{band_slug}/{release_slug}/media/"
+
+
+def members_index_url(lang: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}members/"
+
+
+def member_url(lang: str, member_slug: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}members/{member_slug}/"

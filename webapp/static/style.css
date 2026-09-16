@@ -1271,3 +1271,59 @@ figure.media-outage-state img {
 .stat-card-warning .stat-value {
   color: #ff922b;
 }
+
+.scene-link {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.scene-link:hover {
+  color: var(--text);
+}
+
+.musician-directory-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.musician-directory-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.musician-main {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.musician-name-link {
+  font-size: 1.05rem;
+}
+
+.badge-multiband {
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  background: var(--bg-raised, #1f2428);
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+
+.musician-bands-preview {
+  margin-bottom: 0;
+  font-size: 0.85rem;
+}
+
+.musician-band-chip a {
+  color: var(--text-dim);
+}
+
+.musician-band-chip a:hover {
+  color: var(--text);
+}
+

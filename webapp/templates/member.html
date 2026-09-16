@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ musician.display_name }} — daugavpils.fans{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb"><a href="{{ members_index_url or (base_path ~ '/' ~ lang_prefix ~ 'members/') }}">← {{ t.all_musicians }}</a></div>
+{% endblock %}
+{% block content %}
+<h1>{{ musician.display_name }}</h1>
+
+{% if musician.alternate_names %}
+<p class="meta">{{ t.also_known_as }}: {{ musician.alternate_names | join(", ") }}</p>
+{% endif %}
+
+<h2>{{ t.bands_label }}</h2>
+<ul class="musician-bands-list member-list">
+  {% for b in musician.bands %}
+  <li>
+    <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ b.band_slug }}/"><strong>{{ b.band_name }}</strong></a>
+    {% if b.display_role %} — {{ b.display_role }}{% endif %}
+    {% if b.period %} <span class="meta">({{ b.period }})</span>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+{% if collaborators %}
+<h2>{{ t.collaborators }}</h2>
+<ul class="collaborator-list member-list">
+  {% for c in collaborators %}
+  <li>
+    <a href="{{ base_path }}/{{ lang_prefix }}members/{{ c.slug }}/"><strong>{{ c.display_name }}</strong></a>
+    <span class="meta">({{ c.shared_bands | join(", ") }})</span>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

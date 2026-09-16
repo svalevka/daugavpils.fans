@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ t.musicians }} — daugavpils.fans{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb"><a href="{{ home_url }}">← {{ t.all_bands }}</a></div>
+{% endblock %}
+{% block content %}
+<h1>{{ t.musicians }}</h1>
+<p class="meta">{{ t.musicians_directory_desc }}</p>
+
+<ul class="musician-directory-list">
+  {% for m in musicians %}
+  <li class="musician-directory-item">
+    <div class="musician-main">
+      <a class="musician-name-link" href="{{ base_path }}/{{ lang_prefix }}members/{{ m.slug }}/">
+        <strong>{{ m.display_name }}</strong>
+      </a>
+      {% if m.bands | length > 1 %}
+      <span class="badge-multiband">
+        {% if lang == "en" %}
+          {{ m.bands | length }} bands
+        {% else %}
+          {% set count = m.bands | length %}
+          {% if count % 10 == 1 and count % 100 != 11 %}
+            {{ count }} группа
+          {% elif count % 10 in [2, 3, 4] and count % 100 not in [12, 13, 14] %}
+            {{ count }} группы
+          {% else %}
+            {{ count }} групп
+          {% endif %}
+        {% endif %}
+      </span>
+      {% endif %}
+    </div>
+    <div class="meta musician-bands-preview">
+      {% for b in m.bands %}
+      <span class="musician-band-chip">
+        <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ b.band_slug }}/">{{ b.band_name }}</a>{% if b.display_role %} ({{ b.display_role }}){% endif %}{% if b.period %} · {{ b.period }}{% endif %}
+      </span>{% if not loop.last %} · {% endif %}
+      {% endfor %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

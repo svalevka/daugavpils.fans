@@ -510,5 +510,205 @@ class ReleaseDownloadsTest(unittest.TestCase):
         self.assertNotIn("track-download", rendered)
 
 
+class MusicianDirectoryTest(unittest.TestCase):
+    def setUp(self) -> None:
+        import sys
+
+        repo_root = Path(__file__).resolve().parent.parent
+        sys.path.insert(0, str(repo_root / "tools"))
+        sys.path.insert(0, str(repo_root / "webapp"))
+
+        templates_dir = Path(__file__).resolve().parent / "templates"
+        self.env = Environment(
+            loader=FileSystemLoader(str(templates_dir)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self.env.filters["duration"] = lambda d: d or ""
+        self.env.filters["license_label"] = lambda u: u
+        self.env.globals["localize"] = lambda obj, field, lang: (
+            getattr(obj, f"{field}_en", None) if lang == "en" and getattr(obj, f"{field}_en", None) else getattr(obj, field, None)
+        )
+        self.env.globals["localize_list"] = lambda obj, field, lang: getattr(obj, field, []) or []
+        self.env.globals["partial"] = lambda fn, *args: (lambda *a, **k: fn(*args, *a, **k))
+
+    def test_canonical_musician_slug(self) -> None:
+        from build import canonical_musician_slug
+
+        # Quotes / nicknames in quotes
+        self.assertEqual(canonical_musician_slug("Руслан «Гоблин» Кондрусь"), "ruslan-kondrus")
+        self.assertEqual(canonical_musician_slug("Алексей «Вантуз» Красько"), "aleksei-kras-ko")
+
+        # Parenthesized nicknames
+        self.assertEqual(canonical_musician_slug("Алексей Красько (Вантуз)"), "aleksei-kras-ko")
+        self.assertEqual(canonical_musician_slug("Руслан Кондрусь (Годблин)"), "ruslan-kondrus")
+
+        # Nickname-only alias map
+        self.assertEqual(canonical_musician_slug("Вантуз"), "aleksei-kras-ko")
+        self.assertEqual(canonical_musician_slug("Гоблин"), "ruslan-kondrus")
+        self.assertEqual(canonical_musician_slug("Александр «Рыб»"), "aleksandr-rybakov")
+
+        # Single word without alias
+        self.assertEqual(canonical_musician_slug("Слеер"), "sleer")
+
+    def test_index_musicians_and_collaborators(self) -> None:
+        from build import canonical_musician_slug, index_musicians, prepare_musicians_view
+        from models import MusicGroup
+
+        band1 = MusicGroup.model_validate({
+            "name": "Фобия",
+            "slug": "fobiia",
+            "member": [
+                {"name": "Руслан «Гоблин» Кондрусь", "name_en": "Ruslan Kondrus", "role": "гитара", "role_en": "guitar"},
+                {"name": "Геннадий «Кузя» Кузьмин", "name_en": "Gennady Kuzmin", "role": "вокал", "role_en": "vocals"},
+            ],
+        })
+        band2 = MusicGroup.model_validate({
+            "name": "Дети Гранта",
+            "slug": "deti-granta",
+            "member": [
+                {"name": "Гоблин", "name_en": "Goblin", "role": "гитара", "role_en": "guitar"},
+                {"name": "Вантуз", "name_en": "Vantuz", "role": "вокал", "role_en": "vocals"},
+            ],
+        })
+
+        raw_index = index_musicians([band1, band2])
+        self.assertIn("ruslan-kondrus", raw_index)
+        self.assertIn("gennadii-kuz-min", raw_index)
+        self.assertIn("aleksei-kras-ko", raw_index)
+
+        # Russian view
+        view_ru = prepare_musicians_view(raw_index, "ru")
+        kondrus_ru = next(m for m in view_ru if m["slug"] == "ruslan-kondrus")
+        self.assertEqual(kondrus_ru["display_name"], "Руслан Кондрусь")
+        self.assertIn("Гоблин", kondrus_ru["alternate_names"])
+        self.assertEqual(len(kondrus_ru["bands"]), 2)
+        # Collaborators of Ruslan Kondrus: Gennady Kuzmin and Aleksei Kras'ko
+        collab_slugs = [c["slug"] for c in kondrus_ru["collaborators"]]
+        self.assertIn("gennadii-kuz-min", collab_slugs)
+        self.assertIn("aleksei-kras-ko", collab_slugs)
+
+        # English view
+        view_en = prepare_musicians_view(raw_index, "en")
+        kondrus_en = next(m for m in view_en if m["slug"] == "ruslan-kondrus")
+        self.assertEqual(kondrus_en["display_name"], "Ruslan Kondrus")
+        self.assertIn("Goblin", kondrus_en["alternate_names"])
+
+    def test_members_directory_template_rendering(self) -> None:
+        from i18n import STRINGS
+
+        tmpl = self.env.get_template("members.html")
+        musicians = [
+            {
+                "slug": "ruslan-kondrus",
+                "display_name": "Руслан Кондрусь",
+                "alternate_names": ["Гоблин"],
+                "bands": [
+                    {"band_slug": "fobiia", "band_name": "Фобия", "display_role": "гитара", "period": "1994"},
+                    {"band_slug": "deti-granta", "band_name": "Дети Гранта", "display_role": "гитара", "period": None},
+                ],
+            },
+            {
+                "slug": "aleksei-kras-ko",
+                "display_name": "Алексей Красько",
+                "alternate_names": ["Вантуз"],
+                "bands": [
+                    {"band_slug": "deti-granta", "band_name": "Дети Гранта", "display_role": "вокал", "period": None},
+                ],
+            },
+        ]
+
+        rendered = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/members/",
+            en_url="/en/members/",
+            musicians=musicians,
+        )
+
+        self.assertIn("Руслан Кондрусь", rendered)
+        self.assertIn("/members/ruslan-kondrus/", rendered)
+        self.assertIn("2 группы", rendered)
+        self.assertIn("Алексей Красько", rendered)
+        self.assertIn("/members/aleksei-kras-ko/", rendered)
+
+    def test_member_profile_template_rendering(self) -> None:
+        from i18n import STRINGS
+
+        tmpl = self.env.get_template("member.html")
+        musician = {
+            "slug": "ruslan-kondrus",
+            "display_name": "Руслан Кондрусь",
+            "alternate_names": ["Гоблин", "Годблин"],
+            "bands": [
+                {"band_slug": "fobiia", "band_name": "Фобия", "display_role": "гитара", "period": "1994-1995"},
+                {"band_slug": "deti-granta", "band_name": "Дети Гранта", "display_role": "гитара", "period": None},
+            ],
+        }
+        collaborators = [
+            {"slug": "gennadii-kuz-min", "display_name": "Геннадий Кузьмин", "shared_bands": ["Фобия"]},
+            {"slug": "aleksei-kras-ko", "display_name": "Алексей Красько", "shared_bands": ["Дети Гранта"]},
+        ]
+
+        rendered = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/members/ruslan-kondrus/",
+            en_url="/en/members/ruslan-kondrus/",
+            members_index_url="/members/",
+            musician=musician,
+            collaborators=collaborators,
+        )
+
+        self.assertIn("<h1>Руслан Кондрусь</h1>", rendered)
+        self.assertIn("Гоблин, Годблин", rendered)
+        self.assertIn("/bands/fobiia/", rendered)
+        self.assertIn("/bands/deti-granta/", rendered)
+        self.assertIn("/members/gennadii-kuz-min/", rendered)
+        self.assertIn("Геннадий Кузьмин", rendered)
+        self.assertIn("(Фобия)", rendered)
+
+    def test_band_template_links_members(self) -> None:
+        from build import canonical_musician_slug
+        from i18n import STRINGS
+        from models import MusicGroup
+
+        self.env.globals["musician_slug"] = canonical_musician_slug
+
+        band = MusicGroup.model_validate({
+            "name": "Фобия",
+            "slug": "fobiia",
+            "member": [
+                {"name": "Руслан «Гоблин» Кондрусь", "role": "гитара"},
+            ],
+        })
+
+        tmpl = self.env.get_template("band.html")
+        rendered = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            band=band,
+            releases=[],
+            home_url="/",
+            ru_url="/bands/fobiia/",
+            en_url="/en/bands/fobiia/",
+            jsonld="{}",
+            visible_same_as=[],
+            photo_teaser_limit=6,
+            video_teaser_limit=2,
+            media_page_url=None,
+        )
+
+        self.assertIn('<a href="/members/ruslan-kondrus/"><strong>Руслан «Гоблин» Кондрусь</strong></a>', rendered)
+
+
 if __name__ == "__main__":
     unittest.main()
+

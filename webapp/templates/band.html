@@ -25,7 +25,12 @@
 <ul class="member-list">
   {% for m in band.member %}
   <li>
+    {% set m_slug = m.slug if (m.slug is defined and m.slug) else (musician_slug(m.name) if musician_slug is defined else None) %}
+    {% if m_slug %}
+    <a href="{{ base_path }}/{{ lang_prefix }}members/{{ m_slug }}/"><strong>{{ localize(m, "name", lang) }}</strong></a>
+    {% else %}
     <strong>{{ localize(m, "name", lang) }}</strong>
+    {% endif %}
     {% set role = localize(m, "role", lang) %}
     {% if role %} — {{ role }}{% endif %}
     {% if m.period %} <span class="meta">({{ m.period }})</span>{% endif %}

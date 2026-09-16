@@ -40,11 +40,13 @@ import re
 import shutil
 import subprocess
 import sys
+from collections import Counter
 from functools import partial
 from itertools import zip_longest
 from pathlib import Path
 
 import markdown
+import unidecode
 import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -63,6 +65,8 @@ from i18n import (  # noqa: E402
     release_url,
     band_media_page_url as band_media_page_url_fn,
     release_media_page_url as release_media_page_url_fn,
+    members_index_url as members_index_url_fn,
+    member_url as member_url_fn,
     lang_prefix,
 )
 
@@ -157,6 +161,181 @@ def license_label(url: str) -> str:
         version = parts[i + 2] if len(parts) > i + 2 else ""
         return f"CC {variant} {version}".strip()
     return url
+
+
+ALIAS_MAP: dict[str, str] = {
+    "вантуз": "aleksei-kras-ko",
+    "гоблин": "ruslan-kondrus",
+    "александр «рыб»": "aleksandr-rybakov",
+    "вадим неменущий (вадер)": "vadim-neminushchii",
+    "дерево": "evgenii-ershov",
+    "андрон": "andrei-fatkhutdinov",
+    "андрон фатхут": "andrei-fatkhutdinov",
+    "алвин": "alvin-matisans",
+    "алвин м.": "alvin-matisans",
+    "янсон": "aivar-ianson",
+    "стас": "stas-shimanskii",
+}
+
+
+def extract_clean_name_and_nicknames(name: str) -> tuple[str, list[str]]:
+    """Extract clean canonical name and any embedded nicknames from quotes or parentheses."""
+    nicks: list[str] = []
+    for q in re.findall(r"[«\"“]([^»\"”]+)[»\"”]", name):
+        n = q.strip()
+        if n:
+            nicks.append(n)
+    for p in re.findall(r"\(([^)]+)\)", name):
+        n = p.strip()
+        if n:
+            nicks.append(n)
+    cleaned = re.sub(r"[«\"“][^»\"”]+[»\"”]", "", name)
+    cleaned = re.sub(r"\([^)]+\)", "", cleaned)
+    cleaned = " ".join(cleaned.split())
+    if not cleaned:
+        cleaned = (
+            name.replace("«", "")
+            .replace("»", "")
+            .replace('"', "")
+            .replace("“", "")
+            .replace("”", "")
+            .strip(" ()")
+        )
+    return cleaned, nicks
+
+
+def canonical_musician_slug(name: str) -> str:
+    """Generate a stable, cross-referenced musician slug."""
+    key = name.strip().lower()
+    if key in ALIAS_MAP:
+        return ALIAS_MAP[key]
+    cleaned, _ = extract_clean_name_and_nicknames(name)
+    trans = unidecode.unidecode(cleaned).lower()
+    return re.sub(r"[^a-z0-9]+", "-", trans).strip("-")
+
+
+def index_musicians(bands: list[MusicGroup]) -> dict[str, dict]:
+    """Index all musician memberships across bands into a cross-referenced scene graph."""
+    musicians: dict[str, dict] = {}
+    for band in bands:
+        for m in band.member:
+            slug = canonical_musician_slug(m.name)
+            if slug not in musicians:
+                musicians[slug] = {
+                    "slug": slug,
+                    "names_ru": [],
+                    "names_en": [],
+                    "nicks_ru": [],
+                    "nicks_en": [],
+                    "memberships": [],
+                }
+
+            clean_ru, nicks_ru = extract_clean_name_and_nicknames(m.name)
+            musicians[slug]["names_ru"].append(clean_ru)
+            musicians[slug]["nicks_ru"].extend(nicks_ru)
+
+            if m.name_en:
+                clean_en, nicks_en = extract_clean_name_and_nicknames(m.name_en)
+                musicians[slug]["names_en"].append(clean_en)
+                musicians[slug]["nicks_en"].extend(nicks_en)
+
+            musicians[slug]["memberships"].append({
+                "band_slug": band.slug,
+                "band_name": band.name,
+                "band_name_en": getattr(band, "name_en", None) or band.name,
+                "role": m.role,
+                "role_en": m.role_en or m.role,
+                "period": m.period,
+            })
+
+    return musicians
+
+
+def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
+    """Prepare localized musician directory and collaborator graph for rendering."""
+    prepared: list[dict] = []
+
+    intermediate: dict[str, dict] = {}
+    for slug, m_data in musicians.items():
+        c_ru = Counter(m_data["names_ru"])
+        best_ru = max(c_ru.keys(), key=lambda s: (len(s.split()), c_ru[s], len(s)))
+
+        c_en = Counter(m_data["names_en"])
+        if c_en:
+            best_en = max(c_en.keys(), key=lambda s: (len(s.split()), c_en[s], len(s)))
+        else:
+            best_en = unidecode.unidecode(best_ru)
+
+        display_name = best_en if lang == "en" else best_ru
+
+        alt_names: list[str] = []
+        if lang == "en":
+            candidates = m_data["nicks_en"] + m_data["names_en"]
+            if not candidates:
+                candidates = [unidecode.unidecode(n) for n in m_data["nicks_ru"] + m_data["names_ru"]]
+        else:
+            candidates = m_data["nicks_ru"] + m_data["names_ru"]
+
+        for cand in candidates:
+            if cand and cand != display_name and cand not in alt_names:
+                alt_names.append(cand)
+
+        bands_list: list[dict] = []
+        seen_bands: set[tuple[str, str | None]] = set()
+        for mem in m_data["memberships"]:
+            band_name = mem["band_name_en"] if lang == "en" else mem["band_name"]
+            display_role = mem["role_en"] if lang == "en" else mem["role"]
+            period = mem["period"]
+            band_key = (mem["band_slug"], period)
+            if band_key not in seen_bands:
+                seen_bands.add(band_key)
+                bands_list.append({
+                    "band_slug": mem["band_slug"],
+                    "band_name": band_name,
+                    "role": mem["role"],
+                    "display_role": display_role,
+                    "period": period,
+                })
+
+        intermediate[slug] = {
+            "slug": slug,
+            "display_name": display_name,
+            "alternate_names": alt_names,
+            "bands": bands_list,
+            "band_slugs": {b["band_slug"] for b in bands_list},
+        }
+
+    for slug, item in intermediate.items():
+        my_band_slugs = item["band_slugs"]
+        collaborators: list[dict] = []
+        for other_slug, other_item in intermediate.items():
+            if other_slug == slug:
+                continue
+            shared_slugs = my_band_slugs & other_item["band_slugs"]
+            if shared_slugs:
+                shared_band_names: list[str] = []
+                for b in item["bands"]:
+                    if b["band_slug"] in shared_slugs and b["band_name"] not in shared_band_names:
+                        shared_band_names.append(b["band_name"])
+                collaborators.append({
+                    "slug": other_slug,
+                    "display_name": other_item["display_name"],
+                    "shared_bands": shared_band_names,
+                })
+
+        collaborators.sort(key=lambda c: (-len(c["shared_bands"]), c["display_name"]))
+
+        prepared.append({
+            "slug": slug,
+            "display_name": item["display_name"],
+            "alternate_names": item["alternate_names"],
+            "bands": item["bands"],
+            "collaborators": collaborators,
+        })
+
+    prepared.sort(key=lambda m: m["display_name"].lower())
+    return prepared
+
 
 
 def render_maintenance_html(lang: str) -> str:
@@ -379,6 +558,7 @@ def build() -> None:
     env.filters["license_label"] = license_label
     env.globals["localize"] = localize
     env.globals["localize_list"] = localize_list
+    env.globals["musician_slug"] = canonical_musician_slug
     env.globals["band_media_url"] = band_media_url
     env.globals["release_media_url"] = release_media_url
     env.globals["partial"] = partial
@@ -395,10 +575,14 @@ def build() -> None:
 
     require_media_published(bands, releases_by_band)
 
+    musicians_by_slug = index_musicians(bands)
+
     index_tmpl = env.get_template("index.html")
     band_tmpl = env.get_template("band.html")
     release_tmpl = env.get_template("release.html")
     media_tmpl = env.get_template("media.html")
+    members_tmpl = env.get_template("members.html")
+    member_tmpl = env.get_template("member.html")
 
     for lang in LANGS:
         lang_root = DIST_DIR if lang == DEFAULT_LANG else DIST_DIR / lang
@@ -553,11 +737,54 @@ def build() -> None:
                         )
                     )
 
+        musicians_view = prepare_musicians_view(musicians_by_slug, lang)
+        members_out_dir = lang_root / "members"
+        members_out_dir.mkdir(parents=True, exist_ok=True)
+
+        (members_out_dir / "index.html").write_text(
+            members_tmpl.render(
+                **base_ctx,
+                ru_url=members_index_url_fn("ru", BASE_PATH),
+                en_url=members_index_url_fn("en", BASE_PATH),
+                home_url=home_url(lang, BASE_PATH),
+                musicians=musicians_view,
+                og_title=f"{STRINGS[lang]['musicians']} — daugavpils.fans",
+                og_description=STRINGS[lang]["musicians_directory_desc"],
+                og_image_url=None,
+                og_type="website",
+                canonical_url=f"{SITE_URL}{members_index_url_fn(lang, BASE_PATH)}",
+            )
+        )
+
+        for m_view in musicians_view:
+            musician_out_dir = members_out_dir / m_view["slug"]
+            musician_out_dir.mkdir(parents=True, exist_ok=True)
+            band_names_str = ", ".join(b["band_name"] for b in m_view["bands"])
+            (musician_out_dir / "index.html").write_text(
+                member_tmpl.render(
+                    **base_ctx,
+                    ru_url=member_url_fn("ru", m_view["slug"], BASE_PATH),
+                    en_url=member_url_fn("en", m_view["slug"], BASE_PATH),
+                    home_url=home_url(lang, BASE_PATH),
+                    members_index_url=members_index_url_fn(lang, BASE_PATH),
+                    musician=m_view,
+                    collaborators=m_view["collaborators"],
+                    og_title=f"{m_view['display_name']} — daugavpils.fans",
+                    og_description=og_snippet(
+                        f"{m_view['display_name']} — {band_names_str}",
+                        f"{m_view['display_name']} — daugavpils.fans",
+                    ),
+                    og_image_url=None,
+                    og_type="profile",
+                    canonical_url=f"{SITE_URL}{member_url_fn(lang, m_view['slug'], BASE_PATH)}",
+                )
+            )
+
         search_index = generate_search_index(lang, bands, releases_by_band, BASE_PATH)
         (lang_root / "search-index.json").write_text(
             json.dumps(search_index, ensure_ascii=False, indent=2)
         )
-        print(f"  built [{lang}]: {len(bands)} band(s), search-index.json ({len(search_index)} items)")
+        print(f"  built [{lang}]: {len(bands)} band(s), /members/ ({len(musicians_view)} musicians), search-index.json ({len(search_index)} items)")
 
     support_tmpl = env.get_template("support.html")
     for lang in LANGS:
