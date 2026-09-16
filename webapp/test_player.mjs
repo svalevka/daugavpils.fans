@@ -34,6 +34,23 @@ function createMockDom(options = {}) {
       this.disabled = false;
       this.loaded = false;
       this._handlers = new Map();
+      this.paused = true;
+      this.currentTime = 0;
+      this.duration = 180;
+      this.playbackRate = 1.0;
+    }
+
+    play() {
+      this.paused = false;
+      const handlers = eventListeners.get("play") || [];
+      handlers.forEach((h) => h.fn({ target: this, type: "play" }));
+      return Promise.resolve();
+    }
+
+    pause() {
+      this.paused = true;
+      const handlers = eventListeners.get("pause") || [];
+      handlers.forEach((h) => h.fn({ target: this, type: "pause" }));
     }
 
     get className() {
@@ -102,14 +119,34 @@ function createMockDom(options = {}) {
     }
 
     querySelectorAll(sel) {
-      const selectors = sel.split(",").map((s) => s.trim());
+      if (sel.includes(",")) {
+        const parts = sel.split(",").map((s) => s.trim());
+        const set = new Set();
+        parts.forEach((p) => this.querySelectorAll(p).forEach((el) => set.add(el)));
+        return Array.from(set);
+      }
+      if (sel.includes(" ")) {
+        const parts = sel.split(/\s+/).filter(Boolean);
+        let current = [this];
+        for (const part of parts) {
+          const next = [];
+          for (const node of current) {
+            next.push(...node.querySelectorAll(part));
+          }
+          current = next;
+        }
+        return current;
+      }
       const results = [];
       function matchesOne(child) {
-        for (const s of selectors) {
-          if (s.startsWith(".") && child.classList.contains(s.slice(1))) return true;
-          if (s.startsWith("#") && child.id === s.slice(1)) return true;
-          if (child.tagName && child.tagName.toLowerCase() === s.toLowerCase()) return true;
+        if (sel.startsWith(".")) return child.classList.contains(sel.slice(1));
+        if (sel.startsWith("#")) return child.id === sel.slice(1);
+        if (sel.includes(".")) {
+          const [tag, cls] = sel.split(".");
+          return (!tag || (child.tagName && child.tagName.toLowerCase() === tag.toLowerCase())) &&
+                 child.classList.contains(cls);
         }
+        if (child.tagName && child.tagName.toLowerCase() === sel.toLowerCase()) return true;
         return false;
       }
       function walk(node) {
@@ -163,6 +200,28 @@ function createMockDom(options = {}) {
     },
   };
 
+  const mediaSession = {
+    metadata: null,
+    playbackState: "none",
+    positionState: null,
+    _actionHandlers: new Map(),
+    setActionHandler(action, handler) {
+      this._actionHandlers.set(action, handler);
+    },
+    setPositionState(state) {
+      this.positionState = state;
+    },
+  };
+
+  class MediaMetadata {
+    constructor(init = {}) {
+      this.title = init.title || "";
+      this.artist = init.artist || "";
+      this.album = init.album || "";
+      this.artwork = init.artwork || [];
+    }
+  }
+
   const mockWindow = {
     document: mockDocument,
     sessionStorage: {
@@ -176,7 +235,8 @@ function createMockDom(options = {}) {
       removeItem: (k) => localStorageStore.delete(k),
     },
     addEventListener: () => {},
-    navigator: { onLine: true },
+    navigator: { onLine: true, mediaSession },
+    MediaMetadata,
     CustomEvent: class CustomEvent {
       constructor(type, init = {}) {
         this.type = type;
@@ -383,3 +443,122 @@ test("player.js: handleMediaError marks image figure and shows outage banner", (
   assert.ok(banner);
   assert.ok(context.window.DaugavpilsArchiveOutage.isOutageCached());
 });
+
+test("player.js: Media Session metadata is assigned when an audio track plays", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "en" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    navigator: mockWindow.navigator,
+    MediaMetadata: mockWindow.MediaMetadata,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    fetch: mockWindow.fetch,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+
+  const table = mockDocument.createElement("table");
+  table.classList.add("tracklist");
+  const tr = mockDocument.createElement("tr");
+  const td = mockDocument.createElement("td");
+  const audio = mockDocument.createElement("audio");
+  audio.setAttribute("data-track", "Test Track 1");
+  audio.setAttribute("data-artist", "Test Band");
+  audio.setAttribute("data-album", "Test Album");
+  audio.setAttribute("data-artwork", "https://example.com/cover.jpg");
+  td.appendChild(audio);
+  tr.appendChild(td);
+  table.appendChild(tr);
+  mockDocument.body.appendChild(table);
+
+  audio.play();
+
+  const metadata = mockWindow.navigator.mediaSession.metadata;
+  assert.ok(metadata);
+  assert.equal(metadata.title, "Test Track 1");
+  assert.equal(metadata.artist, "Test Band");
+  assert.equal(metadata.album, "Test Album");
+  assert.equal(metadata.artwork.length, 1);
+  assert.equal(metadata.artwork[0].src, "https://example.com/cover.jpg");
+  assert.equal(mockWindow.navigator.mediaSession.playbackState, "playing");
+
+  audio.pause();
+  assert.equal(mockWindow.navigator.mediaSession.playbackState, "paused");
+});
+
+test("player.js: Media Session action handlers control playback and navigation", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "en" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    navigator: mockWindow.navigator,
+    MediaMetadata: mockWindow.MediaMetadata,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    fetch: mockWindow.fetch,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+
+  const table = mockDocument.createElement("table");
+  table.classList.add("tracklist");
+  const audio1 = mockDocument.createElement("audio");
+  audio1.setAttribute("data-track", "Track 1");
+  const audio2 = mockDocument.createElement("audio");
+  audio2.setAttribute("data-track", "Track 2");
+
+  const tr1 = mockDocument.createElement("tr");
+  tr1.appendChild(audio1);
+  table.appendChild(tr1);
+
+  const tr2 = mockDocument.createElement("tr");
+  tr2.appendChild(audio2);
+  table.appendChild(tr2);
+
+  mockDocument.body.appendChild(table);
+
+  // Check action handlers were registered
+  const handlers = mockWindow.navigator.mediaSession._actionHandlers;
+  assert.ok(handlers.has("play"));
+  assert.ok(handlers.has("pause"));
+  assert.ok(handlers.has("nexttrack"));
+  assert.ok(handlers.has("previoustrack"));
+  assert.ok(handlers.has("seekto"));
+
+  // Play audio1
+  audio1.play();
+  assert.equal(audio1.paused, false);
+
+  // Invoke pause handler
+  handlers.get("pause")();
+  assert.equal(audio1.paused, true);
+
+  // Invoke play handler
+  handlers.get("play")();
+  assert.equal(audio1.paused, false);
+
+  // Invoke nexttrack handler
+  handlers.get("nexttrack")();
+  assert.equal(audio1.paused, true);
+  assert.equal(audio2.paused, false);
+
+  // Invoke previoustrack handler with currentTime <= 3
+  audio2.currentTime = 1;
+  handlers.get("previoustrack")();
+  assert.equal(audio2.paused, true);
+  assert.equal(audio1.paused, false);
+
+  // Seekto handler
+  handlers.get("seekto")({ seekTime: 42 });
+  assert.equal(audio1.currentTime, 42);
+});
+

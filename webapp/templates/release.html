@@ -53,7 +53,7 @@
       {% if track.alternateName %}<div class="meta">{{ track.alternateName }}</div>{% endif %}
     </td>
     {% if track.audio %}
-    <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
+    <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-artist="{{ band.name }}" data-album="{{ release.name }}"{% if release.image %} data-artwork="{{ media_url(release.image[0].contentUrl) }}"{% endif %} data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
     <td class="track-duration">{{ track.audio.duration | duration }}</td>
     {% else %}
     <td colspan="2" class="track-status-cell"><span class="unpreserved-badge">{{ t.unpreserved_track }}</span></td>

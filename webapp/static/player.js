@@ -132,6 +132,164 @@
     }
   });
 
+  // Media Session API integration (see GitHub issue #54):
+  // Integrates lock screen controls, Bluetooth devices, and OS media keys
+  // with track metadata (title, artist, album, cover art) and next/prev controls.
+  var currentAudio = null;
+
+  function updatePositionState(audio) {
+    if (
+      typeof navigator !== "undefined" &&
+      "mediaSession" in navigator &&
+      typeof navigator.mediaSession.setPositionState === "function" &&
+      audio &&
+      !isNaN(audio.duration) &&
+      audio.duration > 0
+    ) {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: audio.duration,
+          playbackRate: audio.playbackRate || 1.0,
+          position: Math.min(audio.currentTime || 0, audio.duration),
+        });
+      } catch (e) {}
+    }
+  }
+
+  function updateMediaSession(audio) {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    currentAudio = audio;
+
+    var trackTitle = audio.getAttribute("data-track") || "";
+    var artistName = audio.getAttribute("data-artist") || "";
+    var albumName = audio.getAttribute("data-album") || "";
+    var artworkUrl = audio.getAttribute("data-artwork") || "";
+
+    if (!albumName) {
+      var h1 = document.querySelector("h1");
+      if (h1) albumName = h1.textContent.trim();
+    }
+    if (!artistName) {
+      var meta = document.querySelector(".meta");
+      if (meta) {
+        var parts = meta.textContent.split("·");
+        if (parts.length > 0) artistName = parts[0].trim();
+      }
+    }
+    if (!artworkUrl) {
+      var img = document.querySelector(".gallery img, .bio img");
+      if (img && img.src) artworkUrl = img.src;
+    }
+
+    var artwork = [];
+    if (artworkUrl) {
+      artwork.push({
+        src: artworkUrl,
+        sizes: "512x512",
+        type: artworkUrl.endsWith(".png") ? "image/png" : "image/jpeg",
+      });
+    }
+
+    if (typeof MediaMetadata !== "undefined") {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: trackTitle,
+        artist: artistName,
+        album: albumName,
+        artwork: artwork,
+      });
+    }
+
+    navigator.mediaSession.playbackState = "playing";
+    updatePositionState(audio);
+  }
+
+  function setupMediaSessionHandlers() {
+    if (
+      typeof navigator === "undefined" ||
+      !("mediaSession" in navigator) ||
+      typeof navigator.mediaSession.setActionHandler !== "function"
+    ) {
+      return;
+    }
+
+    function getTracklistAudios() {
+      return Array.prototype.slice.call(
+        document.querySelectorAll("table.tracklist audio")
+      );
+    }
+
+    var actions = {
+      play: function () {
+        if (currentAudio) currentAudio.play();
+      },
+      pause: function () {
+        if (currentAudio) currentAudio.pause();
+      },
+      previoustrack: function () {
+        if (!currentAudio) return;
+        var players = getTracklistAudios();
+        var idx = players.indexOf(currentAudio);
+        if (currentAudio.currentTime > 3) {
+          currentAudio.currentTime = 0;
+          updatePositionState(currentAudio);
+        } else if (idx > 0) {
+          currentAudio.pause();
+          players[idx - 1].currentTime = 0;
+          players[idx - 1].play();
+        } else {
+          currentAudio.currentTime = 0;
+          updatePositionState(currentAudio);
+        }
+      },
+      nexttrack: function () {
+        if (!currentAudio) return;
+        var players = getTracklistAudios();
+        var idx = players.indexOf(currentAudio);
+        if (idx >= 0 && idx < players.length - 1) {
+          currentAudio.pause();
+          players[idx + 1].currentTime = 0;
+          players[idx + 1].play();
+        }
+      },
+      seekto: function (details) {
+        if (!currentAudio || details.seekTime == null) return;
+        if (details.fastSeek && typeof currentAudio.fastSeek === "function") {
+          currentAudio.fastSeek(details.seekTime);
+        } else {
+          currentAudio.currentTime = details.seekTime;
+        }
+        updatePositionState(currentAudio);
+      },
+      seekbackward: function (details) {
+        if (!currentAudio) return;
+        var offset = (details && details.seekOffset) || 10;
+        currentAudio.currentTime = Math.max((currentAudio.currentTime || 0) - offset, 0);
+        updatePositionState(currentAudio);
+      },
+      seekforward: function (details) {
+        if (!currentAudio) return;
+        var offset = (details && details.seekOffset) || 10;
+        currentAudio.currentTime = Math.min((currentAudio.currentTime || 0) + offset, currentAudio.duration || Infinity);
+        updatePositionState(currentAudio);
+      },
+      stop: function () {
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "none";
+        }
+      },
+    };
+
+    for (var action in actions) {
+      try {
+        navigator.mediaSession.setActionHandler(action, actions[action]);
+      } catch (e) {}
+    }
+  }
+
+  setupMediaSessionHandlers();
+
   // Only one <audio>/<video> plays at a time site-wide - starting one
   // pauses every other, so playing a gallery video while a track (or
   // another video) is already going doesn't leave both audible at once.
@@ -147,6 +305,33 @@
       var players = document.querySelectorAll("audio, video");
       for (var i = 0; i < players.length; i++) {
         if (players[i] !== target) players[i].pause();
+      }
+      if (target.tagName === "AUDIO") {
+        updateMediaSession(target);
+      }
+    },
+    true
+  );
+
+  document.addEventListener(
+    "pause",
+    function (event) {
+      var target = event.target;
+      if (target.tagName === "AUDIO" && target === currentAudio) {
+        if (typeof navigator !== "undefined" && "mediaSession" in navigator) {
+          navigator.mediaSession.playbackState = "paused";
+        }
+      }
+    },
+    true
+  );
+
+  document.addEventListener(
+    "timeupdate",
+    function (event) {
+      var target = event.target;
+      if (target.tagName === "AUDIO" && target === currentAudio) {
+        updatePositionState(target);
       }
     },
     true
