@@ -40,6 +40,11 @@ STRINGS = {
         "search_tracks": "Треки",
         "search_clear": "Очистить поиск",
         "copy_track_link": "Скопировать ссылку на трек",
+        "download_album": "Скачать релиз",
+        "download_torrent": "Скачать .torrent",
+        "download_zip": "Скачать архив (.zip)",
+        "download_track": "Скачать трек",
+        "download_archive_note": "Файлы предоставлены через Internet Archive для постоянного хранения, офлайн-прослушивания и раздачи по BitTorrent.",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -75,6 +80,11 @@ STRINGS = {
         "search_tracks": "Tracks",
         "search_clear": "Clear search",
         "copy_track_link": "Copy link to track",
+        "download_album": "Download release",
+        "download_torrent": "Download .torrent",
+        "download_zip": "Download archive (.zip)",
+        "download_track": "Download track",
+        "download_archive_note": "Files provided via the Internet Archive for preservation, offline listening, and BitTorrent seeding.",
     },
 }
 

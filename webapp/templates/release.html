@@ -54,13 +54,47 @@
     </td>
     {% if track.audio %}
     <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-artist="{{ band.name }}" data-album="{{ release.name }}"{% if release.image %} data-artwork="{{ media_url(release.image[0].contentUrl) }}"{% endif %} data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
-    <td class="track-duration">{{ track.audio.duration | duration }}</td>
+    <td class="track-duration">
+      <span class="duration-text">{{ track.audio.duration | duration }}</span>
+      <a href="{{ media_url(track.audio.contentUrl) }}" class="track-download" download="{{ track.audio.contentUrl }}" title="{{ t.download_track }}" aria-label="{{ t.download_track }} ({{ track.name }})">
+        <svg class="download-icon" aria-hidden="true" viewBox="0 0 24 24" width="14" height="14">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor"/>
+        </svg>
+      </a>
+    </td>
     {% else %}
     <td colspan="2" class="track-status-cell"><span class="unpreserved-badge">{{ t.unpreserved_track }}</span></td>
     {% endif %}
   </tr>
   {% endfor %}
 </table>
+
+{% if torrent_url or zip_url %}
+<div class="release-downloads">
+  <h3>{{ t.download_album }}</h3>
+  <p class="meta">{{ t.download_archive_note }}</p>
+  <div class="download-buttons">
+    {% if torrent_url %}
+    <a href="{{ torrent_url }}" class="download-btn download-torrent" download>
+      <span class="download-btn-icon" aria-hidden="true">⬇</span>
+      <span class="download-btn-text">
+        <strong>{{ t.download_torrent }}</strong>
+        <small>BitTorrent · Internet Archive</small>
+      </span>
+    </a>
+    {% endif %}
+    {% if zip_url %}
+    <a href="{{ zip_url }}" class="download-btn download-zip">
+      <span class="download-btn-icon" aria-hidden="true">📦</span>
+      <span class="download-btn-text">
+        <strong>{{ t.download_zip }}</strong>
+        <small>.zip · Internet Archive</small>
+      </span>
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
 
 {% if release.video %}
 <h2>{{ t.video }}</h2>

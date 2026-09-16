@@ -367,5 +367,148 @@ class DeepLinkAndOpenGraphTest(unittest.TestCase):
         self.assertIn('<meta name="twitter:card" content="summary_large_image">', rendered)
 
 
+class ReleaseDownloadsTest(unittest.TestCase):
+    def setUp(self) -> None:
+        import sys
+
+        repo_root = Path(__file__).resolve().parent.parent
+        sys.path.insert(0, str(repo_root / "tools"))
+        sys.path.insert(0, str(repo_root / "webapp"))
+
+        templates_dir = Path(__file__).resolve().parent / "templates"
+        self.env = Environment(
+            loader=FileSystemLoader(str(templates_dir)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self.env.filters["duration"] = lambda d: d or ""
+        self.env.globals["localize"] = lambda obj, field, lang: getattr(obj, field, None)
+        self.env.globals["localize_list"] = lambda obj, field, lang: getattr(obj, field, []) or []
+        self.env.globals["partial"] = lambda fn, *args: (lambda *a, **k: fn(*args, *a, **k))
+
+    def test_release_template_renders_direct_downloads(self) -> None:
+        from i18n import STRINGS
+        from models import MusicAlbum, MusicGroup
+
+        band = MusicGroup.model_validate({"name": "M. Spirit", "slug": "m-spirit"})
+        release = MusicAlbum.model_validate({
+            "name": "Задушевные песенки",
+            "slug": "1995-zadushevnie-pesenki",
+            "datePublished": "1995",
+            "byArtist": "m-spirit",
+            "track": [
+                {
+                    "position": 1,
+                    "name": "Ящер",
+                    "audio": {
+                        "contentUrl": "01-iashcher.mp3",
+                        "encodingFormat": "audio/mpeg",
+                        "identifier": [{"propertyID": "sha256", "value": "abc"}],
+                    },
+                }
+            ],
+        })
+
+        tmpl = self.env.get_template("release.html")
+        rendered_ru = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            band=band,
+            release=release,
+            home_url="/",
+            ru_url="/",
+            en_url="/en/",
+            visible_same_as=[],
+            photo_teaser_limit=6,
+            video_teaser_limit=2,
+            release_media_url=lambda b, r, u: f"https://archive.org/download/item/{u}",
+            canonical_url="https://daugavpils.fans/bands/m-spirit/1995-zadushevnie-pesenki/",
+            jsonld="{}",
+            torrent_url="https://archive.org/download/item/item_archive.torrent",
+            zip_url="https://archive.org/compress/item/formats=VBR%20MP3,JPEG&file=/item.zip",
+        )
+
+        # Downloads section
+        self.assertIn('<div class="release-downloads">', rendered_ru)
+        self.assertIn("<h3>Скачать релиз</h3>", rendered_ru)
+        self.assertIn('href="https://archive.org/download/item/item_archive.torrent"', rendered_ru)
+        self.assertIn("Скачать .torrent", rendered_ru)
+        self.assertIn('href="https://archive.org/compress/item/formats=VBR%20MP3,JPEG&amp;file=/item.zip"', rendered_ru)
+        self.assertIn("Скачать архив (.zip)", rendered_ru)
+
+        # Individual track download
+        self.assertIn('href="https://archive.org/download/item/01-iashcher.mp3"', rendered_ru)
+        self.assertIn('class="track-download"', rendered_ru)
+        self.assertIn('download="01-iashcher.mp3"', rendered_ru)
+
+        # English rendering
+        rendered_en = tmpl.render(
+            lang="en",
+            t=STRINGS["en"],
+            lang_prefix="en/",
+            base_path="",
+            band=band,
+            release=release,
+            home_url="/en/",
+            ru_url="/",
+            en_url="/en/",
+            visible_same_as=[],
+            photo_teaser_limit=6,
+            video_teaser_limit=2,
+            release_media_url=lambda b, r, u: f"https://archive.org/download/item/{u}",
+            canonical_url="https://daugavpils.fans/en/bands/m-spirit/1995-zadushevnie-pesenki/",
+            jsonld="{}",
+            torrent_url="https://archive.org/download/item/item_archive.torrent",
+            zip_url="https://archive.org/compress/item/formats=VBR%20MP3,JPEG&file=/item.zip",
+        )
+        self.assertIn("<h3>Download release</h3>", rendered_en)
+        self.assertIn("Download .torrent", rendered_en)
+        self.assertIn("Download archive (.zip)", rendered_en)
+        self.assertIn('title="Download track"', rendered_en)
+
+    def test_release_template_omits_downloads_when_none(self) -> None:
+        from i18n import STRINGS
+        from models import MusicAlbum, MusicGroup
+
+        band = MusicGroup.model_validate({"name": "M. Spirit", "slug": "m-spirit"})
+        release = MusicAlbum.model_validate({
+            "name": "Unpreserved",
+            "slug": "1995-unpreserved",
+            "datePublished": "1995",
+            "byArtist": "m-spirit",
+            "track": [
+                {
+                    "position": 1,
+                    "name": "Lost Track",
+                    "audio": None,
+                }
+            ],
+        })
+
+        tmpl = self.env.get_template("release.html")
+        rendered = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            band=band,
+            release=release,
+            home_url="/",
+            ru_url="/",
+            en_url="/en/",
+            visible_same_as=[],
+            photo_teaser_limit=6,
+            video_teaser_limit=2,
+            release_media_url=lambda b, r, u: f"https://archive.org/download/item/{u}",
+            canonical_url="https://daugavpils.fans/bands/m-spirit/1995-unpreserved/",
+            jsonld="{}",
+            torrent_url=None,
+            zip_url=None,
+        )
+        self.assertNotIn("release-downloads", rendered)
+        self.assertNotIn("track-download", rendered)
+
+
 if __name__ == "__main__":
     unittest.main()
