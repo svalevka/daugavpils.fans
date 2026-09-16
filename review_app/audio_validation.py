@@ -84,6 +84,19 @@ def check_ffprobe_available() -> bool:
     return shutil.which("ffprobe") is not None
 
 
+def _limit_child_process_resources() -> None:
+    """Sets address space limit on child process where supported to contain decompressor bombs."""
+    try:
+        import resource
+        max_bytes = 512 * 1024 * 1024  # 512 MB
+        if hasattr(resource, "RLIMIT_AS"):
+            resource.setrlimit(resource.RLIMIT_AS, (max_bytes, max_bytes))
+        elif hasattr(resource, "RLIMIT_DATA"):
+            resource.setrlimit(resource.RLIMIT_DATA, (max_bytes, max_bytes))
+    except Exception:
+        pass
+
+
 def probe_audio_file(path: Path) -> dict[str, Any]:
     """Run ffprobe to verify audio integrity, duration, bitrate, and tags.
     Raises AudioValidationError if the file is invalid, zero-length, or ffprobe fails.
@@ -103,7 +116,11 @@ def probe_audio_file(path: Path) -> dict[str, Any]:
             capture_output=True,
             text=True,
             check=True,
+            timeout=15,
+            preexec_fn=_limit_child_process_resources,
         )
+    except subprocess.TimeoutExpired as exc:
+        raise AudioValidationError("ffprobe inspection timed out") from exc
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:
         raise AudioValidationError(f"ffprobe failed to inspect audio file: {exc}") from exc
 

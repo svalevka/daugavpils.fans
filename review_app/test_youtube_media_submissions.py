@@ -237,6 +237,59 @@ class FetchFailureTest(YoutubeMediaSubmissionTestCase):
         self.mock_fetch_failed_submitter.assert_not_called()
         self.mock_fetch_failed_admin.assert_called_once()
 
+    def test_socket_timeout_configured_in_yt_dlp_opts(self):
+        self.submit_youtube()
+        self.assertTrue(_FakeYoutubeDL.captured_opts)
+        for opts in _FakeYoutubeDL.captured_opts:
+            self.assertEqual(opts.get("socket_timeout"), 15)
+
+    def test_extract_info_timeout_cleans_up_and_notifies(self):
+        with mock.patch("youtube_fetch._extract_info", side_effect=youtube_fetch.FetchError("YouTube metadata extraction timed out")):
+            response = self.submit_youtube(submitter_contact="fan@example.com")
+            self.assertEqual(response.status_code, 201)
+            self.assertEqual(self.fetch_media_proposals(), [])
+            self.mock_fetch_failed_submitter.assert_called_once()
+            self.assertIn("timed out", self.mock_fetch_failed_submitter.call_args[0][3])
+            self.mock_fetch_failed_admin.assert_called_once()
+
+    def test_download_timeout_cleans_up_partial_files_and_notifies(self):
+        uploads_dir = Path(self.app.config["MEDIA_UPLOADS_PATH"])
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+
+        def slow_download(*args, **kwargs):
+            partial_file = uploads_dir / "test_partial_token.part"
+            partial_file.write_bytes(b"partial video bytes")
+            raise youtube_fetch.FetchError("YouTube video download timed out")
+
+        with mock.patch("youtube_fetch._download", side_effect=slow_download):
+            response = self.submit_youtube(submitter_contact="fan@example.com")
+            self.assertEqual(response.status_code, 201)
+            self.assertEqual(self.fetch_media_proposals(), [])
+            self.mock_fetch_failed_submitter.assert_called_once()
+            self.assertIn("timed out", self.mock_fetch_failed_submitter.call_args[0][3])
+            self.mock_fetch_failed_admin.assert_called_once()
+
+    def test_download_function_timeout_deletes_partial_token_file(self):
+        uploads_dir = Path(self.app.config["MEDIA_UPLOADS_PATH"])
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+
+        import time
+
+        def hang_download(self_ydl, urls):
+            token = Path(self_ydl.opts["outtmpl"]).stem
+            partial = uploads_dir / f"{token}.part"
+            partial.write_bytes(b"some partial bytes")
+            time.sleep(0.5)
+
+        with mock.patch.object(_FakeYoutubeDL, "download", hang_download):
+            with self.assertRaises(youtube_fetch.FetchError) as ctx:
+                youtube_fetch._download(
+                    VALID_URL, "18", uploads_dir, 50 * 1024 * 1024, None, timeout_seconds=0.05
+                )
+            self.assertIn("timed out", str(ctx.exception))
+            # Verify partial files were cleaned up
+            self.assertEqual(list(uploads_dir.glob("*.part")), [])
+
 
 class ThrottleTest(YoutubeMediaSubmissionTestCase):
     def _seed_published_youtube_video(self, hours_ago: float = 1.0):

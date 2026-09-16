@@ -70,6 +70,15 @@ class ProbeAudioFileTest(unittest.TestCase):
         self.assertIn("zero duration", str(ctx.exception))
 
     @patch("audio_validation.check_ffprobe_available", return_value=True)
+    @patch("subprocess.run", side_effect=subprocess.TimeoutExpired(cmd=["ffprobe"], timeout=15))
+    def test_raises_error_on_timeout(self, mock_run, mock_check):
+        with self.assertRaises(audio_validation.AudioValidationError) as ctx:
+            audio_validation.probe_audio_file(Path("/fake/track.mp3"))
+        self.assertIn("ffprobe inspection timed out", str(ctx.exception))
+        self.assertEqual(mock_run.call_args.kwargs.get("timeout"), 15)
+        self.assertIsNotNone(mock_run.call_args.kwargs.get("preexec_fn"))
+
+    @patch("audio_validation.check_ffprobe_available", return_value=True)
     @patch("subprocess.run")
     def test_success_with_valid_audio(self, mock_run, mock_check):
         mock_run.return_value = MagicMock(
@@ -82,6 +91,8 @@ class ProbeAudioFileTest(unittest.TestCase):
         self.assertEqual(info["bitrate"], "320 kbps")
         self.assertEqual(info["tags"], {"title": "Test Song"})
         self.assertEqual(info["ai_flags"], [])
+        self.assertEqual(mock_run.call_args.kwargs.get("timeout"), 15)
+        self.assertIsNotNone(mock_run.call_args.kwargs.get("preexec_fn"))
 
 
 class SlugGenerationTest(unittest.TestCase):

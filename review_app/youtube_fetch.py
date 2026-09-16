@@ -18,6 +18,7 @@ re-encoding anything.
 """
 from __future__ import annotations
 
+import concurrent.futures
 import logging
 import re
 import secrets
@@ -60,8 +61,17 @@ def is_youtube_url(url: str) -> bool:
     return bool(YOUTUBE_URL_RE.match((url or "").strip()))
 
 
+YOUTUBE_INFO_TIMEOUT = 30  # seconds
+YOUTUBE_DOWNLOAD_TIMEOUT = 180  # seconds
+
+
 def _base_opts(cookiefile: str | None) -> dict[str, Any]:
-    opts: dict[str, Any] = {"quiet": True, "no_warnings": True, "noplaylist": True}
+    opts: dict[str, Any] = {
+        "quiet": True,
+        "no_warnings": True,
+        "noplaylist": True,
+        "socket_timeout": 15,
+    }
     if cookiefile:
         # A dedicated account's exported cookies (see GitHub issue #49) -
         # without this, YouTube's bot-check ("Sign in to confirm you're
@@ -73,11 +83,21 @@ def _base_opts(cookiefile: str | None) -> dict[str, Any]:
     return opts
 
 
-def _extract_info(url: str, cookiefile: str | None) -> dict[str, Any]:
-    opts = _base_opts(cookiefile)
-    opts["skip_download"] = True
-    with yt_dlp.YoutubeDL(opts) as ydl:
-        return ydl.extract_info(url, download=False)
+def _extract_info(
+    url: str, cookiefile: str | None, timeout_seconds: int = YOUTUBE_INFO_TIMEOUT
+) -> dict[str, Any]:
+    def _do_extract():
+        opts = _base_opts(cookiefile)
+        opts["skip_download"] = True
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            return ydl.extract_info(url, download=False)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(_do_extract)
+        try:
+            return future.result(timeout=timeout_seconds)
+        except concurrent.futures.TimeoutError as exc:
+            raise FetchError("YouTube metadata extraction timed out") from exc
 
 
 def _pick_format(info: dict[str, Any], max_bytes: int) -> str:
@@ -113,14 +133,36 @@ def _pick_format(info: dict[str, Any], max_bytes: int) -> str:
     return chosen["format_id"]
 
 
-def _download(url: str, format_id: str, dest_dir: Path, max_bytes: int, cookiefile: str | None) -> Path:
+def _download(
+    url: str,
+    format_id: str,
+    dest_dir: Path,
+    max_bytes: int,
+    cookiefile: str | None,
+    timeout_seconds: int = YOUTUBE_DOWNLOAD_TIMEOUT,
+) -> Path:
     dest_dir.mkdir(parents=True, exist_ok=True)
     token = secrets.token_hex(16)
     outtmpl = str(dest_dir / f"{token}.%(ext)s")
-    opts = _base_opts(cookiefile)
-    opts.update({"format": format_id, "outtmpl": outtmpl, "max_filesize": max_bytes})
-    with yt_dlp.YoutubeDL(opts) as ydl:
-        ydl.download([url])
+
+    def _do_download():
+        opts = _base_opts(cookiefile)
+        opts.update({"format": format_id, "outtmpl": outtmpl, "max_filesize": max_bytes})
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            ydl.download([url])
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(_do_download)
+        try:
+            future.result(timeout=timeout_seconds)
+        except concurrent.futures.TimeoutError as exc:
+            for f in dest_dir.glob(f"{token}.*"):
+                f.unlink(missing_ok=True)
+            raise FetchError("YouTube video download timed out") from exc
+        except Exception:
+            for f in dest_dir.glob(f"{token}.*"):
+                f.unlink(missing_ok=True)
+            raise
 
     produced = sorted(dest_dir.glob(f"{token}.*"))
     if not produced:

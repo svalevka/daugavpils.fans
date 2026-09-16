@@ -79,6 +79,7 @@ def probe_video_duration(path: Path) -> int | None:
             capture_output=True,
             text=True,
             check=True,
+            timeout=15,
         )
         data = json.loads(out.stdout).get("format", {})
         if "duration" in data and data["duration"]:
