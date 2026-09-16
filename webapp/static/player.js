@@ -564,6 +564,11 @@
 
         var players = document.querySelectorAll("audio, video");
         for (var k = 0; k < players.length; k++) {
+          if (players[k].dataset.originalSrc) {
+            players[k].src = players[k].dataset.originalSrc;
+            delete players[k].dataset.originalSrc;
+          }
+          delete players[k].dataset.fallbackTried;
           players[k].load();
         }
 
@@ -590,6 +595,64 @@
     });
   }
 
+  var MEDIA_PROXY_PREFIX = "/media-stream/";
+
+  function toProxyUrl(url) {
+    if (!url) return url;
+    var match = url.match(/^https?:\/\/(?:[a-zA-Z0-9-]+\.)*archive\.org\/download\/(.+)$/);
+    if (match) {
+      return MEDIA_PROXY_PREFIX + match[1];
+    }
+    return url;
+  }
+
+  function toArchiveUrl(url) {
+    if (!url) return url;
+    if (url.indexOf(MEDIA_PROXY_PREFIX) === 0) {
+      return "https://archive.org/download/" + url.substring(MEDIA_PROXY_PREFIX.length);
+    }
+    var idx = url.indexOf(MEDIA_PROXY_PREFIX);
+    if (idx !== -1) {
+      return "https://archive.org/download/" + url.substring(idx + MEDIA_PROXY_PREFIX.length);
+    }
+    return url;
+  }
+
+  function tryMediaFallback(mediaEl) {
+    if (!mediaEl || (mediaEl.tagName !== "AUDIO" && mediaEl.tagName !== "VIDEO")) {
+      return false;
+    }
+    if (mediaEl.dataset.fallbackTried === "1") {
+      return false;
+    }
+    var src = mediaEl.currentSrc || mediaEl.src || "";
+    if (!src && mediaEl.querySelector("source")) {
+      src = mediaEl.querySelector("source").src || "";
+    }
+    var fallbackUrl = null;
+    if (src.indexOf("archive.org/download/") !== -1) {
+      fallbackUrl = toProxyUrl(src);
+    } else if (src.indexOf(MEDIA_PROXY_PREFIX) !== -1) {
+      fallbackUrl = toArchiveUrl(src);
+    }
+    if (!fallbackUrl || fallbackUrl === src) {
+      return false;
+    }
+    mediaEl.dataset.fallbackTried = "1";
+    mediaEl.dataset.originalSrc = src;
+    mediaEl.src = fallbackUrl;
+    if (typeof mediaEl.load === "function") {
+      mediaEl.load();
+    }
+    if (typeof mediaEl.play === "function") {
+      var playPromise = mediaEl.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(function () {});
+      }
+    }
+    return true;
+  }
+
   function handleMediaError(target) {
     var mediaEl = target.tagName === "SOURCE" ? target.parentElement : target;
     if (
@@ -605,7 +668,7 @@
     if (!src && mediaEl.querySelector("source")) {
       src = mediaEl.querySelector("source").src || "";
     }
-    if (src.indexOf("archive.org") === -1) {
+    if (src.indexOf("archive.org") === -1 && src.indexOf(MEDIA_PROXY_PREFIX) === -1) {
       return;
     }
 
@@ -688,6 +751,12 @@
           event.target.tagName === "SOURCE" ||
           event.target.tagName === "IMG")
       ) {
+        var el = event.target.tagName === "SOURCE" ? event.target.parentElement : event.target;
+        if (el && (el.tagName === "AUDIO" || el.tagName === "VIDEO")) {
+          if (tryMediaFallback(el)) {
+            return;
+          }
+        }
         handleMediaError(event.target);
       }
     },
@@ -714,13 +783,16 @@
     }
   });
 
-    window.DaugavpilsArchiveOutage = {
+  window.DaugavpilsArchiveOutage = {
     showBanner: showOutageBanner,
     retry: retryArchiveConnection,
     handleError: handleMediaError,
     probe: probeArchiveOrg,
     isOutageCached: isOutageCached,
     setOutageCached: setOutageCached,
+    toProxyUrl: toProxyUrl,
+    toArchiveUrl: toArchiveUrl,
+    tryMediaFallback: tryMediaFallback,
   };
 
   // Deep-link track anchors (#track-N) and copy-to-clipboard feedback (GitHub issue #56)

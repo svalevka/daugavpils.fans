@@ -667,4 +667,116 @@ test("player.js: clicking .track-anchor copies deep-link URL to clipboard and sh
   assert.ok(anchor.classList.contains("copied"));
 });
 
+test("player.js: toProxyUrl and toArchiveUrl convert archive.org download URLs", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+  const { toProxyUrl, toArchiveUrl } = context.window.DaugavpilsArchiveOutage;
+
+  assert.equal(
+    toProxyUrl("https://archive.org/download/daugavpils-fans-band/01-track.mp3"),
+    "/media-stream/daugavpils-fans-band/01-track.mp3"
+  );
+  assert.equal(
+    toProxyUrl("https://ia800100.us.archive.org/download/daugavpils-fans-band/01-track.mp3"),
+    "/media-stream/daugavpils-fans-band/01-track.mp3"
+  );
+  assert.equal(
+    toArchiveUrl("/media-stream/daugavpils-fans-band/01-track.mp3"),
+    "https://archive.org/download/daugavpils-fans-band/01-track.mp3"
+  );
+  assert.equal(toProxyUrl("/other/path.mp3"), "/other/path.mp3");
+  assert.equal(toArchiveUrl("https://other.com/file.mp3"), "https://other.com/file.mp3");
+});
+
+test("player.js: tryMediaFallback switches direct archive.org audio to /media-stream/", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+  const { tryMediaFallback } = context.window.DaugavpilsArchiveOutage;
+
+  const audio = mockDocument.createElement("audio");
+  audio.src = "https://archive.org/download/daugavpils-fans-band/01-track.mp3";
+
+  const didFallback = tryMediaFallback(audio);
+  assert.equal(didFallback, true);
+  assert.equal(audio.src, "/media-stream/daugavpils-fans-band/01-track.mp3");
+  assert.equal(audio.dataset.fallbackTried, "1");
+  assert.equal(audio.loaded, true);
+
+  // Calling it again on the same element returns false (already tried)
+  const secondAttempt = tryMediaFallback(audio);
+  assert.equal(secondAttempt, false);
+});
+
+test("player.js: error event performs proxy fallback before marking outage", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+
+  const table = mockDocument.createElement("table");
+  const tr = mockDocument.createElement("tr");
+  const td = mockDocument.createElement("td");
+  const audio = mockDocument.createElement("audio");
+  audio.src = "https://archive.org/download/daugavpils-fans-band/01-track.mp3";
+  audio.dataset.track = "Track 1";
+
+  td.appendChild(audio);
+  tr.appendChild(td);
+  table.appendChild(tr);
+  mockDocument.body.appendChild(table);
+
+  // First error event: triggers fallback to /media-stream/
+  mockDocument.dispatchEvent({
+    type: "error",
+    target: audio,
+  });
+
+  assert.equal(audio.src, "/media-stream/daugavpils-fans-band/01-track.mp3");
+  assert.equal(audio.dataset.fallbackTried, "1");
+  assert.equal(tr.classList.contains("media-outage-row"), false);
+
+  // Second error event (proxy also failed): marks outage and shows banner
+  mockDocument.dispatchEvent({
+    type: "error",
+    target: audio,
+  });
+
+  assert.equal(tr.classList.contains("media-outage-row"), true);
+  const banner = mockDocument.getElementById("archive-outage-banner");
+  assert.ok(banner);
+  assert.ok(context.window.DaugavpilsArchiveOutage.isOutageCached());
+});
+
+
 

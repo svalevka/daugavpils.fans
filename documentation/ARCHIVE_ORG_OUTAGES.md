@@ -109,15 +109,37 @@ During static site generation (`webapp/build.py`), `require_media_published()` c
 
 ---
 
-## 4. Verification & Testing
+## 4. Nginx Stale Media Proxy Cache (`/media-stream/`)
+
+To prevent audio and video playback outages when archive.org suffers prolonged downtime (502/503/timeouts), server `cherry` operates a persistent, bounded media proxy cache configured in `webapp/deploy/nginx/daugavpils.conf`:
+
+- **Bounded disk cache (`10g`)**: Media files are cached under `/var/cache/nginx/media` with `max_size=10g`, 30-day inactive expiration (`inactive=30d`), and a 50MB shared memory zone (`keys_zone=archive_media_cache:50m`). The cache is persisted across container upgrades using a named Docker volume (`media-cache`).
+- **Byte-range slicing (`slice 1m`)**: Large audio (FLAC/MP3) and video (MP4) files are requested and cached in 1MB sub-ranges. This enables `HTTP 206 Partial Content` responses and smooth audio/video seeking without downloading entire files upfront.
+- **Stale cache serving (`proxy_cache_use_stale`)**:
+  ```nginx
+  proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+  ```
+  When archive.org is down, Nginx immediately serves cached tracks from disk rather than halting playback.
+- **Internal 302 redirect resolution**: Archive.org `/download/` URLs return HTTP 302 redirects to specific storage nodes (e.g. `iaXXXX.us.archive.org`). Nginx intercepts these redirects (`proxy_intercept_errors on; error_page 301 302 307 = @media_redirect;`) and follows them internally with a DNS resolver so media bytes are cached locally.
+- **Client-side resilience (`player.js`)**: When direct media requests fail, `player.js` automatically invokes `tryMediaFallback()`, routing requests through `/media-stream/` to leverage the local cache before flagging an outage. If the track is cached, playback resumes seamlessly.
+
+---
+
+## 5. Verification & Testing
 
 - **Node.js client tests**:
   ```bash
-  node --test webapp/test_player.mjs
+  node webapp/test_player.mjs
   ```
-  Validates banner rendering in Russian and English, track row error marking, session storage caching, and retry recovery.
+  Validates banner rendering in Russian and English, track row error marking, session storage caching, proxy URL conversion, retry recovery, and client-side fallback.
+- **Deploy & proxy unit tests**:
+  ```bash
+  python -m unittest webapp/deploy/test_media_proxy.py
+  ```
+  Validates Nginx configuration syntax, 10GB bounded disk cache definitions, Docker Compose volume persistence, byte-range seeking simulation (HTTP 206), and stale cache fallback during simulated archive.org 502/503 errors.
 - **Python backend tests**:
   ```bash
-  ./.venv/bin/python -m unittest discover -s review_app -p 'test_*.py'
+  python -m unittest discover -s review_app -p 'test_*.py'
   ```
   Validates `media_error` analytics ingestion and admin dashboard rendering.
+

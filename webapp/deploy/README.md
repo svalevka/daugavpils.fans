@@ -304,3 +304,23 @@ docker run --rm \
   certbot/dns-cloudflare renew
 docker compose restart nginx
 ```
+
+## Stale media proxy cache (`/media-stream/`)
+
+To protect listener playback from Internet Archive downtime, `nginx/daugavpils.conf`
+configures a reverse proxy cache on `cherry` at `/media-stream/`:
+
+- **Bounded 10GB disk cache**: Mounted as a persistent named volume
+  `media-cache:/var/cache/nginx/media` in `docker-compose.yml`, with `max_size=10g`
+  and 30-day inactivity pruning (`inactive=30d`).
+- **Byte-range slicing (`slice 1m`)**: Nginx fetches and stores files in 1MB
+  chunks, providing native `HTTP 206 Partial Content` seeking for audio/video
+  players without having to buffer whole files first.
+- **Outage resilience (`proxy_cache_use_stale`)**: When archive.org returns
+  HTTP 500/502/503/504 or times out, Nginx transparently serves cached media
+  from disk, allowing visitors to keep streaming music without interruption.
+- **Redirect following (`@media_redirect`)**: Archive.org `/download/` endpoints
+  return HTTP 302 redirects to regional storage clusters (`iaXXXX.us.archive.org`).
+  Nginx intercepts these redirects internally so that the actual audio/video payloads
+  are retrieved and saved to the local cache.
+
