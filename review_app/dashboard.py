@@ -19,7 +19,7 @@ import sqlite3
 import sys
 from pathlib import Path
 
-from flask import Blueprint, abort, current_app, g, redirect, render_template, request, send_file, session, url_for
+from flask import Blueprint, abort, current_app, g, jsonify, redirect, render_template, request, send_file, session, url_for
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -426,6 +426,173 @@ def reject(proposal_id: int):
             current_app.logger.exception(
                 "failed to send rejection notification for proposal %s", proposal_id
             )
+
+    return redirect(url_for("dashboard.view_pending"))
+
+
+@bp.post("/dashboard/proposals/batch-decide")
+@bp.post("/proposals/batch-decide")
+@require_approver
+def batch_decide():
+    conn = db.get_connection()
+    approver_id = g.approver["id"]
+
+    proposal_type = request.form.get("proposal_type", "text").strip().lower()
+    action = request.form.get("action", "").strip().lower()
+    review_notes = request.form.get("review_notes", "").strip() or request.form.get("reason", "").strip() or None
+
+    raw_ids = request.form.getlist("proposal_ids")
+    if not raw_ids and request.form.get("proposal_ids"):
+        raw_ids = [request.form.get("proposal_ids")]
+
+    # Support JSON payload as well
+    if not raw_ids and request.is_json:
+        data = request.get_json() or {}
+        raw_ids = data.get("proposal_ids", [])
+        action = data.get("action", action)
+        proposal_type = data.get("proposal_type", proposal_type)
+        review_notes = data.get("review_notes", review_notes)
+
+    ids: list[int] = []
+    for item in raw_ids:
+        try:
+            ids.append(int(item))
+        except (ValueError, TypeError):
+            continue
+
+    if not ids:
+        if request.is_json:
+            return jsonify({"ok": False, "error": "no_proposals_selected"}), 400
+        return redirect(url_for("dashboard.view_pending"))
+
+    if action not in ("approve", "reject"):
+        abort(400)
+
+    target_status = "approved" if action == "approve" else "rejected"
+
+    if proposal_type == "text":
+        table_name = "proposals"
+    elif proposal_type == "media":
+        table_name = "media_proposals"
+    elif proposal_type == "album":
+        table_name = "album_proposals"
+    elif proposal_type == "band":
+        table_name = "band_proposals"
+    else:
+        abort(400)
+
+    # 1. Anti-self-approval enforcement:
+    # If approving, no selected proposal may have been submitted by the current approver.
+    if target_status == "approved":
+        placeholders = ",".join("?" for _ in ids)
+        self_submitted = conn.execute(
+            f"SELECT id FROM {table_name} WHERE id IN ({placeholders}) AND submitted_by_approver_id = ?",
+            (*ids, approver_id),
+        ).fetchall()
+        if self_submitted:
+            abort(403)
+
+    # 2. Process decisions per proposal type
+    decided_count = 0
+    if proposal_type == "text":
+        for p_id in ids:
+            row = conn.execute(
+                "SELECT band_slug, release_slug, target, field, submitter_contact, lang FROM proposals WHERE id = ?",
+                (p_id,),
+            ).fetchone()
+            ok, reason = _decide(p_id, target_status, review_notes=review_notes)
+            if not ok:
+                continue
+            decided_count += 1
+
+            if row and row["submitter_contact"]:
+                scope = f"{row['band_slug']}/{row['release_slug']}" if row["release_slug"] else row["band_slug"]
+                target_summary = f"{scope} ({row['target']}.{row['field']})"
+                lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+                live_prefix = "https://daugavpils.fans/en" if lang == "en" else "https://daugavpils.fans"
+                live_path = f"/bands/{row['band_slug']}/{row['release_slug']}/" if row["release_slug"] else f"/bands/{row['band_slug']}/"
+                live_url = f"{live_prefix}{live_path}"
+                try:
+                    mail.send_proposal_decision_notification(
+                        current_app.config["SMTP_CONFIG"],
+                        row["submitter_contact"],
+                        decision=target_status,
+                        proposal_type="edit",
+                        target_summary=target_summary,
+                        live_url=live_url,
+                        review_notes=review_notes,
+                        lang=lang,
+                    )
+                except OSError:
+                    current_app.logger.exception(
+                        "failed to send batch %s notification for text proposal %s", target_status, p_id
+                    )
+
+            if target_status == "approved":
+                try:
+                    github_dispatch.trigger_apply(current_app.config["GITHUB_CONFIG"], p_id)
+                except OSError:
+                    current_app.logger.exception("failed to dispatch apply-proposal.yml for proposal %s", p_id)
+
+    elif proposal_type == "media":
+        for p_id in ids:
+            row = conn.execute(
+                "SELECT stored_filename, band_slug, release_slug, media_type, submitter_contact, lang FROM media_proposals WHERE id = ?",
+                (p_id,),
+            ).fetchone()
+            ok, reason = _decide_media(p_id, target_status, review_notes=review_notes)
+            if not ok:
+                continue
+            decided_count += 1
+
+            if target_status == "rejected" and row and row["stored_filename"]:
+                _media_file_path(row["stored_filename"]).unlink(missing_ok=True)
+
+            if row and row["submitter_contact"]:
+                scope = f"{row['band_slug']}/{row['release_slug']}" if row["release_slug"] else row["band_slug"]
+                target_summary = f"{scope} ({row['media_type']})"
+                lang = row["lang"] if "lang" in row.keys() and row["lang"] else "ru"
+                try:
+                    if target_status == "approved":
+                        description = f"your {row['media_type']} for {scope}"
+                        mail.send_media_approved_notification(
+                            current_app.config["SMTP_CONFIG"], row["submitter_contact"], description
+                        )
+                    else:
+                        mail.send_proposal_decision_notification(
+                            current_app.config["SMTP_CONFIG"],
+                            row["submitter_contact"],
+                            decision="rejected",
+                            proposal_type="media",
+                            target_summary=target_summary,
+                            review_notes=review_notes,
+                            lang=lang,
+                        )
+                except OSError:
+                    current_app.logger.exception(
+                        "failed to send batch %s notification for media proposal %s", target_status, p_id
+                    )
+
+    elif proposal_type == "album":
+        for p_id in ids:
+            if target_status == "approved":
+                ok, _ = _decide_album(p_id, "approved")
+            else:
+                ok, _ = _decide_album(p_id, "rejected", review_notes=review_notes)
+            if ok:
+                decided_count += 1
+
+    elif proposal_type == "band":
+        for p_id in ids:
+            if target_status == "approved":
+                ok, _ = _decide_band(p_id, "approved")
+            else:
+                ok, _ = _decide_band(p_id, "rejected", review_notes=review_notes)
+            if ok:
+                decided_count += 1
+
+    if request.is_json:
+        return jsonify({"ok": True, "count": decided_count, "action": target_status})
 
     return redirect(url_for("dashboard.view_pending"))
 

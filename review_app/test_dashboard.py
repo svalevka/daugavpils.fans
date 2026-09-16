@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from test_support import MP3_BYTES, ReviewAppTestCase  # noqa: E402
+from test_support import JPEG_BYTES, MP3_BYTES, ReviewAppTestCase  # noqa: E402
 
 
 class UnauthenticatedAccessTest(ReviewAppTestCase):
@@ -449,6 +449,199 @@ class AlbumTrackAudioAuditionTest(ReviewAppTestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.headers["Content-Type"], "audio/mpeg")
         self.assertEqual(resp.data, MP3_BYTES)
+
+
+
+class BatchDecisionTest(ReviewAppTestCase):
+    def _submit_and_get_ids(self, count=2, **form) -> list[int]:
+        ids = []
+        for i in range(count):
+            self.submit(**form)
+            ids.append(self.fetch_proposals()[-1]["id"])
+        return ids
+
+    def test_batch_approve_text_proposals(self):
+        approver_id = self.seed_approver("curator@example.com")
+        ids = self._submit_and_get_ids(2, submitter_contact="contributor@example.com")
+        self.login_as(approver_id)
+
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            data={
+                "proposal_type": "text",
+                "action": "approve",
+                "proposal_ids": [str(i) for i in ids],
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        proposals = {p["id"]: p for p in self.fetch_proposals()}
+        for p_id in ids:
+            self.assertEqual(proposals[p_id]["status"], "approved")
+            self.assertEqual(proposals[p_id]["decided_by"], approver_id)
+            self.assertIsNotNone(proposals[p_id]["decided_at"])
+
+        # Dispatches workflows for both proposals
+        self.assertEqual(self.mock_trigger_apply.call_count, 2)
+        # Notifications sent
+        self.assertEqual(self.mock_send_proposal_decision.call_count, 2)
+
+    def test_batch_reject_text_proposals_with_reason(self):
+        approver_id = self.seed_approver("curator@example.com")
+        ids = self._submit_and_get_ids(2, submitter_contact="contributor@example.com")
+        self.login_as(approver_id)
+
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            data={
+                "proposal_type": "text",
+                "action": "reject",
+                "reason": "Batch rejected: duplicate entries",
+                "proposal_ids": [str(i) for i in ids],
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        proposals = {p["id"]: p for p in self.fetch_proposals()}
+        for p_id in ids:
+            self.assertEqual(proposals[p_id]["status"], "rejected")
+            self.assertEqual(proposals[p_id]["decided_by"], approver_id)
+            self.assertEqual(proposals[p_id]["review_notes"], "Batch rejected: duplicate entries")
+
+        self.mock_trigger_apply.assert_not_called()
+        self.assertEqual(self.mock_send_proposal_decision.call_count, 2)
+
+    def test_batch_approve_anti_self_approval_blocked(self):
+        approver_id = self.seed_approver("curator@example.com")
+
+        # Submit one proposal while logged in as approver_id (self-submission)
+        self.login_as(approver_id)
+        self.submit(proposed_value="Self submission")
+        own_id = self.fetch_proposals()[-1]["id"]
+
+        # Submit another proposal anonymously
+        with self.client.session_transaction() as sess:
+            sess.clear()
+        self.submit(proposed_value="Other submission")
+        other_id = self.fetch_proposals()[-1]["id"]
+
+        # Log in as approver_id and try to batch-approve both
+        self.login_as(approver_id)
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            data={
+                "proposal_type": "text",
+                "action": "approve",
+                "proposal_ids": [str(own_id), str(other_id)],
+            },
+        )
+        # 403 Forbidden
+        self.assertEqual(resp.status_code, 403)
+        # Neither was approved
+        proposals = {p["id"]: p for p in self.fetch_proposals()}
+        self.assertEqual(proposals[own_id]["status"], "pending")
+        self.assertEqual(proposals[other_id]["status"], "pending")
+        self.mock_trigger_apply.assert_not_called()
+
+    def test_batch_approve_and_reject_media(self):
+        approver_id = self.seed_approver("curator@example.com")
+        self.submit_media(file_tuples=[("pic1.jpg", JPEG_BYTES)], submitter_contact="media@example.com")
+        self.submit_media(file_tuples=[("pic2.jpg", JPEG_BYTES)], submitter_contact="media@example.com")
+        media = self.fetch_media_proposals()
+        m1_id = media[-2]["id"]
+        m2_id = media[-1]["id"]
+
+        self.login_as(approver_id)
+        # Batch approve media
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            data={
+                "proposal_type": "media",
+                "action": "approve",
+                "proposal_ids": [str(m1_id)],
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        row1 = [m for m in self.fetch_media_proposals() if m["id"] == m1_id][0]
+        self.assertEqual(row1["status"], "approved")
+        self.mock_send_media_approved.assert_called_once()
+
+        # Batch reject media
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            data={
+                "proposal_type": "media",
+                "action": "reject",
+                "reason": "Blurry image",
+                "proposal_ids": [str(m2_id)],
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        row2 = [m for m in self.fetch_media_proposals() if m["id"] == m2_id][0]
+        self.assertEqual(row2["status"], "rejected")
+        self.assertEqual(row2["review_notes"], "Blurry image")
+
+    def test_batch_decide_json_api(self):
+        approver_id = self.seed_approver("curator@example.com")
+        ids = self._submit_and_get_ids(2)
+        self.login_as(approver_id)
+
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            json={
+                "proposal_type": "text",
+                "action": "approve",
+                "proposal_ids": ids,
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.get_json()
+        self.assertTrue(data["ok"])
+        self.assertEqual(data["count"], 2)
+        self.assertEqual(data["action"], "approved")
+
+    def test_batch_decide_validation_and_errors(self):
+        approver_id = self.seed_approver("curator@example.com")
+        self.login_as(approver_id)
+
+        # No IDs provided redirects for form submission
+        resp = self.client.post("/dashboard/proposals/batch-decide", data={"proposal_type": "text", "action": "approve"})
+        self.assertEqual(resp.status_code, 302)
+
+        # No IDs provided returns 400 for JSON
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            json={"proposal_type": "text", "action": "approve", "proposal_ids": []},
+        )
+        self.assertEqual(resp.status_code, 400)
+
+        # Invalid action returns 400
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            data={"proposal_type": "text", "action": "delete", "proposal_ids": ["1"]},
+        )
+        self.assertEqual(resp.status_code, 400)
+
+        # Invalid proposal type returns 400
+        resp = self.client.post(
+            "/dashboard/proposals/batch-decide",
+            data={"proposal_type": "unknown", "action": "approve", "proposal_ids": ["1"]},
+        )
+        self.assertEqual(resp.status_code, 400)
+
+    def test_dashboard_renders_batch_controls(self):
+        approver_id = self.seed_approver("curator@example.com")
+        self.submit()
+        self.submit_media()
+        self.login_as(approver_id)
+
+        resp = self.client.get("/dashboard")
+        self.assertEqual(resp.status_code, 200)
+        html = resp.get_data(as_text=True)
+
+        self.assertIn('id="batch-text-form"', html)
+        self.assertIn('data-select-all="text"', html)
+        self.assertIn('id="batch-media-form"', html)
+        self.assertIn('data-select-all="media"', html)
+        self.assertIn('dashboard_batch.js', html)
 
 
 if __name__ == "__main__":

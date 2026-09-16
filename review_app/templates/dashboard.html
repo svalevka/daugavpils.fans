@@ -19,12 +19,34 @@
 <p>Nothing pending.</p>
 {% endif %}
 
+{% if proposals %}
+<form id="batch-text-form" method="post" action="/dashboard/proposals/batch-decide" class="batch-action-bar">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="proposal_type" value="text">
+  <div class="batch-bar-left">
+    <label class="select-all-label">
+      <input type="checkbox" data-select-all="text">
+      <strong>Select All</strong>
+    </label>
+    <span class="meta" data-selected-count="text">(0 selected)</span>
+  </div>
+  <div class="batch-bar-right">
+    <input type="text" name="reason" placeholder="Reason if rejecting (optional)" style="width: 200px; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+    <button type="submit" name="action" value="approve" class="btn-approve">Approve Selected</button>
+    <button type="submit" name="action" value="reject" class="btn-reject">Reject Selected</button>
+  </div>
+</form>
+{% endif %}
+
 {% for p in proposals %}
 <article class="proposal">
-  <h2>#{{ p.id }} — {{ p.band_slug }}{% if p.release_slug %}/{{ p.release_slug }}{% endif %} —
-    {%- if p.target == "new_member" %} new band member
-    {%- else %} {{ p.target }}.{{ p.field }}{% if p.list_index is not none %}[{{ p.list_index }}]{% endif %}
-    {%- endif %}</h2>
+  <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+    <input type="checkbox" form="batch-text-form" name="proposal_ids" value="{{ p.id }}" class="proposal-select" data-type="text" data-own="{{ '1' if p.is_own_submission else '0' }}" aria-label="Select proposal #{{ p.id }}">
+    <h2 style="margin-top: 0;">#{{ p.id }} — {{ p.band_slug }}{% if p.release_slug %}/{{ p.release_slug }}{% endif %} —
+      {%- if p.target == "new_member" %} new band member
+      {%- else %} {{ p.target }}.{{ p.field }}{% if p.list_index is not none %}[{{ p.list_index }}]{% endif %}
+      {%- endif %}</h2>
+  </div>
   {% if p.submitter_name or p.submitter_contact %}
   <p class="meta">Submitted by {{ p.submitter_name or "(no name given)" }}{% if p.submitter_contact %} &lt;{{ p.submitter_contact }}&gt;{% endif %}</p>
   {% endif %}
@@ -68,10 +90,33 @@
 {% if not media_pending %}
 <p>Nothing pending.</p>
 {% endif %}
+{% if media_pending %}
+<form id="batch-media-form" method="post" action="/dashboard/proposals/batch-decide" class="batch-action-bar">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="proposal_type" value="media">
+  <div class="batch-bar-left">
+    <label class="select-all-label">
+      <input type="checkbox" data-select-all="media">
+      <strong>Select All</strong>
+    </label>
+    <span class="meta" data-selected-count="media">(0 selected)</span>
+  </div>
+  <div class="batch-bar-right">
+    <input type="text" name="reason" placeholder="Reason if rejecting (optional)" style="width: 200px; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+    <button type="submit" name="action" value="approve" class="btn-approve">Approve Selected</button>
+    <button type="submit" name="action" value="reject" class="btn-reject">Reject Selected</button>
+  </div>
+</form>
+{% endif %}
 {% for m in media_pending %}
 <article class="proposal">
-  <span class="status-badge status-pending">Pending review</span>
-  <h2>#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
+  <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+    <input type="checkbox" form="batch-media-form" name="proposal_ids" value="{{ m.id }}" class="proposal-select" data-type="media" data-own="{{ '1' if m.is_own_submission else '0' }}" aria-label="Select media proposal #{{ m.id }}">
+    <div style="flex: 1;">
+      <span class="status-badge status-pending">Pending review</span>
+      <h2 style="margin-top: 0.25rem;">#{{ m.id }} — {{ m.band_slug }}{% if m.release_slug %}/{{ m.release_slug }}{% endif %} — {{ m.media_type }}</h2>
+    </div>
+  </div>
   <p class="meta">{{ m.original_filename }} ({{ (m.size_bytes / 1048576) | round(1) }} MB, {{ m.content_type }})</p>
   {% if m.source_type == "youtube" %}
   <p class="meta">Source: <a href="{{ m.source_url }}" target="_blank" rel="noopener">YouTube</a>
@@ -429,4 +474,8 @@
   </div>
 </article>
 {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='dashboard_batch.js') }}"></script>
 {% endblock %}
