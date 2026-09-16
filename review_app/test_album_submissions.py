@@ -65,6 +65,19 @@ class AlbumSubmissionFormTest(ReviewAppTestCase):
         self.assertIn('data-msg-preview="Preview track"', html)
         self.assertIn('data-msg-draft-restored="Restored', html)
 
+    def test_form_contains_challenge_question_and_input(self):
+        resp_ru = self.client.get(f"/submit/{self.fx.band_slug}/add-release")
+        self.assertEqual(resp_ru.status_code, 200)
+        html_ru = resp_ru.get_data(as_text=True)
+        self.assertIn('name="challenge_answer"', html_ru)
+        self.assertIn("какому городу посвящён этот архив?", html_ru)
+
+        resp_en = self.client.get(f"/submit/{self.fx.band_slug}/add-release?lang=en")
+        self.assertEqual(resp_en.status_code, 200)
+        html_en = resp_en.get_data(as_text=True)
+        self.assertIn('name="challenge_answer"', html_en)
+        self.assertIn("which city is this archive dedicated to?", html_en)
+
 
 class AlbumSubmissionPostTest(ReviewAppTestCase):
     @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
@@ -131,6 +144,19 @@ class AlbumSubmissionPostTest(ReviewAppTestCase):
     def test_no_tracks_aborts_400(self):
         resp = self.submit_album(track_tuples=[])
         self.assertEqual(resp.status_code, 400)
+
+    def test_missing_challenge_answer_aborts_400(self):
+        resp = self.submit_album(challenge_answer="")
+        self.assertEqual(resp.status_code, 400)
+
+    def test_incorrect_challenge_answer_aborts_400(self):
+        resp = self.submit_album(challenge_answer="random spam text")
+        self.assertEqual(resp.status_code, 400)
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_valid_cyrillic_challenge_answer_accepted(self, _mock_probe):
+        resp = self.submit_album(name="Cyrillic Challenge Album", challenge_answer="Даугавпилс")
+        self.assertEqual(resp.status_code, 201)
 
     @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
     def test_existing_release_collision_aborts_400(self, _mock_probe):

@@ -145,6 +145,12 @@
     <input type="text" id="submitter_contact" name="submitter_contact">
   </div>
 
+  <div class="field">
+    <label for="challenge_answer">{{ t.challenge_question }}</label>
+    <input type="text" id="challenge_answer" name="challenge_answer" required placeholder="{{ t.challenge_placeholder }}" autocomplete="off">
+    <p class="meta">{{ t.challenge_hint }}</p>
+  </div>
+
   <!-- honeypot: hidden from real visitors via CSS, never filled by a human -->
   <div class="field honeypot" aria-hidden="true">
     <label for="website">{{ t.honeypot_label }}</label>

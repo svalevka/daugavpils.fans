@@ -18,6 +18,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 import ai_agent  # noqa: E402
 import audio_validation  # noqa: E402
+import challenge  # noqa: E402
 import db  # noqa: E402
 import i18n  # noqa: E402
 import mail  # noqa: E402
@@ -84,6 +85,10 @@ def create_band_proposal():
 
     if request.form.get("website"):  # honeypot check
         return render_template("submit_add_band_done.html", band_name="", has_release=False, count=0), 201
+
+    if not challenge.verify_challenge(request.form.get("challenge_answer")):
+        logger.warning("Band submission rejected: anti-bot challenge failed for IP %s", ip)
+        abort(400)
 
     band_name = request.form.get("name", "").strip()
     founding_date = request.form.get("founding_date", "").strip() or None

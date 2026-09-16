@@ -19,6 +19,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 import ai_agent  # noqa: E402
 import archive_read  # noqa: E402
 import audio_validation  # noqa: E402
+import challenge  # noqa: E402
 import db  # noqa: E402
 import i18n  # noqa: E402
 import mail  # noqa: E402
@@ -93,6 +94,10 @@ def create_album_proposal():
 
     if request.form.get("website"):  # honeypot check
         return render_template("submit_add_release_done.html", title="", count=0), 201
+
+    if not challenge.verify_challenge(request.form.get("challenge_answer")):
+        logger.warning("Album submission rejected: anti-bot challenge failed for IP %s", ip)
+        abort(400)
 
     band_slug = request.form.get("band_slug", "").strip()
     album_name = request.form.get("name", "").strip()

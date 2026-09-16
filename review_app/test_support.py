@@ -256,6 +256,7 @@ class ReviewAppTestCase(unittest.TestCase):
             "submitter_name": "",
             "submitter_contact": "",
             "website": "",
+            "challenge_answer": "Daugavpils",
         }
         base.update(form)
         base["tracks"] = [(io.BytesIO(data), filename) for filename, data in track_tuples]
@@ -281,6 +282,7 @@ class ReviewAppTestCase(unittest.TestCase):
             "submitter_name": "Fan",
             "submitter_contact": "fan@example.com",
             "website": "",
+            "challenge_answer": "Daugavpils",
         }
         base.update(form)
         if photo_tuple:

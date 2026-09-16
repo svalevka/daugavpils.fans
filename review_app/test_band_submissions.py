@@ -59,6 +59,19 @@ class BandSubmissionFormTest(ReviewAppTestCase):
         self.assertIn('data-msg-preview="Preview track"', html)
         self.assertIn('data-msg-draft-restored="Restored', html)
 
+    def test_form_contains_challenge_question_and_input(self):
+        resp_ru = self.client.get("/submit/add-band")
+        self.assertEqual(resp_ru.status_code, 200)
+        html_ru = resp_ru.get_data(as_text=True)
+        self.assertIn('name="challenge_answer"', html_ru)
+        self.assertIn("какому городу посвящён этот архив?", html_ru)
+
+        resp_en = self.client.get("/submit/add-band?lang=en")
+        self.assertEqual(resp_en.status_code, 200)
+        html_en = resp_en.get_data(as_text=True)
+        self.assertIn('name="challenge_answer"', html_en)
+        self.assertIn("which city is this archive dedicated to?", html_en)
+
 
 class BandSubmissionPostTest(ReviewAppTestCase):
     def test_valid_band_only_submission_creates_pending_proposal(self):
@@ -142,6 +155,18 @@ class BandSubmissionPostTest(ReviewAppTestCase):
     def test_missing_band_name_aborts_400(self):
         resp = self.submit_band(name="")
         self.assertEqual(resp.status_code, 400)
+
+    def test_missing_challenge_answer_aborts_400(self):
+        resp = self.submit_band(name="No Challenge", challenge_answer="")
+        self.assertEqual(resp.status_code, 400)
+
+    def test_incorrect_challenge_answer_aborts_400(self):
+        resp = self.submit_band(name="Spam Band", challenge_answer="random spam 123")
+        self.assertEqual(resp.status_code, 400)
+
+    def test_valid_cyrillic_challenge_answer_accepted(self):
+        resp = self.submit_band(name="Даугава", challenge_answer="Даугавпилс")
+        self.assertEqual(resp.status_code, 201)
 
     def test_existing_band_slug_in_archive_rejected_400(self):
         # self.fx.band_slug exists in checkout
