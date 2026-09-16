@@ -52,6 +52,7 @@ STRINGS = {
         "collaborators": "Коллеги по группам",
         "musicians_directory_title": "Музыканты музыкальной сцены Даугавпилса",
         "musicians_directory_desc": "Музыканты, участники групп и их творческие траектории в андеграунде Даугавпилса.",
+        "support_desc": "Как устроен архив, восстановление данных, резервные копии и принципы долговечности.",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -99,6 +100,7 @@ STRINGS = {
         "collaborators": "Collaborators",
         "musicians_directory_title": "Musicians of the Daugavpils music scene",
         "musicians_directory_desc": "Musicians, band members, and their musical paths across the Daugavpils underground scene.",
+        "support_desc": "How the archive works, data recovery, offsite backups, and durability principles.",
     },
 }
 
@@ -140,4 +142,9 @@ def member_url(lang: str, member_slug: str, base_path: str = "") -> str:
 
 def feed_url(lang: str, base_path: str = "") -> str:
     return f"{base_path}/{lang_prefix(lang)}feed.xml"
+
+
+def support_url(lang: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}support/"
+
 

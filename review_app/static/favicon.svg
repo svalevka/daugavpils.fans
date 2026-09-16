@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Vinyl record base -->
+  <circle cx="16" cy="16" r="15" fill="#111214" stroke="#2c2d30" stroke-width="1"/>
+  
+  <!-- Grooves -->
+  <circle cx="16" cy="16" r="12.5" fill="none" stroke="#242529" stroke-width="0.75"/>
+  <circle cx="16" cy="16" r="10.2" fill="none" stroke="#2b2c31" stroke-width="0.75"/>
+  <circle cx="16" cy="16" r="8.2" fill="none" stroke="#242529" stroke-width="0.75"/>
+
+  <!-- Light sheen / reflections on vinyl surface -->
+  <path d="M 6.5 9.5 L 11 12.5 A 6.5 6.5 0 0 0 16 9.5 A 12.5 12.5 0 0 0 6.5 9.5 Z" fill="#ffffff" opacity="0.07"/>
+  <path d="M 25.5 22.5 L 21 19.5 A 6.5 6.5 0 0 0 16 22.5 A 12.5 12.5 0 0 0 25.5 22.5 Z" fill="#ffffff" opacity="0.07"/>
+
+  <!-- Center golden label -->
+  <circle cx="16" cy="16" r="6" fill="#e2b13c"/>
+  
+  <!-- Subtle ring on center label -->
+  <circle cx="16" cy="16" r="4.2" fill="none" stroke="#c99b2c" stroke-width="0.5"/>
+
+  <!-- Center spindle hole -->
+  <circle cx="16" cy="16" r="2" fill="#111214"/>
+</svg>

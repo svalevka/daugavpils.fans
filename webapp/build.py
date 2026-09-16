@@ -70,6 +70,7 @@ from i18n import (  # noqa: E402
     members_index_url as members_index_url_fn,
     member_url as member_url_fn,
     feed_url as feed_url_fn,
+    support_url as support_url_fn,
     lang_prefix,
 )
 
@@ -670,6 +671,60 @@ def generate_feed_items(
     return items
 
 
+def generate_sitemap(
+    bands: list[MusicGroup],
+    releases_by_band: dict[str, list[MusicAlbum]],
+    musicians_by_slug: dict[str, list[tuple[MusicGroup, object]]],
+    base_path: str = BASE_PATH,
+    site_url: str = SITE_URL,
+    env: Environment | None = None,
+) -> str:
+    """Generate sitemap.xml listing every page in both ru and en languages (GitHub issue #74)."""
+    urls: list[str] = []
+
+    for lang in LANGS:
+        # Home
+        urls.append(f"{site_url}{home_url(lang, base_path)}")
+
+        # Bands and their media/release pages
+        for band in bands:
+            urls.append(f"{site_url}{band_url(lang, band.slug, base_path)}")
+            if needs_media_page(band.image, band.video):
+                urls.append(f"{site_url}{band_media_page_url_fn(lang, band.slug, base_path)}")
+            for release in releases_by_band.get(band.slug, []):
+                urls.append(f"{site_url}{release_url(lang, band.slug, release.slug, base_path)}")
+                if needs_media_page(release.image, release.video):
+                    urls.append(f"{site_url}{release_media_page_url_fn(lang, band.slug, release.slug, base_path)}")
+
+        # Musicians index and individual musician profile pages
+        urls.append(f"{site_url}{members_index_url_fn(lang, base_path)}")
+        for m_slug in sorted(musicians_by_slug.keys()):
+            urls.append(f"{site_url}{member_url_fn(lang, m_slug, base_path)}")
+
+        # Support
+        urls.append(f"{site_url}{support_url_fn(lang, base_path)}")
+
+    if env is not None:
+        tmpl = env.get_template("sitemap.xml")
+        return tmpl.render(urls=urls).strip() + "\n"
+
+    # Standalone rendering fallback
+    xml_lines = [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    for url in urls:
+        xml_lines.append(f"  <url>\n    <loc>{html.escape(url)}</loc>\n  </url>")
+    xml_lines.append("</urlset>\n")
+    return "\n".join(xml_lines)
+
+
+def generate_robots_txt(base_path: str = BASE_PATH, site_url: str = SITE_URL) -> str:
+    """Generate robots.txt referencing sitemap.xml (GitHub issue #74)."""
+    sitemap_url = f"{site_url}{base_path}/sitemap.xml"
+    return f"User-agent: *\nAllow: /\n\nSitemap: {sitemap_url}\n"
+
+
 def build() -> None:
     require_valid_archive()
 
@@ -680,7 +735,7 @@ def build() -> None:
 
     env = Environment(
         loader=FileSystemLoader(str(TEMPLATES_DIR)),
-        autoescape=select_autoescape(["html"]),
+        autoescape=select_autoescape(["html", "xml"]),
     )
     env.filters["duration"] = format_duration
     env.filters["license_label"] = license_label
@@ -939,18 +994,38 @@ def build() -> None:
                 t=STRINGS[lang],
                 lang_prefix=lang_prefix(lang),
                 base_path=BASE_PATH,
-                ru_url=f"{BASE_PATH}/{lang_prefix('ru')}support/",
-                en_url=f"{BASE_PATH}/{lang_prefix('en')}support/",
+                ru_url=support_url_fn("ru", BASE_PATH),
+                en_url=support_url_fn("en", BASE_PATH),
                 home_url=home_url(lang, BASE_PATH),
                 content=render_maintenance_html(lang),
                 og_title=f"{STRINGS[lang]['support_link']} — daugavpils.fans",
-                og_description=STRINGS[lang]["site_tagline"],
+                og_description=STRINGS[lang]["support_desc"],
                 og_image_url=None,
                 og_type="website",
-                canonical_url=f"{SITE_URL}{BASE_PATH}/{lang_prefix(lang)}support/",
+                canonical_url=f"{SITE_URL}{support_url_fn(lang, BASE_PATH)}",
             )
         )
         print(f"  built [{lang}]: /support/ (from {MAINTENANCE_MD[lang].name})")
+
+    sitemap_content = generate_sitemap(
+        bands,
+        releases_by_band,
+        musicians_by_slug,
+        base_path=BASE_PATH,
+        site_url=SITE_URL,
+        env=env,
+    )
+    (DIST_DIR / "sitemap.xml").write_text(sitemap_content)
+    print(f"  built sitemap.xml ({sitemap_content.count('<url>')} URLs)")
+
+    robots_content = generate_robots_txt(base_path=BASE_PATH, site_url=SITE_URL)
+    (DIST_DIR / "robots.txt").write_text(robots_content)
+    print("  built robots.txt")
+
+    if (STATIC_DIR / "favicon.ico").exists():
+        shutil.copy(STATIC_DIR / "favicon.ico", DIST_DIR / "favicon.ico")
+    if (STATIC_DIR / "favicon.svg").exists():
+        shutil.copy(STATIC_DIR / "favicon.svg", DIST_DIR / "favicon.svg")
 
     print(f"\nBuilt site into {DIST_DIR}")
 

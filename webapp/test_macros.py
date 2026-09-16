@@ -113,6 +113,13 @@ class StaticFilesTest(unittest.TestCase):
                 res = subprocess.run(["node", "-c", str(js_file)], capture_output=True, text=True)
                 self.assertEqual(res.returncode, 0, f"{js_file.name} syntax error: {res.stderr}")
 
+    def test_favicon_files_exist(self) -> None:
+        static_dir = Path(__file__).resolve().parent / "static"
+        self.assertTrue((static_dir / "favicon.svg").is_file())
+        self.assertTrue((static_dir / "favicon.ico").is_file())
+        self.assertGreater((static_dir / "favicon.svg").stat().st_size, 0)
+        self.assertGreater((static_dir / "favicon.ico").stat().st_size, 0)
+
 
 class SearchIndexTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -825,6 +832,261 @@ class RSSFeedGenerationTest(unittest.TestCase):
             en_url="/site/en/",
         )
         self.assertIn('<link rel="alternate" type="application/rss+xml" title="Daugavpils music archive" href="/site/en/feed.xml">', html_en)
+
+
+class SiteDiscoveryTest(unittest.TestCase):
+    def setUp(self) -> None:
+        import sys
+
+        repo_root = Path(__file__).resolve().parent.parent
+        sys.path.insert(0, str(repo_root / "tools"))
+        sys.path.insert(0, str(repo_root / "webapp"))
+
+        templates_dir = Path(__file__).resolve().parent / "templates"
+        self.env = Environment(
+            loader=FileSystemLoader(str(templates_dir)),
+            autoescape=select_autoescape(["html", "xml"]),
+        )
+        self.env.filters["duration"] = lambda d: d or ""
+        self.env.filters["license_label"] = lambda l: l or ""
+        self.env.globals["localize"] = lambda obj, field, lang: getattr(obj, field, None)
+        self.env.globals["localize_list"] = lambda obj, field, lang: getattr(obj, field, []) or []
+        self.env.globals["partial"] = lambda fn, *args: (lambda *a, **k: fn(*args, *a, **k))
+        self.env.globals["musician_slug"] = lambda name: "some-slug"
+        self.env.globals["band_media_url"] = lambda band, url: url
+        self.env.globals["release_media_url"] = lambda band, release, url: url
+
+    def test_base_template_favicon_and_meta_description(self) -> None:
+        from i18n import STRINGS
+
+        tmpl = self.env.get_template("base.html")
+        # Root-relative
+        html_default = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/",
+            en_url="/en/",
+            og_description="Custom description test",
+        )
+        self.assertIn('<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">', html_default)
+        self.assertIn('<link rel="alternate icon" href="/static/favicon.ico">', html_default)
+        self.assertIn('<meta name="description" content="Custom description test">', html_default)
+
+        # With base_path
+        html_prefixed = tmpl.render(
+            lang="en",
+            t=STRINGS["en"],
+            lang_prefix="en/",
+            base_path="/subpath",
+            home_url="/subpath/en/",
+            ru_url="/subpath/",
+            en_url="/subpath/en/",
+            og_description="Custom description test",
+        )
+        self.assertIn('<link rel="icon" href="/subpath/static/favicon.svg" type="image/svg+xml">', html_prefixed)
+        self.assertIn('<link rel="alternate icon" href="/subpath/static/favicon.ico">', html_prefixed)
+
+    def test_page_meta_descriptions(self) -> None:
+        from i18n import STRINGS
+        from models import MusicGroup, MusicAlbum
+
+        # index.html
+        index_tmpl = self.env.get_template("index.html")
+        index_html = index_tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/",
+            en_url="/en/",
+            bands=[],
+            og_description=STRINGS["ru"]["site_tagline"],
+        )
+        self.assertIn(f'<meta name="description" content="{STRINGS["ru"]["site_tagline"]}">', index_html)
+
+        # band.html
+        band_tmpl = self.env.get_template("band.html")
+        band = MusicGroup(name="Test Band", slug="test-band", description="Test band bio.")
+        band_html = band_tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/bands/test-band/",
+            en_url="/en/bands/test-band/",
+            band=band,
+            releases=[],
+            jsonld="{}",
+            visible_same_as=[],
+            photo_teaser_limit=6,
+            video_teaser_limit=2,
+            media_page_url=None,
+            og_description="Test band bio.",
+        )
+        self.assertIn('<meta name="description" content="Test band bio.">', band_html)
+
+        # release.html
+        release_tmpl = self.env.get_template("release.html")
+        release = MusicAlbum(
+            name="Test Album",
+            slug="test-album",
+            datePublished="2000",
+            byArtist="test-band",
+            description="Test release bio.",
+            track=[],
+        )
+        release_html = release_tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/bands/test-band/test-album/",
+            en_url="/en/bands/test-band/test-album/",
+            band=band,
+            release=release,
+            jsonld="{}",
+            visible_same_as=[],
+            photo_teaser_limit=6,
+            video_teaser_limit=2,
+            media_page_url=None,
+            torrent_url=None,
+            zip_url=None,
+            og_description="Test release bio.",
+        )
+        self.assertIn('<meta name="description" content="Test release bio.">', release_html)
+
+        # support.html
+        support_tmpl = self.env.get_template("support.html")
+        support_html = support_tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/support/",
+            en_url="/en/support/",
+            content="<p>Maintenance</p>",
+            og_description=STRINGS["ru"]["support_desc"],
+        )
+        self.assertIn(f'<meta name="description" content="{STRINGS["ru"]["support_desc"]}">', support_html)
+
+    def test_generate_robots_txt(self) -> None:
+        from build import generate_robots_txt
+
+        # Root-relative (default)
+        robots_default = generate_robots_txt(base_path="", site_url="https://daugavpils.fans")
+        self.assertEqual(
+            robots_default,
+            "User-agent: *\nAllow: /\n\nSitemap: https://daugavpils.fans/sitemap.xml\n",
+        )
+
+        # Path-prefixed
+        robots_prefixed = generate_robots_txt(base_path="/daugavpils.fans", site_url="https://svalevka.github.io")
+        self.assertEqual(
+            robots_prefixed,
+            "User-agent: *\nAllow: /\n\nSitemap: https://svalevka.github.io/daugavpils.fans/sitemap.xml\n",
+        )
+
+    def test_generate_sitemap(self) -> None:
+        import xml.etree.ElementTree as ET
+        from build import generate_sitemap
+        from models import MusicGroup, MusicAlbum, ImageObject
+
+        band1 = MusicGroup(
+            name="Band One",
+            slug="band-one",
+            image=[ImageObject(contentUrl="photo1.jpg", encodingFormat="image/jpeg")] * 7,  # triggers needs_media_page (>6)
+        )
+        band2 = MusicGroup(
+            name="Band Two",
+            slug="band-two",
+        )
+        rel1 = MusicAlbum(
+            name="Album One",
+            slug="album-one",
+            datePublished="2000",
+            byArtist="band-one",
+            track=[],
+            image=[ImageObject(contentUrl="rel_photo1.jpg", encodingFormat="image/jpeg")] * 7,  # triggers needs_media_page (>6)
+        )
+        rel2 = MusicAlbum(
+            name="Album Two",
+            slug="album-two",
+            datePublished="2002",
+            byArtist="band-two",
+            track=[],
+        )
+
+        bands = [band1, band2]
+        releases_by_band = {
+            "band-one": [rel1],
+            "band-two": [rel2],
+        }
+        musicians_by_slug = {
+            "john-doe": [(band1, None)],
+        }
+
+        # Test default
+        sitemap_xml = generate_sitemap(
+            bands,
+            releases_by_band,
+            musicians_by_slug,
+            base_path="",
+            site_url="https://daugavpils.fans",
+            env=self.env,
+        )
+        root = ET.fromstring(sitemap_xml)
+        self.assertEqual(root.tag, "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset")
+
+        ns = {"ns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        locs = [elem.text for elem in root.findall("ns:url/ns:loc", ns)]
+
+        # Expected URLs (both ru and en)
+        self.assertIn("https://daugavpils.fans/", locs)
+        self.assertIn("https://daugavpils.fans/en/", locs)
+        self.assertIn("https://daugavpils.fans/bands/band-one/", locs)
+        self.assertIn("https://daugavpils.fans/en/bands/band-one/", locs)
+        self.assertIn("https://daugavpils.fans/bands/band-one/media/", locs)
+        self.assertIn("https://daugavpils.fans/en/bands/band-one/media/", locs)
+        self.assertIn("https://daugavpils.fans/bands/band-one/album-one/", locs)
+        self.assertIn("https://daugavpils.fans/en/bands/band-one/album-one/", locs)
+        self.assertIn("https://daugavpils.fans/bands/band-one/album-one/media/", locs)
+        self.assertIn("https://daugavpils.fans/en/bands/band-one/album-one/media/", locs)
+        self.assertIn("https://daugavpils.fans/bands/band-two/", locs)
+        # band-two has no media page
+        self.assertNotIn("https://daugavpils.fans/bands/band-two/media/", locs)
+        # members
+        self.assertIn("https://daugavpils.fans/members/", locs)
+        self.assertIn("https://daugavpils.fans/en/members/", locs)
+        self.assertIn("https://daugavpils.fans/members/john-doe/", locs)
+        self.assertIn("https://daugavpils.fans/en/members/john-doe/", locs)
+        # support
+        self.assertIn("https://daugavpils.fans/support/", locs)
+        self.assertIn("https://daugavpils.fans/en/support/", locs)
+
+        # Test with SITE_BASE_PATH
+        sitemap_prefixed = generate_sitemap(
+            bands,
+            releases_by_band,
+            musicians_by_slug,
+            base_path="/daugavpils.fans",
+            site_url="https://svalevka.github.io",
+            env=self.env,
+        )
+        root_prefixed = ET.fromstring(sitemap_prefixed)
+        locs_prefixed = [elem.text for elem in root_prefixed.findall("ns:url/ns:loc", ns)]
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/en/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/bands/band-one/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/en/bands/band-one/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/support/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/en/support/", locs_prefixed)
 
 
 if __name__ == "__main__":
