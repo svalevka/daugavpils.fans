@@ -833,14 +833,35 @@ def album_cover_file(proposal_id: int):
     return send_file(path)
 
 
+AUDIO_MIMETYPES = {
+    ".mp3": "audio/mpeg",
+    ".flac": "audio/flac",
+    ".wav": "audio/wav",
+    ".ogg": "audio/ogg",
+    ".oga": "audio/ogg",
+    ".m4a": "audio/mp4",
+    ".mp4": "audio/mp4",
+    ".aac": "audio/aac",
+}
+
+
+def _resolve_audio_mimetype(content_type: str | None, path: Path) -> str:
+    if content_type and content_type.startswith("audio/"):
+        return content_type
+    return AUDIO_MIMETYPES.get(path.suffix.lower(), "audio/mpeg")
+
+
+@bp.get("/dashboard/proposals/album/<int:proposal_id>/track/<int:position>/audio")
 @bp.get("/album-proposals/<int:proposal_id>/tracks/<int:position>/file")
 @require_approver
 def album_track_audio_file(proposal_id: int, position: int):
     conn = db.get_connection()
     row = conn.execute(
-        "SELECT tracks_json FROM album_proposals WHERE id = ?", (proposal_id,)
+        "SELECT status, tracks_json FROM album_proposals WHERE id = ?", (proposal_id,)
     ).fetchone()
     if row is None or not row["tracks_json"]:
+        abort(404)
+    if row["status"] in ("published", "applied", "rejected", "purged"):
         abort(404)
     tracks = json.loads(row["tracks_json"])
     track = next((t for t in tracks if t.get("position") == position), None)
@@ -849,7 +870,14 @@ def album_track_audio_file(proposal_id: int, position: int):
     path = _media_file_path(track["stored_filename"])
     if not path.exists():
         abort(404)
-    return send_file(path, mimetype=track.get("content_type", "audio/mpeg"))
+    mimetype = _resolve_audio_mimetype(track.get("content_type"), path)
+    return send_file(
+        path,
+        mimetype=mimetype,
+        conditional=True,
+        as_attachment=False,
+        download_name=track.get("original_filename") or path.name,
+    )
 
 
 def _decide_band(
@@ -1119,14 +1147,17 @@ def band_release_cover_file(proposal_id: int):
     return send_file(path)
 
 
+@bp.get("/dashboard/proposals/band/<int:proposal_id>/track/<int:position>/audio")
 @bp.get("/band-proposals/<int:proposal_id>/tracks/<int:position>/file")
 @require_approver
 def band_release_track_audio_file(proposal_id: int, position: int):
     conn = db.get_connection()
     row = conn.execute(
-        "SELECT release_tracks_json FROM band_proposals WHERE id = ?", (proposal_id,)
+        "SELECT status, release_tracks_json FROM band_proposals WHERE id = ?", (proposal_id,)
     ).fetchone()
     if row is None or not row["release_tracks_json"]:
+        abort(404)
+    if row["status"] in ("published", "applied", "rejected", "purged"):
         abort(404)
     tracks = json.loads(row["release_tracks_json"])
     track = next((t for t in tracks if t.get("position") == position), None)
@@ -1135,7 +1166,14 @@ def band_release_track_audio_file(proposal_id: int, position: int):
     path = _media_file_path(track["stored_filename"])
     if not path.exists():
         abort(404)
-    return send_file(path, mimetype=track.get("content_type", "audio/mpeg"))
+    mimetype = _resolve_audio_mimetype(track.get("content_type"), path)
+    return send_file(
+        path,
+        mimetype=mimetype,
+        conditional=True,
+        as_attachment=False,
+        download_name=track.get("original_filename") or path.name,
+    )
 
 
 @bp.get("/dashboard/history")

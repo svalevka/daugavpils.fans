@@ -8,10 +8,11 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from test_support import ReviewAppTestCase  # noqa: E402
+from test_support import MP3_BYTES, ReviewAppTestCase  # noqa: E402
 
 
 class UnauthenticatedAccessTest(ReviewAppTestCase):
@@ -314,6 +315,140 @@ class ProposalDecisionNotificationTest(ReviewAppTestCase):
         row2 = self.fetch_band_proposals()[-1]
         self.assertEqual(row2["status"], "rejected")
         self.assertEqual(row2["review_notes"], "insufficient connection to Daugavpils scene")
+
+
+MOCK_PROBE_RESULT = {
+    "duration_iso": "PT3M15S",
+    "duration_seconds": 195.0,
+    "bitrate": "320 kbps",
+    "tags": {"title": "Track Title"},
+    "ai_flags": [],
+}
+
+
+class AlbumTrackAudioAuditionTest(ReviewAppTestCase):
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_anonymous_visitor_redirected_to_login(self, _mock_probe):
+        self.submit_album()
+        proposal_id = self.fetch_album_proposals()[0]["id"]
+
+        resp = self.client.get(f"/dashboard/proposals/album/{proposal_id}/track/1/audio")
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn("/login", resp.headers["Location"])
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_inactive_approver_cannot_stream_audio(self, _mock_probe):
+        self.submit_album()
+        proposal_id = self.fetch_album_proposals()[0]["id"]
+        inactive_id = self.seed_approver("inactive@example.com", is_active=False)
+        self.login_as(inactive_id)
+
+        resp = self.client.get(f"/dashboard/proposals/album/{proposal_id}/track/1/audio")
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn("/login", resp.headers["Location"])
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_approver_can_stream_audio_and_dashboard_renders_player(self, _mock_probe):
+        self.submit_album(name="Audition Album", track_tuples=[("01-song.mp3", MP3_BYTES)])
+        proposal_id = self.fetch_album_proposals()[0]["id"]
+        approver_id = self.seed_approver("curator@example.com")
+        self.login_as(approver_id)
+
+        # Check dashboard template embedding
+        dash_resp = self.client.get("/dashboard")
+        self.assertEqual(dash_resp.status_code, 200)
+        self.assertIn(f"/dashboard/proposals/album/{proposal_id}/track/1/audio", dash_resp.get_data(as_text=True))
+
+        # Check streaming endpoint (full file)
+        resp = self.client.get(f"/dashboard/proposals/album/{proposal_id}/track/1/audio")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.headers["Content-Type"], "audio/mpeg")
+        self.assertEqual(resp.headers.get("Accept-Ranges"), "bytes")
+        self.assertEqual(resp.data, MP3_BYTES)
+
+        # Check legacy / file route alias
+        alias_resp = self.client.get(f"/album-proposals/{proposal_id}/tracks/1/file")
+        self.assertEqual(alias_resp.status_code, 200)
+        self.assertEqual(alias_resp.data, MP3_BYTES)
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_range_request_seeking_support(self, _mock_probe):
+        self.submit_album(track_tuples=[("01-song.mp3", MP3_BYTES)])
+        proposal_id = self.fetch_album_proposals()[0]["id"]
+        approver_id = self.seed_approver("curator@example.com")
+        self.login_as(approver_id)
+
+        resp = self.client.get(
+            f"/dashboard/proposals/album/{proposal_id}/track/1/audio",
+            headers={"Range": "bytes=0-9"},
+        )
+        self.assertEqual(resp.status_code, 206)
+        self.assertEqual(resp.data, MP3_BYTES[:10])
+        self.assertIn(f"bytes 0-9/{len(MP3_BYTES)}", resp.headers.get("Content-Range", ""))
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_multiple_audio_containers_mimetypes(self, _mock_probe):
+        track_tuples = [
+            ("01.flac", b"fLaC" + b"\x00" * 32),
+            ("02.wav", b"RIFF\x00\x00\x00\x00WAVE" + b"\x00" * 32),
+            ("03.ogg", b"OggS" + b"\x00" * 32),
+            ("04.m4a", b"\x00\x00\x00\x1cftypM4A \x00\x00\x00\x00" + b"\x00" * 32),
+        ]
+        self.submit_album(name="Multi Container", track_tuples=track_tuples)
+        proposal_id = self.fetch_album_proposals()[0]["id"]
+        approver_id = self.seed_approver("curator@example.com")
+        self.login_as(approver_id)
+
+        expected_mimetypes = [
+            "audio/flac",
+            "audio/wav",
+            "audio/ogg",
+            "audio/mp4",
+        ]
+        for pos, expected_type in enumerate(expected_mimetypes, start=1):
+            resp = self.client.get(f"/dashboard/proposals/album/{proposal_id}/track/{pos}/audio")
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(resp.headers["Content-Type"], expected_type)
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_streaming_disabled_for_rejected_published_or_invalid_proposals(self, _mock_probe):
+        self.submit_album(track_tuples=[("01-song.mp3", MP3_BYTES)])
+        proposal_id = self.fetch_album_proposals()[0]["id"]
+        approver_id = self.seed_approver("curator@example.com")
+        self.login_as(approver_id)
+
+        # Invalid track position -> 404
+        resp = self.client.get(f"/dashboard/proposals/album/{proposal_id}/track/999/audio")
+        self.assertEqual(resp.status_code, 404)
+
+        # Missing proposal -> 404
+        resp = self.client.get("/dashboard/proposals/album/99999/track/1/audio")
+        self.assertEqual(resp.status_code, 404)
+
+        # Reject proposal
+        self.client.post(f"/album-proposals/{proposal_id}/reject", data={"reason": "Rejected"})
+
+        # Streaming should now be disabled (404)
+        resp = self.client.get(f"/dashboard/proposals/album/{proposal_id}/track/1/audio")
+        self.assertEqual(resp.status_code, 404)
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_band_release_track_audio_streaming(self, _mock_probe):
+        self.submit_band(name="Band Release", track_tuples=[("01-song.mp3", MP3_BYTES)])
+        proposal_id = self.fetch_band_proposals()[0]["id"]
+        approver_id = self.seed_approver("curator@example.com")
+        self.login_as(approver_id)
+
+        # Check dashboard template embedding
+        dash_resp = self.client.get("/dashboard")
+        self.assertEqual(dash_resp.status_code, 200)
+        self.assertIn(f"/dashboard/proposals/band/{proposal_id}/track/1/audio", dash_resp.get_data(as_text=True))
+
+        # Check band streaming endpoint
+        resp = self.client.get(f"/dashboard/proposals/band/{proposal_id}/track/1/audio")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.headers["Content-Type"], "audio/mpeg")
+        self.assertEqual(resp.data, MP3_BYTES)
 
 
 if __name__ == "__main__":
