@@ -129,7 +129,7 @@
             <form method="post" action="/admin/users/{{ u.id }}/toggle-active" style="margin: 0;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               {% if u.is_active %}
-              <button type="submit" class="button-secondary button-small button-danger" onclick="return confirm('Deactivate {{ u.email }}? They will lose access immediately.');">Deactivate</button>
+              <button type="submit" class="button-secondary button-small button-danger" data-confirm="Deactivate {{ u.email }}? They will lose access immediately.">Deactivate</button>
               {% else %}
               <button type="submit" class="button-secondary button-small">Reactivate</button>
               {% endif %}
@@ -142,4 +142,8 @@
     </table>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='admin_users.js') }}"></script>
 {% endblock %}
