@@ -77,6 +77,12 @@
     {% if m.youtube_channel %} — {{ m.youtube_channel }}{% endif %}
     {% if m.youtube_duration_seconds %} — {{ (m.youtube_duration_seconds // 60) }}:{{ "%02d" | format(m.youtube_duration_seconds % 60) }}{% endif %}</p>
   {% endif %}
+  {% if m.duplicate_match %}
+  <p class="note" style="color: #bf8700;"><strong>Possible duplicate:</strong> existing video
+    "<a href="{{ m.duplicate_match.url }}" target="_blank" rel="noopener">{{ m.duplicate_match.name }}</a>"
+    ({{ (m.duplicate_match.duration_seconds // 60) }}:{{ "%02d" | format(m.duplicate_match.duration_seconds % 60) }})
+    has nearly the same duration - check before approving.</p>
+  {% endif %}
   {% if m.submitter_name or m.submitter_contact %}
   <p class="meta">Submitted by {{ m.submitter_name or "(no name given)" }}{% if m.submitter_contact %} &lt;{{ m.submitter_contact }}&gt;{% endif %}</p>
   {% endif %}
@@ -141,6 +147,12 @@
   {% if m.status == 'approved' and is_youtube_video_throttled %}
   <p class="note">YouTube video publishing is throttled to 3 per rolling 24 hours - this will upload automatically once quota frees up.</p>
   {% endif %}
+  {% endif %}
+  {% if m.duplicate_match %}
+  <p class="note" style="color: #bf8700;"><strong>Possible duplicate:</strong> existing video
+    "<a href="{{ m.duplicate_match.url }}" target="_blank" rel="noopener">{{ m.duplicate_match.name }}</a>"
+    ({{ (m.duplicate_match.duration_seconds // 60) }}:{{ "%02d" | format(m.duplicate_match.duration_seconds % 60) }})
+    has nearly the same duration - double-check before uploading.</p>
   {% endif %}
   {% if m.submitter_name or m.submitter_contact %}
   <p class="meta">Submitted by {{ m.submitter_name or "(no name given)" }}{% if m.submitter_contact %} &lt;{{ m.submitter_contact }}&gt;{% endif %}</p>

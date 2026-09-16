@@ -28,6 +28,7 @@ from flask import Flask
 import archive_read
 import audio_validation
 import db
+import duplicate_detection
 import github_dispatch
 import mail
 import roles
@@ -606,6 +607,31 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
                     confidence=0.0,
                     reasoning=f"AI evaluation error: {exc}",
                     spam_or_vandalism=False,
+                )
+
+        # Hard rule, not just AI context (see GitHub issue #51): a
+        # duration match forces escalation regardless of what the AI
+        # itself concluded - this is exactly the judgment call the AI
+        # already got wrong once (auto-approved a re-upload of an
+        # existing video at 88% confidence) with less information than
+        # it has now. A coincidental false-positive costs a human a few
+        # seconds to clear; a missed duplicate is a permanent archive
+        # error.
+        if proposal_dict.get("media_type") == "video":
+            duplicate_match = duplicate_detection.find_duplicate_video(
+                checkout, proposal_dict["band_slug"], proposal_dict.get("youtube_duration_seconds")
+            )
+            if duplicate_match is not None:
+                result = EvaluationResult(
+                    decision="escalate",
+                    confidence=result.confidence,
+                    reasoning=(
+                        f"Possible duplicate: an existing video '{duplicate_match.name}' "
+                        f"({duplicate_match.duration_seconds}s) is within "
+                        f"{duplicate_detection.DURATION_TOLERANCE_SECONDS}s of this submission's duration. "
+                        f"{duplicate_match.url}\n\nOriginal AI reasoning: {result.reasoning}"
+                    ),
+                    spam_or_vandalism=result.spam_or_vandalism,
                 )
 
         should_auto_approve = (

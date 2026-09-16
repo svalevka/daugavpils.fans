@@ -11,11 +11,16 @@ Covers:
 from __future__ import annotations
 
 import json
+import sys
+from pathlib import Path
 from unittest import mock
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 
 import ai_agent
 from config import AiConfig
 from test_support import JPEG_BYTES, ReviewAppTestCase
+from validate import dump_yaml, load_yaml
 
 
 class AiAgentParsingTest(ReviewAppTestCase):
@@ -368,6 +373,93 @@ class AiAgentYoutubeThrottleTest(ReviewAppTestCase):
         row = self.fetch_media_proposals()[-1]
         self.assertEqual(row["status"], "approved")
         self.mock_ai_trigger_media.assert_not_called()
+
+
+class AiAgentDuplicateVideoTest(ReviewAppTestCase):
+    """The duration-based duplicate-video hard rule (see GitHub issue
+    #51): forces escalation regardless of what the AI itself concludes,
+    when an existing video for the band is within the tolerance."""
+
+    def setUp(self):
+        super().setUp()
+        self.mock_ai_trigger_media = self._patch("ai_agent.github_dispatch.trigger_media_apply")
+        self.mock_ai_api = self._patch("ai_agent.call_ai_api")
+        self._patch("ai_agent.mail.send_ai_escalation_notification")
+        self._patch("ai_agent.mail.send_media_approved_notification")
+        self.app.config["AI_SYNC_EVALUATION"] = True
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+        # High-confidence approve, exactly like the real incident - the
+        # duplicate rule must override this, not just add context to it.
+        self.mock_ai_api.return_value = json.dumps(
+            {"decision": "approve", "confidence": 0.88, "reasoning": "Looks legitimate.", "spam_or_vandalism": False}
+        )
+
+    def _seed_existing_band_video(self, duration_iso: str = "PT2M25S"):
+        band_yaml = self.config.archive_checkout_path / "bands" / self.fx.band_slug / "band.yaml"
+        data = load_yaml(band_yaml)
+        data.setdefault("video", []).append(
+            {
+                "@type": "VideoObject",
+                "contentUrl": "media/existing.mp4",
+                "encodingFormat": "video/mp4",
+                "identifier": [{"@type": "PropertyValue", "propertyID": "sha256", "value": "a" * 64}],
+                "name": "Existing concert video",
+                "duration": duration_iso,
+            }
+        )
+        dump_yaml(band_yaml, data)
+
+    def _insert_pending_youtube_video(self, duration_seconds: int) -> int:
+        import sqlite3
+
+        conn = sqlite3.connect(self.database_path)
+        cur = conn.execute(
+            """
+            INSERT INTO media_proposals (
+                band_slug, media_type, original_filename, stored_filename, content_type,
+                size_bytes, submitter_ip, status, source_type, source_url, youtube_duration_seconds
+            ) VALUES (?, 'video', 'x', 'x', 'video/mp4', 1, '127.0.0.1', 'pending', 'youtube',
+                      'https://youtu.be/x', ?)
+            """,
+            (self.fx.band_slug, duration_seconds),
+        )
+        conn.commit()
+        proposal_id = cur.lastrowid
+        conn.close()
+        return proposal_id
+
+    def test_matching_duration_forces_escalation_over_ai_approval(self):
+        self._seed_existing_band_video("PT2M25S")  # 145s
+        proposal_id = self._insert_pending_youtube_video(145)
+
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "pending")
+        self.assertEqual(row["ai_decision"], "escalate")
+        self.assertIn("Possible duplicate", row["ai_reasoning"])
+        self.assertIn("Existing concert video", row["ai_reasoning"])
+        self.mock_ai_trigger_media.assert_not_called()
+
+    def test_non_matching_duration_still_auto_approves(self):
+        self._seed_existing_band_video("PT2M25S")  # 145s
+        proposal_id = self._insert_pending_youtube_video(900)  # far outside tolerance
+
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "publishing")
+        self.assertEqual(row["ai_decision"], "approved")
+        self.mock_ai_trigger_media.assert_called_once()
+
+    def test_no_existing_video_auto_approves_as_normal(self):
+        proposal_id = self._insert_pending_youtube_video(145)
+
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[0]
+        self.assertEqual(row["status"], "publishing")
+        self.mock_ai_trigger_media.assert_called_once()
 
 
 class AiAgentMediaProposalTest(ReviewAppTestCase):

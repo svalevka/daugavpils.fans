@@ -24,6 +24,7 @@ from flask import Blueprint, abort, current_app, g, redirect, render_template, r
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
+import duplicate_detection  # noqa: E402
 import github_dispatch  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
@@ -157,9 +158,18 @@ def view_pending():
     media_rows = conn.execute(
         "SELECT * FROM media_proposals WHERE status IN ('pending', 'approved', 'publishing', 'publish_failed') ORDER BY created_at"
     ).fetchall()
+    checkout = current_app.config["ARCHIVE_CHECKOUT_PATH"]
     media_pending = []
     media_awaiting_publish = []
     for row in media_rows:
+        duplicate_match = None
+        if row["media_type"] == "video":
+            candidate_duration = (
+                row["youtube_duration_seconds"] if "youtube_duration_seconds" in row.keys() else None
+            )
+            duplicate_match = duplicate_detection.find_duplicate_video(
+                checkout, row["band_slug"], candidate_duration
+            )
         item = {
             "id": row["id"],
             "band_slug": row["band_slug"],
@@ -185,6 +195,7 @@ def view_pending():
             "youtube_duration_seconds": (
                 row["youtube_duration_seconds"] if "youtube_duration_seconds" in row.keys() else None
             ),
+            "duplicate_match": duplicate_match,
         }
         (media_pending if row["status"] == "pending" else media_awaiting_publish).append(item)
 
