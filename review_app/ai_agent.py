@@ -18,6 +18,7 @@ import logging
 import os
 import re
 import threading
+import urllib.parse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -182,6 +183,299 @@ def detect_prompt_injection(text: str) -> str | None:
     for pattern, rule_name in PROMPT_INJECTION_PATTERNS:
         if pattern.search(text):
             return rule_name
+    return None
+
+
+# Verified domains allowlist for external links (GitHub issue #68)
+ALLOWED_URL_DOMAINS: frozenset[str] = frozenset({
+    "bandcamp.com",
+    "youtube.com",
+    "youtu.be",
+    "vk.com",
+    "vkontakte.ru",
+    "soundcloud.com",
+    "discogs.com",
+    "last.fm",
+    "wikipedia.org",
+    "archive.org",
+    "daugavpils.fans",
+})
+
+# Field character length ceilings
+FIELD_LENGTH_CEILINGS: dict[str, int] = {
+    # Biographies / history / notes
+    "description": 5000,
+    "description_en": 5000,
+    "biography": 5000,
+    "band_history": 5000,
+    "liner_notes": 5000,
+    "history": 5000,
+    # Captions
+    "caption": 1000,
+    "caption_en": 1000,
+    # Names and titles
+    "name": 100,
+    "name_en": 100,
+    "band_name": 200,
+    "release_title": 200,
+    "title": 200,
+    "alternateName": 200,
+    "track_title": 200,
+    # Member specifics
+    "role": 100,
+    "role_en": 100,
+    "period": 50,
+    # Genres & tags
+    "genre": 50,
+    "genres": 50,
+    # Locations
+    "location": 200,
+    "contentLocation": 200,
+    # Credits & depicts
+    "creditText": 200,
+    "creditText_en": 200,
+    "depicts": 100,
+    # Submitter metadata
+    "submitter_name": 100,
+    "submitter_contact": 200,
+    "original_filename": 200,
+    "release_year": 10,
+}
+DEFAULT_FIELD_LENGTH_CEILING = 5000
+
+INVISIBLE_OR_OVERRIDE_CHARS: dict[str, str] = {
+    "\u200b": "zero-width space (U+200B)",
+    "\u200c": "zero-width non-joiner (U+200C)",
+    "\u200d": "zero-width joiner (U+200D)",
+    "\ufeff": "zero-width no-break space (U+FEFF)",
+    "\u202e": "right-to-left override (U+202E)",
+    "\u202d": "left-to-right override (U+202D)",
+    "\u202a": "left-to-right embedding (U+202A)",
+    "\u202b": "right-to-left embedding (U+202B)",
+    "\u202c": "pop directional formatting (U+202C)",
+    "\u2066": "left-to-right isolate (U+2066)",
+    "\u2067": "right-to-left isolate (U+2067)",
+    "\u2068": "first strong isolate (U+2068)",
+    "\u2069": "pop directional isolate (U+2069)",
+}
+
+LATIN_SCRIPT_RE = re.compile(r"[a-zA-Z\u00C0-\u024F]")
+CYRILLIC_SCRIPT_RE = re.compile(r"[\u0400-\u04FF\u0500-\u052F]")
+URL_PATTERN = re.compile(r"(?:https?://|www\.)[^\s\"'<>]+", re.IGNORECASE)
+
+
+def check_invisible_or_override_chars(text: str) -> str | None:
+    """Detects invisible zero-width spaces, directional overrides, or isolate control characters."""
+    if not text:
+        return None
+    for ch, name in INVISIBLE_OR_OVERRIDE_CHARS.items():
+        if ch in text:
+            return f"Suspicious Unicode control character detected: {name}"
+    return None
+
+
+def find_mixed_script_homoglyph(text: str) -> str | None:
+    """Detects tokens that suspiciously mix Cyrillic and Latin alphabetic characters."""
+    if not text:
+        return None
+    # Strip URLs and email addresses before tokenizing
+    text_clean = URL_PATTERN.sub(" ", text)
+    text_clean = re.sub(r"[\w.+-]+@[\w-]+\.[\w.-]+", " ", text_clean)
+    for word in text_clean.split():
+        word_clean = word.strip(".,;:!?\"'`()[]{}<>«»„“—–\x27")
+        subtokens = re.split(r"[-_/\\#@*~|]", word_clean)
+        for tok in subtokens:
+            letters = re.sub(r"[\d\W]", "", tok)
+            if (
+                len(letters) >= 2
+                and LATIN_SCRIPT_RE.search(letters)
+                and CYRILLIC_SCRIPT_RE.search(letters)
+            ):
+                return tok
+    return None
+
+
+def is_allowed_url_domain(hostname: str) -> bool:
+    """Returns True if the hostname matches or is a subdomain of an allowed domain."""
+    h = (hostname or "").lower()
+    for allowed in ALLOWED_URL_DOMAINS:
+        if h == allowed or h.endswith("." + allowed):
+            return True
+    return False
+
+
+def check_urls_allowlist(text: str) -> str | None:
+    """Checks all URLs found in text against the verified domain allowlist."""
+    if not text:
+        return None
+    for match in URL_PATTERN.finditer(text):
+        raw_url = match.group(0).rstrip(".,;:!?)]}«»\"'")
+        url_to_parse = ("http://" + raw_url) if raw_url.startswith("www.") else raw_url
+        try:
+            parsed = urllib.parse.urlparse(url_to_parse)
+            hostname = (parsed.hostname or "").lower()
+        except Exception:
+            return f"Malformed URL detected: {raw_url}"
+        if not hostname:
+            return f"Malformed URL detected: {raw_url}"
+        if not is_allowed_url_domain(hostname):
+            return f"Unknown external URL domain: {hostname}"
+    return None
+
+
+def check_field_bounds_and_content(field_name: str, value: Any) -> str | None:
+    """Validates length ceilings, invisible chars, homoglyphs, and URL allowlist for a field."""
+    if value is None:
+        return None
+
+    if isinstance(value, str):
+        limit = FIELD_LENGTH_CEILINGS.get(field_name, DEFAULT_FIELD_LENGTH_CEILING)
+        if len(value) > limit:
+            return f"Field '{field_name}' exceeds maximum length of {limit} characters ({len(value)} characters)"
+        inv = check_invisible_or_override_chars(value)
+        if inv:
+            return inv
+        homo = find_mixed_script_homoglyph(value)
+        if homo:
+            return f"Suspicious mixed-script homoglyph detected: '{homo}'"
+        url_err = check_urls_allowlist(value)
+        if url_err:
+            return url_err
+    elif isinstance(value, list):
+        limit = FIELD_LENGTH_CEILINGS.get(field_name, DEFAULT_FIELD_LENGTH_CEILING)
+        for item in value:
+            err = check_field_bounds_and_content(field_name, item)
+            if err:
+                return err
+    elif isinstance(value, dict):
+        for k, v in value.items():
+            err = check_field_bounds_and_content(k, v)
+            if err:
+                return err
+    return None
+
+
+def check_deterministic_text_proposal(proposal_dict: dict[str, Any]) -> str | None:
+    """Validates structural constraints, bounds, Unicode, and URLs for a text proposal."""
+    for meta_field in ("submitter_name", "submitter_contact"):
+        val = proposal_dict.get(meta_field)
+        if val:
+            err = check_field_bounds_and_content(meta_field, val)
+            if err:
+                return err
+
+    target = proposal_dict.get("target") or "band"
+    field = proposal_dict.get("field") or "description"
+    proposed_val = proposal_dict.get("proposed_value")
+
+    if target == "new_member" and isinstance(proposed_val, dict):
+        for k, v in proposed_val.items():
+            err = check_field_bounds_and_content(k, v)
+            if err:
+                return err
+        return None
+
+    return check_field_bounds_and_content(field, proposed_val)
+
+
+def check_deterministic_media_proposal(proposal_dict: dict[str, Any]) -> str | None:
+    """Validates structural constraints, bounds, Unicode, and URLs for a media proposal."""
+    for fld in ("caption", "original_filename", "submitter_name", "submitter_contact"):
+        val = proposal_dict.get(fld)
+        if val:
+            err = check_field_bounds_and_content(fld, val)
+            if err:
+                return err
+    return None
+
+
+def check_deterministic_album_proposal(proposal_dict: dict[str, Any]) -> str | None:
+    """Validates structural constraints, bounds, Unicode, and URLs for an album proposal."""
+    for fld in (
+        "release_title",
+        "name",
+        "release_year",
+        "year",
+        "description",
+        "description_en",
+        "submitter_name",
+        "submitter_contact",
+    ):
+        val = proposal_dict.get(fld)
+        if val:
+            field_name = "release_title" if fld == "name" else ("release_year" if fld == "year" else fld)
+            err = check_field_bounds_and_content(field_name, val)
+            if err:
+                return err
+    tracks = proposal_dict.get("tracklist") or proposal_dict.get("tracks") or []
+    for t in tracks:
+        if isinstance(t, dict):
+            title = t.get("title") or t.get("name")
+            if title:
+                err = check_field_bounds_and_content("track_title", title)
+                if err:
+                    return err
+    return None
+
+
+def check_deterministic_band_proposal(proposal_dict: dict[str, Any]) -> str | None:
+    """Validates structural constraints, bounds, Unicode, and URLs for a band proposal."""
+    for fld in (
+        "band_name",
+        "name",
+        "location",
+        "biography",
+        "description",
+        "description_en",
+        "band_history",
+        "submitter_name",
+        "submitter_contact",
+    ):
+        val = proposal_dict.get(fld)
+        if val:
+            field_name = "band_name" if fld == "name" else ("biography" if fld in ("description", "description_en", "band_history") else fld)
+            err = check_field_bounds_and_content(field_name, val)
+            if err:
+                return err
+    for g in proposal_dict.get("genres") or []:
+        err = check_field_bounds_and_content("genre", g)
+        if err:
+            return err
+    for link in proposal_dict.get("links") or []:
+        err = check_field_bounds_and_content("links", link)
+        if err:
+            return err
+    for m in proposal_dict.get("members") or []:
+        if isinstance(m, dict):
+            for k in ("name", "name_en", "role", "role_en", "period"):
+                if m.get(k):
+                    err = check_field_bounds_and_content(k, m[k])
+                    if err:
+                        return err
+    if proposal_dict.get("has_release"):
+        err = check_deterministic_album_proposal(proposal_dict)
+        if err:
+            return err
+    return None
+
+
+def check_deterministic_prefilter(
+    field_or_proposal: Any,
+    value: Any = None,
+) -> str | None:
+    """Unified entrypoint for deterministic pre-filter validation."""
+    if value is not None or isinstance(field_or_proposal, str):
+        return check_field_bounds_and_content(str(field_or_proposal), value)
+    if isinstance(field_or_proposal, dict):
+        if "media_type" in field_or_proposal:
+            return check_deterministic_media_proposal(field_or_proposal)
+        if "target" in field_or_proposal or "field" in field_or_proposal:
+            return check_deterministic_text_proposal(field_or_proposal)
+        if "band_name" in field_or_proposal:
+            return check_deterministic_band_proposal(field_or_proposal)
+        if "tracklist" in field_or_proposal or ("tracks" in field_or_proposal and "band_name" not in field_or_proposal):
+            return check_deterministic_album_proposal(field_or_proposal)
+        return check_field_bounds_and_content("data", field_or_proposal)
     return None
 
 
@@ -427,10 +721,11 @@ def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
 
         user_prompt = build_text_proposal_prompt(proposal_dict, band_name, release_name)
 
-        # Pre-filter for prompt injection attempts before calling AI API
+        # Pre-filter for prompt injection and deterministic constraints before calling AI API
         proposal_text = json.dumps(proposal_dict["proposed_value"], ensure_ascii=False)
         metadata_text = f"{proposal_dict.get('submitter_name') or ''} {proposal_dict.get('submitter_contact') or ''}"
         injection_rule = detect_prompt_injection(proposal_text) or detect_prompt_injection(metadata_text)
+        prefilter_error = check_deterministic_text_proposal(proposal_dict)
 
         if injection_rule:
             logger.warning(
@@ -442,6 +737,18 @@ def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 decision="escalate",
                 confidence=0.0,
                 reasoning=f"Potential prompt injection detected ({injection_rule}). Flagged for human review.",
+                spam_or_vandalism=True,
+            )
+        elif prefilter_error:
+            logger.warning(
+                "Deterministic pre-filter blocked proposal %s: %s",
+                proposal_id,
+                prefilter_error,
+            )
+            result = EvaluationResult(
+                decision="escalate",
+                confidence=0.0,
+                reasoning=f"Failed deterministic pre-filter: {prefilter_error}",
                 spam_or_vandalism=True,
             )
         else:
@@ -577,10 +884,11 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
                 except Exception as exc:
                     logger.warning("could not read media file for AI evaluation: %s", exc)
 
-        # Pre-filter for prompt injection attempts before calling AI API
+        # Pre-filter for prompt injection and deterministic constraints before calling AI API
         caption_text = proposal_dict.get("caption") or ""
         metadata_text = f"{proposal_dict.get('original_filename') or ''} {proposal_dict.get('submitter_name') or ''} {proposal_dict.get('submitter_contact') or ''}"
         injection_rule = detect_prompt_injection(caption_text) or detect_prompt_injection(metadata_text)
+        prefilter_error = check_deterministic_media_proposal(proposal_dict)
 
         if injection_rule:
             logger.warning(
@@ -592,6 +900,18 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
                 decision="escalate",
                 confidence=0.0,
                 reasoning=f"Potential prompt injection detected in media submission ({injection_rule}). Flagged for human review.",
+                spam_or_vandalism=True,
+            )
+        elif prefilter_error:
+            logger.warning(
+                "Deterministic pre-filter blocked media proposal %s: %s",
+                media_proposal_id,
+                prefilter_error,
+            )
+            result = EvaluationResult(
+                decision="escalate",
+                confidence=0.0,
+                reasoning=f"Failed deterministic pre-filter: {prefilter_error}",
                 spam_or_vandalism=True,
             )
         else:
@@ -849,6 +1169,9 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
         for t in tracks:
             audio_ai_flags.extend(t.get("ai_flags", []))
 
+        # Deterministic constraints pre-filter
+        prefilter_error = check_deterministic_album_proposal(proposal_dict)
+
         if injection_rule:
             logger.warning(
                 "Prompt injection blocked by pre-filter (rule: %s) for album proposal %s",
@@ -859,6 +1182,18 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 decision="escalate",
                 confidence=0.0,
                 reasoning=f"Potential prompt injection detected ({injection_rule}). Flagged for human review.",
+                spam_or_vandalism=True,
+            )
+        elif prefilter_error:
+            logger.warning(
+                "Deterministic pre-filter blocked album proposal %s: %s",
+                proposal_id,
+                prefilter_error,
+            )
+            result = EvaluationResult(
+                decision="escalate",
+                confidence=0.0,
+                reasoning=f"Failed deterministic pre-filter: {prefilter_error}",
                 spam_or_vandalism=True,
             )
         elif ai_syntax_flags or audio_ai_flags:
@@ -1110,6 +1445,9 @@ def process_band_proposal_with_ai(app: Flask, proposal_id: int) -> None:
         for t in tracks:
             audio_ai_flags.extend(t.get("ai_flags", []))
 
+        # Deterministic constraints pre-filter
+        prefilter_error = check_deterministic_band_proposal(proposal_dict)
+
         if injection_rule:
             logger.warning(
                 "Prompt injection blocked by pre-filter (rule: %s) for band proposal %s",
@@ -1120,6 +1458,18 @@ def process_band_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 decision="escalate",
                 confidence=0.0,
                 reasoning=f"Potential prompt injection detected ({injection_rule}). Flagged for human review.",
+                spam_or_vandalism=True,
+            )
+        elif prefilter_error:
+            logger.warning(
+                "Deterministic pre-filter blocked band proposal %s: %s",
+                proposal_id,
+                prefilter_error,
+            )
+            result = EvaluationResult(
+                decision="escalate",
+                confidence=0.0,
+                reasoning=f"Failed deterministic pre-filter: {prefilter_error}",
                 spam_or_vandalism=True,
             )
         elif ai_syntax_flags or audio_ai_flags:

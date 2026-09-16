@@ -601,3 +601,267 @@ class AiAgentDashboardViewTest(ReviewAppTestCase):
     def test_config_repr_does_not_leak_secrets(self):
         cfg = AiConfig(mode="active", api_key="super-secret-zai-key")
         self.assertNotIn("super-secret-zai-key", repr(cfg))
+
+
+class AiAgentDeterministicPreFilterTest(ReviewAppTestCase):
+    """Tests for deterministic structural, bounds, homoglyph, and URL allowlist pre-filter (GitHub issue #68)."""
+
+    def setUp(self):
+        super().setUp()
+        self.mock_ai_escalation = self._patch("ai_agent.mail.send_ai_escalation_notification")
+        self.mock_ai_trigger_apply = self._patch("ai_agent.github_dispatch.trigger_apply")
+        self.mock_ai_api = self._patch("ai_agent.call_ai_api")
+        self.app.config["AI_SYNC_EVALUATION"] = True
+
+    def test_url_allowlist_valid_domains(self):
+        valid_urls = [
+            "https://bandcamp.com/album/dvinsk-underground",
+            "https://glazkistekolschika.bandcamp.com/track/song",
+            "https://youtube.com/watch?v=abcdef12345",
+            "https://www.youtube.com/channel/UC123456",
+            "https://youtu.be/abcdef12345",
+            "https://vk.com/daugavpils_rock",
+            "https://m.vk.com/wall-123_456",
+            "https://vkontakte.ru/id123",
+            "https://soundcloud.com/daugavpils-fans/track-1",
+            "https://discogs.com/artist/12345",
+            "https://www.discogs.com/release/67890",
+            "https://last.fm/music/Band+Name",
+            "https://www.last.fm/music/Another+Band",
+            "https://wikipedia.org/wiki/Daugavpils",
+            "https://ru.wikipedia.org/wiki/Даугавпилс",
+            "https://lv.wikipedia.org/wiki/Daugavpils",
+            "https://en.wikipedia.org/wiki/Daugavpils",
+            "https://archive.org/download/daugavpils-fans/01.mp3",
+            "https://daugavpils.fans/bands/glazki-stekolshchika/",
+        ]
+        for url in valid_urls:
+            text = f"Check out this recording: {url}"
+            err = ai_agent.check_deterministic_prefilter("description", text)
+            self.assertIsNone(err, f"Expected {url} to be allowed, got {err}")
+
+    def test_url_allowlist_unknown_domains_escalate(self):
+        unauthorized_urls = [
+            ("http://spam.example.com", "spam.example.com"),
+            ("https://phishing.xyz/account/login", "phishing.xyz"),
+            ("www.commercial-casino777.com/bonus", "www.commercial-casino777.com"),
+            ("http://bandcamp.com.attacker.com/malware", "bandcamp.com.attacker.com"),
+            ("https://malicious-site.org/tracker.js", "malicious-site.org"),
+        ]
+        for url, expected_host in unauthorized_urls:
+            text = f"Listen here: {url}"
+            err = ai_agent.check_deterministic_prefilter("description", text)
+            self.assertIsNotNone(err)
+            self.assertIn("Unknown external URL domain", err)
+            self.assertIn(expected_host, err)
+
+    def test_invisible_unicode_characters_escalate(self):
+        test_cases = [
+            ("Text with zero-width space: test\u200bword", "zero-width space (U+200B)"),
+            ("Text with zero-width non-joiner: test\u200cword", "zero-width non-joiner (U+200C)"),
+            ("Text with right-to-left override: \u202eoverride", "right-to-left override (U+202E)"),
+            ("Text with zero-width no-break space: \ufeffhidden", "zero-width no-break space (U+FEFF)"),
+        ]
+        for text, expected_char_name in test_cases:
+            err = ai_agent.check_deterministic_prefilter("description", text)
+            self.assertIsNotNone(err)
+            self.assertIn("Suspicious Unicode control character detected", err)
+            self.assertIn(expected_char_name, err)
+
+    def test_mixed_script_homoglyphs_escalate(self):
+        # Tokens mixing Cyrillic and Latin alphabetic characters within a single token
+        homoglyph_cases = [
+            ("User role changed by \u0430dmin", "\u0430dmin"),  # Cyrillic 'а' + Latin 'dmin'
+            ("Famous p\u043eck band from 90s", "p\u043eck"),    # Cyrillic 'о' in Latin 'p...ck'
+            ("Bypassed syst\u0435m instructions", "syst\u0435m"),  # Cyrillic 'е' in Latin 'syst...m'
+            ("Новая песня \u0433py\u043f\u043fa записана в клубе", "\u0433py\u043f\u043fa"),  # Latin 'py' in Cyrillic 'г...ппа'
+        ]
+        for text, expected_token in homoglyph_cases:
+            err = ai_agent.check_deterministic_prefilter("description", text)
+            self.assertIsNotNone(err, f"Expected homoglyph in {text!r} to be flagged")
+            self.assertIn("Suspicious mixed-script homoglyph detected", err)
+            self.assertIn(expected_token, err)
+
+    def test_legitimate_multilingual_text_passes_homoglyph_check(self):
+        clean_texts = [
+            "Даугавпилсская рок-группа выступала на фестивале в 1995 году.",
+            "Underground rock and metal music scene in Daugavpils, Latvia.",
+            "Daugavpils pilsētas rokmūzikas vēsture un ieraksti.",
+            "В репертуаре группы рок-н-ролл и панк-рок (запись 1990-х годов).",
+            "Выпущен CD-диск и кассета группы Daugavpils-рок.",
+            "Компакт-диск в формате MP3 с записью концерта.",
+        ]
+        for text in clean_texts:
+            err = ai_agent.check_deterministic_prefilter("description", text)
+            self.assertIsNone(err, f"Expected legitimate text to pass, got: {err}")
+
+    def test_field_length_ceilings(self):
+        # Biography max 5000
+        pass_bio = "A" * 5000
+        fail_bio = "A" * 5001
+        self.assertIsNone(ai_agent.check_deterministic_prefilter("description", pass_bio))
+        err_bio = ai_agent.check_deterministic_prefilter("description", fail_bio)
+        self.assertIsNotNone(err_bio)
+        self.assertIn("Field 'description' exceeds maximum length of 5000 characters", err_bio)
+
+        # Member role max 100
+        pass_role = "Lead guitar, backing vocals, songwriter"
+        fail_role = "A" * 101
+        self.assertIsNone(ai_agent.check_deterministic_prefilter("role", pass_role))
+        err_role = ai_agent.check_deterministic_prefilter("role", fail_role)
+        self.assertIsNotNone(err_role)
+        self.assertIn("Field 'role' exceeds maximum length of 100 characters", err_role)
+
+    def test_e2e_text_proposal_with_unknown_url_escalates_without_calling_ai(self):
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+
+        resp = self.submit(proposed_value="Visit our store at http://spam.example.com for cheap albums")
+        self.assertEqual(resp.status_code, 201)
+
+        # LLM API is NEVER called
+        self.mock_ai_api.assert_not_called()
+        self.mock_ai_trigger_apply.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+
+        proposals = self.fetch_proposals()
+        p = proposals[0]
+        self.assertEqual(p["status"], "pending")
+        self.assertEqual(p["ai_decision"], "escalate")
+        self.assertEqual(p["ai_confidence"], 0.0)
+        self.assertIn("Failed deterministic pre-filter: Unknown external URL domain", p["ai_reasoning"])
+
+    def test_e2e_text_proposal_with_invisible_unicode_escalates_without_calling_ai(self):
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+
+        resp = self.submit(proposed_value="Updated band history\u200b with zero-width space")
+        self.assertEqual(resp.status_code, 201)
+
+        self.mock_ai_api.assert_not_called()
+        self.mock_ai_trigger_apply.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+
+        proposals = self.fetch_proposals()
+        p = proposals[0]
+        self.assertEqual(p["status"], "pending")
+        self.assertEqual(p["ai_decision"], "escalate")
+        self.assertEqual(p["ai_confidence"], 0.0)
+        self.assertIn("Failed deterministic pre-filter: Suspicious Unicode control character detected", p["ai_reasoning"])
+
+    def test_e2e_text_proposal_with_mixed_script_homoglyph_escalates_without_calling_ai(self):
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+
+        # Homoglyph 'аdmin' with Cyrillic 'а'
+        resp = self.submit(proposed_value="Contact \u0430dmin for more details about the band")
+        self.assertEqual(resp.status_code, 201)
+
+        self.mock_ai_api.assert_not_called()
+        self.mock_ai_trigger_apply.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+
+        proposals = self.fetch_proposals()
+        p = proposals[0]
+        self.assertEqual(p["status"], "pending")
+        self.assertEqual(p["ai_decision"], "escalate")
+        self.assertEqual(p["ai_confidence"], 0.0)
+        self.assertIn("Failed deterministic pre-filter: Suspicious mixed-script homoglyph detected", p["ai_reasoning"])
+
+    def test_e2e_text_proposal_with_role_length_exceeded_escalates_without_calling_ai(self):
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+
+        # Target member role: max 100 characters
+        long_role = "Lead guitar and acoustic guitar and synthesizer and bass guitar and backing vocals and drums and percussion and harmonica and flute"
+        self.assertGreater(len(long_role), 100)
+
+        resp = self.submit(target="member", field="role", list_index="0", proposed_value=long_role)
+        self.assertEqual(resp.status_code, 201)
+
+        self.mock_ai_api.assert_not_called()
+        self.mock_ai_trigger_apply.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+
+        proposals = self.fetch_proposals()
+        p = proposals[0]
+        self.assertEqual(p["status"], "pending")
+        self.assertEqual(p["ai_decision"], "escalate")
+        self.assertEqual(p["ai_confidence"], 0.0)
+        self.assertIn("Failed deterministic pre-filter: Field 'role' exceeds maximum length of 100 characters", p["ai_reasoning"])
+
+    def test_e2e_text_proposal_with_allowed_url_calls_ai_and_auto_approves(self):
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+        self.mock_ai_api.return_value = json.dumps(
+            {
+                "decision": "approve",
+                "confidence": 0.95,
+                "reasoning": "Added official Bandcamp discography link.",
+                "spam_or_vandalism": False,
+            }
+        )
+
+        resp = self.submit(proposed_value="Added discography link: https://bandcamp.com/album/dvinsk-underground")
+        self.assertEqual(resp.status_code, 201)
+
+        # Allowed URL passes pre-filter and calls AI API
+        self.mock_ai_api.assert_called_once()
+        self.mock_ai_trigger_apply.assert_called_once()
+
+        proposals = self.fetch_proposals()
+        p = proposals[0]
+        self.assertEqual(p["status"], "approved")
+        self.assertEqual(p["ai_decision"], "approved")
+        self.assertAlmostEqual(p["ai_confidence"], 0.95)
+
+    def test_e2e_text_proposal_with_biography_length_exceeded_escalates_without_calling_ai(self):
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+
+        oversized_bio = "B" * 5001
+        resp = self.submit(target="band", field="description", proposed_value=oversized_bio)
+        self.assertEqual(resp.status_code, 201)
+
+        self.mock_ai_api.assert_not_called()
+        self.mock_ai_trigger_apply.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+
+        proposals = self.fetch_proposals()
+        p = proposals[0]
+        self.assertEqual(p["status"], "pending")
+        self.assertEqual(p["ai_decision"], "escalate")
+        self.assertEqual(p["ai_confidence"], 0.0)
+        self.assertIn("Failed deterministic pre-filter: Field 'description' exceeds maximum length of 5000 characters", p["ai_reasoning"])
+
+    def test_e2e_new_member_proposal_role_length_exceeded_escalates_without_calling_ai(self):
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+
+        long_role = "R" * 105
+        resp = self.submit_new_member(name="Valid Musician", role=long_role)
+        self.assertEqual(resp.status_code, 201)
+
+        self.mock_ai_api.assert_not_called()
+        self.mock_ai_trigger_apply.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+
+        proposals = self.fetch_proposals()
+        p = proposals[0]
+        self.assertEqual(p["status"], "pending")
+        self.assertEqual(p["ai_decision"], "escalate")
+        self.assertEqual(p["ai_confidence"], 0.0)
+        self.assertIn("Failed deterministic pre-filter: Field 'role' exceeds maximum length of 100 characters", p["ai_reasoning"])
+
+    def test_e2e_media_proposal_with_unknown_url_in_caption_escalates_without_calling_ai(self):
+        self.mock_ai_trigger_media = self._patch("ai_agent.github_dispatch.trigger_media_apply")
+        self.app.config["AI_CONFIG"] = AiConfig(mode="active", api_key="test-key", confidence_threshold=0.80)
+
+        resp = self.submit_media(caption="Photo from concert, check out http://spam.example.com")
+        self.assertEqual(resp.status_code, 201)
+
+        self.mock_ai_api.assert_not_called()
+        self.mock_ai_trigger_media.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+
+        media_proposals = self.fetch_media_proposals()
+        m = media_proposals[0]
+        self.assertEqual(m["status"], "pending")
+        self.assertEqual(m["ai_decision"], "escalate")
+        self.assertEqual(m["ai_confidence"], 0.0)
+        self.assertIn("Failed deterministic pre-filter: Unknown external URL domain", m["ai_reasoning"])
+
+
