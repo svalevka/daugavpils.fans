@@ -4,6 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}daugavpils.fans{% endblock %}</title>
+{% block og_tags %}
+<meta property="og:site_name" content="daugavpils.fans">
+<meta property="og:title" content="{{ og_title }}">
+<meta property="og:description" content="{{ og_description }}">
+{% if og_image_url %}
+<meta property="og:image" content="{{ og_image_url }}">
+{% endif %}
+<meta property="og:type" content="{{ og_type | default('website') }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta name="twitter:card" content="summary_large_image">
+{% endblock %}
 <link rel="stylesheet" href="{{ base_path }}/static/style.css">
 <script defer src="{{ base_path }}/static/player.js"></script>
 <script defer src="{{ base_path }}/static/stats.js"></script>

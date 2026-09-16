@@ -714,12 +714,72 @@
     }
   });
 
-  window.DaugavpilsArchiveOutage = {
+    window.DaugavpilsArchiveOutage = {
     showBanner: showOutageBanner,
     retry: retryArchiveConnection,
     handleError: handleMediaError,
     probe: probeArchiveOrg,
     isOutageCached: isOutageCached,
     setOutageCached: setOutageCached,
+  };
+
+  // Deep-link track anchors (#track-N) and copy-to-clipboard feedback (GitHub issue #56)
+  function handleTrackHash() {
+    var hash = window.location ? window.location.hash : "";
+    var match = hash ? hash.match(/^#track-(\d+)$/) : null;
+    if (!match) return;
+    var targetRow = document.getElementById("track-" + match[1]);
+    if (!targetRow) return;
+
+    if (targetRow.scrollIntoView) {
+      targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    targetRow.classList.add("track-highlighted");
+    setTimeout(function () {
+      targetRow.classList.remove("track-highlighted");
+    }, 2500);
+  }
+
+  function initTrackAnchors() {
+    handleTrackHash();
+    if (typeof window !== "undefined" && window.addEventListener) {
+      window.addEventListener("hashchange", handleTrackHash);
+    }
+
+    document.addEventListener("click", function (e) {
+      var target = e.target;
+      var anchor = target && target.closest ? target.closest(".track-anchor") : null;
+      if (!anchor && target && target.classList && target.classList.contains("track-anchor")) {
+        anchor = target;
+      }
+      if (!anchor) return;
+      var href = anchor.getAttribute("href");
+      if (!href || href.indexOf("#track-") !== 0) return;
+
+      var origin = (window.location && window.location.origin) || "";
+      var pathname = (window.location && window.location.pathname) || "";
+      var fullUrl = origin + pathname + href;
+      if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullUrl).then(function () {
+          anchor.classList.add("copied");
+          setTimeout(function () {
+            anchor.classList.remove("copied");
+          }, 1500);
+        }).catch(function () {});
+      }
+    });
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initTrackAnchors);
+    } else {
+      initTrackAnchors();
+    }
+  }
+
+  window.DaugavpilsTrackAnchors = {
+    handleTrackHash: handleTrackHash,
+    initTrackAnchors: initTrackAnchors,
   };
 })();

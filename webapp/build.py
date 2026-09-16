@@ -76,6 +76,20 @@ MAINTENANCE_MD = {
     "en": REPO_ROOT / "MAINTENANCE-EN.md",
 }
 BASE_PATH = os.environ.get("SITE_BASE_PATH", "").rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://daugavpils.fans").rstrip("/")
+
+
+def og_snippet(text: str | None, fallback: str, max_length: int = 200) -> str:
+    """Generate a clean, single-line text snippet for Open Graph / meta descriptions."""
+    if not text:
+        return fallback
+    cleaned = " ".join(text.split())
+    if len(cleaned) <= max_length:
+        return cleaned
+    truncated = cleaned[: max_length - 3]
+    if " " in truncated:
+        truncated = truncated.rsplit(" ", 1)[0]
+    return f"{truncated}..."
 
 # How much media a band/release page shows inline before linking out to its
 # own /media/ page (see issue #27) - kept as constants shared between the
@@ -398,6 +412,11 @@ def build() -> None:
                 en_url=home_url("en", BASE_PATH),
                 home_url=home_url(lang, BASE_PATH),
                 bands=bands,
+                og_title=f"{STRINGS[lang]['archive_title']} — daugavpils.fans",
+                og_description=STRINGS[lang]["site_tagline"],
+                og_image_url=None,
+                og_type="website",
+                canonical_url=f"{SITE_URL}{home_url(lang, BASE_PATH)}",
             )
         )
 
@@ -424,6 +443,14 @@ def build() -> None:
                     photo_teaser_limit=PHOTO_TEASER_LIMIT,
                     video_teaser_limit=VIDEO_TEASER_LIMIT,
                     media_page_url=band_media_page_url,
+                    og_title=f"{band.name} — daugavpils.fans",
+                    og_description=og_snippet(
+                        localize(band, "description", lang),
+                        f"{band.name} — {band.location or 'Daugavpils, Latvia'}",
+                    ),
+                    og_image_url=band_media_url(band, band.image[0].contentUrl) if band.image else None,
+                    og_type="music.band",
+                    canonical_url=f"{SITE_URL}{band_url(lang, band.slug, BASE_PATH)}",
                 )
             )
 
@@ -442,6 +469,11 @@ def build() -> None:
                         images=band.image,
                         videos=band.video,
                         media_url=partial(band_media_url, band),
+                        og_title=f"{band.name} — {STRINGS[lang]['photos_and_video']} — daugavpils.fans",
+                        og_description=f"{band.name} — {STRINGS[lang]['photos_and_video']}",
+                        og_image_url=band_media_url(band, band.image[0].contentUrl) if band.image else None,
+                        og_type="website",
+                        canonical_url=f"{SITE_URL}{band_media_page_url}",
                     )
                 )
 
@@ -454,6 +486,12 @@ def build() -> None:
                     release_media_page_url_fn(lang, band.slug, release.slug, BASE_PATH)
                     if release_has_media_page
                     else None
+                )
+
+                rel_og_image = (
+                    release_media_url(band, release, release.image[0].contentUrl)
+                    if release.image
+                    else (band_media_url(band, band.image[0].contentUrl) if band.image else None)
                 )
 
                 (release_out_dir / "index.html").write_text(
@@ -469,6 +507,14 @@ def build() -> None:
                         photo_teaser_limit=PHOTO_TEASER_LIMIT,
                         video_teaser_limit=VIDEO_TEASER_LIMIT,
                         media_page_url=release_media_page_url,
+                        og_title=f"{release.name} — {band.name} — daugavpils.fans",
+                        og_description=og_snippet(
+                            localize(release, "description", lang),
+                            f"{release.name} ({release.datePublished}) — {band.name}",
+                        ),
+                        og_image_url=rel_og_image,
+                        og_type="music.album",
+                        canonical_url=f"{SITE_URL}{release_url(lang, band.slug, release.slug, BASE_PATH)}",
                     )
                 )
 
@@ -478,8 +524,8 @@ def build() -> None:
                     (release_media_out_dir / "index.html").write_text(
                         media_tmpl.render(
                             **base_ctx,
-                            ru_url=release_media_page_url_fn("ru", band.slug, release.slug, BASE_PATH),
-                            en_url=release_media_page_url_fn("en", band.slug, release.slug, BASE_PATH),
+                            ru_url=release_media_page_url_fn(lang, band.slug, release.slug, BASE_PATH),
+                            en_url=release_media_page_url_fn(lang, band.slug, release.slug, BASE_PATH),
                             home_url=home_url(lang, BASE_PATH),
                             heading=release.name,
                             back_url=release_url(lang, band.slug, release.slug, BASE_PATH),
@@ -487,6 +533,11 @@ def build() -> None:
                             images=release.image,
                             videos=release.video,
                             media_url=partial(release_media_url, band, release),
+                            og_title=f"{release.name} — {STRINGS[lang]['photos_and_video']} — daugavpils.fans",
+                            og_description=f"{release.name} — {STRINGS[lang]['photos_and_video']}",
+                            og_image_url=rel_og_image,
+                            og_type="website",
+                            canonical_url=f"{SITE_URL}{release_media_page_url}",
                         )
                     )
 
@@ -510,6 +561,11 @@ def build() -> None:
                 en_url=f"{BASE_PATH}/{lang_prefix('en')}support/",
                 home_url=home_url(lang, BASE_PATH),
                 content=render_maintenance_html(lang),
+                og_title=f"{STRINGS[lang]['support_link']} — daugavpils.fans",
+                og_description=STRINGS[lang]["site_tagline"],
+                og_image_url=None,
+                og_type="website",
+                canonical_url=f"{SITE_URL}{BASE_PATH}/{lang_prefix(lang)}support/",
             )
         )
         print(f"  built [{lang}]: /support/ (from {MAINTENANCE_MD[lang].name})")

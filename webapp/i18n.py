@@ -39,6 +39,7 @@ STRINGS = {
         "search_releases": "Релизы",
         "search_tracks": "Треки",
         "search_clear": "Очистить поиск",
+        "copy_track_link": "Скопировать ссылку на трек",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -73,6 +74,7 @@ STRINGS = {
         "search_releases": "Releases",
         "search_tracks": "Tracks",
         "search_clear": "Clear search",
+        "copy_track_link": "Copy link to track",
     },
 }
 

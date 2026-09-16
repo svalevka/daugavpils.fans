@@ -114,6 +114,21 @@ function createMockDom(options = {}) {
       }
     }
 
+    scrollIntoView(opts) {
+      this.scrolledIntoView = opts || true;
+    }
+
+    closest(sel) {
+      let cur = this;
+      while (cur) {
+        if (sel.startsWith(".") && cur.classList.contains(sel.slice(1))) return cur;
+        if (sel.startsWith("#") && cur.id === sel.slice(1)) return cur;
+        if (cur.tagName && cur.tagName.toLowerCase() === sel.toLowerCase()) return cur;
+        cur = cur.parentElement;
+      }
+      return null;
+    }
+
     querySelector(sel) {
       return this.querySelectorAll(sel)[0] || null;
     }
@@ -234,8 +249,23 @@ function createMockDom(options = {}) {
       setItem: (k, v) => localStorageStore.set(k, String(v)),
       removeItem: (k) => localStorageStore.delete(k),
     },
+    location: {
+      origin: "https://daugavpils.fans",
+      pathname: "/bands/m-spirit/1995-zadushevnie-pesenki/",
+      hash: "",
+      protocol: "https:",
+      host: "daugavpils.fans",
+    },
     addEventListener: () => {},
-    navigator: { onLine: true, mediaSession },
+    navigator: {
+      onLine: true,
+      mediaSession,
+      clipboard: {
+        writeText: async (text) => {
+          mockWindow._lastCopiedText = text;
+        },
+      },
+    },
     MediaMetadata,
     CustomEvent: class CustomEvent {
       constructor(type, init = {}) {
@@ -561,4 +591,80 @@ test("player.js: Media Session action handlers control playback and navigation",
   handlers.get("seekto")({ seekTime: 42 });
   assert.equal(audio1.currentTime, 42);
 });
+
+test("player.js: handleTrackHash highlights and scrolls to track row matching URL hash", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "en" });
+  mockWindow.location.hash = "#track-3";
+
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    navigator: mockWindow.navigator,
+    MediaMetadata: mockWindow.MediaMetadata,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    fetch: mockWindow.fetch,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+
+  const tr = mockDocument.createElement("tr");
+  tr.id = "track-3";
+  tr.classList.add("track-row");
+  mockDocument.body.appendChild(tr);
+
+  mockWindow.DaugavpilsTrackAnchors.handleTrackHash();
+
+  assert.ok(tr.classList.contains("track-highlighted"));
+  assert.ok(tr.scrolledIntoView);
+});
+
+test("player.js: clicking .track-anchor copies deep-link URL to clipboard and shows feedback", async () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "en" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    navigator: mockWindow.navigator,
+    MediaMetadata: mockWindow.MediaMetadata,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    fetch: mockWindow.fetch,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+
+  const tr = mockDocument.createElement("tr");
+  tr.id = "track-2";
+  tr.classList.add("track-row");
+
+  const anchor = mockDocument.createElement("a");
+  anchor.classList.add("track-anchor");
+  anchor.setAttribute("href", "#track-2");
+  tr.appendChild(anchor);
+  mockDocument.body.appendChild(tr);
+
+  // Dispatch click event that bubbles up to document listener
+  mockDocument.dispatchEvent({
+    type: "click",
+    target: anchor,
+  });
+
+  // Wait for clipboard promise
+  await new Promise((r) => setTimeout(r, 10));
+
+  assert.equal(
+    mockWindow._lastCopiedText,
+    "https://daugavpils.fans/bands/m-spirit/1995-zadushevnie-pesenki/#track-2"
+  );
+  assert.ok(anchor.classList.contains("copied"));
+});
+
 

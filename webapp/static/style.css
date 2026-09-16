@@ -325,9 +325,39 @@ table.tracklist td {
   vertical-align: middle;
 }
 
+table.tracklist tr.track-row {
+  scroll-margin-top: 5rem;
+  transition: background-color 0.5s ease;
+}
+
+table.tracklist tr.track-row.track-highlighted {
+  background-color: rgba(226, 177, 60, 0.25);
+  transition: background-color 0.2s ease;
+}
+
 table.tracklist td.track-position {
   color: var(--text-dim);
   width: 2rem;
+}
+
+.track-anchor {
+  color: var(--text-dim);
+  text-decoration: none;
+  display: inline-block;
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.track-anchor:hover {
+  color: var(--accent);
+  background-color: rgba(226, 177, 60, 0.15);
+  text-decoration: none;
+}
+
+.track-anchor.copied {
+  color: #40c057;
 }
 
 table.tracklist td.track-duration {

@@ -240,5 +240,132 @@ class SearchIndexTest(unittest.TestCase):
         self.assertEqual(track_item["url"], "/site/en/bands/m-spirit/1995-zadushevnie-pesenki/#track-2")
 
 
+class DeepLinkAndOpenGraphTest(unittest.TestCase):
+    def setUp(self) -> None:
+        import sys
+
+        repo_root = Path(__file__).resolve().parent.parent
+        sys.path.insert(0, str(repo_root / "tools"))
+        sys.path.insert(0, str(repo_root / "webapp"))
+
+        templates_dir = Path(__file__).resolve().parent / "templates"
+        self.env = Environment(
+            loader=FileSystemLoader(str(templates_dir)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self.env.filters["duration"] = lambda d: d or ""
+        self.env.globals["localize"] = lambda obj, field, lang: getattr(obj, field, None)
+        self.env.globals["localize_list"] = lambda obj, field, lang: getattr(obj, field, []) or []
+        self.env.globals["partial"] = lambda fn, *args: (lambda *a, **k: fn(*args, *a, **k))
+
+    def test_og_snippet_truncation_and_fallback(self) -> None:
+        from build import og_snippet
+
+        self.assertEqual(og_snippet(None, "Fallback text"), "Fallback text")
+        self.assertEqual(og_snippet("", "Fallback text"), "Fallback text")
+
+        text = "First paragraph with words.\n\nSecond paragraph has more text."
+        self.assertEqual(
+            og_snippet(text, "Fallback"),
+            "First paragraph with words. Second paragraph has more text.",
+        )
+
+        long_text = "Word " * 60
+        snippet = og_snippet(long_text, "Fallback", max_length=50)
+        self.assertLessEqual(len(snippet), 50)
+        self.assertTrue(snippet.endswith("..."))
+
+    def test_release_template_renders_track_anchors(self) -> None:
+        from i18n import STRINGS
+        from models import MusicAlbum, MusicGroup
+
+        band = MusicGroup.model_validate({
+            "name": "M. Spirit",
+            "slug": "m-spirit",
+        })
+        release = MusicAlbum.model_validate({
+            "name": "Задушевные песенки",
+            "slug": "1995-zadushevnie-pesenki",
+            "datePublished": "1995",
+            "byArtist": "m-spirit",
+            "track": [
+                {
+                    "position": 1,
+                    "name": "Track 1",
+                    "audio": {
+                        "contentUrl": "01.mp3",
+                        "encodingFormat": "audio/mpeg",
+                        "identifier": [{"propertyID": "sha256", "value": "abc"}],
+                    },
+                },
+                {
+                    "position": 2,
+                    "name": "Track 2",
+                    "audio": None,
+                },
+            ],
+        })
+
+        tmpl = self.env.get_template("release.html")
+        rendered = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            band=band,
+            release=release,
+            home_url="/",
+            ru_url="/",
+            en_url="/en/",
+            visible_same_as=[],
+            photo_teaser_limit=6,
+            video_teaser_limit=2,
+            release_media_url=lambda b, r, u: f"https://archive.org/{u}",
+            canonical_url="https://daugavpils.fans/bands/m-spirit/1995-zadushevnie-pesenki/",
+            jsonld="{}",
+            og_title="Задушевные песенки — M. Spirit — daugavpils.fans",
+            og_description="Test description",
+            og_image_url="https://archive.org/cover.jpg",
+            og_type="music.album",
+        )
+
+        # Track 1 row and anchor
+        self.assertIn('<tr id="track-1" class="track-row">', rendered)
+        self.assertIn('<a href="#track-1" class="track-anchor"', rendered)
+        self.assertIn('>1</a>', rendered)
+
+        # Track 2 unpreserved row and anchor
+        self.assertIn('<tr id="track-2" class="track-row track-unpreserved">', rendered)
+        self.assertIn('<a href="#track-2" class="track-anchor"', rendered)
+        self.assertIn('>2</a>', rendered)
+
+    def test_base_template_renders_open_graph_and_twitter_tags(self) -> None:
+        from i18n import STRINGS
+
+        tmpl = self.env.get_template("base.html")
+        rendered = tmpl.render(
+            lang="en",
+            t=STRINGS["en"],
+            lang_prefix="en/",
+            base_path="",
+            home_url="/en/",
+            ru_url="/",
+            en_url="/en/",
+            og_title="M. Spirit — daugavpils.fans",
+            og_description="Biography of M. Spirit band from Daugavpils.",
+            og_image_url="https://archive.org/photo.jpg",
+            og_type="music.band",
+            canonical_url="https://daugavpils.fans/en/bands/m-spirit/",
+        )
+
+        self.assertIn('<meta property="og:site_name" content="daugavpils.fans">', rendered)
+        self.assertIn('<meta property="og:title" content="M. Spirit — daugavpils.fans">', rendered)
+        self.assertIn('<meta property="og:description" content="Biography of M. Spirit band from Daugavpils.">', rendered)
+        self.assertIn('<meta property="og:image" content="https://archive.org/photo.jpg">', rendered)
+        self.assertIn('<meta property="og:type" content="music.band">', rendered)
+        self.assertIn('<meta property="og:url" content="https://daugavpils.fans/en/bands/m-spirit/">', rendered)
+        self.assertIn('<meta name="twitter:card" content="summary_large_image">', rendered)
+
+
 if __name__ == "__main__":
     unittest.main()
