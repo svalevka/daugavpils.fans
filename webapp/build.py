@@ -283,6 +283,72 @@ def require_media_published(bands: list[MusicGroup], releases_by_band: dict[str,
         sys.exit(1)
 
 
+def generate_search_index(
+    lang: str,
+    bands: list[MusicGroup],
+    releases_by_band: dict[str, list[MusicAlbum]],
+    base_path: str = "",
+) -> list[dict]:
+    """Compile a compact, client-side static search index for bands, releases, and tracks."""
+    items: list[dict] = []
+    for band in bands:
+        years = ""
+        if band.foundingDate and band.dissolutionDate:
+            years = f"{band.foundingDate}-{band.dissolutionDate}"
+        elif band.foundingDate:
+            years = band.foundingDate
+
+        if lang == "en":
+            members = [m.name_en or m.name for m in band.member]
+            roles = [m.role_en or m.role for m in band.member if (m.role or m.role_en)]
+        else:
+            members = [m.name for m in band.member]
+            roles = [m.role for m in band.member if m.role]
+
+        band_item: dict = {
+            "type": "band",
+            "name": band.name,
+            "url": band_url(lang, band.slug, base_path),
+            "genres": list(band.genre or []),
+            "years": years,
+            "members": members,
+        }
+        if roles:
+            band_item["roles"] = roles
+        if band.alternateName:
+            band_item["alternate_names"] = list(band.alternateName)
+        items.append(band_item)
+
+        for release in releases_by_band.get(band.slug, []):
+            release_item: dict = {
+                "type": "release",
+                "name": release.name,
+                "band": band.name,
+                "year": release.datePublished,
+                "url": release_url(lang, band.slug, release.slug, base_path),
+            }
+            if release.genre:
+                release_item["genres"] = list(release.genre)
+            credits = localize_list(release, "creditText", lang)
+            if credits:
+                release_item["credits"] = credits
+            items.append(release_item)
+
+            for track in release.track:
+                track_item: dict = {
+                    "type": "track",
+                    "name": track.name,
+                    "band": band.name,
+                    "release": release.name,
+                    "url": f"{release_url(lang, band.slug, release.slug, base_path)}#track-{track.position}",
+                }
+                if track.alternateName:
+                    track_item["alternate_name"] = track.alternateName
+                items.append(track_item)
+
+    return items
+
+
 def build() -> None:
     require_valid_archive()
 
@@ -424,7 +490,11 @@ def build() -> None:
                         )
                     )
 
-        print(f"  built [{lang}]: {len(bands)} band(s)")
+        search_index = generate_search_index(lang, bands, releases_by_band, BASE_PATH)
+        (lang_root / "search-index.json").write_text(
+            json.dumps(search_index, ensure_ascii=False, indent=2)
+        )
+        print(f"  built [{lang}]: {len(bands)} band(s), search-index.json ({len(search_index)} items)")
 
     support_tmpl = env.get_template("support.html")
     for lang in LANGS:

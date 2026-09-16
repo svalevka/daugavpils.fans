@@ -7,10 +7,32 @@
 <link rel="stylesheet" href="{{ base_path }}/static/style.css">
 <script defer src="{{ base_path }}/static/player.js"></script>
 <script defer src="{{ base_path }}/static/stats.js"></script>
+<script defer src="{{ base_path }}/static/search.js"></script>
 </head>
 <body class="lang-{{ lang }}">
 <header class="site-header">
   <a class="site-title" href="{{ home_url }}">daugavpils.fans</a>
+  <div class="site-search" role="search"
+       data-label-bands="{{ t.search_bands }}"
+       data-label-releases="{{ t.search_releases }}"
+       data-label-tracks="{{ t.search_tracks }}"
+       data-label-no-results="{{ t.search_no_results }}">
+    <div class="search-box">
+      <svg class="search-icon" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/>
+        <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input type="search"
+             class="search-input"
+             placeholder="{{ t.search_placeholder }}"
+             aria-label="{{ t.search_aria_label }}"
+             autocomplete="off"
+             spellcheck="false"
+             data-index-url="{{ base_path }}/{{ lang_prefix }}search-index.json">
+      <button type="button" class="search-clear" aria-label="{{ t.search_clear }}" hidden>&times;</button>
+    </div>
+    <div class="search-results" hidden aria-live="polite"></div>
+  </div>
   <div class="header-right">
     <a class="support-link" href="{{ base_path }}/{{ lang_prefix }}support/">{{ t.support_link }}</a>
     <nav class="lang-switch">

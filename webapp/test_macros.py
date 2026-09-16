@@ -114,5 +114,131 @@ class StaticFilesTest(unittest.TestCase):
                 self.assertEqual(res.returncode, 0, f"{js_file.name} syntax error: {res.stderr}")
 
 
+class SearchIndexTest(unittest.TestCase):
+    def setUp(self) -> None:
+        import sys
+
+        repo_root = Path(__file__).resolve().parent.parent
+        sys.path.insert(0, str(repo_root / "tools"))
+        sys.path.insert(0, str(repo_root / "webapp"))
+
+    def test_generate_search_index_ru(self) -> None:
+        from build import generate_search_index
+        from models import MusicAlbum, MusicGroup
+
+        band = MusicGroup.model_validate({
+            "name": "M. Spirit",
+            "slug": "m-spirit",
+            "alternateName": ["Metal Spirit"],
+            "foundingDate": "1994",
+            "dissolutionDate": "1996",
+            "genre": ["Punk Rock"],
+            "member": [
+                {"name": "Владислав Петкун", "name_en": "Vladislav Petkun", "role": "гитара, вокал", "role_en": "guitar, vocals"},
+                {"name": "Сергей Валевко", "role": "вокал"},
+            ],
+        })
+        release = MusicAlbum.model_validate({
+            "name": "Задушевные песенки",
+            "slug": "1995-zadushevnie-pesenki",
+            "datePublished": "1995",
+            "byArtist": "m-spirit",
+            "genre": ["Punk Rock"],
+            "creditText": ["Кузя - запись"],
+            "creditText_en": ["Kuzya - recording"],
+            "track": [
+                {
+                    "position": 1,
+                    "name": "Ящер",
+                    "alternateName": "Ящерка",
+                    "audio": {
+                        "contentUrl": "01.mp3",
+                        "encodingFormat": "audio/mpeg",
+                        "identifier": [{"propertyID": "sha256", "value": "abc"}],
+                    },
+                }
+            ],
+        })
+
+        index = generate_search_index("ru", [band], {"m-spirit": [release]}, base_path="")
+        self.assertEqual(len(index), 3)
+
+        band_item = index[0]
+        self.assertEqual(band_item["type"], "band")
+        self.assertEqual(band_item["name"], "M. Spirit")
+        self.assertEqual(band_item["url"], "/bands/m-spirit/")
+        self.assertEqual(band_item["years"], "1994-1996")
+        self.assertEqual(band_item["genres"], ["Punk Rock"])
+        self.assertEqual(band_item["members"], ["Владислав Петкун", "Сергей Валевко"])
+        self.assertEqual(band_item["roles"], ["гитара, вокал", "вокал"])
+        self.assertEqual(band_item["alternate_names"], ["Metal Spirit"])
+
+        release_item = index[1]
+        self.assertEqual(release_item["type"], "release")
+        self.assertEqual(release_item["name"], "Задушевные песенки")
+        self.assertEqual(release_item["band"], "M. Spirit")
+        self.assertEqual(release_item["year"], "1995")
+        self.assertEqual(release_item["url"], "/bands/m-spirit/1995-zadushevnie-pesenki/")
+        self.assertEqual(release_item["genres"], ["Punk Rock"])
+        self.assertEqual(release_item["credits"], ["Кузя - запись"])
+
+        track_item = index[2]
+        self.assertEqual(track_item["type"], "track")
+        self.assertEqual(track_item["name"], "Ящер")
+        self.assertEqual(track_item["band"], "M. Spirit")
+        self.assertEqual(track_item["release"], "Задушевные песенки")
+        self.assertEqual(track_item["url"], "/bands/m-spirit/1995-zadushevnie-pesenki/#track-1")
+        self.assertEqual(track_item["alternate_name"], "Ящерка")
+
+    def test_generate_search_index_en(self) -> None:
+        from build import generate_search_index
+        from models import MusicAlbum, MusicGroup
+
+        band = MusicGroup.model_validate({
+            "name": "M. Spirit",
+            "slug": "m-spirit",
+            "foundingDate": "1994",
+            "member": [
+                {"name": "Владислав Петкун", "name_en": "Vladislav Petkun", "role": "гитара, вокал", "role_en": "guitar, vocals"},
+                {"name": "Сергей Валевко", "role": "вокал"},
+            ],
+        })
+        release = MusicAlbum.model_validate({
+            "name": "Задушевные песенки",
+            "slug": "1995-zadushevnie-pesenki",
+            "datePublished": "1995",
+            "byArtist": "m-spirit",
+            "creditText": ["Кузя - запись"],
+            "creditText_en": ["Kuzya - recording"],
+            "track": [
+                {
+                    "position": 2,
+                    "name": "Track Two",
+                    "audio": {
+                        "contentUrl": "02.mp3",
+                        "encodingFormat": "audio/mpeg",
+                        "identifier": [{"propertyID": "sha256", "value": "abc"}],
+                    },
+                }
+            ],
+        })
+
+        index = generate_search_index("en", [band], {"m-spirit": [release]}, base_path="/site")
+        self.assertEqual(len(index), 3)
+
+        band_item = index[0]
+        self.assertEqual(band_item["url"], "/site/en/bands/m-spirit/")
+        self.assertEqual(band_item["years"], "1994")
+        self.assertEqual(band_item["members"], ["Vladislav Petkun", "Сергей Валевко"])
+        self.assertEqual(band_item["roles"], ["guitar, vocals", "вокал"])
+
+        release_item = index[1]
+        self.assertEqual(release_item["url"], "/site/en/bands/m-spirit/1995-zadushevnie-pesenki/")
+        self.assertEqual(release_item["credits"], ["Kuzya - recording"])
+
+        track_item = index[2]
+        self.assertEqual(track_item["url"], "/site/en/bands/m-spirit/1995-zadushevnie-pesenki/#track-2")
+
+
 if __name__ == "__main__":
     unittest.main()

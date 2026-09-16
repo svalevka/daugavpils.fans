@@ -32,6 +32,13 @@ STRINGS = {
         "unpreserved_desc": "Если у вас сохранилась эта кассета, компакт-диск или оцифровка,",
         "unpreserved_cta": "поделитесь записью с архивом",
         "unpreserved_track": "запись не сохранилась",
+        "search_placeholder": "Поиск по архиву...",
+        "search_aria_label": "Поиск по архиву",
+        "search_no_results": "Ничего не найдено",
+        "search_bands": "Группы",
+        "search_releases": "Релизы",
+        "search_tracks": "Треки",
+        "search_clear": "Очистить поиск",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -59,6 +66,13 @@ STRINGS = {
         "unpreserved_desc": "If you have a tape, CD, or digital copy of this recording,",
         "unpreserved_cta": "please share it with the archive",
         "unpreserved_track": "audio missing",
+        "search_placeholder": "Search archive...",
+        "search_aria_label": "Search archive",
+        "search_no_results": "No results found",
+        "search_bands": "Bands",
+        "search_releases": "Releases",
+        "search_tracks": "Tracks",
+        "search_clear": "Clear search",
     },
 }
 
