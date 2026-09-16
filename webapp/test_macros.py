@@ -709,6 +709,125 @@ class MusicianDirectoryTest(unittest.TestCase):
         self.assertIn('<a href="/members/ruslan-kondrus/"><strong>Руслан «Гоблин» Кондрусь</strong></a>', rendered)
 
 
+class RSSFeedGenerationTest(unittest.TestCase):
+    def setUp(self) -> None:
+        import sys
+
+        repo_root = Path(__file__).resolve().parent.parent
+        sys.path.insert(0, str(repo_root / "tools"))
+        sys.path.insert(0, str(repo_root / "webapp"))
+
+        templates_dir = Path(__file__).resolve().parent / "templates"
+        self.env = Environment(
+            loader=FileSystemLoader(str(templates_dir)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self.env.filters["duration"] = lambda d: d or ""
+        self.env.filters["license_label"] = lambda u: u
+        self.env.globals["localize"] = lambda obj, field, lang: (
+            getattr(obj, f"{field}_en", None) if lang == "en" and getattr(obj, f"{field}_en", None) else getattr(obj, field, None)
+        )
+        self.env.globals["localize_list"] = lambda obj, field, lang: getattr(obj, field, []) or []
+        self.env.globals["partial"] = lambda fn, *args: (lambda *a, **k: fn(*args, *a, **k))
+
+    def test_generate_feed_items_and_xml_validation(self) -> None:
+        import datetime
+        import email.utils
+        import xml.etree.ElementTree as ET
+        from build import generate_feed_items
+        from i18n import STRINGS
+        from models import MusicAlbum, MusicGroup
+
+        band = MusicGroup.model_validate({
+            "name": "M. Spirit",
+            "slug": "m-spirit",
+            "image": [{"contentUrl": "media/m-spirit.jpg", "encodingFormat": "image/jpeg"}],
+        })
+        release = MusicAlbum.model_validate({
+            "name": "Задушевные песенки",
+            "slug": "1995-zadushevnie-pesenki",
+            "datePublished": "1995",
+            "byArtist": "m-spirit",
+            "genre": ["Punk Rock"],
+            "description": "Первый студийный альбом группы.",
+            "image": [{"contentUrl": "media/cover.jpg", "encodingFormat": "image/jpeg"}],
+            "track": [
+                {
+                    "position": 1,
+                    "name": "Track 1",
+                    "audio": {
+                        "contentUrl": "01.mp3",
+                        "encodingFormat": "audio/mpeg",
+                        "duration": "PT1M30S",
+                        "identifier": [{"propertyID": "sha256", "value": "abc"}],
+                    },
+                }
+            ],
+        })
+
+        items = generate_feed_items("ru", [band], {"m-spirit": [release]}, base_path="")
+        self.assertEqual(len(items), 1)
+        item = items[0]
+        self.assertEqual(item["title"], "M. Spirit — Задушевные песенки (1995)")
+        self.assertIn("/bands/m-spirit/1995-zadushevnie-pesenki/", item["link"])
+        self.assertIsNotNone(item["enclosure"])
+        self.assertEqual(item["enclosure"]["type"], "image/jpeg")
+        self.assertIn("Первый студийный альбом группы.", item["description"])
+        self.assertIn("Track 1", item["description"])
+        self.assertIn("1:30", item["description"])
+
+        feed_tmpl = self.env.get_template("feed.xml")
+        xml_content = feed_tmpl.render(
+            channel_title="Архив музыки Даугавпилса — daugavpils.fans",
+            channel_link="https://daugavpils.fans/",
+            channel_description=STRINGS["ru"]["site_tagline"],
+            lang="ru",
+            feed_url="https://daugavpils.fans/feed.xml",
+            last_build_date=email.utils.format_datetime(datetime.datetime.now(datetime.timezone.utc)),
+            items=items,
+        )
+
+        root = ET.fromstring(xml_content)
+        self.assertEqual(root.tag, "rss")
+        channel = root.find("channel")
+        self.assertIsNotNone(channel)
+        self.assertEqual(channel.find("title").text, "Архив музыки Даугавпилса — daugavpils.fans")
+        self.assertEqual(channel.find("language").text, "ru")
+        rss_items = channel.findall("item")
+        self.assertEqual(len(rss_items), 1)
+        self.assertEqual(rss_items[0].find("title").text, "M. Spirit — Задушевные песенки (1995)")
+        self.assertEqual(rss_items[0].find("enclosure").attrib["type"], "image/jpeg")
+
+    def test_base_template_includes_rss_feed_link(self) -> None:
+        from i18n import STRINGS
+
+        tmpl = self.env.get_template("base.html")
+        # Russian
+        html_ru = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/",
+            en_url="/en/",
+        )
+        self.assertIn('<link rel="alternate" type="application/rss+xml" title="Архив музыки Даугавпилса" href="/feed.xml">', html_ru)
+
+        # English
+        html_en = tmpl.render(
+            lang="en",
+            t=STRINGS["en"],
+            lang_prefix="en/",
+            base_path="/site",
+            home_url="/site/en/",
+            ru_url="/site/",
+            en_url="/site/en/",
+        )
+        self.assertIn('<link rel="alternate" type="application/rss+xml" title="Daugavpils music archive" href="/site/en/feed.xml">', html_en)
+
+
 if __name__ == "__main__":
     unittest.main()
+
 

@@ -33,6 +33,8 @@ the maintainer's actual local files, at publish time.
 """
 from __future__ import annotations
 
+import datetime
+import email.utils
 import html
 import json
 import os
@@ -67,6 +69,7 @@ from i18n import (  # noqa: E402
     release_media_page_url as release_media_page_url_fn,
     members_index_url as members_index_url_fn,
     member_url as member_url_fn,
+    feed_url as feed_url_fn,
     lang_prefix,
 )
 
@@ -542,6 +545,131 @@ def generate_search_index(
     return items
 
 
+def get_release_git_date(band_slug: str, release_slug: str) -> datetime.datetime | None:
+    """Get the ISO timestamp of the last git commit touching a release directory, if available."""
+    try:
+        proc = subprocess.run(
+            ["git", "log", "-1", "--format=%cI", "--", f"bands/{band_slug}/{release_slug}"],
+            cwd=str(REPO_ROOT),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+        out = proc.stdout.strip()
+        if out:
+            return datetime.datetime.fromisoformat(out)
+    except Exception:
+        pass
+    return None
+
+
+def parse_release_date(release: MusicAlbum) -> datetime.datetime:
+    """Parse release datePublished or fallback to a UTC datetime."""
+    pub = (release.datePublished or "").strip()
+    if len(pub) == 4 and pub.isdigit():
+        return datetime.datetime(int(pub), 1, 1, tzinfo=datetime.timezone.utc)
+    try:
+        dt = datetime.datetime.fromisoformat(pub)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=datetime.timezone.utc)
+        return dt
+    except Exception:
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+
+
+def get_image_mime_type(url: str) -> str:
+    """Determine MIME type from image URL."""
+    lower = url.lower()
+    if lower.endswith(".png"):
+        return "image/png"
+    if lower.endswith(".webp"):
+        return "image/webp"
+    return "image/jpeg"
+
+
+def generate_feed_items(
+    lang: str,
+    bands: list[MusicGroup],
+    releases_by_band: dict[str, list[MusicAlbum]],
+    base_path: str = "",
+) -> list[dict]:
+    """Generate chronological items for the RSS feed."""
+    items: list[dict] = []
+
+    all_releases: list[tuple[MusicGroup, MusicAlbum, datetime.datetime]] = []
+    for band in bands:
+        for release in releases_by_band.get(band.slug, []):
+            dt = get_release_git_date(band.slug, release.slug) or parse_release_date(release)
+            all_releases.append((band, release, dt))
+
+    all_releases.sort(
+        key=lambda triple: (triple[2], triple[1].datePublished or "", triple[0].name, triple[1].name),
+        reverse=True,
+    )
+
+    for band, release, dt in all_releases:
+        band_name = localize(band, "name", lang) or band.name
+        title = f"{band_name} — {release.name} ({release.datePublished})"
+        link = f"{SITE_URL}{release_url(lang, band.slug, release.slug, base_path)}"
+        pub_date = email.utils.format_datetime(dt)
+
+        cover_url = None
+        if release.image:
+            cover_url = release_media_url(band, release, release.image[0].contentUrl)
+        elif band.image:
+            cover_url = band_media_url(band, band.image[0].contentUrl)
+
+        enclosure = None
+        if cover_url:
+            enclosure = {
+                "url": cover_url,
+                "length": 0,
+                "type": get_image_mime_type(cover_url),
+            }
+
+        desc_parts: list[str] = []
+        if cover_url:
+            desc_parts.append(
+                f'<p><a href="{link}"><img src="{cover_url}" alt="{html.escape(release.name)}" style="max-width: 400px; height: auto;" /></a></p>'
+            )
+
+        rel_desc = localize(release, "description", lang)
+        if rel_desc:
+            desc_parts.append(f"<p>{html.escape(rel_desc)}</p>")
+        else:
+            band_desc = localize(band, "description", lang)
+            if band_desc:
+                desc_parts.append(f"<p>{html.escape(og_snippet(band_desc, ''))}</p>")
+
+        genre_label = "Genres" if lang == "en" else "Жанр"
+        if release.genre:
+            desc_parts.append(f"<p><strong>{genre_label}:</strong> {html.escape(', '.join(release.genre))}</p>")
+
+        if release.track:
+            tracks_label = "Tracks" if lang == "en" else "Треки"
+            desc_parts.append(f"<p><strong>{tracks_label}:</strong></p><ol>")
+            for t in release.track:
+                dur = f" ({format_duration(t.audio.duration)})" if t.audio and t.audio.duration else ""
+                desc_parts.append(f"<li>{html.escape(t.name)}{dur}</li>")
+            desc_parts.append("</ol>")
+
+        listen_label = "Listen online" if lang == "en" else "Слушать альбом онлайн"
+        desc_parts.append(f'<p><a href="{link}">→ {listen_label}</a></p>')
+
+        description_html = "".join(desc_parts).replace("]]>", "]]]]><![CDATA[>")
+
+        items.append({
+            "title": title,
+            "link": link,
+            "pub_date": pub_date,
+            "description": description_html,
+            "enclosure": enclosure,
+        })
+
+    return items
+
+
 def build() -> None:
     require_valid_archive()
 
@@ -583,6 +711,7 @@ def build() -> None:
     media_tmpl = env.get_template("media.html")
     members_tmpl = env.get_template("members.html")
     member_tmpl = env.get_template("member.html")
+    feed_tmpl = env.get_template("feed.xml")
 
     for lang in LANGS:
         lang_root = DIST_DIR if lang == DEFAULT_LANG else DIST_DIR / lang
@@ -780,11 +909,25 @@ def build() -> None:
                 )
             )
 
+        feed_items = generate_feed_items(lang, bands, releases_by_band, BASE_PATH)
+        now_dt = datetime.datetime.now(datetime.timezone.utc)
+        (lang_root / "feed.xml").write_text(
+            feed_tmpl.render(
+                channel_title=f"{STRINGS[lang]['archive_title']} — daugavpils.fans",
+                channel_link=f"{SITE_URL}{home_url(lang, BASE_PATH)}",
+                channel_description=STRINGS[lang]["site_tagline"],
+                lang=lang,
+                feed_url=f"{SITE_URL}{feed_url_fn(lang, BASE_PATH)}",
+                last_build_date=email.utils.format_datetime(now_dt),
+                items=feed_items,
+            )
+        )
+
         search_index = generate_search_index(lang, bands, releases_by_band, BASE_PATH)
         (lang_root / "search-index.json").write_text(
             json.dumps(search_index, ensure_ascii=False, indent=2)
         )
-        print(f"  built [{lang}]: {len(bands)} band(s), /members/ ({len(musicians_view)} musicians), search-index.json ({len(search_index)} items)")
+        print(f"  built [{lang}]: {len(bands)} band(s), /members/ ({len(musicians_view)} musicians), feed.xml ({len(feed_items)} items), search-index.json ({len(search_index)} items)")
 
     support_tmpl = env.get_template("support.html")
     for lang in LANGS:

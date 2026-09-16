@@ -136,3 +136,8 @@ def members_index_url(lang: str, base_path: str = "") -> str:
 
 def member_url(lang: str, member_slug: str, base_path: str = "") -> str:
     return f"{base_path}/{lang_prefix(lang)}members/{member_slug}/"
+
+
+def feed_url(lang: str, base_path: str = "") -> str:
+    return f"{base_path}/{lang_prefix(lang)}feed.xml"
+
