@@ -48,3 +48,11 @@ def item_torrent_url(item_id: str) -> str:
     URL - same naming convention as archive_org_url, just for the whole item
     rather than one file."""
     return f"https://archive.org/download/{item_id}/{item_id}_archive.torrent"
+
+
+def secondary_mirror_url(item_id: str, content_url: str, base_url: str = "https://media.daugavpils.fans") -> str:
+    """Predictable secondary media mirror URL (e.g. Backblaze B2 or Cloudflare R2 bucket).
+    Mirrors the archive.org item layout: base_url/<item_id>/<content_url>.
+    """
+    base = base_url.rstrip("/")
+    return f"{base}/{item_id}/{content_url}"

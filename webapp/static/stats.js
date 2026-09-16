@@ -122,4 +122,28 @@
       release: d.release || "",
     });
   });
+
+  // 4. Media fallback beacon (tracks secondary mirror / proxy fallbacks)
+  var reportedFallbacks = new Set();
+  document.addEventListener("daugavpils:media-fallback", function (event) {
+    var d = event.detail || {};
+    var fallbackKey =
+      (d.band || "") +
+      ":" +
+      (d.release || "") +
+      ":" +
+      (d.track || d.video || "") +
+      ":" +
+      (d.src || "");
+    if (reportedFallbacks.has(fallbackKey)) return;
+    reportedFallbacks.add(fallbackKey);
+    sendEvent({
+      type: "media_fallback",
+      path: window.location.pathname,
+      track: d.track || "",
+      video: d.video || "",
+      band: d.band || "",
+      release: d.release || "",
+    });
+  });
 })();

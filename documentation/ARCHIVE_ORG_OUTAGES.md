@@ -16,7 +16,12 @@ flowchart TD
         MEDIA["<audio> or <video> element"] -->|Playback attempt| NET["Stream from archive.org"]
         NET -->|502 / 503 / Timeout / Error| ERR["Media 'error' event captured"]
 
-        ERR --> DETECT["handleMediaError(target)"]
+        ERR --> FB{"tryMediaFallback(el)"}
+        FB -->|Fallback URL available| SWAP["Swap src to secondary mirror (media.daugavpils.fans)"]
+        SWAP --> EV_FB["Dispatch 'daugavpils:media-fallback'"]
+        EV_FB --> STATS_FB["stats.js sends beacon to /api/event"]
+
+        FB -->|Mirror fails or no mirror| DETECT["handleMediaError(target)"]
         DETECT --> CACHE["Cache outage in sessionStorage (5-min TTL)"]
         DETECT --> BANNER["Render sticky top alert banner"]
         DETECT --> INLINE["Flag track row or video with inline badge"]
@@ -31,6 +36,7 @@ flowchart TD
 
     subgraph Server["Server (cherry)"]
         STATS --> PROXY["nginx (/api/event)"]
+        STATS_FB --> PROXY
         PROXY --> APP["review-app container (Flask)"]
         APP --> DB[("review.db (analytics_events)")]
         DB --> ADMIN["Maintainer Dashboard (/admin/)"]
@@ -41,10 +47,14 @@ flowchart TD
 
 ## 2. Component Breakdown
 
-### 2.1 Client-Side Detection (`webapp/static/player.js`)
+### 2.1 Client-Side Detection & Automatic Fallback (`webapp/static/player.js`)
 - **Event capture**: Listens for the `error` event in the capture phase on `<audio>`, `<video>`, and `<source>` elements.
-- **Source verification**: Only media URLs originating from `archive.org` trigger the outage handler.
-- **Inline status**:
+- **Transparent secondary mirror fallback (`tryMediaFallback`)**:
+  - Before declaring an outage, the player checks if the failed source matches `archive.org/download/...` or `/media-stream/...`.
+  - Converts the URL to the secondary mirror: `https://media.daugavpils.fans/<item_id>/<file>` (or custom prefix configured in `window.DAUGAVPILS_MEDIA_MIRROR`).
+  - Swaps `mediaEl.src` to the mirror URL, sets `dataset.fallbackTried = "1"` to prevent infinite loops, calls `mediaEl.load()` and `mediaEl.play()`, and dispatches a `daugavpils:media-fallback` event.
+  - Only if the secondary mirror source also fails does `handleMediaError` declare an outage.
+- **Inline status (on secondary mirror failure)**:
   - The failed track row receives the `.media-outage-row` CSS class and an inline warning badge:
     - Russian: `⚠️ сбой archive.org`
     - English: `⚠️ archive.org error`
@@ -79,21 +89,33 @@ flowchart TD
 - On subsequent page navigations during the session, `DOMContentLoaded` checks the cache and automatically renders the banner so users immediately know archive.org remains unavailable without having to re-trigger a failed playback.
 
 ### 2.4 Telemetry & Maintainer Monitoring (`stats.js` & `analytics.py`)
-- When a confirmed media error occurs, `player.js` emits a `daugavpils:media-error` custom event.
-- `webapp/static/stats.js` listens to this event, deduplicates errors per media item, and transmits a `media_error` beacon to `/api/event`:
-  ```json
-  {
-    "type": "media_error",
-    "path": "/bands/glazki-stekolshika/chernovyaki/",
-    "track": "05-ivanovo.mp3",
-    "band": "glazki-stekolshika",
-    "release": "chernovyaki"
-  }
-  ```
-- `review_app/analytics.py` accepts and logs `media_error` events into SQLite table `analytics_events`.
-- `review_app/admin.py` counts media errors in the active time filter (`Today`, `7d`, `30d`, `All Time`).
-- The admin dashboard (`/admin/`) displays a dedicated summary card:
-  - **Media Errors (archive.org)** with a warning accent color when errors exceed 0.
+- **Fallback events (`media_fallback`)**:
+  - Emitted when a track swaps to the secondary mirror. `stats.js` captures `daugavpils:media-fallback` and transmits:
+    ```json
+    {
+      "type": "media_fallback",
+      "path": "/bands/glazki-stekolshika/chernovyaki/",
+      "track": "05-ivanovo.mp3",
+      "band": "glazki-stekolshika",
+      "release": "chernovyaki"
+    }
+    ```
+- **Outage error events (`media_error`)**:
+  - Emitted when both primary and secondary sources fail. `stats.js` captures `daugavpils:media-error` and transmits:
+    ```json
+    {
+      "type": "media_error",
+      "path": "/bands/glazki-stekolshika/chernovyaki/",
+      "track": "05-ivanovo.mp3",
+      "band": "glazki-stekolshika",
+      "release": "chernovyaki"
+    }
+    ```
+- `review_app/analytics.py` accepts and logs both event types into SQLite table `analytics_events`.
+- `review_app/admin.py` counts media errors and mirror fallbacks across the active time filter (`Today`, `7d`, `30d`, `All Time`).
+- The admin dashboard (`/admin/`) displays dedicated summary cards:
+  - **Media Errors (archive.org)**: Outages where media could not be played.
+  - **Mirror Fallbacks (B2/Proxy)**: Successful graceful transitions to the secondary mirror.
 
 ---
 
@@ -121,17 +143,36 @@ To prevent audio and video playback outages when archive.org suffers prolonged d
   ```
   When archive.org is down, Nginx immediately serves cached tracks from disk rather than halting playback.
 - **Internal 302 redirect resolution**: Archive.org `/download/` URLs return HTTP 302 redirects to specific storage nodes (e.g. `iaXXXX.us.archive.org`). Nginx intercepts these redirects (`proxy_intercept_errors on; error_page 301 302 307 = @media_redirect;`) and follows them internally with a DNS resolver so media bytes are cached locally.
-- **Client-side resilience (`player.js`)**: When direct media requests fail, `player.js` automatically invokes `tryMediaFallback()`, routing requests through `/media-stream/` to leverage the local cache before flagging an outage. If the track is cached, playback resumes seamlessly.
+- **Client-side resilience (`player.js`)**: When direct media requests fail, `player.js` automatically invokes `tryMediaFallback()`, routing requests through the secondary media mirror (`media.daugavpils.fans`) or local cache before flagging an outage. If the track is available on the mirror, playback resumes seamlessly.
 
 ---
 
-## 5. Verification & Testing
+## 5. Secondary Media Mirror (B2 / Cloudflare R2)
+
+To ensure media plays reliably during global Internet Archive outages—even on static hosting environments like GitHub Pages and for cold tracks on server `cherry`—the archive maintains a secondary storage mirror:
+
+- **Predictable URL Mapping**:
+  Direct archive download URLs (`https://archive.org/download/<item_id>/<file>`) map deterministically to:
+  ```
+  https://media.daugavpils.fans/<item_id>/<file>
+  ```
+  The mirror base URL can be customized at runtime via `window.DAUGAVPILS_MEDIA_MIRROR` (or `tools/archive_org.py:secondary_mirror_url(item_id, filename)`).
+- **Automated Publication Mirroring (`tools/publish_to_archive_org.py`)**:
+  - The CLI supports `--mirror-b2` and `--b2-bucket <name>` (defaulting to the `B2_BUCKET_NAME` environment variable).
+  - During release publication, newly uploaded media files are automatically mirrored to the public B2 bucket under `<item_id>/<file>` using `boto3` / S3 API with public read permissions.
+- **Primary Origin Preservation**:
+  - `archive.org/download/...` remains the primary media origin in generated HTML to minimize bandwidth and storage egress costs.
+  - The secondary mirror is contacted strictly as a dynamic fallback when client playback errors occur.
+
+---
+
+## 6. Verification & Testing
 
 - **Node.js client tests**:
   ```bash
   node webapp/test_player.mjs
   ```
-  Validates banner rendering in Russian and English, track row error marking, session storage caching, proxy URL conversion, retry recovery, and client-side fallback.
+  Validates banner rendering in Russian and English, track row error marking, session storage caching, proxy URL conversion, secondary mirror URL resolution, retry recovery, and client-side fallback.
 - **Deploy & proxy unit tests**:
   ```bash
   python -m unittest webapp/deploy/test_media_proxy.py
@@ -141,5 +182,5 @@ To prevent audio and video playback outages when archive.org suffers prolonged d
   ```bash
   python -m unittest discover -s review_app -p 'test_*.py'
   ```
-  Validates `media_error` analytics ingestion and admin dashboard rendering.
+  Validates `media_error` and `media_fallback` analytics ingestion and admin dashboard rendering.
 

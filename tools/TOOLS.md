@@ -308,7 +308,10 @@ every band/release's item id, which isn't actually recoverable-from-scratch
   update the metadata backup bundle (`daugavpils-fans-metadata`), without
   requiring audio/video/image media files to exist locally. Used by CI
   (`.github/workflows/sync-metadata.yml`) and maintainers when updating metadata
-  without a full local media tree.
+- `python tools/publish_to_archive_org.py --mirror-b2` - also sync
+  published media files to Backblaze B2 public mirror bucket (`daugavpils.fans-media`),
+  providing the secondary media mirror fallback (`https://media.daugavpils.fans/`) for
+  archive.org outages.
 - Requires an authenticated `ia` config on the machine running it (`ia
   configure`, once, using the project's archive.org account - not a
   personal one), or `IA_ACCESS_KEY_ID` and `IA_SECRET_ACCESS_KEY` environment

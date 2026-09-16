@@ -186,7 +186,7 @@ def record_event():
         return ("", 204)
 
     event_type = str(data.get("type", "")).strip()
-    if event_type not in ("pageview", "track_play", "video_play", "media_error"):
+    if event_type not in ("pageview", "track_play", "video_play", "media_error", "media_fallback"):
         return ("", 204)
 
     ua = request.user_agent.string or ""

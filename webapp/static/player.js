@@ -596,6 +596,13 @@
   }
 
   var MEDIA_PROXY_PREFIX = "/media-stream/";
+  var SECONDARY_MIRROR_PREFIX = "https://media.daugavpils.fans/";
+
+  function getSecondaryMirrorPrefix() {
+    var custom = typeof window !== "undefined" && window.DAUGAVPILS_MEDIA_MIRROR;
+    var base = custom || SECONDARY_MIRROR_PREFIX;
+    return base.slice(-1) === "/" ? base : base + "/";
+  }
 
   function toProxyUrl(url) {
     if (!url) return url;
@@ -618,6 +625,23 @@
     return url;
   }
 
+  function toMirrorUrl(url) {
+    if (!url) return url;
+    var mirrorBase = getSecondaryMirrorPrefix();
+    var match = url.match(/^https?:\/\/(?:[a-zA-Z0-9-]+\.)*archive\.org\/download\/(.+)$/);
+    if (match) {
+      return mirrorBase + match[1];
+    }
+    if (url.indexOf(MEDIA_PROXY_PREFIX) === 0) {
+      return mirrorBase + url.substring(MEDIA_PROXY_PREFIX.length);
+    }
+    var idx = url.indexOf(MEDIA_PROXY_PREFIX);
+    if (idx !== -1) {
+      return mirrorBase + url.substring(idx + MEDIA_PROXY_PREFIX.length);
+    }
+    return url;
+  }
+
   function tryMediaFallback(mediaEl) {
     if (!mediaEl || (mediaEl.tagName !== "AUDIO" && mediaEl.tagName !== "VIDEO")) {
       return false;
@@ -625,21 +649,25 @@
     if (mediaEl.dataset.fallbackTried === "1") {
       return false;
     }
+
     var src = mediaEl.currentSrc || mediaEl.src || "";
     if (!src && mediaEl.querySelector("source")) {
       src = mediaEl.querySelector("source").src || "";
     }
+
     var fallbackUrl = null;
-    if (src.indexOf("archive.org/download/") !== -1) {
-      fallbackUrl = toProxyUrl(src);
-    } else if (src.indexOf(MEDIA_PROXY_PREFIX) !== -1) {
-      fallbackUrl = toArchiveUrl(src);
+    if (src.indexOf("archive.org/download/") !== -1 || src.indexOf(MEDIA_PROXY_PREFIX) !== -1) {
+      fallbackUrl = toMirrorUrl(src);
     }
+
     if (!fallbackUrl || fallbackUrl === src) {
       return false;
     }
+
     mediaEl.dataset.fallbackTried = "1";
-    mediaEl.dataset.originalSrc = src;
+    if (!mediaEl.dataset.originalSrc) {
+      mediaEl.dataset.originalSrc = src;
+    }
     mediaEl.src = fallbackUrl;
     if (typeof mediaEl.load === "function") {
       mediaEl.load();
@@ -650,6 +678,22 @@
         playPromise.catch(function () {});
       }
     }
+
+    // Emit daugavpils:media-fallback event for analytics beacon
+    try {
+      var fallbackEvt = new CustomEvent("daugavpils:media-fallback", {
+        detail: {
+          track: mediaEl.dataset.track || "",
+          video: mediaEl.dataset.video || "",
+          band: mediaEl.dataset.band || "",
+          release: mediaEl.dataset.release || "",
+          src: fallbackUrl,
+          originalSrc: src,
+        },
+      });
+      document.dispatchEvent(fallbackEvt);
+    } catch (e) {}
+
     return true;
   }
 
@@ -668,7 +712,12 @@
     if (!src && mediaEl.querySelector("source")) {
       src = mediaEl.querySelector("source").src || "";
     }
-    if (src.indexOf("archive.org") === -1 && src.indexOf(MEDIA_PROXY_PREFIX) === -1) {
+    var mirrorBase = getSecondaryMirrorPrefix();
+    if (
+      src.indexOf("archive.org") === -1 &&
+      src.indexOf(MEDIA_PROXY_PREFIX) === -1 &&
+      src.indexOf(mirrorBase) === -1
+    ) {
       return;
     }
 
@@ -792,6 +841,7 @@
     setOutageCached: setOutageCached,
     toProxyUrl: toProxyUrl,
     toArchiveUrl: toArchiveUrl,
+    toMirrorUrl: toMirrorUrl,
     tryMediaFallback: tryMediaFallback,
   };
 

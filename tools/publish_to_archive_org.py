@@ -232,6 +232,26 @@ def sync_metadata(item_id: str, metadata: dict[str, str]) -> bool:
     return True
 
 
+def sync_to_b2_mirror(item_id: str, files: dict[str, Path], bucket: str, dry_run: bool = False) -> bool:
+    """Synchronize media files to public B2 bucket under <bucket>/<item_id>/<content_url>
+    so it matches the predictable secondary mirror URL mapping."""
+    if not files:
+        return True
+    print(f"  [B2 Mirror] Syncing {len(files)} file(s) for {item_id} to b2:{bucket}/{item_id}/")
+    if dry_run:
+        for content_url in sorted(files):
+            print(f"    [B2 dry-run] {content_url} -> b2:{bucket}/{item_id}/{content_url}")
+        return True
+    for content_url, local_path in sorted(files.items()):
+        dest = f"b2:{bucket}/{item_id}/{content_url}"
+        cmd = ["rclone", "copyto", str(local_path), dest]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode != 0:
+            print(f"    WARNING: failed to mirror {local_path} to {dest}: {res.stderr.strip()}")
+            return False
+    return True
+
+
 def publish_metadata_bundle(bands_dir: Path, dry_run: bool) -> None:
     """Uploads every band.yaml/release.yaml under bands_dir into one
     dedicated archive.org item (metadata_item_id()), each at its path
@@ -320,6 +340,16 @@ def main() -> int:
         "skips the archive.org checksum walk over every other band/release. "
         "Default: all bands. The metadata backup upload still runs regardless.",
     )
+    parser.add_argument(
+        "--mirror-b2",
+        action="store_true",
+        help="Also sync published media files to Backblaze B2 public mirror bucket.",
+    )
+    parser.add_argument(
+        "--b2-bucket",
+        default="daugavpils.fans-media",
+        help="Target Backblaze B2 bucket for secondary mirror (default: daugavpils.fans-media).",
+    )
     args = parser.parse_args()
 
     bands_dir: Path = args.bands_dir
@@ -338,9 +368,10 @@ def main() -> int:
         seen.add(band_dir.name)
         band = load_band(band_dir)
         print(f"\n{band.name} ({band.slug})")
+        b_files = media_files(band_dir, band.image + band.video)
         ok = publish_item(
             band_item_id(band.slug),
-            media_files(band_dir, band.image + band.video),
+            b_files,
             band_metadata(band),
             args.dry_run,
             band_dir / "band.yaml",
@@ -348,6 +379,9 @@ def main() -> int:
         )
         if not ok:
             all_ok = False
+        elif args.mirror_b2 and not args.metadata_only:
+            if not sync_to_b2_mirror(band_item_id(band.slug), b_files, args.b2_bucket, args.dry_run):
+                all_ok = False
 
         for release_dir in sorted(p for p in band_dir.iterdir() if p.is_dir()):
             release_yaml = release_dir / "release.yaml"
@@ -365,6 +399,9 @@ def main() -> int:
             )
             if not ok:
                 all_ok = False
+            elif args.mirror_b2 and not args.metadata_only:
+                if not sync_to_b2_mirror(release_item_id(band.slug, release.slug), files, args.b2_bucket, args.dry_run):
+                    all_ok = False
 
     if requested is not None and (unknown := requested - seen):
         print(f"\nWarning: --bands slug(s) not found under {bands_dir}: {', '.join(sorted(unknown))}")

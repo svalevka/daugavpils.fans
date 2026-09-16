@@ -699,8 +699,11 @@ test("player.js: toProxyUrl and toArchiveUrl convert archive.org download URLs",
   assert.equal(toArchiveUrl("https://other.com/file.mp3"), "https://other.com/file.mp3");
 });
 
-test("player.js: tryMediaFallback switches direct archive.org audio to /media-stream/", () => {
+test("player.js: tryMediaFallback switches direct archive.org audio to secondary mirror URL", () => {
   const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const fallbackEvents = [];
+  mockDocument.addEventListener("daugavpils:media-fallback", (e) => fallbackEvents.push(e.detail));
+
   const context = vm.createContext({
     window: mockWindow,
     document: mockDocument,
@@ -717,20 +720,52 @@ test("player.js: tryMediaFallback switches direct archive.org audio to /media-st
 
   const audio = mockDocument.createElement("audio");
   audio.src = "https://archive.org/download/daugavpils-fans-band/01-track.mp3";
+  audio.dataset.track = "Track 1";
 
   const didFallback = tryMediaFallback(audio);
   assert.equal(didFallback, true);
-  assert.equal(audio.src, "/media-stream/daugavpils-fans-band/01-track.mp3");
+  assert.equal(audio.src, "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3");
   assert.equal(audio.dataset.fallbackTried, "1");
   assert.equal(audio.loaded, true);
+  assert.equal(fallbackEvents.length, 1);
+  assert.equal(fallbackEvents[0].src, "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3");
+  assert.equal(fallbackEvents[0].originalSrc, "https://archive.org/download/daugavpils-fans-band/01-track.mp3");
 
   // Calling it again on the same element returns false (already tried)
   const secondAttempt = tryMediaFallback(audio);
   assert.equal(secondAttempt, false);
 });
 
-test("player.js: error event performs proxy fallback before marking outage", () => {
+test("player.js: tryMediaFallback switches /media-stream/ proxy audio to secondary mirror URL", () => {
   const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+  const { tryMediaFallback } = context.window.DaugavpilsArchiveOutage;
+
+  const audio = mockDocument.createElement("audio");
+  audio.src = "/media-stream/daugavpils-fans-band/01-track.mp3";
+
+  const didFallback = tryMediaFallback(audio);
+  assert.equal(didFallback, true);
+  assert.equal(audio.src, "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3");
+  assert.equal(audio.dataset.fallbackTried, "1");
+});
+
+test("player.js: error event performs secondary mirror fallback before marking outage", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const fallbackEvents = [];
+  mockDocument.addEventListener("daugavpils:media-fallback", (e) => fallbackEvents.push(e.detail));
+
   const context = vm.createContext({
     window: mockWindow,
     document: mockDocument,
@@ -756,17 +791,19 @@ test("player.js: error event performs proxy fallback before marking outage", () 
   table.appendChild(tr);
   mockDocument.body.appendChild(table);
 
-  // First error event: triggers fallback to /media-stream/
+  // First error event: triggers fallback to secondary mirror
   mockDocument.dispatchEvent({
     type: "error",
     target: audio,
   });
 
-  assert.equal(audio.src, "/media-stream/daugavpils-fans-band/01-track.mp3");
+  assert.equal(audio.src, "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3");
   assert.equal(audio.dataset.fallbackTried, "1");
   assert.equal(tr.classList.contains("media-outage-row"), false);
+  assert.equal(fallbackEvents.length, 1);
+  assert.equal(fallbackEvents[0].src, "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3");
 
-  // Second error event (proxy also failed): marks outage and shows banner
+  // Second error event (secondary mirror also failed): marks outage and shows banner
   mockDocument.dispatchEvent({
     type: "error",
     target: audio,
@@ -777,6 +814,74 @@ test("player.js: error event performs proxy fallback before marking outage", () 
   assert.ok(banner);
   assert.ok(context.window.DaugavpilsArchiveOutage.isOutageCached());
 });
+
+test("player.js: toMirrorUrl constructs secondary mirror URLs and respects custom mirror host", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+  const { toMirrorUrl } = context.window.DaugavpilsArchiveOutage;
+
+  assert.equal(
+    toMirrorUrl("https://archive.org/download/daugavpils-fans-band/01-track.mp3"),
+    "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3"
+  );
+  assert.equal(
+    toMirrorUrl("https://ia800100.us.archive.org/download/daugavpils-fans-band/photo.jpg"),
+    "https://media.daugavpils.fans/daugavpils-fans-band/photo.jpg"
+  );
+  assert.equal(
+    toMirrorUrl("/media-stream/daugavpils-fans-band/01-track.mp3"),
+    "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3"
+  );
+
+  // With custom window.DAUGAVPILS_MEDIA_MIRROR
+  mockWindow.DAUGAVPILS_MEDIA_MIRROR = "https://r2.daugavpils.fans";
+  assert.equal(
+    toMirrorUrl("https://archive.org/download/daugavpils-fans-band/01-track.mp3"),
+    "https://r2.daugavpils.fans/daugavpils-fans-band/01-track.mp3"
+  );
+});
+
+test("player.js: direct secondary mirror fallback on GitHub Pages", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
+  mockWindow.location.hostname = "svalevka.github.io";
+
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+  vm.runInContext(playerJsCode, context);
+
+  const audio = mockDocument.createElement("audio");
+  audio.src = "https://archive.org/download/daugavpils-fans-band/01-track.mp3";
+
+  // First error event on GitHub Pages: skips /media-stream/ and falls back directly to secondary mirror
+  mockDocument.dispatchEvent({
+    type: "error",
+    target: audio,
+  });
+
+  assert.equal(audio.src, "https://media.daugavpils.fans/daugavpils-fans-band/01-track.mp3");
+  assert.equal(audio.dataset.fallbackTried, "1");
+});
+
 
 
 
