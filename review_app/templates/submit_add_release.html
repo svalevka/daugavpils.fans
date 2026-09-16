@@ -5,7 +5,14 @@
 <p class="meta">{{ band_name }}</p>
 <p>{{ t.add_release_desc }}</p>
 
-<form method="post" action="/submit-release" enctype="multipart/form-data" data-album-form>
+<form method="post" action="/submit-release" enctype="multipart/form-data" data-album-form
+      data-msg-uploading="{{ t.uploading_status }}"
+      data-msg-processing="{{ t.uploading_processing }}"
+      data-msg-network-error="{{ t.upload_network_error }}"
+      data-msg-rate-limit="{{ t.upload_rate_limit_error }}"
+      data-msg-server-error="{{ t.upload_server_error }}"
+      data-msg-preview="{{ t.preview_audio }}"
+      data-msg-pause="{{ t.pause_audio }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="band_slug" value="{{ band_slug }}">
 
@@ -41,9 +48,20 @@
 
   <div class="field">
     <label>{{ t.album_tracks }} *</label>
-    <input type="file" multiple accept="audio/mpeg,audio/flac,audio/wav,audio/ogg,.mp3,.flac,.wav,.ogg" data-album-audio-input hidden>
-    <button type="button" class="btn" data-album-add-audio>+ {{ t.album_tracks }}</button>
+    <noscript>
+      <input type="file" id="noscript-tracks" name="tracks" multiple accept="audio/mpeg,audio/flac,audio/wav,audio/ogg,.mp3,.flac,.wav,.ogg">
+    </noscript>
+    <div class="upload-dropzone" data-album-dropzone>
+      <input type="file" multiple accept="audio/mpeg,audio/flac,audio/wav,audio/ogg,.mp3,.flac,.wav,.ogg" data-album-audio-input hidden>
+      <button type="button" class="btn" data-album-add-audio>+ {{ t.album_tracks }}</button>
+      <span class="dropzone-hint meta">{{ t.drag_drop_hint }}</span>
+    </div>
     <div data-album-track-list style="margin-top: 10px;"></div>
+    <div class="upload-progress-container" data-album-progress style="display: none; margin-top: 15px;">
+      <div class="progress-status meta" data-album-progress-status style="margin-bottom: 6px; font-weight: 500;"></div>
+      <progress class="upload-progress-bar" data-album-progress-bar value="0" max="100" style="width: 100%; height: 10px;"></progress>
+    </div>
+    <div class="upload-error-banner" data-album-upload-error style="display: none; margin-top: 10px;"></div>
   </div>
 
   <div class="field">
@@ -72,7 +90,7 @@
     <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
   </div>
 
-  <button type="submit" data-album-submit disabled data-loading-text="Uploading...">{{ t.submit_button }}</button>
+  <button type="submit" data-album-submit data-original-text="{{ t.submit_button }}">{{ t.submit_button }}</button>
 </form>
 {% endblock %}
 {% block scripts %}

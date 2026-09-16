@@ -701,3 +701,97 @@ button:disabled:hover, .btn:disabled:hover {
   color: #ff922b;
 }
 
+.upload-dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  padding: 1.25rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.upload-dropzone.dragover {
+  border-color: var(--accent);
+  background: rgba(226, 177, 60, 0.08);
+}
+
+.dropzone-hint {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.track-row {
+  cursor: grab;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.track-row.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.track-row.drag-over {
+  border-top: 2px solid var(--accent) !important;
+}
+
+.btn-preview {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  cursor: pointer;
+}
+
+.btn-preview:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-preview.playing {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(226, 177, 60, 0.15);
+}
+
+.upload-progress-bar {
+  width: 100%;
+  height: 10px;
+  accent-color: var(--accent);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.upload-progress-bar::-webkit-progress-bar {
+  background-color: var(--bg-raised);
+  border-radius: 4px;
+}
+
+.upload-progress-bar::-webkit-progress-value {
+  background-color: var(--accent);
+  border-radius: 4px;
+  transition: width 0.15s ease;
+}
+
+.upload-error-banner {
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid #dc3545;
+  color: #ff6b6b;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+

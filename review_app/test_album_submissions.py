@@ -40,6 +40,26 @@ class AlbumSubmissionFormTest(ReviewAppTestCase):
         resp = self.client.get("/submit/non-existent-band/add-release")
         self.assertEqual(resp.status_code, 404)
 
+    def test_form_contains_upload_progress_and_dropzone_elements(self):
+        resp = self.client.get(f"/submit/{self.fx.band_slug}/add-release")
+        self.assertEqual(resp.status_code, 200)
+        html = resp.get_data(as_text=True)
+        self.assertIn("data-album-dropzone", html)
+        self.assertIn("data-album-progress", html)
+        self.assertIn("data-album-progress-bar", html)
+        self.assertIn("data-album-upload-error", html)
+        self.assertIn("noscript-tracks", html)
+        self.assertIn("или перетащите аудиофайлы сюда", html)
+        self.assertIn('data-msg-uploading="Загрузка...', html)
+
+    def test_form_contains_english_i18n_data_attributes(self):
+        resp = self.client.get(f"/submit/{self.fx.band_slug}/add-release?lang=en")
+        self.assertEqual(resp.status_code, 200)
+        html = resp.get_data(as_text=True)
+        self.assertIn("or drag and drop audio files here", html)
+        self.assertIn('data-msg-uploading="Uploading...', html)
+        self.assertIn('data-msg-preview="Preview track"', html)
+
 
 class AlbumSubmissionPostTest(ReviewAppTestCase):
     @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)

@@ -34,6 +34,26 @@ class BandSubmissionFormTest(ReviewAppTestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn("Propose a new band", resp.get_data(as_text=True))
 
+    def test_form_contains_upload_progress_and_dropzone_elements(self):
+        resp = self.client.get("/submit/add-band")
+        self.assertEqual(resp.status_code, 200)
+        html = resp.get_data(as_text=True)
+        self.assertIn("data-band-dropzone", html)
+        self.assertIn("data-band-progress", html)
+        self.assertIn("data-band-progress-bar", html)
+        self.assertIn("data-band-upload-error", html)
+        self.assertIn("noscript-band-tracks", html)
+        self.assertIn("или перетащите аудиофайлы сюда", html)
+        self.assertIn('data-msg-uploading="Загрузка...', html)
+
+    def test_form_contains_english_i18n_data_attributes(self):
+        resp = self.client.get("/submit/add-band?lang=en")
+        self.assertEqual(resp.status_code, 200)
+        html = resp.get_data(as_text=True)
+        self.assertIn("or drag and drop audio files here", html)
+        self.assertIn('data-msg-uploading="Uploading...', html)
+        self.assertIn('data-msg-preview="Preview track"', html)
+
 
 class BandSubmissionPostTest(ReviewAppTestCase):
     def test_valid_band_only_submission_creates_pending_proposal(self):
