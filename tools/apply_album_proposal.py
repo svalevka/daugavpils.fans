@@ -37,6 +37,7 @@ from publish_to_archive_org import (
     publish_metadata_bundle,
     release_metadata,
 )
+from exif_cleanup import strip_sensitive_exif
 from validate import dump_yaml, ffprobe_av_info, load_yaml, sha256_of
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -123,6 +124,7 @@ def apply_album_proposal(
         dest_cover_path = release_dir / dest_cover_name
         if not dry_run:
             shutil.copy2(cover_file, dest_cover_path)
+            strip_sensitive_exif(dest_cover_path)
             cover_sha = sha256_of(dest_cover_path)
         else:
             dest_cover_path = cover_file

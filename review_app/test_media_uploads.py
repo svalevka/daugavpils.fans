@@ -115,6 +115,37 @@ class SniffingAndSavingTest(unittest.TestCase):
                 )
             self.assertIn("storage space is low", str(ctx.exception))
 
+    def test_strips_sensitive_exif_on_image_upload(self):
+        from PIL import Image
+
+        img = Image.new("RGB", (64, 48), color="cyan")
+        exif = img.getexif()
+        exif[0x0112] = 6  # Orientation
+        exif[0x010F] = "CameraBrand"
+        exif[0x0110] = "CameraModelX"
+        gps = exif.get_ifd(0x8825)
+        gps[1] = "N"
+        gps[2] = (55.0, 52.0, 0.0)
+
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", exif=exif)
+        raw_bytes = buf.getvalue()
+
+        stored_filename, content_type, media_type, size = media_uploads.save_upload(
+            _file_storage(raw_bytes), self.uploads_dir, self.max_bytes
+        )
+
+        saved_path = self.uploads_dir / stored_filename
+        self.assertTrue(saved_path.exists())
+
+        with Image.open(saved_path) as saved_img:
+            saved_exif = saved_img.getexif()
+            self.assertEqual(saved_exif.get(0x0112), 6)
+            self.assertNotIn(0x8825, saved_exif)
+            self.assertFalse(bool(saved_exif.get_ifd(0x8825)))
+            self.assertNotIn(0x010F, saved_exif)
+            self.assertNotIn(0x0110, saved_exif)
+
 
 if __name__ == "__main__":
     unittest.main()

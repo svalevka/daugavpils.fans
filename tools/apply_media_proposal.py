@@ -36,6 +36,7 @@ from publish_to_archive_org import (
     publish_metadata_bundle,
     release_metadata,
 )
+from exif_cleanup import strip_sensitive_exif
 from validate import dump_yaml, ffprobe_av_info, load_yaml, sha256_of
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -203,6 +204,8 @@ def apply_media_proposal(
     if not dry_run:
         target_file.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(media_file_path, target_file)
+        if media_type == "image":
+            strip_sensitive_exif(target_file)
 
     actual_sha256 = sha256_of(target_file if not dry_run else media_file_path)
 

@@ -11,8 +11,13 @@ from __future__ import annotations
 
 import secrets
 import shutil
+import sys
 from pathlib import Path
 from typing import BinaryIO
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+
+from exif_cleanup import strip_sensitive_exif  # noqa: E402
 
 CHUNK_SIZE = 1024 * 1024  # 1 MiB
 
@@ -130,5 +135,9 @@ def save_upload(
                 dest.unlink(missing_ok=True)
                 raise UploadRejected("total upload storage quota exceeded; please try again later")
             out.write(chunk)
+
+    if media_type == "image":
+        strip_sensitive_exif(dest)
+        size = dest.stat().st_size
 
     return stored_filename, content_type, media_type, size

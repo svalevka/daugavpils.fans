@@ -530,6 +530,18 @@ still processing every band and exiting non-zero after one band's fetch
 fails while the other's already-verified file needed no network call at
 all.
 
+## `exif_cleanup.py`
+
+**Problem it solves:** community-submitted photos and scans often contain
+sensitive EXIF metadata (GPS coordinates, camera/phone serial numbers,
+device models, author/owner names) that pose a privacy risk when published
+permanently to archive.org (GitHub issue #53).
+
+**How:** `strip_sensitive_exif()` removes GPS information (GPS IFD `0x8825`)
+and sensitive device/personal tags (`Make`, `Model`, `MakerNote`, serial numbers)
+while preserving image orientation (`Orientation` `0x0112`) and visual quality
+(`quality="keep"` for JPEG). Operates idempotently: leaves clean images untouched.
+
 ## `requirements.txt`
 
 **Problem it solves:** pins the Python dependencies these tools need

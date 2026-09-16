@@ -238,6 +238,49 @@ class ApplyMediaProposalTest(unittest.TestCase):
         self.assertNotEqual(res.returncode, 0)
         self.assertIn("not a valid slug", res.stderr)
 
+    def test_apply_image_strips_sensitive_exif(self):
+        import io
+        from PIL import Image
+        from apply_media_proposal import apply_media_proposal
+
+        img = Image.new("RGB", (64, 64), color="orange")
+        exif = img.getexif()
+        exif[0x0112] = 6  # Orientation
+        exif[0x010F] = "PersonalCamera"
+        gps = exif.get_ifd(0x8825)
+        gps[1] = "N"
+        gps[2] = (55.0, 52.0, 0.0)
+
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", exif=exif)
+
+        media_file = self.tmp_path / "camera_upload.jpg"
+        media_file.write_bytes(buf.getvalue())
+
+        proposal = {
+            "id": 10,
+            "band_slug": self.fx.band_slug,
+            "release_slug": None,
+            "media_type": "image",
+            "original_filename": "camera_upload.jpg",
+            "content_type": "image/jpeg",
+        }
+
+        target_file, target_yaml, content_url = apply_media_proposal(
+            proposal,
+            media_file,
+            self.bands_dir,
+            skip_upload=True,
+        )
+
+        self.assertTrue(target_file.exists())
+        with Image.open(target_file) as f:
+            sanitized_exif = f.getexif()
+            self.assertEqual(sanitized_exif.get(0x0112), 6)
+            self.assertNotIn(0x8825, sanitized_exif)
+            self.assertFalse(bool(sanitized_exif.get_ifd(0x8825)))
+            self.assertNotIn(0x010F, sanitized_exif)
+
 
 if __name__ == "__main__":
     unittest.main()
