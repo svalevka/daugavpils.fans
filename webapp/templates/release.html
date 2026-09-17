@@ -49,12 +49,12 @@
   {% for track in release.track %}
   <tr id="track-{{ track.position }}" class="track-row{% if not track.audio %} track-unpreserved{% endif %}">
     <td class="track-position"><a href="#track-{{ track.position }}" class="track-anchor" title="{{ t.copy_track_link }}" aria-label="{{ t.copy_track_link }}">{{ track.position }}</a></td>
-    <td>
+    <td class="track-title">
       {{ track.name }}
       {% if track.alternateName %}<div class="meta">{{ track.alternateName }}</div>{% endif %}
     </td>
     {% if track.audio %}
-    <td><audio controls preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-artist="{{ band.name }}" data-album="{{ release.name }}"{% if release.image %} data-artwork="{{ media_url(release.image[0].contentUrl) }}"{% endif %} data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
+    <td class="track-audio"><audio controls controlsList="nodownload noplaybackrate" preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-artist="{{ band.name }}" data-album="{{ release.name }}"{% if release.image %} data-artwork="{{ media_url(release.image[0].contentUrl) }}"{% endif %} data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
     <td class="track-duration">
       <span class="duration-text">{{ track.audio.duration | duration }}</span>
       <a href="{{ media_url(track.audio.contentUrl) }}" class="track-download" download="{{ track.audio.contentUrl }}" title="{{ t.download_track }}" aria-label="{{ t.download_track }} ({{ track.name }})">

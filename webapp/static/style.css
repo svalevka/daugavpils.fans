@@ -448,9 +448,27 @@ table.tracklist td.track-duration {
   color: var(--text-dim);
 }
 
+table.tracklist td.track-title {
+  word-break: break-word;
+}
+
+table.tracklist td.track-title .meta {
+  font-size: 0.8rem;
+  margin-bottom: 0;
+  margin-top: 0.15rem;
+}
+
+table.tracklist td.track-audio {
+  width: 50%;
+  min-width: 15rem;
+  max-width: 22rem;
+}
+
 table.tracklist audio {
+  display: block;
   height: 2rem;
-  max-width: 12rem;
+  width: 100%;
+  max-width: 22rem;
 }
 
 .badge-unpreserved {
@@ -1260,6 +1278,55 @@ figure.media-outage-state img {
     width: 100%;
     justify-content: space-between;
     margin-top: 0.5rem;
+  }
+
+  /* Responsive tracklist: wrap audio player below track info for full-width touch scrubbing */
+  table.tracklist,
+  table.tracklist tbody,
+  table.tracklist tr.track-row {
+    display: block;
+  }
+  table.tracklist tr.track-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  table.tracklist td {
+    border-bottom: none;
+    padding: 0;
+  }
+  table.tracklist td.track-position {
+    width: 2rem;
+    flex-shrink: 0;
+  }
+  table.tracklist td.track-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-right: 0.5rem;
+  }
+  table.tracklist td.track-duration {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: auto;
+    text-align: right;
+  }
+  table.tracklist td.track-audio {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin-top: 0.4rem;
+  }
+  table.tracklist td.track-audio audio {
+    width: 100%;
+    max-width: 100%;
+    height: 2.25rem;
+  }
+  table.tracklist td.track-status-cell {
+    width: auto;
+    margin-left: auto;
+    text-align: right;
   }
 }
 

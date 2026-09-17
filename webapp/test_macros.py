@@ -120,6 +120,15 @@ class StaticFilesTest(unittest.TestCase):
         self.assertGreater((static_dir / "favicon.svg").stat().st_size, 0)
         self.assertGreater((static_dir / "favicon.ico").stat().st_size, 0)
 
+    def test_tracklist_audio_css_scrubber_rules(self) -> None:
+        static_dir = Path(__file__).resolve().parent / "static"
+        css = (static_dir / "style.css").read_text(encoding="utf-8")
+        self.assertIn("table.tracklist td.track-audio", css)
+        self.assertIn("table.tracklist td.track-title", css)
+        self.assertIn("max-width: 22rem", css)
+        self.assertIn("@media (max-width: 600px)", css)
+        self.assertIn("table.tracklist tr.track-row", css)
+
 
 class SearchIndexTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -340,6 +349,9 @@ class DeepLinkAndOpenGraphTest(unittest.TestCase):
         self.assertIn('<tr id="track-1" class="track-row">', rendered)
         self.assertIn('<a href="#track-1" class="track-anchor"', rendered)
         self.assertIn('>1</a>', rendered)
+        self.assertIn('<td class="track-title">', rendered)
+        self.assertIn('<td class="track-audio">', rendered)
+        self.assertIn('<audio controls controlsList="nodownload noplaybackrate"', rendered)
 
         # Track 2 unpreserved row and anchor
         self.assertIn('<tr id="track-2" class="track-row track-unpreserved">', rendered)
