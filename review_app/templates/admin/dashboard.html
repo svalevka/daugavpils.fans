@@ -18,12 +18,13 @@
   </div>
 </div>
 
-{% if is_admin %}
 <nav class="admin-nav-tabs" aria-label="Admin navigation tabs">
   <a href="/admin/" class="admin-tab active">Statistics</a>
+  <a href="/admin/anomalies/" class="admin-tab">Anomalies &amp; Health</a>
+  {% if is_admin %}
   <a href="/admin/users/" class="admin-tab">Users &amp; Roles</a>
+  {% endif %}
 </nav>
-{% endif %}
 
 <nav class="period-nav" aria-label="Time period selection">
   <a href="/admin/?period=today" class="period-btn{% if period == 'today' %} active{% endif %}">Today</a>

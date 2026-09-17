@@ -26,6 +26,7 @@ from flask import (
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import anomaly_detector  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
@@ -260,6 +261,69 @@ def dashboard():
         user_email=session.get("email", current_app.config.get("MAINTAINER_EMAIL", "")),
         maintainer_email=current_app.config.get("MAINTAINER_EMAIL", ""),
     )
+
+
+@bp.get("/anomalies")
+@bp.get("/anomalies/")
+def anomalies_list():
+    if not _can_view_stats():
+        return redirect(url_for("admin.login_form"))
+
+    filter_status = request.args.get("status", "active")
+    severity = request.args.get("severity") or None
+    category = request.args.get("category") or None
+
+    conn = db.get_connection()
+    active_only = (filter_status == "active")
+    anomalies = anomaly_detector.get_anomalies(
+        conn,
+        active_only=active_only,
+        severity=severity,
+        category=category,
+        limit=100,
+    )
+    if filter_status == "acknowledged":
+        anomalies = [a for a in anomalies if a["acknowledged_at"] is not None]
+
+    db_path = Path(current_app.config["DATABASE_PATH"])
+    uploads_path = (
+        Path(current_app.config["MEDIA_UPLOADS_PATH"])
+        if current_app.config.get("MEDIA_UPLOADS_PATH")
+        else db_path.parent / "uploads"
+    )
+    health_summary = anomaly_detector.get_system_health_summary(
+        conn,
+        database_path=db_path,
+        uploads_path=uploads_path,
+    )
+
+    return render_template(
+        "admin/anomalies.html",
+        active_tab="anomalies",
+        anomalies=anomalies,
+        health_summary=health_summary,
+        filter_status=filter_status,
+        selected_severity=severity,
+        selected_category=category,
+        is_admin=_is_admin(),
+        can_review=_can_review(),
+        user_email=session.get("email", current_app.config.get("MAINTAINER_EMAIL", "")),
+    )
+
+
+@bp.post("/anomalies/<int:anomaly_id>/acknowledge")
+def acknowledge_anomaly(anomaly_id: int):
+    if not (_can_review() or _is_admin()):
+        if not _can_view_stats():
+            return redirect(url_for("admin.login_form"))
+        abort(403)
+
+    conn = db.get_connection()
+    current_user_id = session.get("user_id")
+    anomaly_detector.acknowledge_anomaly(conn, anomaly_id, user_id=current_user_id)
+
+    redirect_to = request.form.get("redirect_to") or url_for("admin.anomalies_list")
+    return redirect(redirect_to)
 
 
 @bp.get("/users")

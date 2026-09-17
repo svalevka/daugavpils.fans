@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Anomalies &amp; Health — daugavpils.fans{% endblock %}
+{% block main_class %}main-wide{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <div>
+    <h1>Anomalies &amp; System Health</h1>
+    <p class="meta">Logged in as: {{ user_email }}{% if is_admin %} (Admin){% endif %}</p>
+  </div>
+  <div class="admin-header-actions">
+    {% if can_review %}
+    <a href="/dashboard" class="button-secondary">Review proposals</a>
+    {% endif %}
+    <form method="post" action="/admin/logout" style="display:inline; margin:0;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="button-secondary">Log out</button>
+    </form>
+  </div>
+</div>
+
+<nav class="admin-nav-tabs" aria-label="Admin navigation tabs">
+  <a href="/admin/" class="admin-tab">Statistics</a>
+  <a href="/admin/anomalies/" class="admin-tab active">Anomalies &amp; Health</a>
+  {% if is_admin %}
+  <a href="/admin/users/" class="admin-tab">Users &amp; Roles</a>
+  {% endif %}
+</nav>
+
+<!-- System Health Overview Cards -->
+<div class="stats-overview-grid" style="margin-bottom: 2rem;">
+  <div class="stat-card{% if health_summary.active_critical > 0 %} stat-card-critical{% endif %}">
+    <div class="stat-value">{{ health_summary.active_critical }}</div>
+    <div class="stat-label">Active Critical</div>
+  </div>
+  <div class="stat-card{% if health_summary.active_warning > 0 %} stat-card-warning{% endif %}">
+    <div class="stat-value">{{ health_summary.active_warning }}</div>
+    <div class="stat-label">Active Warnings</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ health_summary.total_active }}</div>
+    <div class="stat-label">Total Active Anomalies</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ health_summary.ai_approvals_24h }}</div>
+    <div class="stat-label">24h AI Approvals</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ health_summary.pageviews_24h }}</div>
+    <div class="stat-label">24h Pageviews</div>
+  </div>
+  <div class="stat-card{% if health_summary.media_errors_24h > 0 %} stat-card-warning{% endif %}">
+    <div class="stat-value">{{ health_summary.media_errors_24h }}</div>
+    <div class="stat-label">24h Media Errors</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ health_summary.database_size_mb }} MB</div>
+    <div class="stat-label">Database Size</div>
+  </div>
+  <div class="stat-card{% if health_summary.disk_free_mb < 1000 %} stat-card-warning{% endif %}">
+    <div class="stat-value">{{ (health_summary.disk_free_mb / 1024)|round(1) }} GB</div>
+    <div class="stat-label">Server Disk Free</div>
+  </div>
+</div>
+
+<!-- Filter Navigation -->
+<nav class="period-nav" aria-label="Anomaly status selection">
+  <a href="/admin/anomalies/?status=active" class="period-btn{% if filter_status == 'active' %} active{% endif %}">Active Anomalies</a>
+  <a href="/admin/anomalies/?status=all" class="period-btn{% if filter_status == 'all' %} active{% endif %}">All History</a>
+  <a href="/admin/anomalies/?status=acknowledged" class="period-btn{% if filter_status == 'acknowledged' %} active{% endif %}">Acknowledged</a>
+</nav>
+
+<!-- Anomalies Table / List -->
+<section class="admin-section">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h2 style="margin: 0;">Recorded Anomalies</h2>
+    <span class="meta">{{ anomalies|length }} event{% if anomalies|length != 1 %}s{% endif %}</span>
+  </div>
+
+  {% if anomalies %}
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width: 80px;">Severity</th>
+        <th style="width: 110px;">Category</th>
+        <th>Title &amp; Message</th>
+        <th style="width: 150px;">Timestamp</th>
+        <th style="width: 140px;">Status / Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in anomalies %}
+      <tr class="anomaly-row{% if not a.acknowledged_at %} anomaly-unack anomaly-severity-{{ a.severity|lower }}{% endif %}">
+        <td>
+          <span class="badge badge-severity-{{ a.severity|lower }}">{{ a.severity }}</span>
+        </td>
+        <td>
+          <span class="badge badge-category">{{ a.category }}</span>
+        </td>
+        <td>
+          <strong>{{ a.title }}</strong>
+          <div style="font-size: 0.85rem; margin-top: 0.25rem; color: var(--text-muted, #ccc);">{{ a.message }}</div>
+
+          {% if a.proposal_id %}
+          <div style="font-size: 0.8rem; margin-top: 0.35rem;">
+            <a href="/dashboard#proposal-{{ a.proposal_id }}" class="meta-link">
+              View {{ a.proposal_type or 'proposal' }} #{{ a.proposal_id }} &rarr;
+            </a>
+          </div>
+          {% endif %}
+
+          {% if a.details %}
+          <details style="margin-top: 0.4rem; font-size: 0.8rem;">
+            <summary style="cursor: pointer; color: var(--accent);">Debug Details</summary>
+            <pre style="background: #111; padding: 0.5rem; border-radius: 4px; overflow-x: auto; margin-top: 0.25rem;">{{ a.details|tojson(indent=2) }}</pre>
+          </details>
+          {% endif %}
+        </td>
+        <td style="font-size: 0.85rem; white-space: nowrap;">
+          {{ a.created_at }}
+        </td>
+        <td>
+          {% if a.acknowledged_at %}
+          <span class="badge badge-status-inactive" title="Acknowledged at {{ a.acknowledged_at }}">
+            ✓ Acknowledged{% if a.acknowledged_by_name %} by {{ a.acknowledged_by_name }}{% endif %}
+          </span>
+          {% else %}
+          <form method="post" action="/admin/anomalies/{{ a.id }}/acknowledge" style="display:inline; margin:0;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="redirect_to" value="/admin/anomalies/?status={{ filter_status }}">
+            <button type="submit" class="button-secondary button-small" style="padding: 0.2rem 0.6rem; font-size: 0.75rem;">
+              Acknowledge
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div style="padding: 2rem; text-align: center; color: var(--text-muted, #888); background: var(--bg); border: 1px solid var(--border); border-radius: 4px;">
+    <p style="margin: 0; font-size: 1.05rem;">No anomalies detected.</p>
+    <p class="meta" style="margin-top: 0.5rem;">All systems operating within expected baselines and thresholds.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -12,6 +12,7 @@ boundary, so tests never touch the network.
 """
 from __future__ import annotations
 
+import json
 import smtplib
 import sys
 from email.message import EmailMessage
@@ -272,5 +273,92 @@ def send_proposal_decision_notification(
                 "Команда daugavpils.fans",
             ])
 
+    _send(smtp_config, to_addr, subject, "\n".join(body_lines))
+
+
+def send_anomaly_alert(
+    smtp_config: SmtpConfig,
+    to_addr: str,
+    anomaly: dict,
+    dashboard_url: str | None = None,
+) -> None:
+    """Send immediate email alert for critical anomalies to the maintainer."""
+    severity = anomaly.get("severity", "CRITICAL")
+    category = anomaly.get("category", "system")
+    anomaly_type = anomaly.get("anomaly_type", "anomaly")
+    title = anomaly.get("title", "Anomaly Detected")
+    message = anomaly.get("message", "")
+    details = anomaly.get("details_json") or anomaly.get("details")
+
+    subject = f"[{severity} ALERT] daugavpils.fans: {title}"
+    body_lines = [
+        "Automated Anomaly Alert — daugavpils.fans",
+        f"Severity: {severity}",
+        f"Category: {category}",
+        f"Anomaly Type: {anomaly_type}",
+        "",
+        "Summary:",
+        f"{message}",
+    ]
+    if details:
+        if isinstance(details, str):
+            try:
+                parsed = json.loads(details)
+                body_lines.extend(["", "Details:", json.dumps(parsed, indent=2, ensure_ascii=False)])
+            except Exception:
+                body_lines.extend(["", "Details:", details])
+        elif isinstance(details, dict):
+            body_lines.extend(["", "Details:", json.dumps(details, indent=2, ensure_ascii=False)])
+
+    if dashboard_url:
+        body_lines.extend(["", f"Review in Admin Dashboard:\n{dashboard_url}"])
+
+    body_lines.extend(["", "Best regards,", "daugavpils.fans automated observability"])
+    _send(smtp_config, to_addr, subject, "\n".join(body_lines))
+
+
+def send_anomaly_digest(
+    smtp_config: SmtpConfig,
+    to_addr: str,
+    active_anomalies: list[dict],
+    stats_summary: dict | None = None,
+    dashboard_url: str | None = None,
+) -> None:
+    """Send periodic (e.g. daily) health check digest to the maintainer."""
+    count = len(active_anomalies)
+    crit_count = sum(1 for a in active_anomalies if a.get("severity") == "CRITICAL")
+    warn_count = sum(1 for a in active_anomalies if a.get("severity") == "WARNING")
+
+    status_str = "OK" if count == 0 else f"{count} active anomalies ({crit_count} critical, {warn_count} warning)"
+    subject = f"[Health Digest] daugavpils.fans system status: {status_str}"
+
+    body_lines = [
+        "Daily System Health & Anomaly Digest — daugavpils.fans",
+        f"Status: {status_str}",
+        "",
+    ]
+    if stats_summary:
+        body_lines.append("24-Hour Metrics Summary:")
+        for k, v in stats_summary.items():
+            body_lines.append(f"  - {k}: {v}")
+        body_lines.append("")
+
+    if active_anomalies:
+        body_lines.append("Active Anomalies:")
+        for idx, a in enumerate(active_anomalies, 1):
+            sev = a.get("severity", "INFO")
+            t = a.get("title", a.get("anomaly_type", "Anomaly"))
+            msg = a.get("message", "")
+            created = a.get("created_at", "")
+            body_lines.append(f"{idx}. [{sev}] {t} ({created})")
+            body_lines.append(f"   {msg}")
+        body_lines.append("")
+    else:
+        body_lines.append("No active anomalies detected. All systems operating normally.\n")
+
+    if dashboard_url:
+        body_lines.append(f"Admin Dashboard:\n{dashboard_url}\n")
+
+    body_lines.extend(["Best regards,", "daugavpils.fans automated observability"])
     _send(smtp_config, to_addr, subject, "\n".join(body_lines))
 

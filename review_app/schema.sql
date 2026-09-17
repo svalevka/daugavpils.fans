@@ -270,3 +270,26 @@ CREATE INDEX IF NOT EXISTS idx_media_proposals_decided ON media_proposals(status
 CREATE INDEX IF NOT EXISTS idx_album_proposals_decided ON album_proposals(status, decided_at);
 CREATE INDEX IF NOT EXISTS idx_band_proposals_decided ON band_proposals(status, decided_at);
 
+-- Automated anomaly detection and maintainer alerting (GitHub issue #47):
+-- Records statistical anomalies, AI evaluation drift, suspicious submissions,
+-- workflow dispatch failures, and system health alerts.
+CREATE TABLE IF NOT EXISTS anomaly_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    category TEXT NOT NULL,                    -- 'ai_approval' | 'traffic' | 'auth' | 'operational'
+    anomaly_type TEXT NOT NULL,                -- e.g. 'borderline_approval', 'approval_velocity', etc.
+    severity TEXT NOT NULL,                    -- 'CRITICAL' | 'WARNING' | 'INFO'
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    details_json TEXT,                         -- JSON dict with metrics, baselines, and debug context
+    proposal_id INTEGER,
+    proposal_type TEXT,                        -- 'edit' | 'media' | 'album' | 'band'
+    acknowledged_at TEXT,
+    acknowledged_by INTEGER REFERENCES approvers(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_anomaly_created ON anomaly_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_anomaly_severity ON anomaly_events(severity, acknowledged_at);
+CREATE INDEX IF NOT EXISTS idx_anomaly_category ON anomaly_events(category, created_at);
+CREATE INDEX IF NOT EXISTS idx_anomaly_type ON anomaly_events(anomaly_type, created_at);
+

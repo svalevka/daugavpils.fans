@@ -23,8 +23,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import anomaly_detector  # noqa: E402
 import db  # noqa: E402
+import mail  # noqa: E402
 import roles  # noqa: E402
+from config import SmtpConfig  # noqa: E402
 
 
 def _connect(database_path: Path) -> sqlite3.Connection:
@@ -100,6 +103,78 @@ def deactivate_user(conn: sqlite3.Connection, email: str) -> int:
     return 0
 
 
+def check_anomalies_cmd(
+    conn: sqlite3.Connection,
+    database_path: Path,
+    uploads_path: Path | None = None,
+    notify: bool = False,
+    digest: bool = False,
+) -> int:
+    resolved_uploads = uploads_path or (database_path.parent / "uploads")
+
+    smtp_config: SmtpConfig | None = None
+    maintainer_email = os.environ.get("MAINTAINER_EMAIL")
+    if notify or digest:
+        smtp_host = os.environ.get("SMTP_HOST")
+        smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+        smtp_from = os.environ.get("SMTP_FROM")
+        smtp_user = os.environ.get("SMTP_USER")
+        smtp_pass = os.environ.get("SMTP_PASSWORD")
+        if smtp_host and smtp_from:
+            smtp_config = SmtpConfig(
+                host=smtp_host,
+                port=smtp_port,
+                from_addr=smtp_from,
+                user=smtp_user,
+                password=smtp_pass,
+            )
+
+    dashboard_url = os.environ.get("ADMIN_DASHBOARD_URL", "https://daugavpils.fans/admin/anomalies/")
+
+    new_anomalies = anomaly_detector.run_anomaly_detection(
+        conn,
+        database_path=database_path,
+        uploads_path=resolved_uploads,
+        notify=notify,
+        smtp_config=smtp_config,
+        maintainer_email=maintainer_email,
+        dashboard_url=dashboard_url,
+    )
+
+    active_anomalies = anomaly_detector.get_anomalies(conn, active_only=True)
+    crit_count = sum(1 for a in active_anomalies if a.get("severity") == anomaly_detector.SEVERITY_CRITICAL)
+    warn_count = sum(1 for a in active_anomalies if a.get("severity") == anomaly_detector.SEVERITY_WARNING)
+    info_count = sum(1 for a in active_anomalies if a.get("severity") == anomaly_detector.SEVERITY_INFO)
+
+    print(f"Anomaly Audit Summary:")
+    print(f"  New anomalies recorded in this run: {len(new_anomalies)}")
+    print(f"  Total active unacknowledged anomalies: {len(active_anomalies)} ({crit_count} CRITICAL, {warn_count} WARNING, {info_count} INFO)")
+
+    if active_anomalies:
+        print("\nActive Anomalies:")
+        for a in active_anomalies:
+            print(f"  [{a['severity']}] #{a['id']} {a['title']} ({a['created_at']})")
+            print(f"      {a['message']}")
+    else:
+        print("\nAll systems normal. No active anomalies.")
+
+    if digest and smtp_config and maintainer_email:
+        summary = anomaly_detector.get_system_health_summary(
+            conn, database_path=database_path, uploads_path=resolved_uploads
+        )
+        mail.send_anomaly_digest(
+            smtp_config,
+            maintainer_email,
+            active_anomalies,
+            stats_summary=summary,
+            dashboard_url=dashboard_url,
+        )
+        print(f"\nDispatched daily health digest to {maintainer_email}")
+
+    # Return exit code 1 if critical anomalies exist, otherwise 0
+    return 1 if crit_count > 0 else 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     default_db_path = Path(os.environ["DATABASE_PATH"]) if "DATABASE_PATH" in os.environ else None
@@ -155,6 +230,31 @@ def main() -> int:
     )
     deactivate_user_parser.add_argument("email", help="the email to deactivate")
 
+    # check-anomalies
+    check_anomalies_parser = subparsers.add_parser(
+        "check-anomalies", help="audit system telemetry and report statistical anomalies"
+    )
+    check_anomalies_parser.add_argument(
+        "--uploads-path",
+        type=Path,
+        default=(
+            Path(os.environ["MEDIA_UPLOADS_PATH"])
+            if "MEDIA_UPLOADS_PATH" in os.environ
+            else None
+        ),
+        help="path to media uploads directory (default: sibling 'uploads' of database)",
+    )
+    check_anomalies_parser.add_argument(
+        "--notify",
+        action="store_true",
+        help="send immediate email alert to maintainer for any CRITICAL anomalies",
+    )
+    check_anomalies_parser.add_argument(
+        "--digest",
+        action="store_true",
+        help="send system health and anomaly digest email to maintainer",
+    )
+
     args = parser.parse_args()
 
     conn = _connect(args.database_path)
@@ -169,6 +269,14 @@ def main() -> int:
             return set_user_roles_cmd(conn, args.email, args.roles)
         if args.command in ("deactivate-approver", "deactivate-user"):
             return deactivate_user(conn, args.email)
+        if args.command == "check-anomalies":
+            return check_anomalies_cmd(
+                conn,
+                args.database_path,
+                uploads_path=args.uploads_path,
+                notify=args.notify,
+                digest=args.digest,
+            )
         raise AssertionError(f"unreachable: unknown command {args.command!r}")
     finally:
         conn.close()

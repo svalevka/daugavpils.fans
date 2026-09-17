@@ -701,6 +701,47 @@ button:disabled:hover, .btn:disabled:hover {
   color: #ff922b;
 }
 
+.stat-card-critical {
+  border-color: rgba(255, 82, 82, 0.6);
+  background: rgba(255, 82, 82, 0.1);
+}
+
+.stat-card-critical .stat-value {
+  color: #ff5252;
+}
+
+.badge-severity-critical {
+  background: #3b1818;
+  color: #ff7575;
+  border: 1px solid rgba(255, 117, 117, 0.3);
+}
+
+.badge-severity-warning {
+  background: #3d2c14;
+  color: #f5b958;
+  border: 1px solid rgba(245, 185, 88, 0.3);
+}
+
+.badge-severity-info {
+  background: #1b2d42;
+  color: #7bb8f0;
+  border: 1px solid rgba(123, 184, 240, 0.3);
+}
+
+.badge-category {
+  background: #22252a;
+  color: #b0b4ba;
+  border: 1px solid var(--border);
+}
+
+.anomaly-unack.anomaly-severity-critical {
+  background: rgba(255, 82, 82, 0.05);
+}
+
+.anomaly-unack.anomaly-severity-warning {
+  background: rgba(255, 146, 43, 0.03);
+}
+
 .upload-dropzone {
   border: 2px dashed var(--border);
   border-radius: 6px;
