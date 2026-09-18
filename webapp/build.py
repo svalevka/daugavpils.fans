@@ -862,16 +862,6 @@ def build() -> None:
                     else (band_media_url(band, band.image[0].contentUrl) if band.image else None)
                 )
 
-                rel_item_id = release_item_id(band.slug, release.slug)
-                rel_torrent_url = next((url for url in release.sameAs if url.endswith(".torrent")), None)
-                if not rel_torrent_url and release.has_audio:
-                    rel_torrent_url = f"https://archive.org/download/{rel_item_id}/{rel_item_id}_archive.torrent"
-                rel_zip_url = (
-                    f"https://archive.org/compress/{rel_item_id}/formats=VBR%20MP3,JPEG&file=/{rel_item_id}.zip"
-                    if release.has_audio
-                    else None
-                )
-
                 (release_out_dir / "index.html").write_text(
                     release_tmpl.render(
                         **base_ctx,
@@ -885,8 +875,6 @@ def build() -> None:
                         photo_teaser_limit=PHOTO_TEASER_LIMIT,
                         video_teaser_limit=VIDEO_TEASER_LIMIT,
                         media_page_url=release_media_page_url,
-                        torrent_url=rel_torrent_url,
-                        zip_url=rel_zip_url,
                         og_title=f"{release.name} — {band.name} — daugavpils.fans",
                         og_description=og_snippet(
                             localize(release, "description", lang),
