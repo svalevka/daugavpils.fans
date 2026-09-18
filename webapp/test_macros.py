@@ -1092,6 +1092,65 @@ class SiteDiscoveryTest(unittest.TestCase):
         self.assertIn("https://svalevka.github.io/daugavpils.fans/en/support/", locs_prefixed)
 
 
+class VisibleSameAsTest(unittest.TestCase):
+    def test_visible_same_as_filters_archive_org_and_torrents(self) -> None:
+        import json
+        from build import to_jsonld, visible_same_as
+        from models import MusicGroup
+
+        band = MusicGroup.model_validate({
+            "name": "Test Band",
+            "slug": "test-band",
+            "sameAs": [
+                "https://www.facebook.com/testband/",
+                "https://soundcloud.com/testband",
+                "https://archive.org/details/daugavpils-fans-test-band",
+                "https://archive.org/download/daugavpils-fans-test-band/test-band_archive.torrent",
+            ],
+        })
+
+        self.assertEqual(
+            visible_same_as(band),
+            [
+                "https://www.facebook.com/testband/",
+                "https://soundcloud.com/testband",
+            ],
+        )
+
+        # JSON-LD should also omit archive.org and .torrent
+        data = json.loads(to_jsonld(band))
+        self.assertEqual(
+            data["sameAs"],
+            [
+                "https://www.facebook.com/testband/",
+                "https://soundcloud.com/testband",
+            ],
+        )
+
+    def test_visible_same_as_empty_when_only_archive_org(self) -> None:
+        import json
+        from build import to_jsonld, visible_same_as
+        from models import MusicAlbum
+
+        release = MusicAlbum.model_validate({
+            "name": "Test Release",
+            "slug": "1999-test",
+            "datePublished": "1999",
+            "byArtist": "test-band",
+            "track": [],
+            "sameAs": [
+                "https://archive.org/details/daugavpils-fans-test-band-1999-test",
+                "https://archive.org/download/daugavpils-fans-test-band-1999-test/daugavpils-fans-test-band-1999-test_archive.torrent",
+            ],
+        })
+
+        self.assertEqual(visible_same_as(release), [])
+
+        # When sameAs only contains archive.org links, it should be cleanly omitted from JSON-LD
+        data = json.loads(to_jsonld(release))
+        self.assertNotIn("sameAs", data)
+
+
 if __name__ == "__main__":
     unittest.main()
 

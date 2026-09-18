@@ -42,6 +42,7 @@ import re
 import shutil
 import subprocess
 import sys
+import urllib.parse
 from collections import Counter
 from functools import partial
 from itertools import zip_longest
@@ -374,11 +375,27 @@ def render_maintenance_html(lang: str) -> str:
     return body
 
 
+def _is_public_external_url(url: str) -> bool:
+    """Returns True if url is an external community link (e.g. facebook, soundcloud,
+    last.fm) and not an internal archive.org or BitTorrent backup link."""
+    lower = url.lower()
+    if lower.endswith(".torrent"):
+        return False
+    try:
+        host = urllib.parse.urlparse(url).netloc.lower()
+        if host == "archive.org" or host.endswith(".archive.org"):
+            return False
+    except Exception:
+        if "archive.org" in lower:
+            return False
+    return True
+
+
 def visible_same_as(model: MusicGroup | MusicAlbum) -> list[str]:
-    """sameAs URLs worth showing a human in the "Ещё" list - torrent links
-    stay in band.yaml/release.yaml metadata (and the JSON-LD) but aren't
-    surfaced on the page itself."""
-    return [url for url in model.sameAs if not url.endswith(".torrent")]
+    """sameAs URLs worth showing a human in the "Ещё" list - archive.org
+    and torrent links stay in band.yaml/release.yaml metadata for archive
+    preservation and recovery, but aren't surfaced on the page itself."""
+    return [url for url in model.sameAs if _is_public_external_url(url)]
 
 
 def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
@@ -386,6 +403,12 @@ def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
     the same model that backs its band.yaml/release.yaml - embedded as a
     <script type="application/ld+json"> for crawlers."""
     data = model.model_dump(by_alias=True, exclude_none=True, mode="json")
+    if "sameAs" in data and isinstance(data["sameAs"], list):
+        filtered = [url for url in data["sameAs"] if _is_public_external_url(url)]
+        if filtered:
+            data["sameAs"] = filtered
+        else:
+            del data["sameAs"]
     return json.dumps(data, ensure_ascii=False, indent=2).replace("<", "\\u003c")
 
 
