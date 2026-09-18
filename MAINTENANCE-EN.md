@@ -18,6 +18,28 @@ Short version: **the daugavpils.fans site is just a storefront.** The
 recordings and descriptions themselves live in two places that don't
 depend on this site or on any one particular person.
 
+## Why this archive exists
+
+Daugavpils music scene recordings have existed scattered for years — on
+cassettes, discs, and individual people's hard drives, with no shared
+place where they could be found and preserved. This project solves
+exactly that problem: it keeps recordings, photos, and the scene's
+history in one open place, before they're lost for good.
+
+This is a non-commercial, volunteer-run archive — there are no ads,
+subscriptions, or monetization on the site, and no one earns anything
+from it. Material is added by scene members and listeners on their own
+initiative and in good faith — the curator can't physically contact
+every band and confirm every detail before publishing. If you're the
+author of a recording, or represent a band, and think something was
+published incorrectly or without your consent — that gets resolved
+quickly and without conflict, see "Is this actually allowed? About the
+license" below.
+
+This is one person's work, done voluntarily, in their spare time —
+please keep that in mind: we're here to preserve the scene's music, not
+to argue with anyone.
+
 ## Where the data actually lives
 
 ```mermaid
@@ -240,13 +262,28 @@ the terminal): [documentation/BACKUP.md](documentation/BACKUP.md).
 
 ## Is this actually allowed? About the license
 
-Yes. Every album in the archive has a Creative Commons license attached
-— explicit permission from the recording's author allowing it to be
-downloaded and shared further (usually with a condition — non-commercial
-use, with attribution). That means recordings from this archive can be
-downloaded and shared openly, without asking anyone for additional
-permission — the authors themselves already gave it in advance,
-specifically so this music wouldn't be lost.
+Every album in the archive has a Creative Commons license attached —
+chosen by whoever adds the album to the archive (the author themselves,
+another band member, or someone from their circle), as a good-faith
+declaration that the recording can be freely shared (usually with a
+condition — non-commercial use, with attribution). The archive's curator
+doesn't personally verify every such declaration with the band before
+publishing — that isn't possible for an archive that grows through
+community contributions. If you're the author and think the license
+listed is wrong, or that you never gave that consent — read on for what
+to do.
+
+### If you're the author and want your recording taken down
+
+We respect an author's right to decide what happens to their music. If
+you're the author (or rights holder) of a recording and want it removed
+from the archive — write to us, and we'll respond quickly. Before taking
+it down, we may ask you to confirm authorship — this protects the
+archive from accidental or bad-faith requests from people with no actual
+connection to the recording. Until that's confirmed, the recording may
+be temporarily hidden from the site, but it isn't permanently deleted —
+if the claim turns out to be mistaken, everything is restored without
+loss.
 
 ## How to get in touch
 
