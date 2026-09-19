@@ -15,4 +15,7 @@ Environment=STATE_FILE=/opt/daugavpils-fans/.last-deployed-sha
 Environment=REBUILD_MARKER_FILE=/opt/daugavpils-fans/.rebuild-needed
 Environment=LOCK_DIR=/opt/daugavpils-fans/.sync-and-deploy.lock.d
 Environment=PYTHON_BIN=/opt/daugavpils-fans/venv/bin/python3
+# Optional heartbeat monitoring ping (e.g. Healthchecks.io, GitHub issue #44)
+# Environment=HEARTBEAT_URL=https://hc-ping.com/<uuid>
 ExecStart=/opt/daugavpils-fans/sync-and-deploy.sh
+

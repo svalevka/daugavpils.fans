@@ -241,6 +241,25 @@ class FirstAndRepeatDeployTest(unittest.TestCase):
             # Both symlinks move together, to the same new commit.
             self.assertEqual(h.current_link.resolve().parent.parent, h.current_checkout_link.resolve())
 
+    def test_sync_and_deploy_pings_heartbeat_url_when_configured(self):
+        """When HEARTBEAT_URL is provided, sync-and-deploy.sh must ping it on successful deployment (GitHub issue #44)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            h = DeployHarness(Path(tmp))
+            _init_origin(h.origin_dir, "v1")
+
+            ping_log = Path(tmp) / "curl.log"
+            mock_curl = h.bin_dir / "curl"
+            mock_curl.write_text(f"""#!/bin/sh
+echo "$@" >> "{ping_log}"
+exit 0
+""")
+            mock_curl.chmod(0o755)
+
+            res = h.run(extra_env={"HEARTBEAT_URL": "https://hc-ping.com/sync-uuid"})
+            self.assertEqual(res.returncode, 0, msg=res.stdout + res.stderr)
+            self.assertTrue(ping_log.exists(), "curl was not called")
+            self.assertIn("https://hc-ping.com/sync-uuid", ping_log.read_text())
+
     def test_detects_review_app_changes_and_writes_marker_without_calling_docker(self):
         with tempfile.TemporaryDirectory() as tmp:
             h = DeployHarness(Path(tmp))

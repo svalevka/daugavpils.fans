@@ -179,7 +179,28 @@ journalctl -u daugavpils-fans-sync.service -n 50
 journalctl -u daugavpils-fans-rebuild.service -n 50
 ```
 
+### External Heartbeat Monitoring (Healthchecks.io) (GitHub issue #44)
+
+To ensure the pull-deploy timer doesn't silently stop running (due to systemd timer stalls, deadlocks, disk exhaustion, or host hangs), `sync-and-deploy.sh` supports heartbeat pinging:
+
+- When the `HEARTBEAT_URL` environment variable is set (e.g. `https://hc-ping.com/<uuid>`), `sync-and-deploy.sh` pings it with `curl -fsS -m 10 --retry 2 "$HEARTBEAT_URL"` at the end of each run.
+- To configure on `cherry`:
+  ```bash
+  sudo systemctl edit daugavpils-fans-sync.service
+  ```
+  Add:
+  ```ini
+  [Service]
+  Environment="HEARTBEAT_URL=https://hc-ping.com/<your-check-uuid>"
+  ```
+  Then reload systemd:
+  ```bash
+  sudo systemctl daemon-reload
+  ```
+- If a run fails or the timer stops firing within the expected grace period, Healthchecks.io alerts the maintainer immediately.
+
 ### Automated Offsite Backups to Backblaze B2
+
 
 To protect SQLite proposals/analytics (`review.db`) and uploaded media files in flight (`/data/uploads`), backups are pulled offsite automatically by GitHub Actions ([`.github/workflows/backup-to-b2.yml`](../../.github/workflows/backup-to-b2.yml)):
 
