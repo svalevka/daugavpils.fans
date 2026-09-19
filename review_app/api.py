@@ -10,15 +10,21 @@ from __future__ import annotations
 import hmac
 import json
 import sys
+import threading
+import time
 from pathlib import Path
 
-from flask import Blueprint, abort, current_app, jsonify, request, send_file
+from flask import Blueprint, Response, abort, current_app, jsonify, request, send_file
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
 
 bp = Blueprint("api", __name__, url_prefix="/api")
+
+_backup_lock = threading.Lock()
+_backup_timestamps: list[float] = []
+_backup_history_lock = threading.Lock()
 
 
 def _require_callback_key() -> None:
@@ -582,46 +588,96 @@ def record_band_publish_result(proposal_id: int):
 
 @bp.get("/backup")
 def get_backup_bundle():
-    """Stream an atomic compressed snapshot of review.db and uploads/ to authorized caller."""
+    """Stream an atomic snapshot of review.db and uploads/ to authorized caller."""
     _require_callback_key()
-    import shutil
+    import io
+    import os
     import sqlite3
     import tarfile
-    import tempfile
-    from flask import after_this_request
 
-    tmp_dir = tempfile.mkdtemp(prefix="review_backup_")
+    # Application-layer rate limiting: reject rapid bursts exceeding limit
+    limit = current_app.config.get("BACKUP_RATE_LIMIT_PER_MINUTE", 2)
+    now = time.time()
+    with _backup_history_lock:
+        _backup_timestamps[:] = [t for t in _backup_timestamps if now - t < 60.0]
+        if len(_backup_timestamps) >= limit:
+            abort(429)
+        _backup_timestamps.append(now)
 
-    @after_this_request
-    def remove_tmp(response):
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        return response
+    # Concurrency limit: prevent concurrent backup generations from exhausting CPU/RAM
+    if not _backup_lock.acquire(blocking=False):
+        abort(429)
 
-    stage_dir = Path(tmp_dir) / "stage"
-    stage_dir.mkdir()
+    fmt = request.args.get("format", "").lower()
+    accept = request.headers.get("Accept", "").lower()
+    is_plain_tar = (fmt == "tar") or ("application/x-tar" in accept and "gzip" not in accept)
+
+    tar_mode = "w|" if is_plain_tar else "w|gz"
+    mimetype = "application/x-tar" if is_plain_tar else "application/gzip"
+    filename = "review-app-backup.tar" if is_plain_tar else "review-app-backup.tar.gz"
 
     db_path = Path(current_app.config["DATABASE_PATH"])
+    uploads_path = Path(current_app.config["MEDIA_UPLOADS_PATH"])
+
+    # Atomically snapshot SQLite database in memory without creating temporary files on disk
+    db_bytes = b""
     if db_path.exists():
-        dest_db = stage_dir / "review.db"
         src = sqlite3.connect(db_path)
-        dst = sqlite3.connect(dest_db)
+        dst = sqlite3.connect(":memory:")
         src.backup(dst)
+        db_bytes = dst.serialize()
         dst.close()
         src.close()
 
-    uploads_path = Path(current_app.config["MEDIA_UPLOADS_PATH"])
-    if uploads_path.exists() and any(uploads_path.iterdir()):
-        shutil.copytree(uploads_path, stage_dir / "uploads", dirs_exist_ok=True)
+    try:
+        r, w = os.pipe()
 
-    archive_path = Path(tmp_dir) / "review-app-backup.tar.gz"
-    with tarfile.open(archive_path, "w:gz") as tar:
-        for item in stage_dir.iterdir():
-            tar.add(item, arcname=item.name)
+        def generate_tar():
+            try:
+                with os.fdopen(w, "wb") as f:
+                    kwargs = {}
+                    if not is_plain_tar:
+                        kwargs["compresslevel"] = 1
+                    with tarfile.open(mode=tar_mode, fileobj=f, **kwargs) as tar:
+                        if db_bytes:
+                            ti = tarfile.TarInfo(name="review.db")
+                            ti.size = len(db_bytes)
+                            tar.addfile(ti, io.BytesIO(db_bytes))
 
-    return send_file(
-        archive_path,
-        mimetype="application/gzip",
-        as_attachment=True,
-        download_name="review-app-backup.tar.gz",
-    )
+                        if uploads_path.exists() and any(uploads_path.iterdir()):
+                            try:
+                                tar.add(uploads_path, arcname="uploads", recursive=True)
+                            except (FileNotFoundError, PermissionError):
+                                pass
+            except (BrokenPipeError, OSError):
+                # Client disconnected prematurely during streaming
+                pass
+
+        t = threading.Thread(target=generate_tar, daemon=True)
+        t.start()
+
+        def generate_chunks():
+            try:
+                with os.fdopen(r, "rb") as rf:
+                    while chunk := rf.read(65536):
+                        yield chunk
+            finally:
+                try:
+                    t.join(timeout=5)
+                finally:
+                    if _backup_lock.locked():
+                        _backup_lock.release()
+
+        response = Response(
+            generate_chunks(),
+            mimetype=mimetype,
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+        response.call_on_close(lambda: _backup_lock.locked() and _backup_lock.release())
+        return response
+    except Exception:
+        if _backup_lock.locked():
+            _backup_lock.release()
+        raise
+
 

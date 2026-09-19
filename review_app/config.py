@@ -82,6 +82,8 @@ class Config:
     # attempt including non-matching emails, so this still bounds it well
     # under real spam-bot volume.
     login_rate_limit_per_ip_per_hour: int = 20
+    # Capped at 2 requests per minute to prevent CPU and I/O exhaustion from backup generation (GitHub issue #89)
+    backup_rate_limit_per_minute: int = 2
     # Where uploaded photos/videos wait for a maintainer to scp/rsync them
     # off before publishing (see GitHub issue #21 - "curated queue, manual
     # finish": review_app never uploads to archive.org itself). Defaults
@@ -136,6 +138,7 @@ class Config:
             base_url=os.environ.get("REVIEW_APP_BASE_URL", "https://review.daugavpils.fans"),
             rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "20")),
             login_rate_limit_per_ip_per_hour=int(os.environ.get("LOGIN_RATE_LIMIT_PER_IP_PER_HOUR", "20")),
+            backup_rate_limit_per_minute=int(os.environ.get("BACKUP_RATE_LIMIT_PER_MINUTE", "2")),
             media_uploads_path=(
                 Path(os.environ["MEDIA_UPLOADS_PATH"]) if "MEDIA_UPLOADS_PATH" in os.environ else None
             ),

@@ -171,11 +171,28 @@ class NginxRateLimitConfigTest(unittest.TestCase):
         self.assertIn("review_strict_zone", self.conf_text)
         self.assertIn("review_event_zone", self.conf_text)
 
+    def test_backup_endpoint_rate_limiting(self) -> None:
+        """review.daugavpils.fans must rate limit /api/backup with review_strict_zone burst=2 nodelay (GitHub issue #89)."""
+        review_server_match = re.search(
+            r"server_name\s+review\.daugavpils\.fans;.*?(?=server\s*\{|\Z)",
+            self.conf_text,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(review_server_match, "review.daugavpils.fans server block not found")
+        block_text = review_server_match.group(0)
+
+        self.assertRegex(
+            block_text,
+            r"location\s+=\s+/api/backup\s*\{[^}]*limit_req\s+zone=review_strict_zone\s+burst=2\s+nodelay;",
+            "review.daugavpils.fans location = /api/backup must apply review_strict_zone burst=2 nodelay",
+        )
+
     def test_readme_documents_rate_limiting_and_upload_limits(self) -> None:
         """webapp/deploy/README.md must document the rate limits and upload body size / timeouts."""
         self.assertIn("review_general_zone", self.readme_text)
         self.assertIn("review_strict_zone", self.readme_text)
         self.assertIn("review_event_zone", self.readme_text)
+        self.assertIn("/api/backup", self.readme_text)
         self.assertIn("client_max_body_size", self.readme_text)
         self.assertIn("client_body_timeout", self.readme_text)
 

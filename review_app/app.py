@@ -40,6 +40,7 @@ def create_app(config: Config) -> Flask:
     app.config["ARCHIVE_CHECKOUT_PATH"] = config.archive_checkout_path
     app.config["RATE_LIMIT_PER_IP_PER_HOUR"] = config.rate_limit_per_ip_per_hour
     app.config["LOGIN_RATE_LIMIT_PER_IP_PER_HOUR"] = config.login_rate_limit_per_ip_per_hour
+    app.config["BACKUP_RATE_LIMIT_PER_MINUTE"] = config.backup_rate_limit_per_minute
     app.config["MAINTAINER_EMAIL"] = config.maintainer_email
     app.config["SMTP_CONFIG"] = config.smtp
     app.config["GITHUB_CONFIG"] = config.github

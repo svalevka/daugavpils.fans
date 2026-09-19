@@ -261,12 +261,13 @@ service (no `ports:`, only `expose:`) and
     - `client_max_body_size 2g`: Accommodates large photo and multi-video submissions. Non-upload endpoints remain at default small limits to prevent memory and worker starvation.
     - `client_body_timeout 600s` and `proxy_read_timeout 600s`: Prevents premature client disconnects mid-transfer for multi-hundred-megabyte uploads over slower connections.
 
-- **Connection rate limiting (GitHub issues #73, #86)**:
+- **Connection rate limiting (GitHub issues #73, #86, #89)**:
   - Shared memory zones tracked by `$binary_remote_addr` (10MB each, tracking ~160,000 distinct IP addresses with minimal memory overhead):
     - `review_general_zone` (`rate=10r/s`): Applied across the entire `review.daugavpils.fans` domain and proxied maintainer paths (`/admin`, `/dashboard`). Burst allowance of 20 with `nodelay` allows snappy page loads and static asset fetches while capping raw flood volume.
-    - `review_strict_zone` (`rate=2r/s`): Stricter throttling applied to abuse-sensitive endpoints (`/submit*` burst 10, `/login` burst 5 with `nodelay`). This stops automated submission spamming, credential probing, and email-bombing at Nginx before heavy multipart payloads or DB transactions reach Flask workers.
+    - `review_strict_zone` (`rate=2r/s`): Stricter throttling applied to abuse-sensitive endpoints (`/submit*` burst 10, `/login` burst 5, `/api/backup` burst 2 with `nodelay`). This stops automated submission spamming, credential probing, email-bombing, and backup CPU/IO saturation at Nginx before heavy multipart payloads or DB operations reach Flask workers.
     - `review_event_zone` (`rate=2r/s`): Tight throttling with burst=5 and a 64KB body cap (`client_max_body_size 64k`) applied to the unauthenticated `/api/event` analytics beacon, protecting against disk and SQLite database exhaustion.
   - `limit_req_status 429`: Ensures Nginx returns HTTP 429 Too Many Requests (rather than default 503 Service Unavailable), matching application-layer rate-limiting conventions (GitHub issue #26).
+  - `/api/backup` streams directly via in-memory SQLite serialization and pipe without multi-gigabyte `/tmp` staging or unnecessary re-compression, cleanly releasing locks on early disconnect (GitHub issue #89).
 
 ### YouTube cookies (optional, GitHub issue #49)
 

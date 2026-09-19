@@ -362,6 +362,15 @@ class MediaApiTest(ReviewAppTestCase):
 
 
 class BackupEndpointTest(ReviewAppTestCase):
+    def setUp(self):
+        super().setUp()
+        import api
+
+        with api._backup_history_lock:
+            api._backup_timestamps.clear()
+        if api._backup_lock.locked():
+            api._backup_lock.release()
+
     def test_backup_requires_bearer_auth(self):
         res = self.client.get("/api/backup")
         self.assertEqual(res.status_code, 401)
@@ -407,6 +416,91 @@ class BackupEndpointTest(ReviewAppTestCase):
             temp_conn.close()
             self.assertIsNotNone(row)
             self.assertEqual(json.loads(row[0]), "Test bio for backup")
+
+    def test_backup_plain_tar_format(self):
+        """Format=tar returns an uncompressed application/x-tar archive without gzip overhead (GitHub issue #89)."""
+        import io
+        import tarfile
+
+        import api
+
+        with api._backup_history_lock:
+            api._backup_timestamps.clear()
+
+        uploads_dir = self.config.resolved_media_uploads_path()
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        (uploads_dir / "plain_test.txt").write_text("plain tar content")
+
+        res = self.client.get("/api/backup?format=tar", headers=self.callback_headers())
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.mimetype, "application/x-tar")
+        self.assertIn("review-app-backup.tar", res.headers.get("Content-Disposition", ""))
+
+        tar_bytes = io.BytesIO(res.data)
+        with tarfile.open(fileobj=tar_bytes, mode="r:") as tar:
+            names = tar.getnames()
+            self.assertIn("review.db", names)
+            self.assertTrue(any("plain_test.txt" in n for n in names))
+
+    def test_backup_rejects_rapid_bursts_exceeding_rate_limit(self):
+        """Rapid bursts to /api/backup exceeding limit return 429 Too Many Requests (GitHub issue #89)."""
+        import api
+
+        with api._backup_history_lock:
+            api._backup_timestamps.clear()
+
+        self.app.config["BACKUP_RATE_LIMIT_PER_MINUTE"] = 2
+
+        # 1st and 2nd requests within limit should succeed
+        res1 = self.client.get("/api/backup", headers=self.callback_headers())
+        self.assertEqual(res1.status_code, 200)
+        _ = res1.data
+
+        res2 = self.client.get("/api/backup", headers=self.callback_headers())
+        self.assertEqual(res2.status_code, 200)
+        _ = res2.data
+
+        # 3rd request in the same window exceeds rate limit and must return 429
+        res3 = self.client.get("/api/backup", headers=self.callback_headers())
+        self.assertEqual(res3.status_code, 429)
+
+    def test_backup_purges_staging_and_cleans_up_on_early_disconnect(self):
+        """Early client disconnect during streaming terminates writer thread and releases locks cleanly (GitHub issue #89)."""
+        import tempfile
+
+        import api
+
+        with api._backup_history_lock:
+            api._backup_timestamps.clear()
+
+        # Record temp directory contents before backup
+        tmp_dir = tempfile.gettempdir()
+        before_files = set(Path(tmp_dir).glob("review_backup_*"))
+
+        res = self.client.get("/api/backup", headers=self.callback_headers())
+        self.assertEqual(res.status_code, 200)
+
+        # Simulate client prematurely closing connection after consuming only the first chunk
+        iterator = res.response
+        _ = next(iterator)
+        iterator.close()
+        res.close()
+
+        # Verify lock is released
+        self.assertFalse(api._backup_lock.locked())
+
+        # Verify no review_backup_* staging directories lingered in /tmp
+        after_files = set(Path(tmp_dir).glob("review_backup_*"))
+        self.assertEqual(after_files, before_files)
+
+        # Subsequent request can be served cleanly
+        with api._backup_history_lock:
+            api._backup_timestamps.clear()
+
+        res2 = self.client.get("/api/backup", headers=self.callback_headers())
+        self.assertEqual(res2.status_code, 200)
+        _ = res2.data
+        self.assertFalse(api._backup_lock.locked())
 
 
 if __name__ == "__main__":
