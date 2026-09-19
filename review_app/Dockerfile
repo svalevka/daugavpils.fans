@@ -46,16 +46,14 @@ WORKDIR /app/review_app
 # Offline GeoIP database for visitor country resolution (GitHub issues #34, #91).
 # SHA-256 checksum is verified upon download to ensure asset integrity.
 ARG MMDB_SHA256=7ca6753b093a69441a5e9185f498ee1e767c24ef6c0915494d1f68090cca032d
-RUN python3 -c "import urllib.error, urllib.request, hashlib; \
+RUN python3 -c "import urllib.request, hashlib, sys; \
     url = 'https://raw.githubusercontent.com/P3TERX/GeoLite.mmdb/download/GeoLite2-Country.mmdb'; \
-    try: \
-        data = urllib.request.urlopen(url, timeout=30).read(); \
-    except (urllib.error.URLError, TimeoutError, OSError) as e: \
-        print(f'Warning: MMDB download failed ({e}); visitor country resolution will be unavailable', flush=True); \
-    else: \
-        h = hashlib.sha256(data).hexdigest(); \
-        if h != '${MMDB_SHA256}': raise SystemExit(f'SECURITY ERROR: MMDB SHA-256 mismatch! Got {h}, expected ${MMDB_SHA256}'); \
-        open('/app/review_app/country.mmdb', 'wb').write(data)"
+    data = urllib.request.urlopen(url, timeout=30).read(); \
+    h = hashlib.sha256(data).hexdigest(); \
+    (h == '${MMDB_SHA256}') or sys.exit('SECURITY ERROR: MMDB SHA-256 mismatch! Got ' + h + ', expected ${MMDB_SHA256}'); \
+    open('/app/review_app/country.mmdb', 'wb').write(data)"
+
+
 
 RUN groupadd -g 10001 appuser && \
     useradd -u 10001 -g appuser -m -s /bin/bash appuser && \
