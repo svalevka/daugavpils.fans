@@ -3,7 +3,7 @@
 sync-and-deploy.sh is the script a systemd timer on the primary server
 (cherry) runs every few minutes to pick up changes to `main` without
 GitHub Actions ever needing inbound access to that box (see
-webapp/deploy/README.md, ADR-0001, and GitHub issue #10).
+webapp/deploy/README.md, ADR-0001, and GitHub issues #10, #79, #83).
 
 This exercises the script's own responsibility - checking out the latest
 commit into an isolated git worktree, invoking the Site build, atomically
@@ -14,6 +14,11 @@ doesn't depend on network access, archive.org, or the real Site build,
 which are already someone else's concern; it depends only on
 `python3 webapp/build.py` being invocable and honoring
 SITE_SKIP_LOCAL_VALIDATION, same contract the real build.py has).
+
+Also tests least-privilege container rebuild separation (GitHub issue #83):
+sync-and-deploy.sh never calls docker directly, only writes a rebuild marker file;
+rebuild-containers.sh runs as root to validate configs, reload nginx, and
+rebuild/restart review-app.
 """
 from __future__ import annotations
 
@@ -25,11 +30,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parent / "sync-and-deploy.sh"
-# Resolved once from *this* process's PATH, not the restricted PATH given
-# to the subprocess below - macOS ships an ancient bash (3.2, no
-# `mapfile`) at /usr/bin/bash that would otherwise shadow a newer one.
-BASH_BIN = shutil.which("bash")
+DEPLOY_DIR = Path(__file__).resolve().parent
+SCRIPT = DEPLOY_DIR / "sync-and-deploy.sh"
+REBUILD_SCRIPT = DEPLOY_DIR / "rebuild-containers.sh"
+SYNC_SERVICE_FILE = DEPLOY_DIR / "daugavpils-fans-sync.service"
+REBUILD_SERVICE_FILE = DEPLOY_DIR / "daugavpils-fans-rebuild.service"
+REBUILD_PATH_FILE = DEPLOY_DIR / "daugavpils-fans-rebuild.path"
+BASH_BIN = shutil.which("bash") or "bash"
 
 STUB_BUILD_PY = """\
 import os, pathlib, sys
@@ -106,6 +113,7 @@ class DeployHarness:
         self.current_link = self.site_dir / "current"
         self.current_checkout_link = self.site_dir / "current-checkout"
         self.state_file = tmp_path / "last-deployed-sha"
+        self.rebuild_marker_file = tmp_path / ".rebuild-needed"
         self.lock_dir = tmp_path / "lock.d"
         self.live_compose_file = tmp_path / "docker-compose.yml"
         self.live_nginx_dir = tmp_path / "nginx"
@@ -161,6 +169,7 @@ exit 0
             "CURRENT_LINK": str(self.current_link),
             "CURRENT_CHECKOUT_LINK": str(self.current_checkout_link),
             "STATE_FILE": str(self.state_file),
+            "REBUILD_MARKER_FILE": str(self.rebuild_marker_file),
             "LOCK_DIR": str(self.lock_dir),
             "LIVE_COMPOSE_FILE": str(self.live_compose_file),
             "LIVE_NGINX_DIR": str(self.live_nginx_dir),
@@ -232,7 +241,7 @@ class FirstAndRepeatDeployTest(unittest.TestCase):
             # Both symlinks move together, to the same new commit.
             self.assertEqual(h.current_link.resolve().parent.parent, h.current_checkout_link.resolve())
 
-    def test_detects_review_app_changes_on_new_commit(self):
+    def test_detects_review_app_changes_and_writes_marker_without_calling_docker(self):
         with tempfile.TemporaryDirectory() as tmp:
             h = DeployHarness(Path(tmp))
             _init_origin(h.origin_dir, "v1")
@@ -244,10 +253,19 @@ class FirstAndRepeatDeployTest(unittest.TestCase):
             (review_app_dir / "new_feature.py").write_text("# new feature\n")
             _git("add", "review_app", cwd=h.origin_dir)
             _git("commit", "-m", "update review_app", cwd=h.origin_dir)
+            latest_sha = _head(h.origin_dir)
 
             result = h.run()
             self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
             self.assertIn("review_app code or deployment configuration changed", result.stdout)
+            self.assertIn("rebuild marker written", result.stdout)
+
+            # Rebuild marker written with latest SHA
+            self.assertTrue(h.rebuild_marker_file.exists())
+            self.assertEqual(h.rebuild_marker_file.read_text().strip(), latest_sha)
+
+            # Least privilege: sync script must NEVER invoke docker directly
+            self.assertFalse(h.docker_log_file.exists(), "sync-and-deploy.sh must not call docker directly")
 
 
 class FailedBuildTest(unittest.TestCase):
@@ -319,7 +337,7 @@ class OverlapTest(unittest.TestCase):
 
 
 class DeploymentConfigSyncTest(unittest.TestCase):
-    def test_config_changed_is_synced_validated_and_reloaded(self):
+    def test_config_changed_is_synced_and_marker_written_without_calling_docker(self):
         with tempfile.TemporaryDirectory() as tmp:
             h = DeployHarness(Path(tmp))
             _init_origin(h.origin_dir, "v1")
@@ -339,43 +357,26 @@ class DeploymentConfigSyncTest(unittest.TestCase):
             self.assertTrue(h.live_nginx_conf.exists())
             self.assertEqual(h.live_nginx_conf.read_text(), "# nginx conf v1\n")
 
+            # Reset marker
+            h.rebuild_marker_file.unlink(missing_ok=True)
+
             # Now advance origin with v2 config
             (nginx_dir / "daugavpils.conf").write_text("# nginx conf v2\n")
             _git("commit", "-am", "update nginx conf to v2", cwd=h.origin_dir)
+            latest_sha = _head(h.origin_dir)
 
-            h.docker_log_file.write_text("")
             result2 = h.run()
             self.assertEqual(result2.returncode, 0, msg=result2.stdout + result2.stderr)
             self.assertEqual(h.live_nginx_conf.read_text(), "# nginx conf v2\n")
             self.assertIn("deployment configuration changed or drifted", result2.stdout)
-            self.assertIn("deployment configuration successfully validated and applied", result2.stdout)
-            docker_log = h.docker_log_file.read_text()
-            self.assertIn("nginx -t", docker_log)
-            self.assertIn("nginx -s reload", docker_log)
+            self.assertIn("deployment configuration successfully synced", result2.stdout)
 
-    def test_invalid_config_is_rolled_back_and_alert_raised(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            h = DeployHarness(Path(tmp))
-            _init_origin(h.origin_dir, "v1")
+            # Rebuild marker written
+            self.assertTrue(h.rebuild_marker_file.exists())
+            self.assertEqual(h.rebuild_marker_file.read_text().strip(), latest_sha)
 
-            # Initial good config
-            deploy_dir = h.origin_dir / "webapp" / "deploy"
-            nginx_dir = deploy_dir / "nginx"
-            nginx_dir.mkdir(parents=True, exist_ok=True)
-            (deploy_dir / "docker-compose.yml").write_text("services:\n  nginx:\n    image: nginx:alpine\n")
-            (nginx_dir / "daugavpils.conf").write_text("# good nginx conf\n")
-            _git("add", "-A", cwd=h.origin_dir)
-            _git("commit", "-m", "add deploy configs v1", cwd=h.origin_dir)
-            h.run()
-
-            # Advance with invalid config
-            (nginx_dir / "daugavpils.conf").write_text("# broken nginx conf\n")
-            _git("commit", "-am", "broken config", cwd=h.origin_dir)
-
-            result = h.run(extra_env={"MOCK_DOCKER_FAIL_NGINX_TEST": "1"})
-            # Verification: live nginx conf must be rolled back to good config
-            self.assertEqual(h.live_nginx_conf.read_text(), "# good nginx conf\n")
-            self.assertIn("ALERT: deployment config validation failed! Rolling back", result.stderr)
+            # Sync script must never call docker directly
+            self.assertFalse(h.docker_log_file.exists(), "sync script must never invoke docker directly")
 
     def test_unchanged_config_is_noop(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -391,14 +392,14 @@ class DeploymentConfigSyncTest(unittest.TestCase):
             _git("commit", "-m", "add deploy configs", cwd=h.origin_dir)
             h.run()
 
-            # Advance with change to build.py only (deploy config unchanged)
+            # Advance with change to build.py only (deploy config and review_app unchanged)
+            h.rebuild_marker_file.unlink(missing_ok=True)
             _advance_origin(h.origin_dir, "v2")
-            h.docker_log_file.write_text("")
             result = h.run()
             self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
             self.assertIn("deployment configuration unchanged - nothing to sync", result.stdout)
-            docker_log = h.docker_log_file.read_text()
-            self.assertNotIn("nginx -s reload", docker_log)
+            self.assertFalse(h.rebuild_marker_file.exists())
+            self.assertFalse(h.docker_log_file.exists())
 
     def test_drift_check(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -424,6 +425,139 @@ class DeploymentConfigSyncTest(unittest.TestCase):
             drift_res = h.run("--check-drift")
             self.assertEqual(drift_res.returncode, 1)
             self.assertIn("DRIFT:", drift_res.stderr)
+
+
+class RebuildContainersScriptTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.tmp_path = Path(self.tmp_dir.name)
+        self.base_dir = self.tmp_path / "base"
+        self.base_dir.mkdir()
+
+        self.compose_file = self.base_dir / "docker-compose.yml"
+        self.compose_file.write_text("services:\n  nginx:\n    image: nginx:alpine\n  review-app:\n    build: .\n")
+
+        self.nginx_dir = self.base_dir / "nginx"
+        self.nginx_dir.mkdir()
+        self.nginx_conf = self.nginx_dir / "daugavpils.conf"
+        self.nginx_conf.write_text("# nginx conf\n")
+
+        self.marker_file = self.base_dir / ".rebuild-needed"
+        self.docker_log = self.tmp_path / "mock_docker.log"
+        self.bin_dir = self.tmp_path / "bin"
+        self.bin_dir.mkdir()
+        self._setup_mock_docker()
+
+    def tearDown(self) -> None:
+        self.tmp_dir.cleanup()
+
+    def _setup_mock_docker(self) -> None:
+        mock_docker = self.bin_dir / "docker"
+        mock_docker.write_text(f"""#!/usr/bin/env bash
+echo "docker $@" >> "{self.docker_log}"
+case "$*" in
+  *"ps --services"*)
+    echo "nginx"
+    echo "review-app"
+    exit 0
+    ;;
+  *"config --services"*)
+    echo "nginx"
+    echo "review-app"
+    exit 0
+    ;;
+  *"config"*)
+    if [ "${{MOCK_DOCKER_FAIL_CONFIG:-0}}" = "1" ]; then
+      echo "compose config error" >&2
+      exit 1
+    fi
+    exit 0
+    ;;
+  *"nginx -t"*)
+    exit 0
+    ;;
+  *"nginx -s reload"*)
+    exit 0
+    ;;
+  *"build review-app"*)
+    exit 0
+    ;;
+  *"up -d"*)
+    exit 0
+    ;;
+esac
+exit 0
+""")
+        mock_docker.chmod(0o755)
+
+    def test_script_syntax(self) -> None:
+        """Bash syntax check: bash -n rebuild-containers.sh."""
+        res = subprocess.run([BASH_BIN, "-n", str(REBUILD_SCRIPT)], capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0, f"Syntax error in {REBUILD_SCRIPT}: {res.stderr}")
+
+    def test_noop_without_marker_file(self) -> None:
+        """When no marker file exists, rebuild script exits cleanly without running docker commands."""
+        env = os.environ.copy()
+        env.update(
+            {
+                "BASE_DIR": str(self.base_dir),
+                "DOCKER_COMPOSE_FILE": str(self.compose_file),
+                "REBUILD_MARKER_FILE": str(self.marker_file),
+                "DOCKER_BIN": str(self.bin_dir / "docker"),
+            }
+        )
+
+        res = subprocess.run([str(REBUILD_SCRIPT)], env=env, capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0)
+        self.assertFalse(self.docker_log.exists())
+
+    def test_rebuild_executed_and_marker_removed(self) -> None:
+        """When marker file exists, docker validation, reload, rebuild, and marker cleanup take place."""
+        self.marker_file.write_text("commit-sha-12345\n")
+
+        env = os.environ.copy()
+        env.update(
+            {
+                "BASE_DIR": str(self.base_dir),
+                "DOCKER_COMPOSE_FILE": str(self.compose_file),
+                "REBUILD_MARKER_FILE": str(self.marker_file),
+                "LIVE_NGINX_CONF": str(self.nginx_conf),
+                "DOCKER_BIN": str(self.bin_dir / "docker"),
+            }
+        )
+
+        res = subprocess.run([str(REBUILD_SCRIPT)], env=env, capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0, f"Script failed: {res.stderr}\n{res.stdout}")
+        self.assertIn("Container rebuild/reload complete for commit commit-sha-12345", res.stdout)
+
+        # Marker file was cleaned up
+        self.assertFalse(self.marker_file.exists())
+
+        # Verify docker calls
+        docker_calls = self.docker_log.read_text()
+        self.assertIn("compose -f", docker_calls)
+        self.assertIn("nginx -t", docker_calls)
+        self.assertIn("nginx -s reload", docker_calls)
+        self.assertIn("build review-app", docker_calls)
+        self.assertIn("up -d review-app", docker_calls)
+
+
+class SystemdUnitsLeastPrivilegeTest(unittest.TestCase):
+    def test_sync_service_runs_as_unprivileged_deploy_user(self) -> None:
+        content = SYNC_SERVICE_FILE.read_text()
+        self.assertIn("User=daugavpils-deploy", content)
+        self.assertNotIn("User=root", content)
+        self.assertNotIn("User=sergei", content)
+        self.assertIn("REBUILD_MARKER_FILE=", content)
+
+    def test_rebuild_service_and_path_units(self) -> None:
+        service_content = REBUILD_SERVICE_FILE.read_text()
+        self.assertIn("User=root", service_content)
+        self.assertIn("ExecStart=/opt/daugavpils-fans/rebuild-containers.sh", service_content)
+
+        path_content = REBUILD_PATH_FILE.read_text()
+        self.assertIn("PathModified=/opt/daugavpils-fans/.rebuild-needed", path_content)
+        self.assertIn("Unit=daugavpils-fans-rebuild.service", path_content)
 
 
 if __name__ == "__main__":

@@ -5,13 +5,14 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=sergei
+User=daugavpils-deploy
 Environment=REPO_URL=https://github.com/svalevka/daugavpils.fans.git
 Environment=REPO_DIR=/opt/daugavpils-fans/repo
 Environment=CHECKOUT_ROOT=/opt/daugavpils-fans/site/checkouts
 Environment=CURRENT_LINK=/opt/daugavpils-fans/site/current
 Environment=CURRENT_CHECKOUT_LINK=/opt/daugavpils-fans/site/current-checkout
 Environment=STATE_FILE=/opt/daugavpils-fans/.last-deployed-sha
+Environment=REBUILD_MARKER_FILE=/opt/daugavpils-fans/.rebuild-needed
 Environment=LOCK_DIR=/opt/daugavpils-fans/.sync-and-deploy.lock.d
 Environment=PYTHON_BIN=/opt/daugavpils-fans/venv/bin/python3
 ExecStart=/opt/daugavpils-fans/sync-and-deploy.sh

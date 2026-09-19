@@ -69,6 +69,7 @@ DEPLOY_BASE_DIR="$(dirname "$STATE_FILE")"
 LIVE_COMPOSE_FILE="${LIVE_COMPOSE_FILE:-$DEPLOY_BASE_DIR/docker-compose.yml}"
 LIVE_NGINX_DIR="${LIVE_NGINX_DIR:-$DEPLOY_BASE_DIR/nginx}"
 LIVE_NGINX_CONF="${LIVE_NGINX_CONF:-$LIVE_NGINX_DIR/daugavpils.conf}"
+REBUILD_MARKER_FILE="${REBUILD_MARKER_FILE:-$DEPLOY_BASE_DIR/.rebuild-needed}"
 
 if [ "${1:-}" = "--check-drift" ]; then
   drift_found=0
@@ -202,7 +203,8 @@ ln -sfn "$(basename "$CHECKOUT_ROOT")/$LATEST_SHA" "$CURRENT_CHECKOUT_LINK"
 
 echo "$LATEST_SHA" > "$STATE_FILE"
 
-# Sync live deployment configuration (nginx/daugavpils.conf, docker-compose.yml) if changed or drifted (GitHub issue #79)
+# Sync live deployment configuration (nginx/daugavpils.conf, docker-compose.yml) if changed or drifted (GitHub issues #79, #83)
+config_synced=0
 sync_deployment_config() {
   local new_compose="$WORKTREE_DIR/webapp/deploy/docker-compose.yml"
   local new_nginx="$WORKTREE_DIR/webapp/deploy/nginx/daugavpils.conf"
@@ -237,17 +239,6 @@ sync_deployment_config() {
 
   echo "deployment configuration changed or drifted - syncing"
 
-  local compose_backup=""
-  local nginx_backup=""
-  if [ -f "$LIVE_COMPOSE_FILE" ]; then
-    compose_backup="$(mktemp "${LIVE_COMPOSE_FILE}.bak.XXXXXX")"
-    cp "$LIVE_COMPOSE_FILE" "$compose_backup"
-  fi
-  if [ -f "$LIVE_NGINX_CONF" ]; then
-    nginx_backup="$(mktemp "${LIVE_NGINX_CONF}.bak.XXXXXX")"
-    cp "$LIVE_NGINX_CONF" "$nginx_backup"
-  fi
-
   # Copy new files into place
   if [ -f "$new_compose" ]; then
     mkdir -p "$(dirname "$LIVE_COMPOSE_FILE")"
@@ -258,73 +249,29 @@ sync_deployment_config() {
     cp "$new_nginx" "$LIVE_NGINX_CONF"
   fi
 
-  # Validate
-  local validation_failed=0
-  if command -v docker >/dev/null 2>&1; then
-    if [ -f "$LIVE_COMPOSE_FILE" ]; then
-      if ! docker compose -f "$LIVE_COMPOSE_FILE" config >/dev/null 2>&1; then
-        echo "ERROR: docker compose config validation failed" >&2
-        validation_failed=1
-      fi
-    fi
-
-    if [ "$validation_failed" -eq 0 ] && [ -f "$LIVE_NGINX_CONF" ]; then
-      if docker compose -f "$LIVE_COMPOSE_FILE" ps --services --filter "status=running" 2>/dev/null | grep -q "^nginx$"; then
-        if ! docker compose -f "$LIVE_COMPOSE_FILE" exec -T nginx nginx -t >/dev/null 2>&1; then
-          echo "ERROR: nginx -t validation failed" >&2
-          validation_failed=1
-        fi
-      fi
-    fi
-  fi
-
-  if [ "$validation_failed" -eq 1 ]; then
-    echo "ALERT: deployment config validation failed! Rolling back to previous files" >&2
-    if [ -n "$compose_backup" ]; then
-      mv -f "$compose_backup" "$LIVE_COMPOSE_FILE"
-    else
-      rm -f "$LIVE_COMPOSE_FILE"
-    fi
-    if [ -n "$nginx_backup" ]; then
-      mv -f "$nginx_backup" "$LIVE_NGINX_CONF"
-    else
-      rm -f "$LIVE_NGINX_CONF"
-    fi
-    return 1
-  fi
-
-  # Reload / restart only on successful validation
-  if command -v docker >/dev/null 2>&1 && [ -f "$LIVE_COMPOSE_FILE" ]; then
-    if docker compose -f "$LIVE_COMPOSE_FILE" ps --services --filter "status=running" 2>/dev/null | grep -q "^nginx$"; then
-      echo "reloading nginx configuration"
-      docker compose -f "$LIVE_COMPOSE_FILE" exec -T nginx nginx -s reload || true
-    fi
-    echo "applying compose service updates"
-    docker compose -f "$LIVE_COMPOSE_FILE" up -d || true
-  fi
-
-  [ -n "$compose_backup" ] && rm -f "$compose_backup"
-  [ -n "$nginx_backup" ] && rm -f "$nginx_backup"
-
-  echo "deployment configuration successfully validated and applied"
+  config_synced=1
+  echo "deployment configuration successfully synced"
   return 0
 }
 
 sync_deployment_config || true
 
-# If review_app code changed since the last deploy,
-# rebuild and restart review-app so server changes go live without manual intervention.
+# If review_app code or deployment configuration changed since the last deploy,
+# record that a container rebuild/reload is needed via marker file (GitHub issue #83).
+# The unprivileged sync user does not invoke Docker directly; a separate root-owned
+# service or timer executes container rebuilds upon detecting the marker file.
+rebuild_needed=0
 if [ -n "$PREVIOUS_SHA" ]; then
   if git -C "$REPO_DIR" diff --name-only "$PREVIOUS_SHA" "$LATEST_SHA" | grep -qE '^review_app/'; then
-    echo "review_app code or deployment configuration changed ($PREVIOUS_SHA..$LATEST_SHA)"
-    COMPOSE_FILE="${COMPOSE_FILE:-$LIVE_COMPOSE_FILE}"
-    AUTO_REBUILD_CONTAINERS="${AUTO_REBUILD_CONTAINERS:-1}"
-    if [ "$AUTO_REBUILD_CONTAINERS" = "1" ] && command -v docker >/dev/null 2>&1 && [ -f "$COMPOSE_FILE" ]; then
-      echo "rebuilding and restarting review-app container"
-      docker compose -f "$COMPOSE_FILE" build review-app
-      docker compose -f "$COMPOSE_FILE" up -d review-app
-    fi
+    rebuild_needed=1
   fi
+fi
+
+if [ "$config_synced" -eq 1 ] || [ "$rebuild_needed" -eq 1 ]; then
+  echo "review_app code or deployment configuration changed ($PREVIOUS_SHA..$LATEST_SHA)"
+  mkdir -p "$(dirname "$REBUILD_MARKER_FILE")"
+  echo "$LATEST_SHA" > "$REBUILD_MARKER_FILE"
+  echo "rebuild marker written to $REBUILD_MARKER_FILE"
 fi
 
 # Prune worktrees beyond KEEP_CHECKOUTS, oldest (by creation, i.e. mtime -

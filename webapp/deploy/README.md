@@ -115,17 +115,52 @@ manual, fully-verified path above still exists and is still the way to
 do an on-demand deploy with a real local-checksum recheck; the timer just
 means the site no longer sits stale between manual deploys.
 
-Install:
+### Least-Privilege Pull-Based Deployment (GitHub issue #83)
+
+To minimize the blast radius of any compromised commit landing on `main`, the deployment runs under strict principle of least privilege:
+
+1. **Dedicated Unprivileged Deploy User (`daugavpils-deploy`)**:
+   - The user has no sudo permissions and is **NOT** a member of the `docker` group (preventing host root escalation via the Docker socket).
+   - Owns the git repository mirror (`/opt/daugavpils-fans/repo`), checkout worktrees (`/opt/daugavpils-fans/site/checkouts`), and symlinks.
+   - `daugavpils-fans-sync.service` runs as `User=daugavpils-deploy`.
+
+2. **Split Container Rebuild / Reload**:
+   - `sync-and-deploy.sh` never invokes Docker directly. When `review_app/` or `webapp/deploy/` changes are detected, it copies config files and writes the latest commit SHA to `/opt/daugavpils-fans/.rebuild-needed`.
+   - A systemd path unit (`daugavpils-fans-rebuild.path`) triggers `daugavpils-fans-rebuild.service`, which runs `/opt/daugavpils-fans/rebuild-containers.sh` as `root:root`.
+   - `rebuild-containers.sh` validates compose and nginx configs, gracefully reloads nginx, rebuilds `review-app`, brings containers up, and removes the marker file.
+   - *Alternative*: If preferred, an exact-command sudoers rule in `/etc/sudoers.d/daugavpils-deploy` can grant `daugavpils-deploy` permission to run only `/opt/daugavpils-fans/rebuild-containers.sh`.
+
+3. **GitHub Ruleset Protection on `main`**:
+   - The repository has an active branch ruleset (`Protect main`) enforcing non-fast-forward protection (blocking force pushes) and preventing branch deletion.
+   - Owner and collaborator accounts require 2FA/passkeys.
+
+### Installation
+
+1. Create the unprivileged deploy user and set up directory ownership:
+
+```bash
+sudo useradd --system --no-create-home --shell /usr/sbin/nologin daugavpils-deploy
+sudo chown -R daugavpils-deploy:daugavpils-deploy /opt/daugavpils-fans/repo /opt/daugavpils-fans/site
+```
+
+2. Install scripts and systemd units:
 
 ```bash
 sudo cp sync-and-deploy.sh /opt/daugavpils-fans/sync-and-deploy.sh
-sudo chmod +x /opt/daugavpils-fans/sync-and-deploy.sh
+sudo chmod 755 /opt/daugavpils-fans/sync-and-deploy.sh
+
+sudo cp rebuild-containers.sh /opt/daugavpils-fans/rebuild-containers.sh
+sudo chown root:root /opt/daugavpils-fans/rebuild-containers.sh
+sudo chmod 700 /opt/daugavpils-fans/rebuild-containers.sh
+
 sudo cp daugavpils-fans-sync.service daugavpils-fans-sync.timer /etc/systemd/system/
+sudo cp daugavpils-fans-rebuild.service daugavpils-fans-rebuild.path /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now daugavpils-fans-sync.timer
+sudo systemctl enable --now daugavpils-fans-rebuild.path
 ```
 
-The service unit's `Environment=` lines already point at this layout
+The service unit's `Environment=` lines point at this layout
 (`/opt/daugavpils-fans/repo`, `/opt/daugavpils-fans/site/checkouts`, etc.)
 and at a venv Python (`/opt/daugavpils-fans/venv/bin/python3` - create it with
 `python3 -m venv /opt/daugavpils-fans/venv && /opt/daugavpils-fans/venv/bin/pip install -r tools/requirements.txt -r webapp/requirements.txt`
@@ -135,11 +170,13 @@ deploy key to provision on this box). First run bootstraps
 `/opt/daugavpils-fans/repo` itself via `git clone` - nothing else needs
 to pre-exist.
 
-Check on it:
+Check on status and logs:
 
 ```bash
 systemctl status daugavpils-fans-sync.timer
+systemctl status daugavpils-fans-rebuild.path
 journalctl -u daugavpils-fans-sync.service -n 50
+journalctl -u daugavpils-fans-rebuild.service -n 50
 ```
 
 ### Automated Offsite Backups to Backblaze B2

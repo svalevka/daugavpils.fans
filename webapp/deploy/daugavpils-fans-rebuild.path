@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch for container rebuild marker (see GitHub issue #83)
+After=network.target
+
+[Path]
+PathModified=/opt/daugavpils-fans/.rebuild-needed
+Unit=daugavpils-fans-rebuild.service
+
+[Install]
+WantedBy=multi-user.target
