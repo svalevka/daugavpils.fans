@@ -220,6 +220,13 @@ class DocumentationTest(unittest.TestCase):
         self.assertIn("daugavpils-fans-update-containers.service", readme_text)
         self.assertNotIn("containrrr/watchtower", readme_text)
 
+    def test_readme_documents_docker_unattended_upgrades(self) -> None:
+        """README must document including Docker origin in unattended-upgrades (GitHub issue #81)."""
+        readme_text = README_FILE.read_text()
+        self.assertIn("51unattended-upgrades-docker", readme_text)
+        self.assertIn("Docker:${distro_codename}", readme_text)
+        self.assertIn("GitHub issue #81", readme_text)
+
 
 if __name__ == "__main__":
     unittest.main()

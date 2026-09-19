@@ -420,6 +420,13 @@ configures a reverse proxy cache on `cherry` at `/media-stream/`:
 
 Host-level OS packages receive security patches automatically via Ubuntu's `unattended-upgrades`. Container base images (`nginx:alpine` and the `python:3.12-slim` base image for `review-app`) are kept up-to-date via a dedicated root systemd timer and script (`update-containers.sh`, see GitHub issue #82), avoiding third-party daemons with host Docker socket access.
 
+To ensure the container runtime (`docker-ce`, `containerd.io`, `docker-compose-plugin`, `docker-buildx-plugin`) also receives automated security updates, include Docker's APT origin in `unattended-upgrades` (GitHub issue #81):
+
+```bash
+echo 'Unattended-Upgrade::Allowed-Origins:: "Docker:${distro_codename}";' | sudo tee /etc/apt/apt.conf.d/51unattended-upgrades-docker
+sudo unattended-upgrade --dry-run --debug 2>&1 | grep -i docker
+```
+
 ### Update Workflow
 
 The daily timer (`daugavpils-fans-update-containers.timer`) runs off-peak (04:00 UTC) executing:
