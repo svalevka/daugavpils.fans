@@ -84,6 +84,25 @@ class LoginRequestTest(ReviewAppTestCase):
         response = self.client.post("/login", data={"email": "nobody@example.com"})
         self.assertEqual(response.status_code, 429)
 
+    def test_magic_link_url_uses_configured_base_url_and_ignores_host_headers(self):
+        self.seed_approver("ryb@example.com")
+        self.client.post(
+            "/login",
+            data={"email": "ryb@example.com"},
+            headers={
+                "Host": "attacker.example.com",
+                "X-Forwarded-Host": "evil.example.org",
+            },
+        )
+        self.mock_send_magic_link.assert_called_once()
+        _smtp_config, _to_addr, link_url = self.mock_send_magic_link.call_args.args
+        self.assertTrue(
+            link_url.startswith("https://review.daugavpils.fans/login/verify?token="),
+            f"link_url should start with configured BASE_URL origin, got {link_url}",
+        )
+        self.assertNotIn("attacker.example.com", link_url)
+        self.assertNotIn("evil.example.org", link_url)
+
 
 class MagicLinkVerificationTest(ReviewAppTestCase):
     def _request_link(self, email: str) -> str:

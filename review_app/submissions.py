@@ -25,6 +25,7 @@ import db  # noqa: E402
 import i18n  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
+from url_utils import external_url  # noqa: E402
 from config import AiConfig  # noqa: E402
 from editable_fields import (  # noqa: E402
     EDITABLE_FIELDS,
@@ -312,7 +313,7 @@ def create_proposal():
     ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
     if ai_config.mode == "disabled":
         scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
-        login_url = url_for("auth.login_form", _external=True)
+        login_url = external_url("auth.login_form")
         summary = (
             f"New proposal #{proposal_id} for {scope} ({target}.{field}):\n\n"
             f"- {original_value!r}\n+ {proposed_value!r}\n\n"
@@ -396,7 +397,7 @@ def create_member_proposal(band_slug: str):
     proposal_id = cur.lastrowid
     ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
     if ai_config.mode == "disabled":
-        login_url = url_for("auth.login_form", _external=True)
+        login_url = external_url("auth.login_form")
         summary = (
             f"New proposal #{proposal_id} for {band_slug} (new band member):\n\n"
             f"+ {proposed_value!r}\n\n"

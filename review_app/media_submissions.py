@@ -27,6 +27,7 @@ import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
 import youtube_fetch  # noqa: E402
+from url_utils import external_url  # noqa: E402
 from config import AiConfig  # noqa: E402
 
 bp = Blueprint("media_submissions", __name__)
@@ -271,7 +272,7 @@ def create_media_proposal():
     if ai_config.mode == "disabled":
         if saved:
             scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
-            login_url = url_for("auth.login_form", _external=True)
+            login_url = external_url("auth.login_form")
             summary = (
                 f"{saved} new media proposal(s) for {scope}"
                 + (f" ({len(skipped)} skipped - see below)" if skipped else "")

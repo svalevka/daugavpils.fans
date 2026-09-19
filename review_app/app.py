@@ -57,7 +57,9 @@ def create_app(config: Config) -> Flask:
     app.config["MIN_DISK_FREE_BYTES"] = config.min_disk_free_bytes
     app.config["AI_CONFIG"] = config.ai
     app.config["YOUTUBE_COOKIES_PATH"] = config.youtube_cookies_path
-    app.config["BASE_URL"] = os.environ.get("REVIEW_APP_BASE_URL", "https://review.daugavpils.fans")
+    app.config["BASE_URL"] = getattr(config, "base_url", None) or os.environ.get(
+        "REVIEW_APP_BASE_URL", "https://review.daugavpils.fans"
+    )
     # Hardened session cookie attributes (SEC-06)
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
@@ -95,12 +97,12 @@ def create_app(config: Config) -> Flask:
 
     # Behind nginx (see webapp/deploy/nginx/daugavpils.conf's `proxy_set_header
     # X-Forwarded-*` lines), only one hop of forwarding headers is ever
-    # trusted - this is what makes url_for(..., _external=True) generate
-    # https://review.daugavpils.fans/... links (auth.py's magic links) and
-    # request.remote_addr reflect the real submitter's IP (submissions.py's
-    # rate limiting) instead of nginx's own address. A no-op when there's
-    # no reverse proxy in front (local dev, tests) - no X-Forwarded-* header
-    # ever arrives, so there's nothing to trust.
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+    # trusted - this makes request.remote_addr reflect the real submitter's IP
+    # (submissions.py's rate limiting) and ensures proto (https) is recognized.
+    # We explicitly omit x_host=1 so untrusted Host / X-Forwarded-Host headers
+    # cannot manipulate URL generation or host resolution (GitHub issue #77).
+    # All external links (magic links, notification emails) are built from
+    # configured BASE_URL via external_url() instead.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
     return app

@@ -62,6 +62,7 @@ class Config:
     smtp: SmtpConfig
     github: GithubConfig
     callback_key: str = field(repr=False)
+    base_url: str = "https://review.daugavpils.fans"
     # 5 (the previous default) turned out too low for legitimate use: the
     # /submit flow is one field per POST (see submissions.py's module
     # docstring - there's no batched multi-field submission), so a
@@ -132,6 +133,7 @@ class Config:
                 ref=os.environ.get("GITHUB_REF", "main"),
             ),
             callback_key=os.environ["REVIEW_APP_CALLBACK_KEY"],
+            base_url=os.environ.get("REVIEW_APP_BASE_URL", "https://review.daugavpils.fans"),
             rate_limit_per_ip_per_hour=int(os.environ.get("RATE_LIMIT_PER_IP_PER_HOUR", "20")),
             login_rate_limit_per_ip_per_hour=int(os.environ.get("LOGIN_RATE_LIMIT_PER_IP_PER_HOUR", "20")),
             media_uploads_path=(

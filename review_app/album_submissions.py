@@ -25,6 +25,7 @@ import i18n  # noqa: E402
 import mail  # noqa: E402
 import media_uploads  # noqa: E402
 import roles  # noqa: E402
+from url_utils import external_url  # noqa: E402
 from config import AiConfig  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -264,7 +265,7 @@ def create_album_proposal():
         smtp_cfg = current_app.config.get("SMTP_CONFIG")
         if smtp_cfg:
             try:
-                login_url = url_for("auth.login_form", _external=True)
+                login_url = external_url("auth.login_form")
                 summary = (
                     f"New album proposal #{proposal_id} submitted for band '{band_slug}':\n\n"
                     f"Title: {album_name}\n"

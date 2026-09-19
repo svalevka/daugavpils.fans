@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import db  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
+from url_utils import external_url  # noqa: E402
 
 bp = Blueprint("auth", __name__)
 
@@ -87,7 +88,7 @@ def login_request():
             (row["id"], _hash_token(token), request.remote_addr),
         )
         conn.commit()
-        link_url = url_for("auth.verify", token=token, _external=True)
+        link_url = external_url("auth.verify", token=token)
         # The token is already committed - an SMTP failure shouldn't turn
         # into a 500 (which would itself be a signal distinguishing this
         # case from "no match", undermining the point of the identical

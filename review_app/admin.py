@@ -30,6 +30,7 @@ import anomaly_detector  # noqa: E402
 import db  # noqa: E402
 import mail  # noqa: E402
 import roles  # noqa: E402
+from url_utils import external_url  # noqa: E402
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -396,9 +397,7 @@ def user_add():
             (user_id, _hash_token(token), request.remote_addr),
         )
         conn.commit()
-        login_url = url_for("auth.verify", token=token, _external=True)
-        if "daugavpils.fans" in login_url and "review.daugavpils.fans" not in login_url:
-            login_url = login_url.replace("daugavpils.fans", "review.daugavpils.fans")
+        login_url = external_url("auth.verify", token=token)
     else:
         conn.execute(
             "INSERT INTO admin_magic_links (email, token_hash, expires_at, requested_ip) "
@@ -406,7 +405,7 @@ def user_add():
             (email, _hash_token(token), request.remote_addr),
         )
         conn.commit()
-        login_url = url_for("admin.verify", token=token, _external=True)
+        login_url = external_url("admin.verify", token=token)
 
     try:
         mail.send_welcome_invitation(
@@ -532,7 +531,7 @@ def login_request():
             (email, _hash_token(token), request.remote_addr),
         )
         conn.commit()
-        link_url = url_for("admin.verify", token=token, _external=True)
+        link_url = external_url("admin.verify", token=token)
         try:
             mail.send_admin_magic_link(current_app.config["SMTP_CONFIG"], email, link_url)
         except OSError:

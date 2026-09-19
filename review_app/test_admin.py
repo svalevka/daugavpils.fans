@@ -45,6 +45,24 @@ class AdminAuthTest(ReviewAppTestCase):
         self.assertEqual(to_addr, self.config.maintainer_email)
         self.assertIn("/admin/verify?token=", link_url)
 
+    def test_admin_magic_link_url_uses_configured_base_url_and_ignores_host_headers(self):
+        self.client.post(
+            "/admin/login",
+            data={"email": self.config.maintainer_email},
+            headers={
+                "Host": "attacker.example.com",
+                "X-Forwarded-Host": "evil.example.org",
+            },
+        )
+        self.mock_send_admin_link.assert_called_once()
+        _smtp_config, to_addr, link_url = self.mock_send_admin_link.call_args.args
+        self.assertTrue(
+            link_url.startswith("https://review.daugavpils.fans/admin/verify?token="),
+            f"admin link_url should start with configured BASE_URL origin, got {link_url}",
+        )
+        self.assertNotIn("attacker.example.com", link_url)
+        self.assertNotIn("evil.example.org", link_url)
+
     def test_non_maintainer_email_does_not_send_link_but_returns_identical_status(self):
         valid = self.client.post("/admin/login", data={"email": self.config.maintainer_email})
         self.mock_send_admin_link.reset_mock()
