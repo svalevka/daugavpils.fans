@@ -371,12 +371,44 @@ configures a reverse proxy cache on `cherry` at `/media-stream/`:
   Nginx intercepts these redirects internally so that the actual audio/video payloads
   are retrieved and saved to the local cache.
 
-## Automated container security updates (Watchtower)
+## Automated container security updates (Systemd Timer)
 
-Host-level OS packages receive security patches automatically via Ubuntu's `unattended-upgrades`. To ensure public registry container images (such as `nginx:alpine`) also receive timely security updates, `docker-compose.yml` includes **Watchtower** ([containrrr/watchtower](https://github.com/containrrr/watchtower)):
+Host-level OS packages receive security patches automatically via Ubuntu's `unattended-upgrades`. Container base images (`nginx:alpine` and the `python:3.12-slim` base image for `review-app`) are kept up-to-date via a dedicated root systemd timer and script (`update-containers.sh`, see GitHub issue #82), avoiding third-party daemons with host Docker socket access.
 
-- **Opt-in only (`WATCHTOWER_LABEL_ENABLE=true`)**: Watchtower is restricted to updating only containers explicitly labeled with `com.centurylinklabs.watchtower.enable=true`. This prevents unexpected updates or disruptions to other containers on the host (e.g. `review-app`, which is built locally from source git checkout, or other standalone services).
-- **Automatic cleanup (`WATCHTOWER_CLEANUP=true`)**: When a new image is pulled and the container is recreated, Watchtower prunes the old dangling image layers to prevent disk space exhaustion.
-- **Off-peak schedule (`WATCHTOWER_SCHEDULE="0 0 4 * * *"`)**: Evaluated via a 6-field cron expression to run daily at 04:00 UTC during off-peak hours.
+### Update Workflow
+
+The daily timer (`daugavpils-fans-update-containers.timer`) runs off-peak (04:00 UTC) executing:
+1. `docker compose pull nginx && docker compose up -d nginx` - updates and restarts the edge reverse proxy if a new upstream alpine image is available.
+2. `docker compose build --pull review-app && docker compose up -d review-app` - rebuilds the review app against the latest `python:3.12-slim` base image and restarts it.
+3. `docker image prune -f` - removes superseded dangling image layers to conserve disk space.
+4. Health checks against `https://daugavpils.fans` and `https://review.daugavpils.fans`; on any failure, sends an alert email to `MAINTAINER_EMAIL`.
+5. Optional heartbeat ping to `HEARTBEAT_URL` (e.g. Healthchecks.io).
+
+### Installation
+
+Install the script, service, and timer on `cherry`:
+
+```bash
+sudo cp update-containers.sh /opt/daugavpils-fans/update-containers.sh
+sudo chmod +x /opt/daugavpils-fans/update-containers.sh
+sudo cp daugavpils-fans-update-containers.service daugavpils-fans-update-containers.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now daugavpils-fans-update-containers.timer
+```
+
+Verify timer status and logs:
+
+```bash
+systemctl status daugavpils-fans-update-containers.timer
+systemctl list-timers --all | grep update-containers
+journalctl -u daugavpils-fans-update-containers.service -n 50
+```
+
+To run manually or trigger an immediate container update:
+
+```bash
+sudo systemctl start daugavpils-fans-update-containers.service
+```
+
 
 

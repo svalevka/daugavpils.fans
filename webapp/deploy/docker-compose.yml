@@ -3,8 +3,6 @@ services:
     image: nginx:alpine
     container_name: daugavpils-fans-nginx
     restart: unless-stopped
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "80:80"
       - "443:443"
@@ -19,22 +17,6 @@ services:
       - ./nginx/daugavpils.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certbot/conf:/etc/letsencrypt:ro
       - media-cache:/var/cache/nginx/media
-
-  watchtower:
-    image: containrrr/watchtower
-    container_name: daugavpils-fans-watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      # Required for Docker Engine 29+ on Ubuntu 24.04 (minimum supported API 1.40)
-      - DOCKER_API_VERSION=1.44
-      # Automatically remove old unused images after updating
-      - WATCHTOWER_CLEANUP=true
-      # Only update containers that explicitly opt-in with com.centurylinklabs.watchtower.enable=true
-      - WATCHTOWER_LABEL_ENABLE=true
-      # Run once daily at 04:00 UTC during off-peak hours (6-field cron: s m h dom m dow)
-      - WATCHTOWER_SCHEDULE=0 0 4 * * *
 
   review-app:
     build:

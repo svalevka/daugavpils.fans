@@ -1,0 +1,10 @@
+[Unit]
+Description=Run daugavpils-fans-update-containers.service daily at off-peak hours (GitHub issue #82)
+
+[Timer]
+OnCalendar=*-*-* 04:00:00
+RandomizedDelaySec=30m
+Persistent=true
+
+[Install]
+WantedBy=timers.target
