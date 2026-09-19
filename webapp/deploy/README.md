@@ -360,7 +360,12 @@ Install the timer and service on `cherry`:
 
 ```bash
 sudo cp renew-cert.sh /opt/daugavpils-fans/renew-cert.sh
-sudo chmod +x /opt/daugavpils-fans/renew-cert.sh
+# To prevent unprivileged users from escalating privileges when the root timer executes,
+# renew-cert.sh must be owned strictly by root:root and only accessible by root (mode 700).
+# In addition, ensure /opt/daugavpils-fans is owned by root and cannot have root-owned files
+# deleted or replaced by unprivileged users (e.g. sticky bit chmod +t / 1775). See GitHub issue #87.
+sudo chown root:root /opt/daugavpils-fans/renew-cert.sh
+sudo chmod 700 /opt/daugavpils-fans/renew-cert.sh
 sudo cp daugavpils-fans-cert-renew.service daugavpils-fans-cert-renew.timer /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now daugavpils-fans-cert-renew.timer

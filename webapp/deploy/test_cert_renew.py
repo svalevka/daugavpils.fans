@@ -159,5 +159,20 @@ class SystemdUnitsConfigTest(unittest.TestCase):
         self.assertIn("WantedBy=timers.target", content)
 
 
+class CertRenewSecurityAndDocTest(unittest.TestCase):
+    def test_readme_documents_root_permissions(self) -> None:
+        """README must explicitly document chown root:root and chmod 700 for renew-cert.sh (GitHub issue #87)."""
+        content = README_FILE.read_text()
+        self.assertIn("sudo chown root:root /opt/daugavpils-fans/renew-cert.sh", content)
+        self.assertIn("sudo chmod 700 /opt/daugavpils-fans/renew-cert.sh", content)
+        self.assertIn("GitHub issue #87", content)
+
+    def test_service_runs_as_root(self) -> None:
+        """Service executes as root, reinforcing need for root-only script ownership."""
+        content = SERVICE_FILE.read_text()
+        self.assertIn("User=root", content)
+
+
 if __name__ == "__main__":
     unittest.main()
+
