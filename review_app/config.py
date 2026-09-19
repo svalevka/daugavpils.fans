@@ -40,17 +40,39 @@ class GithubConfig:
 
 @dataclass(frozen=True)
 class AiConfig:
-    """Settings for the AI autonomous approval agent (GitHub issue #43).
-    mode: 'active' (auto-approves & dispatches), 'shadow' (evaluates & logs
-    without dispatching), or 'disabled' (manual approvals only).
+    """Settings for the AI autonomous approval agent (GitHub issues #43, #78).
+    mode: fallback/legacy mode ('active', 'shadow', 'disabled').
+    text_mode: 'active', 'shadow', or 'disabled' (controls text proposals).
+    media_mode: 'active', 'shadow', or 'disabled' (controls media, album, and band proposals).
     """
 
     mode: str = "disabled"
+    text_mode: str | None = None
+    media_mode: str | None = None
     api_key: str = field(default="", repr=False)
     base_url: str = "https://api.z.ai/api/coding/paas/v4"
     model: str = "glm-5.1"
     confidence_threshold: float = 0.80
     timeout_seconds: float = 30.0
+
+    @property
+    def effective_text_mode(self) -> str:
+        """Text approval mode: defaults to text_mode if specified, else legacy mode."""
+        if self.text_mode:
+            return self.text_mode.lower()
+        return self.mode.lower()
+
+    @property
+    def effective_media_mode(self) -> str:
+        """Media approval mode: defaults to media_mode if explicitly specified.
+        If not explicitly set: media defaults to 'shadow' (if legacy mode != 'disabled')
+        or 'disabled' (if legacy mode == 'disabled'). Auto-approval ('active') of media
+        always requires explicit opt-in (GitHub issue #78).
+        """
+        if self.media_mode:
+            return self.media_mode.lower()
+        return self.mode.lower()
+
 
 
 @dataclass
@@ -152,6 +174,16 @@ class Config:
             ),
             ai=AiConfig(
                 mode=os.environ.get("AI_APPROVAL_MODE", "shadow").lower(),
+                text_mode=(
+                    os.environ.get("AI_TEXT_APPROVAL_MODE").lower()
+                    if "AI_TEXT_APPROVAL_MODE" in os.environ
+                    else None
+                ),
+                media_mode=(
+                    os.environ.get("AI_MEDIA_APPROVAL_MODE").lower()
+                    if "AI_MEDIA_APPROVAL_MODE" in os.environ
+                    else None
+                ),
                 api_key=(
                     os.environ.get("ZAI_API_KEY")
                     or os.environ.get("GLM_API_KEY")
@@ -163,6 +195,7 @@ class Config:
                 confidence_threshold=float(os.environ.get("AI_CONFIDENCE_THRESHOLD", "0.80")),
                 timeout_seconds=float(os.environ.get("AI_TIMEOUT_SECONDS", "30.0")),
             ),
+
             youtube_cookies_path=(
                 Path(os.environ["YOUTUBE_COOKIES_PATH"]) if "YOUTUBE_COOKIES_PATH" in os.environ else None
             ),

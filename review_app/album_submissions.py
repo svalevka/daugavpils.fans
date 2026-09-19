@@ -255,7 +255,7 @@ def create_album_proposal():
     conn.commit()
 
     ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
-    if ai_config.mode != "disabled":
+    if ai_config.effective_media_mode != "disabled":
         try:
             ai_agent.dispatch_album_evaluation(current_app._get_current_object(), proposal_id)
         except Exception:

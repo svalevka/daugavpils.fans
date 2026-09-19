@@ -320,6 +320,10 @@ class AiAgentYoutubeThrottleTest(ReviewAppTestCase):
         self.mock_ai_api.return_value = json.dumps(
             {"decision": "approve", "confidence": 0.95, "reasoning": "Clearly the band's own upload.", "spam_or_vandalism": False}
         )
+        uploads_dir = Path(self.app.config["MEDIA_UPLOADS_PATH"])
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        (uploads_dir / "x").write_bytes(b"dummy-video-data")
+        self.mock_extract_frames = self._patch("ai_agent.extract_video_frames", return_value=[(b"frame", "image/jpeg")])
 
     def _insert_pending_youtube_proposal(self) -> int:
         import sqlite3
@@ -393,6 +397,10 @@ class AiAgentDuplicateVideoTest(ReviewAppTestCase):
         self.mock_ai_api.return_value = json.dumps(
             {"decision": "approve", "confidence": 0.88, "reasoning": "Looks legitimate.", "spam_or_vandalism": False}
         )
+        uploads_dir = Path(self.app.config["MEDIA_UPLOADS_PATH"])
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        (uploads_dir / "x").write_bytes(b"dummy-video-data")
+        self.mock_extract_frames = self._patch("ai_agent.extract_video_frames", return_value=[(b"frame", "image/jpeg")])
 
     def _seed_existing_band_video(self, duration_iso: str = "PT2M25S"):
         band_yaml = self.config.archive_checkout_path / "bands" / self.fx.band_slug / "band.yaml"
@@ -863,5 +871,329 @@ class AiAgentDeterministicPreFilterTest(ReviewAppTestCase):
         self.assertEqual(m["ai_decision"], "escalate")
         self.assertEqual(m["ai_confidence"], 0.0)
         self.assertIn("Failed deterministic pre-filter: Unknown external URL domain", m["ai_reasoning"])
+
+
+class AiAgentMediaInspectionTest(ReviewAppTestCase):
+    """Tests for GitHub issue #78: separate text/media modes, content inspection, fail-closed handling, and failure alerts."""
+
+    def setUp(self):
+        super().setUp()
+        ai_agent.reset_failure_alert_cooldowns()
+        self.mock_ai_trigger_media = self._patch("ai_agent.github_dispatch.trigger_media_apply")
+        self.mock_ai_trigger_apply = self._patch("ai_agent.github_dispatch.trigger_apply")
+        self.mock_ai_api = self._patch("ai_agent.call_ai_api")
+        self.mock_ai_escalation = self._patch("ai_agent.mail.send_ai_escalation_notification")
+        self.mock_ai_failure_alert = self._patch("ai_agent.mail.send_ai_inspection_failure_alert")
+        self.mock_submitter_approved = self._patch("ai_agent.mail.send_media_approved_notification")
+        self.app.config["AI_SYNC_EVALUATION"] = True
+
+    def test_text_active_media_shadow_mode(self):
+        # Text approval active, but media approval shadow
+        self.app.config["AI_CONFIG"] = AiConfig(
+            text_mode="active",
+            media_mode="shadow",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self.mock_ai_api.return_value = json.dumps(
+            {
+                "decision": "approve",
+                "confidence": 0.95,
+                "reasoning": "Valid biographical update.",
+                "spam_or_vandalism": False,
+            }
+        )
+
+        # 1. Text proposal should auto-approve
+        resp = self.submit(proposed_value="Updated biography.")
+        self.assertEqual(resp.status_code, 201)
+        proposals = self.fetch_proposals()
+        self.assertEqual(proposals[0]["status"], "approved")
+        self.mock_ai_trigger_apply.assert_called_once()
+
+        # 2. Media proposal should remain pending (shadow mode) and not dispatch
+        resp_media = self.submit_media(caption="Concert photo 1998")
+        self.assertEqual(resp_media.status_code, 201)
+        media = self.fetch_media_proposals()
+        self.assertEqual(media[0]["status"], "pending")
+        self.assertEqual(media[0]["ai_decision"], "approve")
+        self.mock_ai_trigger_media.assert_not_called()
+        self.mock_ai_escalation.assert_called_once()
+        self.assertTrue(self.mock_ai_escalation.call_args[1]["is_shadow"])
+
+    def test_media_auto_approval_requires_explicit_media_mode_active(self):
+        # Even with legacy mode="active", if media_mode="shadow", media does not auto-approve
+        self.app.config["AI_CONFIG"] = AiConfig(
+            mode="active",
+            media_mode="shadow",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self.mock_ai_api.return_value = json.dumps(
+            {
+                "decision": "approve",
+                "confidence": 0.95,
+                "reasoning": "Archival photo.",
+                "spam_or_vandalism": False,
+            }
+        )
+
+        resp = self.submit_media(caption="Photo")
+        self.assertEqual(resp.status_code, 201)
+        media = self.fetch_media_proposals()
+        self.assertEqual(media[0]["status"], "pending")
+        self.mock_ai_trigger_media.assert_not_called()
+
+        # With explicit media_mode="active", media auto-approves
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        resp2 = self.submit_media(caption="Photo 2")
+        self.assertEqual(resp2.status_code, 201)
+        media2 = self.fetch_media_proposals()
+        self.assertEqual(media2[-1]["status"], "publishing")
+        self.mock_ai_trigger_media.assert_called_once()
+
+    def test_image_proposal_passes_image_bytes_to_call_ai_api(self):
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self.mock_ai_api.return_value = json.dumps(
+            {
+                "decision": "approve",
+                "confidence": 0.90,
+                "reasoning": "Visual content shows real concert.",
+                "spam_or_vandalism": False,
+            }
+        )
+
+        resp = self.submit_media(caption="Live gig")
+        self.assertEqual(resp.status_code, 201)
+
+        self.mock_ai_api.assert_called_once()
+        kwargs = self.mock_ai_api.call_args[1]
+        self.assertIsNotNone(kwargs.get("image_bytes"))
+        self.assertEqual(kwargs.get("image_mime"), "image/jpeg")
+
+    def test_video_proposal_passes_extracted_frames_to_call_ai_api(self):
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self.mock_ai_api.return_value = json.dumps(
+            {
+                "decision": "approve",
+                "confidence": 0.90,
+                "reasoning": "Video keyframes match live performance.",
+                "spam_or_vandalism": False,
+            }
+        )
+
+        sample_frames = [(b"frame1-bytes", "image/jpeg"), (b"frame2-bytes", "image/jpeg")]
+        self._patch("ai_agent.extract_video_frames", return_value=sample_frames)
+
+        uploads_dir = Path(self.app.config["MEDIA_UPLOADS_PATH"])
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        video_filename = "test-video.mp4"
+        (uploads_dir / video_filename).write_bytes(b"dummy-mp4-data")
+
+        import sqlite3
+        conn = sqlite3.connect(self.database_path)
+        cur = conn.execute(
+            """
+            INSERT INTO media_proposals (
+                band_slug, media_type, original_filename, stored_filename, content_type,
+                size_bytes, submitter_ip, status, duration_seconds
+            ) VALUES (?, 'video', 'concert.mp4', ?, 'video/mp4', 100, '127.0.0.1', 'pending', 120)
+            """,
+            (self.fx.band_slug, video_filename),
+        )
+        conn.commit()
+        proposal_id = cur.lastrowid
+        conn.close()
+
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        self.mock_ai_api.assert_called_once()
+        kwargs = self.mock_ai_api.call_args[1]
+        self.assertEqual(kwargs.get("images"), sample_frames)
+
+    def test_video_frame_extraction_failure_fails_closed_and_alerts_maintainer(self):
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self._patch(
+            "ai_agent.extract_video_frames",
+            side_effect=RuntimeError("ffmpeg binary is not available on PATH"),
+        )
+
+        uploads_dir = Path(self.app.config["MEDIA_UPLOADS_PATH"])
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        video_filename = "fail-video.mp4"
+        (uploads_dir / video_filename).write_bytes(b"corrupt-data")
+
+        import sqlite3
+        conn = sqlite3.connect(self.database_path)
+        cur = conn.execute(
+            """
+            INSERT INTO media_proposals (
+                band_slug, media_type, original_filename, stored_filename, content_type,
+                size_bytes, submitter_ip, status, duration_seconds
+            ) VALUES (?, 'video', 'fail.mp4', ?, 'video/mp4', 50, '127.0.0.1', 'pending', 60)
+            """,
+            (self.fx.band_slug, video_filename),
+        )
+        conn.commit()
+        proposal_id = cur.lastrowid
+        conn.close()
+
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[-1]
+        self.assertEqual(row["status"], "pending")
+        self.assertEqual(row["ai_decision"], "escalate")
+        self.assertEqual(row["ai_confidence"], 0.0)
+        self.assertIn("Video frame extraction failed", row["ai_reasoning"])
+        self.mock_ai_trigger_media.assert_not_called()
+
+        self.mock_ai_failure_alert.assert_called_once()
+        alert_args = self.mock_ai_failure_alert.call_args[1]
+        self.assertEqual(alert_args["proposal_id"], proposal_id)
+        self.assertEqual(alert_args["stage"], "video_frame_extraction")
+        self.assertIn("ffmpeg", alert_args["error_message"])
+
+    def test_missing_photo_file_fails_closed_and_alerts_maintainer(self):
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+
+        import sqlite3
+        conn = sqlite3.connect(self.database_path)
+        cur = conn.execute(
+            """
+            INSERT INTO media_proposals (
+                band_slug, media_type, original_filename, stored_filename, content_type,
+                size_bytes, submitter_ip, status
+            ) VALUES (?, 'image', 'missing.jpg', 'nonexistent-photo.jpg', 'image/jpeg', 100, '127.0.0.1', 'pending')
+            """,
+            (self.fx.band_slug,),
+        )
+        conn.commit()
+        proposal_id = cur.lastrowid
+        conn.close()
+
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[-1]
+        self.assertEqual(row["status"], "pending")
+        self.assertEqual(row["ai_decision"], "escalate")
+        self.assertEqual(row["ai_confidence"], 0.0)
+        self.assertIn("missing or empty on disk", row["ai_reasoning"])
+
+        self.mock_ai_failure_alert.assert_called_once()
+        alert_args = self.mock_ai_failure_alert.call_args[1]
+        self.assertEqual(alert_args["proposal_id"], proposal_id)
+        self.assertEqual(alert_args["stage"], "photo_read")
+
+    def test_audio_proposal_ai_watermark_detected_fails_closed_and_alerts_maintainer(self):
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self._patch(
+            "audio_validation.probe_audio_file",
+            return_value={
+                "duration_iso": "PT2M30S",
+                "duration_seconds": 150.0,
+                "bitrate": "320 kbps",
+                "tags": {"comment": "suno.ai"},
+                "ai_flags": ["AI generator watermark detected in tag 'comment': suno.ai"],
+            },
+        )
+
+        uploads_dir = Path(self.app.config["MEDIA_UPLOADS_PATH"])
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        audio_filename = "ai-generated-song.mp3"
+        (uploads_dir / audio_filename).write_bytes(b"dummy-audio")
+
+        import sqlite3
+        conn = sqlite3.connect(self.database_path)
+        cur = conn.execute(
+            """
+            INSERT INTO media_proposals (
+                band_slug, media_type, original_filename, stored_filename, content_type,
+                size_bytes, submitter_ip, status
+            ) VALUES (?, 'audio', 'song.mp3', ?, 'audio/mpeg', 100, '127.0.0.1', 'pending')
+            """,
+            (self.fx.band_slug, audio_filename),
+        )
+        conn.commit()
+        proposal_id = cur.lastrowid
+        conn.close()
+
+        ai_agent.dispatch_evaluation(self.app, proposal_id, is_media=True)
+
+        row = self.fetch_media_proposals()[-1]
+        self.assertEqual(row["status"], "pending")
+        self.assertEqual(row["ai_decision"], "escalate")
+        self.assertEqual(row["ai_confidence"], 0.0)
+        self.assertIn("AI generator watermark detected", row["ai_reasoning"])
+
+        self.mock_ai_failure_alert.assert_called_once()
+        alert_args = self.mock_ai_failure_alert.call_args[1]
+        self.assertEqual(alert_args["proposal_id"], proposal_id)
+        self.assertEqual(alert_args["stage"], "audio_ai_check")
+
+    def test_ai_provider_error_fails_closed_and_alerts_maintainer(self):
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self.mock_ai_api.side_effect = Exception("429 Too Many Requests: quota exhausted")
+
+        resp = self.submit_media(caption="Gig photo")
+        self.assertEqual(resp.status_code, 201)
+
+        media = self.fetch_media_proposals()
+        m = media[0]
+        self.assertEqual(m["status"], "pending")
+        self.assertEqual(m["ai_decision"], "escalate")
+        self.assertEqual(m["ai_confidence"], 0.0)
+        self.assertIn("429 Too Many Requests", m["ai_reasoning"])
+        self.mock_ai_trigger_media.assert_not_called()
+
+        self.mock_ai_failure_alert.assert_called_once()
+        alert_args = self.mock_ai_failure_alert.call_args[1]
+        self.assertEqual(alert_args["stage"], "ai_provider")
+        self.assertIn("quota exhausted", alert_args["error_message"])
+
+    def test_failure_alert_deduplication_within_cooldown_window(self):
+        self.app.config["AI_CONFIG"] = AiConfig(
+            media_mode="active",
+            api_key="test-key",
+            confidence_threshold=0.80,
+        )
+        self.mock_ai_api.side_effect = Exception("429 Too Many Requests: quota exhausted")
+
+        # First failure triggers alert
+        resp1 = self.submit_media(caption="Photo 1")
+        self.assertEqual(resp1.status_code, 201)
+        self.assertEqual(self.mock_ai_failure_alert.call_count, 1)
+
+        # Second submission with identical provider failure within cooldown suppresses duplicate alert
+        resp2 = self.submit_media(caption="Photo 2")
+        self.assertEqual(resp2.status_code, 201)
+        self.assertEqual(self.mock_ai_failure_alert.call_count, 1)
 
 

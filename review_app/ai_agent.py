@@ -17,7 +17,10 @@ import json
 import logging
 import os
 import re
+import shutil
+import subprocess
 import threading
+import time
 import urllib.parse
 from dataclasses import dataclass
 from pathlib import Path
@@ -36,6 +39,118 @@ import roles
 from config import AiConfig
 
 logger = logging.getLogger(__name__)
+
+_recent_failure_alerts: dict[str, float] = {}
+FAILURE_ALERT_COOLDOWN_SECONDS = 900.0  # 15 minutes deduplication window
+
+
+def _get_dashboard_url(app: Flask) -> str:
+    base = app.config.get("BASE_URL") or os.environ.get("REVIEW_APP_BASE_URL", "https://review.daugavpils.fans")
+    return f"{base.rstrip('/')}/dashboard"
+
+
+def reset_failure_alert_cooldowns() -> None:
+
+    """Clear failure alert cooldowns (for test isolation)."""
+    _recent_failure_alerts.clear()
+
+
+def _notify_inspection_failure(
+    app: Flask,
+    proposal_id: int,
+    media_type: str,
+    stage: str,
+    error_message: str,
+    target_summary: str,
+) -> None:
+    """Alerts the maintainer via email on inspection pipeline failure, deduplicating identical failures within window."""
+    now = time.time()
+    err_prefix = str(error_message)[:60].strip()
+    dedup_key = f"{stage}:{err_prefix}"
+    last_sent = _recent_failure_alerts.get(dedup_key, 0.0)
+    if now - last_sent < FAILURE_ALERT_COOLDOWN_SECONDS:
+        logger.warning(
+            "Suppressed duplicate AI inspection failure alert for %s (last sent %.1fs ago)",
+            dedup_key,
+            now - last_sent,
+        )
+        return
+
+    _recent_failure_alerts[dedup_key] = now
+    maintainer_email = app.config.get("MAINTAINER_EMAIL")
+    smtp_config = app.config.get("SMTP_CONFIG")
+    if not maintainer_email or not smtp_config:
+        return
+
+    dashboard_url = _get_dashboard_url(app)
+    try:
+        mail.send_ai_inspection_failure_alert(
+            smtp_config,
+            maintainer_email,
+            proposal_id=proposal_id,
+            media_type=media_type,
+            stage=stage,
+            error_message=error_message,
+            target_summary=target_summary,
+            dashboard_url=dashboard_url,
+        )
+    except Exception as exc:
+        logger.exception("Failed to send AI inspection failure alert email: %s", exc)
+
+
+def extract_video_frames(
+    video_path: Path,
+    duration_seconds: float | None = None,
+    max_frames: int = 3,
+) -> list[tuple[bytes, str]]:
+    """Extract sample JPEG frames from video for multimodal visual inspection using ffmpeg."""
+    if not shutil.which("ffmpeg"):
+        raise RuntimeError("ffmpeg binary is not available on PATH")
+
+    if not video_path.exists() or video_path.stat().st_size == 0:
+        raise ValueError(f"Video file {video_path} does not exist or is zero bytes")
+
+    dur = duration_seconds or 10.0
+    if dur > 6.0:
+        timestamps = [dur * 0.2, dur * 0.5, dur * 0.8]
+    elif dur > 2.0:
+        timestamps = [1.0, dur * 0.7]
+    else:
+        timestamps = [0.5]
+    timestamps = timestamps[:max_frames]
+
+    frames: list[tuple[bytes, str]] = []
+    for ts in timestamps:
+        cmd = [
+            "ffmpeg",
+            "-v", "error",
+            "-ss", f"{ts:.2f}",
+            "-i", str(video_path),
+            "-frames:v", "1",
+            "-vf", "scale=640:-2",
+            "-q:v", "4",
+            "-f", "image2pipe",
+            "-vcodec", "mjpeg",
+            "-",
+        ]
+        try:
+            proc = subprocess.run(
+                cmd,
+                capture_output=True,
+                check=True,
+                timeout=15,
+                preexec_fn=audio_validation._limit_child_process_resources,
+            )
+            data = proc.stdout
+            if data and data.startswith(b"\xff\xd8"):
+                frames.append((data, "image/jpeg"))
+        except (subprocess.SubprocessError, OSError) as exc:
+            logger.warning("ffmpeg frame extraction failed at %.2fs: %s", ts, exc)
+
+    if not frames:
+        raise ValueError(f"ffmpeg failed to extract valid video frames from {video_path.name}")
+    return frames
+
 
 SYSTEM_PROMPT = """You are the automated approval agent for daugavpils.fans, a non-profit digital preservation archive dedicated to the underground and independent rock and metal music scene of Daugavpils, Latvia.
 Your mission is to evaluate community submissions on behalf of the archive maintainer.
@@ -530,8 +645,9 @@ def call_ai_api(
     user_prompt: str,
     image_bytes: bytes | None = None,
     image_mime: str | None = None,
+    images: list[tuple[bytes, str]] | None = None,
 ) -> str:
-    """Calls the Z-AI / OpenAI-compatible endpoint with optional image attachment."""
+    """Calls the Z-AI / OpenAI-compatible endpoint with optional single or multiple image attachments."""
     if not ai_config.api_key:
         raise ValueError("AI API key is not configured")
 
@@ -540,15 +656,22 @@ def call_ai_api(
         "Content-Type": "application/json",
     }
 
+    all_images: list[tuple[bytes, str]] = []
     if image_bytes:
-        mime = image_mime or "image/jpeg"
-        b64 = base64.b64encode(image_bytes).decode("ascii")
-        user_content: Any = [
-            {"type": "text", "text": user_prompt},
-            {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}},
-        ]
+        all_images.append((image_bytes, image_mime or "image/jpeg"))
+    if images:
+        all_images.extend(images)
+
+    if all_images:
+        user_content: Any = [{"type": "text", "text": user_prompt}]
+        for img_data, mime in all_images:
+            b64 = base64.b64encode(img_data).decode("ascii")
+            user_content.append(
+                {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}}
+            )
     else:
         user_content = user_prompt
+
 
     payload = {
         "model": ai_config.model,
@@ -676,17 +799,14 @@ def build_album_proposal_prompt(
     )
 
 
-def _get_dashboard_url(app: Flask) -> str:
-    base = app.config.get("BASE_URL") or os.environ.get("REVIEW_APP_BASE_URL", "https://review.daugavpils.fans")
-    return f"{base.rstrip('/')}/dashboard"
-
-
 def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
+
     """Evaluates a text proposal and performs autonomous approval or escalation."""
     with app.app_context():
         ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-        if ai_config.mode == "disabled":
+        if ai_config.effective_text_mode == "disabled":
             return
+
 
         conn = db.get_connection()
         row = conn.execute(
@@ -757,6 +877,20 @@ def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 result = parse_ai_response(raw_response)
             except Exception as exc:
                 logger.exception("AI evaluation failed for proposal %s: %s", proposal_id, exc)
+                scope = (
+                    f"{proposal_dict['band_slug']}/{proposal_dict['release_slug']}"
+                    if proposal_dict.get("release_slug")
+                    else proposal_dict["band_slug"]
+                )
+                target_summary = f"{scope} ({proposal_dict['target']}: {proposal_dict['field']})"
+                _notify_inspection_failure(
+                    app,
+                    proposal_id=proposal_id,
+                    media_type="text",
+                    stage="ai_provider",
+                    error_message=str(exc),
+                    target_summary=target_summary,
+                )
                 result = EvaluationResult(
                     decision="escalate",
                     confidence=0.0,
@@ -765,7 +899,7 @@ def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 )
 
         should_auto_approve = (
-            ai_config.mode == "active"
+            ai_config.effective_text_mode == "active"
             and result.decision == "approve"
             and result.confidence >= ai_config.confidence_threshold
             and not result.spam_or_vandalism
@@ -833,7 +967,7 @@ def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 ai_reasoning=result.reasoning,
                 dashboard_url=dashboard_url,
                 is_media=False,
-                is_shadow=(ai_config.mode == "shadow"),
+                is_shadow=(ai_config.effective_text_mode == "shadow"),
             )
         except OSError:
             logger.exception(
@@ -841,11 +975,12 @@ def process_proposal_with_ai(app: Flask, proposal_id: int) -> None:
             )
 
 
+
 def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
     """Evaluates a media proposal (photo/video) and performs autonomous approval or escalation."""
     with app.app_context():
         ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-        if ai_config.mode == "disabled":
+        if ai_config.effective_media_mode == "disabled":
             return
 
         conn = db.get_connection()
@@ -871,18 +1006,83 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
         except Exception:
             pass
 
+        scope = (
+            f"{proposal_dict['band_slug']}/{proposal_dict['release_slug']}"
+            if proposal_dict.get("release_slug")
+            else proposal_dict["band_slug"]
+        )
+        target_summary = (
+            f"{scope} ({proposal_dict['media_type']}: {proposal_dict.get('original_filename') or ''})"
+        )
+
         user_prompt = build_media_proposal_prompt(proposal_dict, band_name, release_name)
 
         image_bytes = None
         image_mime = None
+        video_frames: list[tuple[bytes, str]] = []
+        inspection_error: str | None = None
+        inspection_stage: str | None = None
+
         if proposal_dict["media_type"] == "image":
-            file_path = Path(app.config["MEDIA_UPLOADS_PATH"]) / proposal_dict["stored_filename"]
-            if file_path.exists():
-                try:
-                    image_bytes = file_path.read_bytes()
-                    image_mime = proposal_dict.get("content_type") or "image/jpeg"
-                except Exception as exc:
-                    logger.warning("could not read media file for AI evaluation: %s", exc)
+            if proposal_dict.get("stored_filename"):
+                file_path = Path(app.config["MEDIA_UPLOADS_PATH"]) / proposal_dict["stored_filename"]
+                if file_path.exists() and file_path.stat().st_size > 0:
+                    try:
+                        image_bytes = file_path.read_bytes()
+                        image_mime = proposal_dict.get("content_type") or "image/jpeg"
+                    except Exception as exc:
+                        logger.warning("could not read media file for AI evaluation: %s", exc)
+                        inspection_error = f"Failed to read image file: {exc}"
+                        inspection_stage = "photo_read"
+                else:
+                    inspection_error = f"Photo file {proposal_dict.get('stored_filename')} missing or empty on disk"
+                    inspection_stage = "photo_read"
+            else:
+                inspection_error = f"Photo proposal {media_proposal_id} has no stored_filename"
+                inspection_stage = "photo_read"
+        elif proposal_dict["media_type"] == "video":
+            if proposal_dict.get("stored_filename"):
+                file_path = Path(app.config["MEDIA_UPLOADS_PATH"]) / proposal_dict["stored_filename"]
+                if file_path.exists() and file_path.stat().st_size > 0:
+                    try:
+                        dur = (
+                            proposal_dict.get("duration_seconds")
+                            if proposal_dict.get("duration_seconds") is not None
+                            else proposal_dict.get("youtube_duration_seconds")
+                        )
+                        video_frames = extract_video_frames(file_path, duration_seconds=dur, max_frames=3)
+                    except Exception as exc:
+                        logger.warning("Video frame extraction failed: %s", exc)
+                        inspection_error = f"Video frame extraction failed: {exc}"
+                        inspection_stage = "video_frame_extraction"
+                else:
+                    inspection_error = f"Video file {proposal_dict.get('stored_filename')} missing or empty on disk"
+                    inspection_stage = "video_read"
+            else:
+                inspection_error = f"Video proposal {media_proposal_id} has no stored_filename"
+                inspection_stage = "video_read"
+        elif proposal_dict["media_type"] == "audio":
+            if proposal_dict.get("stored_filename"):
+                file_path = Path(app.config["MEDIA_UPLOADS_PATH"]) / proposal_dict["stored_filename"]
+                if file_path.exists() and file_path.stat().st_size > 0:
+                    try:
+                        probe = audio_validation.probe_audio_file(file_path)
+                        if probe.get("ai_flags"):
+                            inspection_error = f"AI generator watermark detected in audio: {probe['ai_flags'][0]}"
+                            inspection_stage = "audio_ai_check"
+                    except Exception as exc:
+                        logger.warning("Audio probe failed: %s", exc)
+                        inspection_error = f"Audio validation failed: {exc}"
+                        inspection_stage = "audio_probe"
+                else:
+                    inspection_error = f"Audio file {proposal_dict.get('stored_filename')} missing or empty on disk"
+                    inspection_stage = "audio_read"
+            else:
+                inspection_error = f"Audio proposal {media_proposal_id} has no stored_filename"
+                inspection_stage = "audio_read"
+        else:
+            inspection_error = f"Unsupported media type '{proposal_dict['media_type']}'"
+            inspection_stage = "unsupported_media_type"
 
         # Pre-filter for prompt injection and deterministic constraints before calling AI API
         caption_text = proposal_dict.get("caption") or ""
@@ -890,7 +1090,22 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
         injection_rule = detect_prompt_injection(caption_text) or detect_prompt_injection(metadata_text)
         prefilter_error = check_deterministic_media_proposal(proposal_dict)
 
-        if injection_rule:
+        if inspection_error:
+            _notify_inspection_failure(
+                app,
+                proposal_id=media_proposal_id,
+                media_type=proposal_dict["media_type"],
+                stage=inspection_stage or "media_inspection",
+                error_message=inspection_error,
+                target_summary=target_summary,
+            )
+            result = EvaluationResult(
+                decision="escalate",
+                confidence=0.0,
+                reasoning=f"Media inspection failed at stage '{inspection_stage}': {inspection_error}",
+                spam_or_vandalism=False,
+            )
+        elif injection_rule:
             logger.warning(
                 "Prompt injection blocked by pre-filter (rule: %s) for media proposal %s",
                 injection_rule,
@@ -917,12 +1132,24 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
         else:
             try:
                 raw_response = call_ai_api(
-                    ai_config, user_prompt, image_bytes=image_bytes, image_mime=image_mime
+                    ai_config,
+                    user_prompt,
+                    image_bytes=image_bytes,
+                    image_mime=image_mime,
+                    images=video_frames,
                 )
                 result = parse_ai_response(raw_response)
             except Exception as exc:
                 logger.exception(
                     "AI evaluation failed for media proposal %s: %s", media_proposal_id, exc
+                )
+                _notify_inspection_failure(
+                    app,
+                    proposal_id=media_proposal_id,
+                    media_type=proposal_dict.get("media_type", "media"),
+                    stage="ai_provider",
+                    error_message=str(exc),
+                    target_summary=target_summary,
                 )
                 result = EvaluationResult(
                     decision="escalate",
@@ -962,7 +1189,7 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
                 )
 
         should_auto_approve = (
-            ai_config.mode == "active"
+            ai_config.effective_media_mode == "active"
             and result.decision == "approve"
             and result.confidence >= ai_config.confidence_threshold
             and not result.spam_or_vandalism
@@ -970,6 +1197,7 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
 
         if should_auto_approve:
             ai_approver_id = roles.ensure_ai_approver(conn)
+
 
             # Global pacing cap on YouTube-sourced videos only (see
             # GitHub issue #49, decision 14) - same shape as
@@ -1086,7 +1314,7 @@ def process_media_proposal_with_ai(app: Flask, media_proposal_id: int) -> None:
                 ai_reasoning=result.reasoning,
                 dashboard_url=dashboard_url,
                 is_media=True,
-                is_shadow=(ai_config.mode == "shadow"),
+                is_shadow=(ai_config.effective_media_mode == "shadow"),
             )
         except OSError:
             logger.exception(
@@ -1100,7 +1328,8 @@ def dispatch_evaluation(
 ) -> None:
     """Dispatches the AI evaluation either synchronously or asynchronously in a background thread."""
     ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-    if ai_config.mode == "disabled":
+    mode = ai_config.effective_media_mode if is_media else ai_config.effective_text_mode
+    if mode == "disabled":
         return
 
     is_sync = sync or bool(app.config.get("TESTING") and app.config.get("AI_SYNC_EVALUATION"))
@@ -1116,7 +1345,7 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
     """Evaluates an album proposal and performs autonomous approval or escalation."""
     with app.app_context():
         ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-        if ai_config.mode == "disabled":
+        if ai_config.effective_media_mode == "disabled":
             return
 
         conn = db.get_connection()
@@ -1224,6 +1453,15 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 result = parse_ai_response(raw_response)
             except Exception as exc:
                 logger.exception("AI evaluation failed for album proposal %s: %s", proposal_id, exc)
+                target_summary = f"{proposal_dict['band_slug']} / {proposal_dict['name']} ({proposal_dict['date_published']})"
+                _notify_inspection_failure(
+                    app,
+                    proposal_id=proposal_id,
+                    media_type="album",
+                    stage="ai_provider",
+                    error_message=str(exc),
+                    target_summary=target_summary,
+                )
                 result = EvaluationResult(
                     decision="escalate",
                     confidence=0.0,
@@ -1233,7 +1471,7 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
 
         # Autonomous approval policy: confidence >= 0.90
         should_auto_approve = (
-            ai_config.mode == "active"
+            ai_config.effective_media_mode == "active"
             and result.decision == "approve"
             and result.confidence >= 0.90
             and not result.spam_or_vandalism
@@ -1304,7 +1542,7 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 ai_reasoning=result.reasoning,
                 dashboard_url=dashboard_url,
                 is_media=False,
-                is_shadow=(ai_config.mode == "shadow"),
+                is_shadow=(ai_config.effective_media_mode == "shadow"),
             )
         except OSError:
             logger.exception(
@@ -1316,7 +1554,7 @@ def process_album_proposal_with_ai(app: Flask, proposal_id: int) -> None:
 def dispatch_album_evaluation(app: Flask, proposal_id: int, sync: bool = False) -> None:
     """Dispatches the AI evaluation for an album proposal synchronously or asynchronously."""
     ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-    if ai_config.mode == "disabled":
+    if ai_config.effective_media_mode == "disabled":
         return
 
     is_sync = sync or bool(app.config.get("TESTING") and app.config.get("AI_SYNC_EVALUATION"))
@@ -1392,7 +1630,7 @@ def process_band_proposal_with_ai(app: Flask, proposal_id: int) -> None:
     """Evaluates a band proposal and performs autonomous approval or escalation."""
     with app.app_context():
         ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-        if ai_config.mode == "disabled":
+        if ai_config.effective_media_mode == "disabled":
             return
 
         conn = db.get_connection()
@@ -1500,6 +1738,15 @@ def process_band_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 result = parse_ai_response(raw_response)
             except Exception as exc:
                 logger.exception("AI evaluation failed for band proposal %s: %s", proposal_id, exc)
+                target_summary = f"New Band: {proposal_dict['name']} ({proposal_dict['band_slug']})"
+                _notify_inspection_failure(
+                    app,
+                    proposal_id=proposal_id,
+                    media_type="band",
+                    stage="ai_provider",
+                    error_message=str(exc),
+                    target_summary=target_summary,
+                )
                 result = EvaluationResult(
                     decision="escalate",
                     confidence=0.0,
@@ -1509,7 +1756,7 @@ def process_band_proposal_with_ai(app: Flask, proposal_id: int) -> None:
 
         # Autonomous approval policy: confidence >= 0.95 (PRD threshold for brand-new bands)
         should_auto_approve = (
-            ai_config.mode == "active"
+            ai_config.effective_media_mode == "active"
             and result.decision == "approve"
             and result.confidence >= 0.95
             and not result.spam_or_vandalism
@@ -1584,7 +1831,7 @@ def process_band_proposal_with_ai(app: Flask, proposal_id: int) -> None:
                 ai_reasoning=result.reasoning,
                 dashboard_url=dashboard_url,
                 is_media=False,
-                is_shadow=(ai_config.mode == "shadow"),
+                is_shadow=(ai_config.effective_media_mode == "shadow"),
             )
         except OSError:
             logger.exception(
@@ -1596,7 +1843,7 @@ def process_band_proposal_with_ai(app: Flask, proposal_id: int) -> None:
 def dispatch_band_evaluation(app: Flask, proposal_id: int, sync: bool = False) -> None:
     """Dispatches the AI evaluation for a band proposal synchronously or asynchronously."""
     ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-    if ai_config.mode == "disabled":
+    if ai_config.effective_media_mode == "disabled":
         return
 
     is_sync = sync or bool(app.config.get("TESTING") and app.config.get("AI_SYNC_EVALUATION"))

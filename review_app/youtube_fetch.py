@@ -243,7 +243,7 @@ def fetch_and_store(app, media_proposal_id: int) -> None:
         # returned) - otherwise a fetched video would silently sit
         # 'pending' forever with nobody notified when AI review is off.
         ai_config: AiConfig = app.config.get("AI_CONFIG") or AiConfig()
-        if ai_config.mode == "disabled":
+        if ai_config.effective_media_mode == "disabled":
             scope = (
                 f"{proposal['band_slug']}/{proposal['release_slug']}"
                 if proposal.get("release_slug")

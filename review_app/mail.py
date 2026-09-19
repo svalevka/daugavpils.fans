@@ -362,3 +362,33 @@ def send_anomaly_digest(
     body_lines.extend(["Best regards,", "daugavpils.fans automated observability"])
     _send(smtp_config, to_addr, subject, "\n".join(body_lines))
 
+
+def send_ai_inspection_failure_alert(
+    smtp_config: SmtpConfig,
+    to_addr: str,
+    proposal_id: int,
+    media_type: str,
+    stage: str,
+    error_message: str,
+    target_summary: str,
+    dashboard_url: str | None = None,
+) -> None:
+    """Send immediate email alert to maintainer when AI media inspection fails (GitHub issue #78)."""
+    subject = f"[AI INSPECTION FAILURE] Proposal #{proposal_id} ({media_type}) failed at stage: {stage}"
+    body_lines = [
+        "AI Media Inspection Failure Alert — daugavpils.fans",
+        "",
+        f"Proposal ID: #{proposal_id}",
+        f"Media Type: {media_type}",
+        f"Target: {target_summary}",
+        f"Failure Stage: {stage}",
+        f"Error: {error_message}",
+        "",
+        "Status: FAIL-CLOSED (proposal remains pending for human review; auto-approval skipped).",
+    ]
+    if dashboard_url:
+        body_lines.extend(["", f"Review proposal on dashboard:\n{dashboard_url}"])
+    body_lines.extend(["", "Best regards,", "daugavpils.fans automated AI agent"])
+    _send(smtp_config, to_addr, subject, "\n".join(body_lines))
+
+

@@ -325,7 +325,7 @@ def create_band_proposal():
     proposal_id = cur.lastrowid
 
     ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
-    if ai_config.mode == "disabled":
+    if ai_config.effective_media_mode == "disabled":
         try:
             login_url = external_url("auth.login_form")
             summary_str = f"New Band: {band_name} ({band_slug})"

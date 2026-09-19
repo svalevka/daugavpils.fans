@@ -93,6 +93,7 @@ class ReviewAppTestCase(unittest.TestCase):
         self.mock_trigger_band_apply = self._patch("dashboard.github_dispatch.trigger_band_apply")
         self.mock_send_media_approved = self._patch("dashboard.mail.send_media_approved_notification")
         self.mock_send_proposal_decision = self._patch("dashboard.mail.send_proposal_decision_notification")
+        self.mock_send_ai_failure_alert = self._patch("ai_agent.mail.send_ai_inspection_failure_alert")
         self.mock_probe_audio = self._patch(
             "audio_validation.probe_audio_file",
             return_value={

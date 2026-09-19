@@ -269,7 +269,7 @@ def create_media_proposal():
     conn.commit()
 
     ai_config: AiConfig = current_app.config.get("AI_CONFIG") or AiConfig()
-    if ai_config.mode == "disabled":
+    if ai_config.effective_media_mode == "disabled":
         if saved:
             scope = f"{band_slug}/{release_slug}" if release_slug else band_slug
             login_url = external_url("auth.login_form")
