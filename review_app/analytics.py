@@ -179,11 +179,81 @@ def parse_path_slugs(path: str) -> tuple[str | None, str | None]:
     return band_slug, release_slug
 
 
+MAX_EVENT_PAYLOAD_BYTES = 64 * 1024  # 64 KB (GitHub issue #86)
+
+MAX_FIELD_LENGTHS = {
+    "type": 32,
+    "path": 1024,
+    "band": 128,
+    "release": 128,
+    "track": 256,
+    "video": 256,
+    "referrer": 1024,
+}
+
+
+def purge_old_events(conn, retention_days: int = 90) -> int:
+    """Purges raw analytics events older than retention_days, aggregating daily counts
+    first into analytics_daily_summary so historical dashboard summaries remain intact (GitHub issue #86).
+    Returns the number of deleted rows."""
+    if retention_days < 1:
+        raise ValueError("retention_days must be at least 1")
+
+    # Ensure aggregate table exists
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS analytics_daily_summary (
+            event_date TEXT NOT NULL,
+            event_type TEXT NOT NULL,
+            event_count INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (event_date, event_type)
+        )"""
+    )
+
+    # 1. Aggregate daily counts for events about to be purged
+    conn.execute(
+        """INSERT INTO analytics_daily_summary (event_date, event_type, event_count)
+           SELECT strftime('%Y-%m-%d', created_at) as event_date, event_type, COUNT(*)
+           FROM analytics_events
+           WHERE created_at < datetime('now', '-' || ? || ' days')
+           GROUP BY event_date, event_type
+           ON CONFLICT(event_date, event_type) DO UPDATE SET
+               event_count = event_count + excluded.event_count""",
+        (retention_days,),
+    )
+
+    # 2. Delete the raw events
+    cursor = conn.execute(
+        "DELETE FROM analytics_events WHERE created_at < datetime('now', '-' || ? || ' days')",
+        (retention_days,),
+    )
+    deleted = cursor.rowcount
+    conn.commit()
+    return deleted
+
+
 @bp.post("/api/event")
 def record_event():
-    data = request.get_json(silent=True)
-    if not data or not isinstance(data, dict):
+    # 1. Enforce payload size limit (GitHub issue #86)
+    content_length = request.content_length
+    if content_length and content_length > MAX_EVENT_PAYLOAD_BYTES:
+        return ({"error": "Payload too large"}, 413)
+
+    raw_body = request.get_data(cache=True)
+    if len(raw_body) > MAX_EVENT_PAYLOAD_BYTES:
+        return ({"error": "Payload too large"}, 413)
+
+    if not raw_body or not raw_body.strip():
         return ("", 204)
+
+    data = request.get_json(silent=True)
+    if data is None or not isinstance(data, dict):
+        return ({"error": "Invalid JSON payload"}, 400)
+
+    # 2. Enforce per-field length bounds
+    for key, val in data.items():
+        if val is not None and key in MAX_FIELD_LENGTHS:
+            if len(str(val)) > MAX_FIELD_LENGTHS[key]:
+                return ({"error": f"Field '{key}' exceeds maximum allowed length"}, 400)
 
     event_type = str(data.get("type", "")).strip()
     if event_type not in ("pageview", "track_play", "video_play", "media_error", "media_fallback"):

@@ -256,14 +256,16 @@ service (no `ports:`, only `expose:`) and
 
 `nginx/daugavpils.conf` acts as the first line of defense for `review-app`, handling TLS termination, connection limits, and upload streaming before requests hit gunicorn/Flask:
 
-- **Large file uploads (GitHub issue #21)**:
-  - `client_max_body_size 2g`: Overrides Nginx's 1MB default to accommodate large photo and multi-video submissions. Flask enforces precise per-file limits (`MAX_PHOTO_UPLOAD_BYTES` and `MAX_VIDEO_UPLOAD_BYTES`), but Nginx needs a generous ceiling to avoid cutting off legitimate uploads with HTTP 413.
-  - `client_body_timeout 600s` and `proxy_read_timeout 600s`: Home internet uploads of multi-hundred-megabyte videos can take minutes; generous timeouts prevent premature client disconnects mid-transfer.
+- **Large file uploads (GitHub issues #21, #86)**:
+  - Scoped strictly to upload routes (`location /submit`):
+    - `client_max_body_size 2g`: Accommodates large photo and multi-video submissions. Non-upload endpoints remain at default small limits to prevent memory and worker starvation.
+    - `client_body_timeout 600s` and `proxy_read_timeout 600s`: Prevents premature client disconnects mid-transfer for multi-hundred-megabyte uploads over slower connections.
 
-- **Connection rate limiting (GitHub issue #73)**:
-  - Two shared memory zones tracked by `$binary_remote_addr` (10MB each, tracking ~160,000 distinct IP addresses with minimal memory overhead):
+- **Connection rate limiting (GitHub issues #73, #86)**:
+  - Shared memory zones tracked by `$binary_remote_addr` (10MB each, tracking ~160,000 distinct IP addresses with minimal memory overhead):
     - `review_general_zone` (`rate=10r/s`): Applied across the entire `review.daugavpils.fans` domain and proxied maintainer paths (`/admin`, `/dashboard`). Burst allowance of 20 with `nodelay` allows snappy page loads and static asset fetches while capping raw flood volume.
     - `review_strict_zone` (`rate=2r/s`): Stricter throttling applied to abuse-sensitive endpoints (`/submit*` burst 10, `/login` burst 5 with `nodelay`). This stops automated submission spamming, credential probing, and email-bombing at Nginx before heavy multipart payloads or DB transactions reach Flask workers.
+    - `review_event_zone` (`rate=2r/s`): Tight throttling with burst=5 and a 64KB body cap (`client_max_body_size 64k`) applied to the unauthenticated `/api/event` analytics beacon, protecting against disk and SQLite database exhaustion.
   - `limit_req_status 429`: Ensures Nginx returns HTTP 429 Too Many Requests (rather than default 503 Service Unavailable), matching application-layer rate-limiting conventions (GitHub issue #26).
 
 ### YouTube cookies (optional, GitHub issue #49)

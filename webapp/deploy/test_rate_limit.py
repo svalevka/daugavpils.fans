@@ -41,6 +41,11 @@ class NginxRateLimitConfigTest(unittest.TestCase):
         )
         self.assertRegex(
             self.conf_text,
+            r"limit_req_zone\s+\$binary_remote_addr\s+zone=review_event_zone:10m\s+rate=2r/s;",
+            "review_event_zone not defined with 10m memory and 2r/s rate",
+        )
+        self.assertRegex(
+            self.conf_text,
             r"limit_req_status\s+429;",
             "limit_req_status must be set to 429 (Too Many Requests)",
         )
@@ -76,6 +81,62 @@ class NginxRateLimitConfigTest(unittest.TestCase):
             "review.daugavpils.fans location /login must apply review_strict_zone burst=5 nodelay",
         )
 
+    def test_api_event_rate_limited_and_size_capped(self) -> None:
+        """location /api/event must enforce review_event_zone and client_max_body_size 64k (GitHub issue #86)."""
+        main_server_match = re.search(
+            r"server_name\s+daugavpils\.fans\s+www\.daugavpils\.fans;.*?(?=server\s*\{|\Z)",
+            self.conf_text,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(main_server_match, "daugavpils.fans server block not found")
+        main_text = main_server_match.group(0)
+
+        self.assertRegex(
+            main_text,
+            r"location\s+/api/event\s*\{[^}]*limit_req\s+zone=review_event_zone\s+burst=5\s+nodelay;",
+            "daugavpils.fans /api/event must apply review_event_zone burst=5 nodelay",
+        )
+        self.assertRegex(
+            main_text,
+            r"location\s+/api/event\s*\{[^}]*client_max_body_size\s+64k;",
+            "daugavpils.fans /api/event must cap body size at 64k",
+        )
+
+    def test_large_upload_limits_scoped_strictly_to_upload_locations(self) -> None:
+        """review.daugavpils.fans must scope 2g body size and 600s timeouts strictly to upload locations (GitHub issue #86)."""
+        review_server_match = re.search(
+            r"server_name\s+review\.daugavpils\.fans;.*?(?=server\s*\{|\Z)",
+            self.conf_text,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(review_server_match, "review.daugavpils.fans server block not found")
+        block_text = review_server_match.group(0)
+
+        # Ensure client_max_body_size 2g is inside location /submit
+        self.assertRegex(
+            block_text,
+            r"location\s+/submit\s*\{[^}]*client_max_body_size\s+2g;",
+            "location /submit must contain client_max_body_size 2g",
+        )
+        self.assertRegex(
+            block_text,
+            r"location\s+/submit\s*\{[^}]*client_body_timeout\s+600s;",
+            "location /submit must contain client_body_timeout 600s",
+        )
+
+        # Ensure server-level block does NOT contain client_max_body_size 2g outside location /submit
+        server_level_before_locations = block_text.split("location")[0]
+        self.assertNotIn(
+            "client_max_body_size 2g",
+            server_level_before_locations,
+            "client_max_body_size 2g must not be configured at server level outside upload locations",
+        )
+        self.assertNotIn(
+            "client_body_timeout 600s",
+            server_level_before_locations,
+            "client_body_timeout 600s must not be configured at server level outside upload locations",
+        )
+
     def test_primary_domain_proxied_locations_rate_limiting(self) -> None:
         """daugavpils.fans proxied admin, dashboard, and login locations must also apply rate limits."""
         main_server_match = re.search(
@@ -108,11 +169,13 @@ class NginxRateLimitConfigTest(unittest.TestCase):
         self.assertIn("$binary_remote_addr", self.conf_text)
         self.assertIn("review_general_zone", self.conf_text)
         self.assertIn("review_strict_zone", self.conf_text)
+        self.assertIn("review_event_zone", self.conf_text)
 
     def test_readme_documents_rate_limiting_and_upload_limits(self) -> None:
         """webapp/deploy/README.md must document the rate limits and upload body size / timeouts."""
         self.assertIn("review_general_zone", self.readme_text)
         self.assertIn("review_strict_zone", self.readme_text)
+        self.assertIn("review_event_zone", self.readme_text)
         self.assertIn("client_max_body_size", self.readme_text)
         self.assertIn("client_body_timeout", self.readme_text)
 

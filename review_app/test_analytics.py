@@ -18,6 +18,7 @@ from analytics import (  # noqa: E402
     is_bot,
     parse_path_slugs,
     parse_referrer,
+    purge_old_events,
 )
 from test_support import ReviewAppTestCase  # noqa: E402
 
@@ -228,6 +229,77 @@ class AnalyticsApiTest(ReviewAppTestCase):
         rows = conn.execute("SELECT COUNT(*) FROM analytics_events").fetchone()[0]
         conn.close()
         self.assertEqual(rows, 0)
+
+    def test_oversized_payload_rejected_with_413(self):
+        # Payload exceeding 64KB
+        large_extra = "x" * (70 * 1024)
+        response = self.client.post(
+            "/api/event",
+            data=large_extra,
+            content_type="application/json",
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        self.assertEqual(response.status_code, 413)
+
+    def test_oversized_field_rejected_with_400(self):
+        # Field exceeding maximum allowed length (e.g. path > 1024)
+        long_path = "/" + ("a" * 1050)
+        response = self.client.post(
+            "/api/event",
+            json={"type": "pageview", "path": long_path},
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("exceeds maximum allowed length", response.get_json()["error"])
+
+    def test_invalid_json_rejected_with_400(self):
+        response = self.client.post(
+            "/api/event",
+            data="not-a-valid-json",
+            content_type="application/json",
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_purge_old_events_aggregates_and_deletes(self):
+        conn = sqlite3.connect(self.database_path)
+        conn.row_factory = sqlite3.Row
+
+        # Insert an event older than 90 days (100 days ago)
+        conn.execute(
+            """INSERT INTO analytics_events (
+                event_type, path, visitor_hash, created_at
+            ) VALUES ('pageview', '/old-page', 'hash1', datetime('now', '-100 days'))"""
+        )
+        # Insert another event older than 90 days (95 days ago) of different type
+        conn.execute(
+            """INSERT INTO analytics_events (
+                event_type, path, visitor_hash, created_at
+            ) VALUES ('track_play', '/old-track', 'hash2', datetime('now', '-95 days'))"""
+        )
+        # Insert a recent event (5 days ago)
+        conn.execute(
+            """INSERT INTO analytics_events (
+                event_type, path, visitor_hash, created_at
+            ) VALUES ('pageview', '/recent-page', 'hash3', datetime('now', '-5 days'))"""
+        )
+        conn.commit()
+
+        # Purge events older than 90 days
+        deleted = purge_old_events(conn, retention_days=90)
+        self.assertEqual(deleted, 2)
+
+        # Recent event is preserved
+        remaining = conn.execute("SELECT * FROM analytics_events").fetchall()
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining[0]["path"], "/recent-page")
+
+        # Daily summary table received the aggregated counts
+        summary = conn.execute("SELECT * FROM analytics_daily_summary").fetchall()
+        self.assertEqual(len(summary), 2)
+        event_types = {s["event_type"] for s in summary}
+        self.assertEqual(event_types, {"pageview", "track_play"})
+        conn.close()
 
 
 if __name__ == "__main__":

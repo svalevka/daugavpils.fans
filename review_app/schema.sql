@@ -175,6 +175,14 @@ CREATE INDEX IF NOT EXISTS idx_analytics_created ON analytics_events(created_at)
 CREATE INDEX IF NOT EXISTS idx_analytics_type ON analytics_events(event_type, created_at);
 CREATE INDEX IF NOT EXISTS idx_analytics_band ON analytics_events(band_slug, created_at);
 
+-- Daily aggregated analytics summaries for long-term retention (GitHub issue #86)
+CREATE TABLE IF NOT EXISTS analytics_daily_summary (
+    event_date TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    event_count INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (event_date, event_type)
+);
+
 -- New album proposals (GitHub issue #20):
 -- Allows proposing a brand-new release with audio tracks and optional cover art
 -- under an existing band. Similar to media_proposals, approving one dispatches
