@@ -65,7 +65,54 @@ CURRENT_CHECKOUT_LINK="${CURRENT_CHECKOUT_LINK:-/opt/daugavpils-fans/site/curren
 STATE_FILE="${STATE_FILE:-/opt/daugavpils-fans/.last-deployed-sha}"
 LOCK_DIR="${LOCK_DIR:-/opt/daugavpils-fans/.sync-and-deploy.lock.d}"
 KEEP_CHECKOUTS="${KEEP_CHECKOUTS:-3}"
-PYTHON_BIN="${PYTHON_BIN:-python3}"
+DEPLOY_BASE_DIR="$(dirname "$STATE_FILE")"
+LIVE_COMPOSE_FILE="${LIVE_COMPOSE_FILE:-$DEPLOY_BASE_DIR/docker-compose.yml}"
+LIVE_NGINX_DIR="${LIVE_NGINX_DIR:-$DEPLOY_BASE_DIR/nginx}"
+LIVE_NGINX_CONF="${LIVE_NGINX_CONF:-$LIVE_NGINX_DIR/daugavpils.conf}"
+
+if [ "${1:-}" = "--check-drift" ]; then
+  drift_found=0
+  target_dir="${WORKTREE_DIR:-}"
+  if [ -z "$target_dir" ] || [ ! -d "$target_dir" ]; then
+    if [ -d "$REPO_DIR" ]; then
+      target_dir="$REPO_DIR"
+    elif [ -L "$CURRENT_CHECKOUT_LINK" ]; then
+      target_dir="$(dirname "$CHECKOUT_ROOT")/$(readlink "$CURRENT_CHECKOUT_LINK")"
+    fi
+  fi
+
+  if [ -n "$target_dir" ] && [ -d "$target_dir" ]; then
+    repo_compose="$target_dir/webapp/deploy/docker-compose.yml"
+    repo_nginx="$target_dir/webapp/deploy/nginx/daugavpils.conf"
+
+    if [ -f "$repo_compose" ]; then
+      if [ ! -f "$LIVE_COMPOSE_FILE" ]; then
+        echo "DRIFT: $LIVE_COMPOSE_FILE is missing" >&2
+        drift_found=1
+      elif ! cmp -s "$repo_compose" "$LIVE_COMPOSE_FILE"; then
+        echo "DRIFT: $LIVE_COMPOSE_FILE differs from repo $repo_compose" >&2
+        drift_found=1
+      fi
+    fi
+
+    if [ -f "$repo_nginx" ]; then
+      if [ ! -f "$LIVE_NGINX_CONF" ]; then
+        echo "DRIFT: $LIVE_NGINX_CONF is missing" >&2
+        drift_found=1
+      elif ! cmp -s "$repo_nginx" "$LIVE_NGINX_CONF"; then
+        echo "DRIFT: $LIVE_NGINX_CONF differs from repo $repo_nginx" >&2
+        drift_found=1
+      fi
+    fi
+  fi
+
+  if [ "$drift_found" -eq 1 ]; then
+    exit 1
+  else
+    echo "OK: live deployment configuration matches repo"
+    exit 0
+  fi
+fi
 
 for link in "$CURRENT_LINK" "$CURRENT_CHECKOUT_LINK"; do
   if [ "$(dirname "$link")" != "$(dirname "$CHECKOUT_ROOT")" ]; then
@@ -155,12 +202,122 @@ ln -sfn "$(basename "$CHECKOUT_ROOT")/$LATEST_SHA" "$CURRENT_CHECKOUT_LINK"
 
 echo "$LATEST_SHA" > "$STATE_FILE"
 
-# If review_app code or deployment configuration changed since the last deploy,
+# Sync live deployment configuration (nginx/daugavpils.conf, docker-compose.yml) if changed or drifted (GitHub issue #79)
+sync_deployment_config() {
+  local new_compose="$WORKTREE_DIR/webapp/deploy/docker-compose.yml"
+  local new_nginx="$WORKTREE_DIR/webapp/deploy/nginx/daugavpils.conf"
+
+  if [ ! -f "$new_compose" ] && [ ! -f "$new_nginx" ]; then
+    return 0
+  fi
+
+  local config_needs_sync=0
+  if [ -n "$PREVIOUS_SHA" ]; then
+    if git -C "$REPO_DIR" diff --name-only "$PREVIOUS_SHA" "$LATEST_SHA" | grep -qE '^(webapp/deploy/nginx/|webapp/deploy/docker-compose\.yml)'; then
+      config_needs_sync=1
+    fi
+  fi
+
+  if [ -f "$new_compose" ]; then
+    if [ ! -f "$LIVE_COMPOSE_FILE" ] || ! cmp -s "$new_compose" "$LIVE_COMPOSE_FILE"; then
+      config_needs_sync=1
+    fi
+  fi
+
+  if [ -f "$new_nginx" ]; then
+    if [ ! -f "$LIVE_NGINX_CONF" ] || ! cmp -s "$new_nginx" "$LIVE_NGINX_CONF"; then
+      config_needs_sync=1
+    fi
+  fi
+
+  if [ "$config_needs_sync" -eq 0 ]; then
+    echo "deployment configuration unchanged - nothing to sync"
+    return 0
+  fi
+
+  echo "deployment configuration changed or drifted - syncing"
+
+  local compose_backup=""
+  local nginx_backup=""
+  if [ -f "$LIVE_COMPOSE_FILE" ]; then
+    compose_backup="$(mktemp "${LIVE_COMPOSE_FILE}.bak.XXXXXX")"
+    cp "$LIVE_COMPOSE_FILE" "$compose_backup"
+  fi
+  if [ -f "$LIVE_NGINX_CONF" ]; then
+    nginx_backup="$(mktemp "${LIVE_NGINX_CONF}.bak.XXXXXX")"
+    cp "$LIVE_NGINX_CONF" "$nginx_backup"
+  fi
+
+  # Copy new files into place
+  if [ -f "$new_compose" ]; then
+    mkdir -p "$(dirname "$LIVE_COMPOSE_FILE")"
+    cp "$new_compose" "$LIVE_COMPOSE_FILE"
+  fi
+  if [ -f "$new_nginx" ]; then
+    mkdir -p "$(dirname "$LIVE_NGINX_CONF")"
+    cp "$new_nginx" "$LIVE_NGINX_CONF"
+  fi
+
+  # Validate
+  local validation_failed=0
+  if command -v docker >/dev/null 2>&1; then
+    if [ -f "$LIVE_COMPOSE_FILE" ]; then
+      if ! docker compose -f "$LIVE_COMPOSE_FILE" config >/dev/null 2>&1; then
+        echo "ERROR: docker compose config validation failed" >&2
+        validation_failed=1
+      fi
+    fi
+
+    if [ "$validation_failed" -eq 0 ] && [ -f "$LIVE_NGINX_CONF" ]; then
+      if docker compose -f "$LIVE_COMPOSE_FILE" ps --services --filter "status=running" 2>/dev/null | grep -q "^nginx$"; then
+        if ! docker compose -f "$LIVE_COMPOSE_FILE" exec -T nginx nginx -t >/dev/null 2>&1; then
+          echo "ERROR: nginx -t validation failed" >&2
+          validation_failed=1
+        fi
+      fi
+    fi
+  fi
+
+  if [ "$validation_failed" -eq 1 ]; then
+    echo "ALERT: deployment config validation failed! Rolling back to previous files" >&2
+    if [ -n "$compose_backup" ]; then
+      mv -f "$compose_backup" "$LIVE_COMPOSE_FILE"
+    else
+      rm -f "$LIVE_COMPOSE_FILE"
+    fi
+    if [ -n "$nginx_backup" ]; then
+      mv -f "$nginx_backup" "$LIVE_NGINX_CONF"
+    else
+      rm -f "$LIVE_NGINX_CONF"
+    fi
+    return 1
+  fi
+
+  # Reload / restart only on successful validation
+  if command -v docker >/dev/null 2>&1 && [ -f "$LIVE_COMPOSE_FILE" ]; then
+    if docker compose -f "$LIVE_COMPOSE_FILE" ps --services --filter "status=running" 2>/dev/null | grep -q "^nginx$"; then
+      echo "reloading nginx configuration"
+      docker compose -f "$LIVE_COMPOSE_FILE" exec -T nginx nginx -s reload || true
+    fi
+    echo "applying compose service updates"
+    docker compose -f "$LIVE_COMPOSE_FILE" up -d || true
+  fi
+
+  [ -n "$compose_backup" ] && rm -f "$compose_backup"
+  [ -n "$nginx_backup" ] && rm -f "$nginx_backup"
+
+  echo "deployment configuration successfully validated and applied"
+  return 0
+}
+
+sync_deployment_config || true
+
+# If review_app code changed since the last deploy,
 # rebuild and restart review-app so server changes go live without manual intervention.
 if [ -n "$PREVIOUS_SHA" ]; then
-  if git -C "$REPO_DIR" diff --name-only "$PREVIOUS_SHA" "$LATEST_SHA" | grep -qE '^(review_app/|webapp/deploy/)'; then
+  if git -C "$REPO_DIR" diff --name-only "$PREVIOUS_SHA" "$LATEST_SHA" | grep -qE '^review_app/'; then
     echo "review_app code or deployment configuration changed ($PREVIOUS_SHA..$LATEST_SHA)"
-    COMPOSE_FILE="${COMPOSE_FILE:-$(dirname "$STATE_FILE")/docker-compose.yml}"
+    COMPOSE_FILE="${COMPOSE_FILE:-$LIVE_COMPOSE_FILE}"
     AUTO_REBUILD_CONTAINERS="${AUTO_REBUILD_CONTAINERS:-1}"
     if [ "$AUTO_REBUILD_CONTAINERS" = "1" ] && command -v docker >/dev/null 2>&1 && [ -f "$COMPOSE_FILE" ]; then
       echo "rebuilding and restarting review-app container"

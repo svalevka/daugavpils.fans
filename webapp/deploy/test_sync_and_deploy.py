@@ -98,6 +98,7 @@ class DeployHarness:
     """
 
     def __init__(self, tmp_path: Path):
+        self.tmp_path = tmp_path
         self.origin_dir = tmp_path / "origin"
         self.repo_dir = tmp_path / "repo"  # intentionally not pre-created - the script bootstraps it
         self.site_dir = tmp_path / "site"
@@ -106,12 +107,54 @@ class DeployHarness:
         self.current_checkout_link = self.site_dir / "current-checkout"
         self.state_file = tmp_path / "last-deployed-sha"
         self.lock_dir = tmp_path / "lock.d"
+        self.live_compose_file = tmp_path / "docker-compose.yml"
+        self.live_nginx_dir = tmp_path / "nginx"
+        self.live_nginx_conf = self.live_nginx_dir / "daugavpils.conf"
+        self.bin_dir = tmp_path / "bin"
+        self.bin_dir.mkdir(parents=True, exist_ok=True)
+        self.docker_log_file = tmp_path / "docker.log"
+        self._setup_mock_docker()
+
+    def _setup_mock_docker(self) -> None:
+        docker_script = self.bin_dir / "docker"
+        docker_script.write_text(f"""#!/bin/sh
+echo "$@" >> "{self.docker_log_file}"
+case "$*" in
+  *"ps --services"*)
+    echo "nginx"
+    echo "review-app"
+    exit 0
+    ;;
+  *"config"*)
+    if [ "${{MOCK_DOCKER_FAIL_CONFIG:-0}}" = "1" ]; then
+      echo "compose config error" >&2
+      exit 1
+    fi
+    exit 0
+    ;;
+  *"nginx -t"*)
+    if [ "${{MOCK_DOCKER_FAIL_NGINX_TEST:-0}}" = "1" ]; then
+      echo "nginx: syntax error" >&2
+      exit 1
+    fi
+    exit 0
+    ;;
+  *"nginx -s reload"*)
+    exit 0
+    ;;
+  *"up"*)
+    exit 0
+    ;;
+esac
+exit 0
+""")
+        docker_script.chmod(0o755)
 
     def current_index_html(self) -> str:
         return (self.current_link / "index.html").read_text()
 
-    def env(self, keep_checkouts: int = 3) -> dict[str, str]:
-        return {
+    def env(self, keep_checkouts: int = 3, extra_env: dict[str, str] | None = None) -> dict[str, str]:
+        base = {
             "REPO_URL": str(self.origin_dir),
             "REPO_DIR": str(self.repo_dir),
             "CHECKOUT_ROOT": str(self.checkout_root),
@@ -119,14 +162,20 @@ class DeployHarness:
             "CURRENT_CHECKOUT_LINK": str(self.current_checkout_link),
             "STATE_FILE": str(self.state_file),
             "LOCK_DIR": str(self.lock_dir),
+            "LIVE_COMPOSE_FILE": str(self.live_compose_file),
+            "LIVE_NGINX_DIR": str(self.live_nginx_dir),
+            "LIVE_NGINX_CONF": str(self.live_nginx_conf),
             "KEEP_CHECKOUTS": str(keep_checkouts),
             "PYTHON_BIN": sys.executable,
-            "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin",
+            "PATH": f"{self.bin_dir}:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin",
         }
+        if extra_env:
+            base.update(extra_env)
+        return base
 
-    def run(self, *, keep_checkouts: int = 3) -> "subprocess.CompletedProcess[str]":
+    def run(self, *args: str, keep_checkouts: int = 3, extra_env: dict[str, str] | None = None) -> "subprocess.CompletedProcess[str]":
         return subprocess.run(
-            [BASH_BIN, str(SCRIPT)], env=self.env(keep_checkouts), capture_output=True, text=True
+            [BASH_BIN, str(SCRIPT), *args], env=self.env(keep_checkouts, extra_env), capture_output=True, text=True
         )
 
 
@@ -267,6 +316,114 @@ class OverlapTest(unittest.TestCase):
             self.assertIn("stale lock detected", result.stdout)
             self.assertEqual(h.current_index_html(), "v1")
             self.assertTrue(h.state_file.exists())
+
+
+class DeploymentConfigSyncTest(unittest.TestCase):
+    def test_config_changed_is_synced_validated_and_reloaded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            h = DeployHarness(Path(tmp))
+            _init_origin(h.origin_dir, "v1")
+
+            # Add deploy config files to origin
+            deploy_dir = h.origin_dir / "webapp" / "deploy"
+            nginx_dir = deploy_dir / "nginx"
+            nginx_dir.mkdir(parents=True, exist_ok=True)
+            (deploy_dir / "docker-compose.yml").write_text("services:\n  nginx:\n    image: nginx:alpine\n")
+            (nginx_dir / "daugavpils.conf").write_text("# nginx conf v1\n")
+            _git("add", "-A", cwd=h.origin_dir)
+            _git("commit", "-m", "add deploy configs v1", cwd=h.origin_dir)
+
+            result1 = h.run()
+            self.assertEqual(result1.returncode, 0, msg=result1.stdout + result1.stderr)
+            self.assertTrue(h.live_compose_file.exists())
+            self.assertTrue(h.live_nginx_conf.exists())
+            self.assertEqual(h.live_nginx_conf.read_text(), "# nginx conf v1\n")
+
+            # Now advance origin with v2 config
+            (nginx_dir / "daugavpils.conf").write_text("# nginx conf v2\n")
+            _git("commit", "-am", "update nginx conf to v2", cwd=h.origin_dir)
+
+            h.docker_log_file.write_text("")
+            result2 = h.run()
+            self.assertEqual(result2.returncode, 0, msg=result2.stdout + result2.stderr)
+            self.assertEqual(h.live_nginx_conf.read_text(), "# nginx conf v2\n")
+            self.assertIn("deployment configuration changed or drifted", result2.stdout)
+            self.assertIn("deployment configuration successfully validated and applied", result2.stdout)
+            docker_log = h.docker_log_file.read_text()
+            self.assertIn("nginx -t", docker_log)
+            self.assertIn("nginx -s reload", docker_log)
+
+    def test_invalid_config_is_rolled_back_and_alert_raised(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            h = DeployHarness(Path(tmp))
+            _init_origin(h.origin_dir, "v1")
+
+            # Initial good config
+            deploy_dir = h.origin_dir / "webapp" / "deploy"
+            nginx_dir = deploy_dir / "nginx"
+            nginx_dir.mkdir(parents=True, exist_ok=True)
+            (deploy_dir / "docker-compose.yml").write_text("services:\n  nginx:\n    image: nginx:alpine\n")
+            (nginx_dir / "daugavpils.conf").write_text("# good nginx conf\n")
+            _git("add", "-A", cwd=h.origin_dir)
+            _git("commit", "-m", "add deploy configs v1", cwd=h.origin_dir)
+            h.run()
+
+            # Advance with invalid config
+            (nginx_dir / "daugavpils.conf").write_text("# broken nginx conf\n")
+            _git("commit", "-am", "broken config", cwd=h.origin_dir)
+
+            result = h.run(extra_env={"MOCK_DOCKER_FAIL_NGINX_TEST": "1"})
+            # Verification: live nginx conf must be rolled back to good config
+            self.assertEqual(h.live_nginx_conf.read_text(), "# good nginx conf\n")
+            self.assertIn("ALERT: deployment config validation failed! Rolling back", result.stderr)
+
+    def test_unchanged_config_is_noop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            h = DeployHarness(Path(tmp))
+            _init_origin(h.origin_dir, "v1")
+
+            deploy_dir = h.origin_dir / "webapp" / "deploy"
+            nginx_dir = deploy_dir / "nginx"
+            nginx_dir.mkdir(parents=True, exist_ok=True)
+            (deploy_dir / "docker-compose.yml").write_text("services:\n  nginx:\n    image: nginx:alpine\n")
+            (nginx_dir / "daugavpils.conf").write_text("# nginx conf v1\n")
+            _git("add", "-A", cwd=h.origin_dir)
+            _git("commit", "-m", "add deploy configs", cwd=h.origin_dir)
+            h.run()
+
+            # Advance with change to build.py only (deploy config unchanged)
+            _advance_origin(h.origin_dir, "v2")
+            h.docker_log_file.write_text("")
+            result = h.run()
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertIn("deployment configuration unchanged - nothing to sync", result.stdout)
+            docker_log = h.docker_log_file.read_text()
+            self.assertNotIn("nginx -s reload", docker_log)
+
+    def test_drift_check(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            h = DeployHarness(Path(tmp))
+            _init_origin(h.origin_dir, "v1")
+
+            deploy_dir = h.origin_dir / "webapp" / "deploy"
+            nginx_dir = deploy_dir / "nginx"
+            nginx_dir.mkdir(parents=True, exist_ok=True)
+            (deploy_dir / "docker-compose.yml").write_text("services:\n  nginx:\n    image: nginx:alpine\n")
+            (nginx_dir / "daugavpils.conf").write_text("# nginx conf v1\n")
+            _git("add", "-A", cwd=h.origin_dir)
+            _git("commit", "-m", "add deploy configs", cwd=h.origin_dir)
+            h.run()
+
+            # Check drift when matching
+            clean_res = h.run("--check-drift")
+            self.assertEqual(clean_res.returncode, 0)
+            self.assertIn("OK: live deployment configuration matches repo", clean_res.stdout)
+
+            # Introduce drift manually in live config
+            h.live_nginx_conf.write_text("# tampered conf\n")
+            drift_res = h.run("--check-drift")
+            self.assertEqual(drift_res.returncode, 1)
+            self.assertIn("DRIFT:", drift_res.stderr)
 
 
 if __name__ == "__main__":
