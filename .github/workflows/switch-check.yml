@@ -61,13 +61,23 @@ jobs:
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Generate vault token from GitHub App
+        id: app-token
+        if: steps.pending.outputs.found == 'true' && secrets.VAULT_APP_ID != '' && secrets.VAULT_APP_PRIVATE_KEY != ''
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.VAULT_APP_ID }}
+          private-key: ${{ secrets.VAULT_APP_PRIVATE_KEY }}
+          owner: ${{ env.VAULT_OWNER }}
+          repositories: ${{ env.VAULT_REPO }}
+
       - name: Trip each due issue
         if: steps.pending.outputs.found == 'true'
         env:
           IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
           IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
           TRUSTED_CONTACTS_JSON: ${{ secrets.SWITCH_TRUSTED_CONTACTS }}
-          VAULT_TOKEN: ${{ secrets.SWITCH_VAULT_PAT }}
+          VAULT_TOKEN: ${{ steps.app-token.outputs.token || secrets.SWITCH_VAULT_PAT }}
         run: |
           while read -r number; do
             requester=$(gh issue view "$number" --json author --jq '.author.login')

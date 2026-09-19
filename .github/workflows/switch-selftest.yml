@@ -49,19 +49,32 @@ jobs:
             echo "ok=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Check vault PAT still has admin access to the vault repo
+      - name: Generate vault token from GitHub App
+        id: app-token
+        if: ${{ secrets.VAULT_APP_ID != '' && secrets.VAULT_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.VAULT_APP_ID }}
+          private-key: ${{ secrets.VAULT_APP_PRIVATE_KEY }}
+          owner: ${{ env.VAULT_OWNER }}
+          repositories: ${{ env.VAULT_REPO }}
+
+      - name: Check vault token has access to the vault repo
         id: vault
         env:
-          VAULT_TOKEN: ${{ secrets.SWITCH_VAULT_PAT }}
+          VAULT_TOKEN: ${{ steps.app-token.outputs.token || secrets.SWITCH_VAULT_PAT }}
+          TOKEN_TYPE: ${{ steps.app-token.outputs.token != '' && 'GitHub App' || 'fine-grained PAT' }}
         run: |
-          admin=$(GH_TOKEN="$VAULT_TOKEN" gh api "repos/$VAULT_OWNER/$VAULT_REPO" --jq '.permissions.admin' 2>/dev/null || echo "false")
+          admin=$(GH_TOKEN="$VAULT_TOKEN" gh api "repos/$VAULT_OWNER/$VAULT_REPO" --jq '.permissions.admin // .permissions.push // false' 2>/dev/null || echo "false")
           echo "ok=$admin" >> "$GITHUB_OUTPUT"
+          echo "type=$TOKEN_TYPE" >> "$GITHUB_OUTPUT"
 
       - name: Record result and act on it
         env:
           TRUSTED_CONTACTS_JSON: ${{ secrets.SWITCH_TRUSTED_CONTACTS }}
           CONTACTS_OK: ${{ steps.contacts.outputs.ok }}
           VAULT_OK: ${{ steps.vault.outputs.ok }}
+          TOKEN_TYPE: ${{ steps.vault.outputs.type }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           mkdir -p "$(dirname "$STATE_FILE")"
@@ -91,9 +104,11 @@ jobs:
           body="Dead-man's-switch self-test failed (consecutive failures: $failures).
 
           - Trusted-contacts allowlist parses OK: $CONTACTS_OK
-          - Vault PAT has admin access to $VAULT_OWNER/$VAULT_REPO: $VAULT_OK
+          - Vault token ($TOKEN_TYPE) has access to $VAULT_OWNER/$VAULT_REPO: $VAULT_OK
 
-          Likely cause if the PAT check failed: SWITCH_VAULT_PAT expired (fine-grained PATs cap at 1 year) or was revoked - mint a new one and update the secret. See documentation/DEAD_MANS_SWITCH.md.
+          Likely cause if the vault token check failed: token expired or was revoked.
+          If using fine-grained PAT (SWITCH_VAULT_PAT): renew at https://github.com/settings/personal-access-tokens/new.
+          To eliminate annual expiration permanently, configure a GitHub App (VAULT_APP_ID, VAULT_APP_PRIVATE_KEY). See documentation/DEAD_MANS_SWITCH.md.
 
           Full run: $RUN_URL"
 

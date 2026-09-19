@@ -96,9 +96,10 @@ Three workflows in `.github/workflows/`:
   `IA_ACCESS_KEY_ID`/`IA_SECRET_ACCESS_KEY` secrets fresh (never a
   pre-copied value that could go stale if the key is ever rotated),
   writes them into the vault repo, and invites the requester there using
-  `SWITCH_VAULT_PAT`.
+  a GitHub App installation token (`VAULT_APP_ID` / `VAULT_APP_PRIVATE_KEY`)
+  with automatic fallback to `SWITCH_VAULT_PAT`.
 - **`switch-selftest.yml`** - runs monthly. Confirms the trusted-contacts
-  secret still parses and the vault PAT still has admin access to the
+  secret still parses and the vault token (GitHub App or PAT) still has access to the
   vault repo. Tracks consecutive failures in
   `.github/switch-selftest-state.json`; on failure, files/updates an
   issue for the maintainer, and after 3 consecutive unfixed failures also
@@ -114,7 +115,7 @@ the verified requester.
 
 ## Maintaining this (for the current maintainer)
 
-Two secrets on `svalevka/daugavpils.fans` need occasional attention:
+Secrets on `svalevka/daugavpils.fans`:
 
 - **`SWITCH_TRUSTED_CONTACTS`** - a JSON array, e.g.:
   ```json
@@ -123,17 +124,36 @@ Two secrets on `svalevka/daugavpils.fans` need occasional attention:
   Update via `gh secret set SWITCH_TRUSTED_CONTACTS` when the list of
   trusted people changes. Keep it short and to people you'd actually
   want holding this.
-- **`SWITCH_VAULT_PAT`** - a **fine-grained personal access token**,
+- **`VAULT_APP_ID`** and **`VAULT_APP_PRIVATE_KEY`** (Recommended permanent solution, see GitHub issue #45):
+  To eliminate the 1-year mandatory expiration limit of fine-grained PATs,
+  use a dedicated GitHub App:
+  1. Register a dedicated GitHub App at <https://github.com/settings/apps/new>
+     (e.g. named `daugavpils-fans-recovery-bot`).
+  2. Set Homepage URL to `https://daugavpils.fans` and disable Webhooks
+     (uncheck "Active").
+  3. Under Repository Permissions:
+     - **Administration: Read and write** (or **Members: Read and write**)
+     - **Contents: Read and write**
+  4. Under "Where can this GitHub App be installed?", choose "Only on this account".
+  5. Create the app. Note the numeric **App ID** on the general settings page.
+  6. Scroll down to "Private keys" and click "Generate a private key". Save the downloaded `.pem` file.
+  7. In the left sidebar, click "Install App" and install it onto the private vault repository
+     (`svalevka/daugavpils-fans-recovery-vault`).
+  8. Store the credentials in repository secrets on `svalevka/daugavpils.fans`:
+     ```bash
+     gh secret set VAULT_APP_ID --body "123456"
+     gh secret set VAULT_APP_PRIVATE_KEY < recovery-bot-private-key.pem
+     ```
+  GitHub App private keys do not expire annually, making the dead-man's switch
+  permanently durable without annual human intervention.
+- **`SWITCH_VAULT_PAT`** (Backward-compatible fallback):
+  A **fine-grained personal access token**,
   scoped to only the `svalevka/daugavpils-fans-recovery-vault` repo,
   with **Administration: Read and write** (needed to invite
   collaborators) and **Contents: Read and write** (needed to write the
-  credential file) permissions, nothing broader. Fine-grained PATs cap
-  out at a 1-year expiration - GitHub won't let you create one that
-  lasts forever - so **this will need renewing at least yearly**. The
-  monthly self-test is there specifically to catch this before it
-  becomes a problem: if it starts failing, mint a new PAT at
-  <https://github.com/settings/personal-access-tokens/new> (scoped as
-  above) and run `gh secret set SWITCH_VAULT_PAT`.
+  credential file) permissions. Fine-grained PATs cap
+  out at a 1-year expiration, so this requires annual renewal if used instead
+  of the GitHub App. Update via `gh secret set SWITCH_VAULT_PAT`.
 
 The vault repo itself (`svalevka/daugavpils-fans-recovery-vault`) should
 be left alone otherwise - private, empty except for the vault README
