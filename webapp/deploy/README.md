@@ -371,3 +371,12 @@ configures a reverse proxy cache on `cherry` at `/media-stream/`:
   Nginx intercepts these redirects internally so that the actual audio/video payloads
   are retrieved and saved to the local cache.
 
+## Automated container security updates (Watchtower)
+
+Host-level OS packages receive security patches automatically via Ubuntu's `unattended-upgrades`. To ensure public registry container images (such as `nginx:alpine`) also receive timely security updates, `docker-compose.yml` includes **Watchtower** ([containrrr/watchtower](https://github.com/containrrr/watchtower)):
+
+- **Opt-in only (`WATCHTOWER_LABEL_ENABLE=true`)**: Watchtower is restricted to updating only containers explicitly labeled with `com.centurylinklabs.watchtower.enable=true`. This prevents unexpected updates or disruptions to other containers on the host (e.g. `review-app`, which is built locally from source git checkout, or other standalone services).
+- **Automatic cleanup (`WATCHTOWER_CLEANUP=true`)**: When a new image is pulled and the container is recreated, Watchtower prunes the old dangling image layers to prevent disk space exhaustion.
+- **Off-peak schedule (`WATCHTOWER_SCHEDULE="0 0 4 * * *"`)**: Evaluated via a 6-field cron expression to run daily at 04:00 UTC during off-peak hours.
+
+
