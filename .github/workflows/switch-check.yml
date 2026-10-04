@@ -42,6 +42,9 @@ jobs:
 
       - name: Find pending switch issues past their deadline
         id: pending
+        env:
+          VAULT_APP_ID: ${{ secrets.VAULT_APP_ID }}
+          VAULT_APP_PRIVATE_KEY: ${{ secrets.VAULT_APP_PRIVATE_KEY }}
         run: |
           now=$(date -u +%s)
           threshold=$((SWITCH_DELAY_DAYS * 86400))
@@ -60,10 +63,15 @@ jobs:
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
+          if [ -n "$VAULT_APP_ID" ] && [ -n "$VAULT_APP_PRIVATE_KEY" ]; then
+            echo "has_app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_app=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Generate vault token from GitHub App
         id: app-token
-        if: steps.pending.outputs.found == 'true' && secrets.VAULT_APP_ID != '' && secrets.VAULT_APP_PRIVATE_KEY != ''
+        if: steps.pending.outputs.found == 'true' && steps.pending.outputs.has_app == 'true'
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.VAULT_APP_ID }}

@@ -42,16 +42,23 @@ jobs:
         id: contacts
         env:
           TRUSTED_CONTACTS_JSON: ${{ secrets.SWITCH_TRUSTED_CONTACTS }}
+          VAULT_APP_ID: ${{ secrets.VAULT_APP_ID }}
+          VAULT_APP_PRIVATE_KEY: ${{ secrets.VAULT_APP_PRIVATE_KEY }}
         run: |
           if echo "$TRUSTED_CONTACTS_JSON" | jq -e 'type == "array" and length > 0 and all(.[]; .github and .email and .name)' >/dev/null 2>&1; then
             echo "ok=true" >> "$GITHUB_OUTPUT"
           else
             echo "ok=false" >> "$GITHUB_OUTPUT"
           fi
+          if [ -n "$VAULT_APP_ID" ] && [ -n "$VAULT_APP_PRIVATE_KEY" ]; then
+            echo "has_app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_app=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Generate vault token from GitHub App
         id: app-token
-        if: ${{ secrets.VAULT_APP_ID != '' && secrets.VAULT_APP_PRIVATE_KEY != '' }}
+        if: steps.contacts.outputs.has_app == 'true'
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.VAULT_APP_ID }}
