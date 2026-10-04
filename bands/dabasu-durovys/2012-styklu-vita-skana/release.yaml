@@ -1,0 +1,218 @@
+'@type': MusicAlbum
+name: Styklu Vītā Skaņa
+slug: 2012-styklu-vita-skana
+datePublished: '2012'
+byArtist: dabasu-durovys
+genre:
+- Pop-Rock
+- Folk Rock
+description: Второй студийный альбом группы Dabasu Durovys (2012), номинированный
+  на ежегодную музыкальную премию Латвии как один из лучших поп-рок альбомов.
+description_en: Second studio album by Dabasu Durovys (2012), nominated for the Latvian
+  Music Recording of the Year Award.
+description_lv: Otrs grupas Dabasu Durovys studijas albums (2012), nominets Latvijas
+  Muzikas ierakstu gada balvai labaka pop-roka albuma kategorija.
+sameAs:
+- https://dabasudurovys.bandcamp.com/album/styklu-v-t-ska-a
+- https://dabasudurovys.lv/
+- https://archive.org/details/daugavpils-fans-dabasu-durovys-2012-styklu-vita-skana
+- https://archive.org/download/daugavpils-fans-dabasu-durovys-2012-styklu-vita-skana/daugavpils-fans-dabasu-durovys-2012-styklu-vita-skana_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Pusnakts triādis
+  audio:
+    contentUrl: 01-pusnakts-triadis.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8215b0278b69a751bc81225eaeb9c616a4c3b9967f6c5dc884ac832aeb56e6f3
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M44S
+- '@type': MusicRecording
+  position: 2
+  name: Lai jau kreit
+  audio:
+    contentUrl: 02-lai-jau-kreit.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4ea4d6968025dd3ccef4ec46ca79b7262f37123917a612968131931bdd142b3e
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M0S
+- '@type': MusicRecording
+  position: 3
+  name: Muoksleigī kameiši
+  audio:
+    contentUrl: 03-muoksleigi-kameisi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1641abc2f67946e45035e4eb4ae29218376d45bfed299cfea3b0bc9f4d996caf
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M5S
+- '@type': MusicRecording
+  position: 4
+  name: Par Martu
+  audio:
+    contentUrl: 04-par-martu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e2c32a2dba178475c333bbdb73671c3b53100cfd9ab3685469e6403e444da909
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M32S
+- '@type': MusicRecording
+  position: 5
+  name: Tai tam byus byut
+  audio:
+    contentUrl: 05-tai-tam-byus-byut.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 181a412aea5d2d146921269ccc891c8deef446bd88a2c171424b16c3f8715d36
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M34S
+- '@type': MusicRecording
+  position: 6
+  name: Pavasara talka
+  audio:
+    contentUrl: 06-pavasara-talka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f4d90b25c27e8cf0e6daa6e3e009f119d7f1aec82bc2268893fabacfa7165781
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M17S
+- '@type': MusicRecording
+  position: 7
+  name: Trešais pagarinuojums
+  audio:
+    contentUrl: 07-tresais-pagarinuojums.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0f714989fde9455142faa307ac4cf8687be16e2dcffd22e29add59c692edc573
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M27S
+- '@type': MusicRecording
+  position: 8
+  name: Sajuotu īlūpi
+  audio:
+    contentUrl: 08-sajiutu-iluopi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b49d392f2cbe7c02157ebb2a4bcf0ee662c9c94b9938b315adb6f18f46b36dd0
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M38S
+- '@type': MusicRecording
+  position: 9
+  name: Krāns
+  audio:
+    contentUrl: 09-krans.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8df77e09f9021d145138b55d356b65a218444b54de6929a06519878fb50d6ec1
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M0S
+- '@type': MusicRecording
+  position: 10
+  name: Vacais mašīnists
+  audio:
+    contentUrl: 10-vacais-masinists.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f916cf1b07a1c762e735af03a7412609ccf48644d7d19adb283de9acdd13f00e
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M16S
+- '@type': MusicRecording
+  position: 11
+  name: Grāku fani
+  audio:
+    contentUrl: 11-greku-fani.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 64812d57ee3a50370e953544e2a7b66ea3d71a42426f6727c5f07f0f643a8892
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M6S
+- '@type': MusicRecording
+  position: 12
+  name: Dzīsmīņa par izglābšonūs
+  audio:
+    contentUrl: 12-dziesmina-par-izglabsanos.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 43479a306d9e31bdf740c27d6d7cd519138e4481a2ba9e23046252af134a2a6c
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M58S
+- '@type': MusicRecording
+  position: 13
+  name: White
+  audio:
+    contentUrl: 13-white.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f40bdac771b6d33b97f84c00dbf35e31493bb364f293dc6283c1f24ccd5512c9
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M42S
+- '@type': MusicRecording
+  position: 14
+  name: Veikala dadzynuošona
+  audio:
+    contentUrl: 14-veikala-dadzynuosona.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 07698ac12f02a1922850ecb2fb82d2b385dd1a2e9a6b7cedc95b99799132f148
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M50S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 05e58caebb9746950912381a38dceb23c7411cd841995a7ada924efb5582c74c
+  '@type': ImageObject
+  caption: Обложка альбома Styklu Vītā Skaņa
+  caption_en: Styklu Vita Skana album cover
+  caption_lv: Styklu Vita Skana albuma vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

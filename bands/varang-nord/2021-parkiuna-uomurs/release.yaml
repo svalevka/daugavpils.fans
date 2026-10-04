@@ -18,16 +18,158 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Cīsareits
+  name: Pi Tuoļim Krostym
+  alternateName: У далеких берегов
+  audio:
+    contentUrl: 01-pi-tuolim-krostym.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 616f4eb3131eb6d26c2bb9d377dcc8f7468a7bab027393510541f9bce8513aeb
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M7S
 - '@type': MusicRecording
   position: 2
-  name: Stuojies!
+  name: Stuojīs!
+  alternateName: Вставай!
+  audio:
+    contentUrl: 02-stuojs.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 503c723fb03aa0bbcc20b84a992b9c550e343f1c2471c735e83b71a02c4c6aef
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M29S
 - '@type': MusicRecording
   position: 3
-  name: Pārķiuņa uomurs
+  name: Cīņis Gors
+  alternateName: Дух битвы
+  audio:
+    contentUrl: 03-cinis-gors.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6d1847e48afd7dcd2425c44e8730f7ac985e945ec0119eaa51227b806bd68190
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M18S
 - '@type': MusicRecording
   position: 4
+  name: Pārķiuņa Uomurs
+  alternateName: Молот Перкунаса
+  audio:
+    contentUrl: 04-parkiuna-uomurs.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4d689d795a2be58e503d2fc6be1a9e64ea8d296dacf94f7c45071d7da82f7682
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M44S
+- '@type': MusicRecording
+  position: 5
+  name: Dzeļža Ryuda
+  alternateName: Железная руда
+  audio:
+    contentUrl: 05-dzelza-ryuda.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 21b8fe44e2945e01dae369e2e921acfe4c61039656a623c4e89be7398d991e3a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M19S
+- '@type': MusicRecording
+  position: 6
   name: Svietņeica
+  alternateName: Святилище
+  audio:
+    contentUrl: 06-svietneica.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e520712eb22fffcf3394e42035b31ea816e4694457e97f7f234c7e12da10ed32
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M40S
+- '@type': MusicRecording
+  position: 7
+  name: Uperiešona
+  alternateName: Жертвоприношение
+  audio:
+    contentUrl: 07-uperiesona.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c582bf2c39fb26a039baa175d410481fdf4a587e04c292924eadf4915d2636fc
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M0S
+- '@type': MusicRecording
+  position: 8
+  name: Syt pa Seji
+  alternateName: Бей по морде
+  audio:
+    contentUrl: 08-syt-pa-seji.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 982ca44bb35fe6ea3b9ab07cb04bc2bdff64c50e2cecfcaa3beb0c96ff2648c1
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M7S
+- '@type': MusicRecording
+  position: 9
+  name: Troļļs
+  alternateName: Тролль
+  audio:
+    contentUrl: 09-trolls.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 148edcc6a8947e36e5aadf2abef3ac79b05d56bca2a7954c66c61d3fa9ffb0c8
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M19S
+- '@type': MusicRecording
+  position: 10
+  name: Karaveiri
+  alternateName: Воины
+  audio:
+    contentUrl: 10-karaveiri.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f1044770e283f888ab87c994f199c9785da1577eb5cff3677c641a05695aa2ee
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M48S
+- '@type': MusicRecording
+  position: 11
+  name: Ceļš da Sātai
+  alternateName: Дорога домой
+  audio:
+    contentUrl: 11-cels-da-satai.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1f643ce4ce0d0cb7bce08909b9636485ee95de4e6a6b0db55a4d5e490c8a71c2
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M16S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

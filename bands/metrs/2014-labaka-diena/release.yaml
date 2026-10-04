@@ -6,9 +6,9 @@ byArtist: metrs
 genre:
 - Alternative Rock
 - Pop-Rock
-description: Второй альбом группы Metrs (2014).
-description_en: Second album by Metrs (2014).
-description_lv: Grupas Metrs otrais albums (2014).
+description: Второй альбом даугавпилсской рок-группы Metrs (2014).
+description_en: Second album by Daugavpils rock band Metrs (2014).
+description_lv: Daugavpils rokgrupas Metrs otrais albums (2014).
 sameAs:
 - https://www.draugiem.lv/metrs/
 - https://archive.org/details/daugavpils-fans-metrs-2014-labaka-diena
@@ -17,12 +17,68 @@ track:
 - '@type': MusicRecording
   position: 1
   name: Labākā diena
+  audio:
+    contentUrl: 01-labaka-diena.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b90a147b2deac0cc07ee98cfb74efd65a2582bc52e86e688af93a4f5060b9e03
+    '@type': AudioObject
+    bitrate: 242 kbps
+    duration: PT4M8S
 - '@type': MusicRecording
   position: 2
-  name: Pilsēta
+  name: Pikadilli
+  audio:
+    contentUrl: 02-pikadilli.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9c86fc27d06932f4dbd52879e2ae392866e765e1bdb878c952041699b2d26243
+    '@type': AudioObject
+    bitrate: 228 kbps
+    duration: PT3M9S
 - '@type': MusicRecording
   position: 3
-  name: Lietus
+  name: Likmes
+  audio:
+    contentUrl: 03-likmes.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 623f17b88335414e002153543101deb7231fe78e927cf527c2728717eec6192c
+    '@type': AudioObject
+    bitrate: 235 kbps
+    duration: PT4M22S
+- '@type': MusicRecording
+  position: 4
+  name: Pelēkais
+  audio:
+    contentUrl: 04-pelekais.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 09f1102232fb140bcf46e1e4f362a2f4f02fc978f3b62e64140a97f4332e69c1
+    '@type': AudioObject
+    bitrate: 231 kbps
+    duration: PT3M27S
+- '@type': MusicRecording
+  position: 5
+  name: Predestinācija
+  audio:
+    contentUrl: 05-predestinacija.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 861b20b00967ffffc9bb7a0e0fefb7e0d5f0ebfbf65bc04e6f8aacc3412da3c6
+    '@type': AudioObject
+    bitrate: 235 kbps
+    duration: PT3M43S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

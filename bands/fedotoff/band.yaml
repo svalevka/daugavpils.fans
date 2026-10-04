@@ -44,6 +44,7 @@ description_lv: FEDOTOFF ir Daugavpils roka projekts, kuru izveidoja Daugavpils 
 sameAs:
 - https://www.facebook.com/fedotoffband/
 - https://chayka.lv/2019/04/05/fedotoff/
+- https://www.youtube.com/watch?v=vPLxkKn02So
 - https://archive.org/details/daugavpils-fans-fedotoff
 - https://archive.org/download/daugavpils-fans-fedotoff/daugavpils-fans-fedotoff_archive.torrent
 image:
@@ -58,4 +59,14 @@ image:
   caption_en: FEDOTOFF band photo
   caption_lv: Grupas FEDOTOFF foto
   depicts: []
-video: []
+video:
+- contentUrl: media/fedotoff-zhizn-prekrasna.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: b833f1148dd576333f6ca51bd2a417ba5bfb7644ee1fb23692a933515c0959f9
+  '@type': VideoObject
+  name: Жизнь прекрасна (Official Video)
+  bitrate: 716 kbps
+  duration: PT4M47S

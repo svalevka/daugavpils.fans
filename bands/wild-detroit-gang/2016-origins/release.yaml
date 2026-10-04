@@ -10,19 +10,127 @@ description: Дебютный студийный альбом группы Wild 
 description_en: Debut studio album by Wild Detroit Gang (2016).
 description_lv: Grupas Wild Detroit Gang debijas studijas albums (2016).
 sameAs:
-- https://wilddetroitgang.bandcamp.com/album/origins
+- https://www.draugiem.lv/wilddetroitgang/
 - https://archive.org/details/daugavpils-fans-wild-detroit-gang-2016-origins
 - https://archive.org/download/daugavpils-fans-wild-detroit-gang-2016-origins/daugavpils-fans-wild-detroit-gang-2016-origins_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: Origins
+  name: Wild Detroit
+  audio:
+    contentUrl: 01-wild-detroit.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1936383b18b1c2c2e7feee07afe3eed92cc15d42bcf9e6374b7f670e0c816c44
+    '@type': AudioObject
+    bitrate: 254 kbps
+    duration: PT5M5S
 - '@type': MusicRecording
   position: 2
-  name: Stay
+  name: I Am the Man
+  audio:
+    contentUrl: 02-i-am-the-man.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: aee48c59dd4167b5d892247db21f4176c9e53b4bbb1f3ee969a4f21c3ae34274
+    '@type': AudioObject
+    bitrate: 248 kbps
+    duration: PT2M52S
 - '@type': MusicRecording
   position: 3
-  name: Rock'n'Roll Night
+  name: Sunset
+  audio:
+    contentUrl: 03-sunset.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1ac88d2ce614b0799083bcade58abbd4126ba9fb06862680043d5cd01772e03d
+    '@type': AudioObject
+    bitrate: 127 kbps
+    duration: PT4M16S
+- '@type': MusicRecording
+  position: 4
+  name: Real Love Blues
+  audio:
+    contentUrl: 04-real-love-blues.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 06213e1551ac9c9136f817f55b1854e84f113bdaaae86e0f2636ddb3705316ab
+    '@type': AudioObject
+    bitrate: 231 kbps
+    duration: PT3M15S
+- '@type': MusicRecording
+  position: 5
+  name: Lady in the Dark
+  audio:
+    contentUrl: 05-lady-in-the-dark.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c0b934c1193ba1c2e01aa60ca1dcb71551eeabfe724132a8ed313565deeef811
+    '@type': AudioObject
+    bitrate: 235 kbps
+    duration: PT2M41S
+- '@type': MusicRecording
+  position: 6
+  name: That's My Lady
+  audio:
+    contentUrl: 06-that-s-my-lady.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ee80987ddef847bcc12cd6a6ac16702097bae260b28a0d5327a1b2f7d799afe2
+    '@type': AudioObject
+    bitrate: 234 kbps
+    duration: PT3M16S
+- '@type': MusicRecording
+  position: 7
+  name: Deal at Night
+  audio:
+    contentUrl: 07-deal-at-night.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fb8e53e89838b3ababe411df1f94d193b9993eeb23b2973f6d6dd074cd96cf53
+    '@type': AudioObject
+    bitrate: 229 kbps
+    duration: PT3M58S
+- '@type': MusicRecording
+  position: 8
+  name: Metal Thunder
+  audio:
+    contentUrl: 08-metal-thunder.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bfbeb2e075a7f17fdb6f4f882ae3966397d10794e9afe6b15bb07ed333eaecf8
+    '@type': AudioObject
+    bitrate: 236 kbps
+    duration: PT3M41S
+- '@type': MusicRecording
+  position: 9
+  name: Burn the Witcher
+  audio:
+    contentUrl: 09-burn-the-witcher.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0d6a18cd8f65d93410d9f43150dca6b1b4b1508c009137919bc6fa2402f8b7a7
+    '@type': AudioObject
+    bitrate: 237 kbps
+    duration: PT5M41S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

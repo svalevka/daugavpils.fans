@@ -10,22 +10,115 @@ description: Полноформатный студийный альбом гру
 description_en: Full-length studio album by YGODEH (2013).
 description_lv: Grupas YGODEH pilnmetrazas studijas albums (2013).
 sameAs:
+- https://ygodeh.bandcamp.com/album/the-experiment-interrupted
 - https://www.youtube.com/@ygodehband/videos
 - https://archive.org/details/daugavpils-fans-ygodeh-2013-the-experiment-interrupted
 - https://archive.org/download/daugavpils-fans-ygodeh-2013-the-experiment-interrupted/daugavpils-fans-ygodeh-2013-the-experiment-interrupted_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: Interrupted Experiment
+  name: To Down
+  audio:
+    contentUrl: 01-to-down.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a44e3388ea8141df9507e2b49b2ac7029078fa705426245ed7c6fbc151168971
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M50S
 - '@type': MusicRecording
   position: 2
-  name: Biomechanical Era
+  name: From On High
+  audio:
+    contentUrl: 02-from-on-high.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a978fd59158406cdb504a596af8567256eea370666c0118aa5b006a6d66a2ea0
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M24S
 - '@type': MusicRecording
   position: 3
-  name: Digital Dissection
+  name: Groove's Night
+  audio:
+    contentUrl: 03-groove-s-night.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 06684a5df214f1e8775685a27d85a77ce8a5ed36b75fd8d95c576d23c9eaed3b
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M57S
 - '@type': MusicRecording
   position: 4
-  name: Neural Collapse
+  name: Fragment 1
+  audio:
+    contentUrl: 04-fragment-1.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5296c92eab2addb4965c236eea73075d60fa1dc24382945aa9a3e9aa8fbd970f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT59S
+- '@type': MusicRecording
+  position: 5
+  name: Eternal Immortal
+  audio:
+    contentUrl: 05-eternal-immortal.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a8a491f4b4ff3a393cfca2d900c61542551c48c109267fb681f0df78c78003fb
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M35S
+- '@type': MusicRecording
+  position: 6
+  name: Fallen's
+  audio:
+    contentUrl: 06-fallen-s.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 927ea1a4029b087b4121ba2be169215867e5d4a66532fb7b39b64ecf9fbc3434
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M17S
+- '@type': MusicRecording
+  position: 7
+  name: Trance Orchestra
+  audio:
+    contentUrl: 07-trance-orchestra.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c1c0a22409a125eb27a36f88dcf916deb5171cd2d1ecb1a63364a6f79ef45aec
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M26S
+- '@type': MusicRecording
+  position: 8
+  name: Fragment 2
+  audio:
+    contentUrl: 08-fragment-2.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c3ccd6aba1b36d553cb29fffac1c145a5e18aa17516ce856da0b76c4bd12df5d
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT1M50S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

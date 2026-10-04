@@ -1,0 +1,163 @@
+'@type': MusicAlbum
+name: Кактус
+slug: 2025-kaktus
+datePublished: '2025'
+byArtist: fedotoff
+genre:
+- Alternative Rock
+- Folk Rock
+- Acoustic Rock
+description: Студийный альбом даугавпилсской группы FEDOTOFF (2025).
+description_en: Studio album by Daugavpils band FEDOTOFF (2025).
+description_lv: Daugavpils grupas FEDOTOFF studijas albums (2025).
+sameAs:
+- https://album.link/i/1823661893
+- https://archive.org/details/daugavpils-fans-fedotoff-2025-kaktus
+- https://archive.org/download/daugavpils-fans-fedotoff-2025-kaktus/daugavpils-fans-fedotoff-2025-kaktus_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Переживи
+  audio:
+    contentUrl: 01-perezhivi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 48e96f7b1b1f6fa7942a35f56f9dea12eebabb5ec13baa643471b86d62af5ea2
+    '@type': AudioObject
+    bitrate: 134 kbps
+    duration: PT4M53S
+- '@type': MusicRecording
+  position: 2
+  name: Колесо
+  audio:
+    contentUrl: 02-koleso.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ff4979894d22a6febf4185f4d4ab27c9a0a853e21edb676cb534415f6cc3028e
+    '@type': AudioObject
+    bitrate: 136 kbps
+    duration: PT4M16S
+- '@type': MusicRecording
+  position: 3
+  name: Тихое утро
+  audio:
+    contentUrl: 03-tihoe-utro.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7024c0976ed70cdaac399c40f6661db6bb97ea918e04fed67a21415faa7a8e9c
+    '@type': AudioObject
+    bitrate: 131 kbps
+    duration: PT4M11S
+- '@type': MusicRecording
+  position: 4
+  name: Ехал Грека через реку
+  audio:
+    contentUrl: 04-ehal-greka-cherez-reku.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c8cc53883a47ec2362586311d3c4ac212ea23b01676ca51ee7c7202308c78cd0
+    '@type': AudioObject
+    bitrate: 134 kbps
+    duration: PT3M54S
+- '@type': MusicRecording
+  position: 5
+  name: Буревестник
+  audio:
+    contentUrl: 05-burevestnik.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c5be3ebfe0858d054d77d690d6189b44e210786a71bfd24228f899107b7378ca
+    '@type': AudioObject
+    bitrate: 134 kbps
+    duration: PT5M46S
+- '@type': MusicRecording
+  position: 6
+  name: Песок
+  audio:
+    contentUrl: 06-pesok.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e67b4f91f6f82a77dbe8ec1f834bbe8e7f290201a476d6e5fb9d5e263b178ce0
+    '@type': AudioObject
+    bitrate: 140 kbps
+    duration: PT4M5S
+- '@type': MusicRecording
+  position: 7
+  name: Мужик
+  audio:
+    contentUrl: 07-muzhik.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7e0d66acb92199222b29db587fdabcdb0cfb0f9c034a5b50d3704178a46b2763
+    '@type': AudioObject
+    bitrate: 135 kbps
+    duration: PT5M30S
+- '@type': MusicRecording
+  position: 8
+  name: Подсолнухи
+  audio:
+    contentUrl: 08-podsolnuhi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6ae4212a209c1e135c7fd1186f8cb974de22ae90a11197fb77321f88e92fffa8
+    '@type': AudioObject
+    bitrate: 139 kbps
+    duration: PT4M46S
+- '@type': MusicRecording
+  position: 9
+  name: Повод
+  audio:
+    contentUrl: 09-povod.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f8dac963755c86712df9642e427c377253c98d30943cd271d3147f527987955d
+    '@type': AudioObject
+    bitrate: 133 kbps
+    duration: PT3M10S
+- '@type': MusicRecording
+  position: 10
+  name: Моё похмелье
+  audio:
+    contentUrl: 10-moe-pohmele.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 77a1c6abb9e00084d3f8d4713d70882154326322816a5a9b4fe065b0779979c6
+    '@type': AudioObject
+    bitrate: 137 kbps
+    duration: PT4M18S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 9294c2e95a22e160c063903f61454428420e16701945c0e225ae6bdccca279fc
+  '@type': ImageObject
+  caption: Обложка альбома Кактус
+  caption_en: Kaktus album cover
+  caption_lv: Kaktus albuma vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

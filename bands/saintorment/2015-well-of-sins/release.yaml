@@ -16,13 +16,134 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Well of Sins
+  name: Intothrasion
+  audio:
+    contentUrl: 01-intothrasion.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1d643ef2b524b0ed011df8d3f8491bfba1063911014211e4aa8ed8791475dea7
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT1M5S
 - '@type': MusicRecording
   position: 2
-  name: Madness
+  name: In Denial
+  audio:
+    contentUrl: 02-in-denial.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b9a959edd4d0d1f428642f768998dc24bc0d92a5368cc52709d312d969c5a864
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M31S
 - '@type': MusicRecording
   position: 3
-  name: Apocalypse
+  name: Witch's Promise
+  audio:
+    contentUrl: 03-witchs-promise.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7242711fe391f7905ae619439a308f9092494769b225cc40ad33d11b587f8046
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M35S
+- '@type': MusicRecording
+  position: 4
+  name: Son Of The Wasteland
+  audio:
+    contentUrl: 04-son-of-the-wasteland.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fc098cda7bec4ef41ac88c0a5ea1335813f919bf4571fb855abad2aea22d2cb1
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M2S
+- '@type': MusicRecording
+  position: 5
+  name: Bulldozing Metal
+  audio:
+    contentUrl: 05-bulldozing-metal.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e54c475b7b40b0a00c4e8cd9ac46d38d3946f3795a3c06692cb299973bfa54ba
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M52S
+- '@type': MusicRecording
+  position: 6
+  name: Freaks
+  audio:
+    contentUrl: 06-freaks.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 05dec11e7e7ff2092547de012eca0f9d782b95adb2d5daf3978fc12e22f8d522
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M46S
+- '@type': MusicRecording
+  position: 7
+  name: Move In Time Of Groove
+  audio:
+    contentUrl: 07-move-in-time-of-groove.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3cb0d07170a026bebad19a35e19c810e2b528ba10ebebbcc19686862f77417fe
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M55S
+- '@type': MusicRecording
+  position: 8
+  name: Empty Sign
+  audio:
+    contentUrl: 08-empty-sign.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 18f28560a2e59db22ed1129db57a7635922dc13f9d3a7c6da77c5abd29f30746
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M6S
+- '@type': MusicRecording
+  position: 9
+  name: For The Long Time
+  audio:
+    contentUrl: 09-for-the-long-time.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9701e1df059469d20184a76fbca25034f34973fcc473be07346054996d0929aa
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M24S
+- '@type': MusicRecording
+  position: 10
+  name: Freedom Of Eternity
+  audio:
+    contentUrl: 10-freedom-of-eternity.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 95fc45256d9567cb9458d47fa996d54a20f15e1b25a9f58c85f9c10e0024bd0d
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT1M57S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

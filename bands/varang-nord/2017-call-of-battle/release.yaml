@@ -15,13 +15,172 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Intro
+  name: Call of Battle
+  alternateName: Зов битвы
+  audio:
+    contentUrl: 01-call-of-battle.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: debdf65824d9e34ec21170bc7f8e65beb83e94aacfa04fb6bc17a0ceaa509b5f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT6M24S
 - '@type': MusicRecording
   position: 2
-  name: Call of Battle
+  name: The Northmen (Ziemeļvīri)
+  alternateName: Северяне
+  audio:
+    contentUrl: 02-the-northmen.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3a2261e4fda413b4fba944aea674eb9cdbd7cc4d982a0597e5ce555935d7fe78
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M36S
 - '@type': MusicRecording
   position: 3
-  name: Crown of the Ice
+  name: Saga I
+  alternateName: Сага I
+  audio:
+    contentUrl: 03-saga-i.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a6b836589f90bda0070cd89dfded8f0e79e92e583d852a57c3cc49a968a182a1
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M2S
+- '@type': MusicRecording
+  position: 4
+  name: Saga II
+  alternateName: Сага II
+  audio:
+    contentUrl: 04-saga-ii.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b867eb4c4e46fd1fe52310429cb0c51771d1002cca3b6e81ad6ad96490fcc8c5
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M48S
+- '@type': MusicRecording
+  position: 5
+  name: Saga III
+  alternateName: Сага III
+  audio:
+    contentUrl: 05-saga-iii.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: dabed1b82b1d8c64d01781667d96a5c49ff10287b51e390d30a6576f88e63921
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M41S
+- '@type': MusicRecording
+  position: 6
+  name: False God
+  alternateName: Ложный бог
+  audio:
+    contentUrl: 06-false-god.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 18f53625278071b586c8a904f3d804dbc2f9e5fd0ec14d1bc5cc143fea23b599
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M57S
+- '@type': MusicRecording
+  position: 7
+  name: Beard
+  alternateName: Борода
+  audio:
+    contentUrl: 07-beard.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1f43d84ac7e9f576d157f191bb9de39ce4ab99802c1c0f05814982e15ba25f0f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M10S
+- '@type': MusicRecording
+  position: 8
+  name: Mead Feast
+  alternateName: Медовый пир
+  audio:
+    contentUrl: 08-mead-feast.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 985982bf94937a59abc7ab84c35de3ae3e7891121a83312b5bf1639bf12c2e2a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M4S
+- '@type': MusicRecording
+  position: 9
+  name: Ale Warrior
+  alternateName: Воин браги
+  audio:
+    contentUrl: 09-ale-warrior.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: dc4b9faded313abe673f679a3033ea1527e3cc2f97f40de0c7f217e13179da5c
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M24S
+- '@type': MusicRecording
+  position: 10
+  name: Ale Brewer
+  alternateName: Пивовар
+  audio:
+    contentUrl: 10-ale-brewer.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 04c6d18d29adfaec30fdb01e86a422a2957b778a9a8898ee1702ea91d15d859b
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M40S
+- '@type': MusicRecording
+  position: 11
+  name: Ragnarok
+  alternateName: Рагнарок
+  audio:
+    contentUrl: 11-ragnarok.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d0ff497ba7335bd65832e5464d336f97f23ac486f28d24f34aec942c2216385e
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M21S
+- '@type': MusicRecording
+  position: 12
+  name: Revival
+  alternateName: Возрождение
+  audio:
+    contentUrl: 12-revival.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e1a36695cfa1b0381f21579f2afb306fe6eb85f93a97411e114b7a26481717b2
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M8S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

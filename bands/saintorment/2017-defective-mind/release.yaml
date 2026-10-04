@@ -15,13 +15,134 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Defective Mind
+  name: Physical Force
+  audio:
+    contentUrl: 01-physical-force.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a704f999ee7e2da1821a2948a89a6621342b6d45708aec9a73e56962c69b83e3
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M9S
 - '@type': MusicRecording
   position: 2
-  name: Killing Machine
+  name: Defective Mind
+  audio:
+    contentUrl: 02-defective-mind.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fce5a94bddd0a23285e9d8f23814ab4a6120caf6098f80c24cc159ca31e26362
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M58S
 - '@type': MusicRecording
   position: 3
-  name: Mental War
+  name: We Are
+  audio:
+    contentUrl: 03-we-are.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 722d7ee69b69f471095367e660d8721d4a5d450a9779fd3b763b3b75ed5c6f17
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M31S
+- '@type': MusicRecording
+  position: 4
+  name: Strong Enough
+  audio:
+    contentUrl: 04-strong-enough.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 34d118aa712ce074d881b10a63241cbcff896ec7c93bfade08241c80a452c5ee
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M6S
+- '@type': MusicRecording
+  position: 5
+  name: Never
+  audio:
+    contentUrl: 05-never.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1d5d183de64487b69a87d61684e74acfe664e9c9b39b9cfd18aa57519df6a0b5
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT6M8S
+- '@type': MusicRecording
+  position: 6
+  name: Zerofy
+  audio:
+    contentUrl: 06-zerofy.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f2cb32e9eb3119e4ed2b070c81fac7e10d9803ca29f5ff6e2077046aa2de57d4
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M36S
+- '@type': MusicRecording
+  position: 7
+  name: '...Dies at the Black Night'
+  audio:
+    contentUrl: 07-dies-at-the-black-night.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2249bf7c1cec3a5492119a92416b1b0b3b507a4b04b81b93ea419c5e85da39b7
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT6M0S
+- '@type': MusicRecording
+  position: 8
+  name: Mood Pyrexia
+  audio:
+    contentUrl: 08-mood-pyrexia.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f097084804cee5f2b3d2948da2253bc1f25c2f4f2370d383cdd9723742041bbf
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M45S
+- '@type': MusicRecording
+  position: 9
+  name: Final Hour
+  audio:
+    contentUrl: 09-final-hour.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3f86b268eceb544691548973056488407bbff56cfd605505ae6c1d8de395d4c8
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M41S
+- '@type': MusicRecording
+  position: 10
+  name: Ai, kā man patīk
+  audio:
+    contentUrl: 10-ai-ka-man-patik.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b65a3cceaef13595cbd727a6dcabb2b819ff3660ef963f654d277ed83d0d8fee
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M59S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

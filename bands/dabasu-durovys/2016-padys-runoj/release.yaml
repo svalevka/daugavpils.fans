@@ -1,0 +1,166 @@
+'@type': MusicAlbum
+name: Pādys Runoj
+slug: 2016-padys-runoj
+datePublished: '2016'
+byArtist: dabasu-durovys
+genre:
+- Pop-Rock
+- Folk Rock
+description: Четвертый студийный альбом группы Dabasu Durovys (2016), выпущенный к
+  10-летию коллектива.
+description_en: Fourth studio album by Dabasu Durovys (2016), released on the band's
+  10th anniversary.
+description_lv: Ceturtais grupas Dabasu Durovys studijas albums (2016), kas izdots
+  par godu grupas 10 gadu jubilejai.
+sameAs:
+- https://dabasudurovys.bandcamp.com/album/p-dys-runoj
+- https://dabasudurovys.lv/
+- https://archive.org/details/daugavpils-fans-dabasu-durovys-2016-padys-runoj
+- https://archive.org/download/daugavpils-fans-dabasu-durovys-2016-padys-runoj/daugavpils-fans-dabasu-durovys-2016-padys-runoj_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Uzvedums
+  audio:
+    contentUrl: 01-uzvedums.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7fe94937dce01a5c375a607d97cd776738e13d01f9ecd6bdc0c234a124cc1fe9
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M1S
+- '@type': MusicRecording
+  position: 2
+  name: Pādys
+  audio:
+    contentUrl: 02-padys.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6e656744b5f4c9ec3976e8c4e01ab00f556c33c95f192c714a4826d14565fe54
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M36S
+- '@type': MusicRecording
+  position: 3
+  name: Rācija
+  audio:
+    contentUrl: 03-racija.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6027ab52023c376fd8528642e31d5edf5e23d586635dbb3adbd5c254c21aec42
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M5S
+- '@type': MusicRecording
+  position: 4
+  name: Nav mīra
+  audio:
+    contentUrl: 04-nav-mira.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ba16803923f55836be546e9052433a7de4bbd95c0bbd9c1cce354f3914446aba
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M20S
+- '@type': MusicRecording
+  position: 5
+  name: Klusums
+  audio:
+    contentUrl: 05-klusums.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8598a697c7c63ba5d531fb280b981e98c91e4d864a2c8f086fe73853a99a3cac
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M45S
+- '@type': MusicRecording
+  position: 6
+  name: Rubikons
+  audio:
+    contentUrl: 06-rubikona.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f8e9b39f73204ae175fe6b2ed1579563aae6a3c5e67b819e8d7ade75125cf70c
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M30S
+- '@type': MusicRecording
+  position: 7
+  name: Augstumā
+  audio:
+    contentUrl: 07-augstuma.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 43b21683740b99e4f91412e38e22b6f3487e7213a6eec49c9e7a5ed304ff04d7
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M23S
+- '@type': MusicRecording
+  position: 8
+  name: Dori tai
+  audio:
+    contentUrl: 08-dori-tai.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2291ae5dc697d77075e5d49a36dade745b1c64fe69da77c2e39b746f42a86175
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M22S
+- '@type': MusicRecording
+  position: 9
+  name: Šyupuldzīsma
+  audio:
+    contentUrl: 09-supuldziesma.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bbdbdc2db8d4503e38f47319aeec47b5cefde62a56f662da746cd7cdc77e3d05
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M59S
+- '@type': MusicRecording
+  position: 10
+  name: Suokums
+  audio:
+    contentUrl: 10-suokums.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d917a9e6b9ea3bb8bc340be1086ad77c1c8af177d94ccaf494ae12234b3a3c78
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M33S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 26a4487207e50e4b637bd49e786341f9376a01966c43824d49b61b3aacf7313a
+  '@type': ImageObject
+  caption: Обложка альбома Pādys Runoj
+  caption_en: Padys Runoj album cover
+  caption_lv: Padys Runoj albuma vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

@@ -1,0 +1,157 @@
+'@type': MusicAlbum
+name: Defeating Scheme — Becoming Divine
+slug: 2009-defeating-scheme-becoming-divine
+datePublished: '2009'
+byArtist: disease
+genre:
+- Progressive Metal
+- Symphonic Metal
+description: 'Финальный полноформатный альбом даугавпилсской progressive/symphonic
+  metal группы Disease (2009). Записан в составе: Максим Гринчук (вокал), Павел «Питон»
+  Степанов (гитара, бас, клавишные, программирование ударных).'
+description_en: 'Final full-length album by Daugavpils progressive/symphonic metal
+  band Disease (2009). Recorded with the lineup: Maxim Grinchuk (vocals), Pavel "Piton"
+  Stepanov (guitar, bass, keyboards, drum programming).'
+description_lv: 'Daugavpils progresiva simfometala grupas Disease nosleguma pilnmetrazas
+  albums (2009). Ierakstits sastava: Maksims Grincuks (vokals), Pavels "Pitons" Stepanovs
+  (gitara, bass, taustininstrumenti, bungu programmesana).'
+sameAs:
+- https://www.youtube.com/watch?v=bp5-hit1Ggs
+- https://www.metal-archives.com/albums/Disease/Defeating_Scheme_-_Becoming_Divine/238490
+- https://www.discogs.com/release/9152808-Disease-Defeating-Scheme-Becoming-Divine
+- https://archive.org/details/daugavpils-fans-disease-2009-defeating-scheme-becoming-divine
+- https://archive.org/download/daugavpils-fans-disease-2009-defeating-scheme-becoming-divine/daugavpils-fans-disease-2009-defeating-scheme-becoming-divine_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Divine Scheme
+  audio:
+    contentUrl: 01-divine-scheme.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 629164bbfa8c4fcce6e4cdc21d088a6266cb0ddcfe6666148144ee1c71e8bcf6
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M42S
+- '@type': MusicRecording
+  position: 2
+  name: Fallen We Are
+  audio:
+    contentUrl: 02-fallen-we-are.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0d6a31f1842f7a9de01e47dd3550bc7a2bd5049f1409ced8a0d536c1af45d442
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M20S
+- '@type': MusicRecording
+  position: 3
+  name: Prison of Mind
+  audio:
+    contentUrl: 03-prison-of-mind.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7fb21aef6b72ef81a06526fd903debd342607aacc54611f7cf89e154bb0960dd
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M47S
+- '@type': MusicRecording
+  position: 4
+  name: Conquering Walls of Shambala
+  audio:
+    contentUrl: 04-conquering-walls-of-shambala.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a0ffa59a3c096a8ae8e0fe2c11f971f9b3704b4659584bfeebd2564dad67122f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M59S
+- '@type': MusicRecording
+  position: 5
+  name: Big Water
+  audio:
+    contentUrl: 05-big-water.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b70860177d470565ccf2c255f452bfb948dec0a6ddef5dd3d87152eb65d4cb6f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M53S
+- '@type': MusicRecording
+  position: 6
+  name: Out of Human Form
+  audio:
+    contentUrl: 06-out-of-human-form.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 66a846e5cf83707119f708bed59f1508ff6aafff8d4a59b68dd8b14e5a5c1e32
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M55S
+- '@type': MusicRecording
+  position: 7
+  name: Dust of Words
+  audio:
+    contentUrl: 07-dust-of-words.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 33a0479f1ff16e27514c1f4fbdbdb4be49a6c269fe9e4ff05103368c814d1569
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M55S
+- '@type': MusicRecording
+  position: 8
+  name: Circle Complete
+  audio:
+    contentUrl: 08-circle-complete.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 563f8547849acdc3daf374a7fc1a26d65a99ec8ef227630f2438af8bc9740252
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M45S
+- '@type': MusicRecording
+  position: 9
+  name: Conquering Walls of Shambala (Alternate Version)
+  audio:
+    contentUrl: 09-conquering-walls-of-shambala-alternate-version.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9cce30c5f2640b3cb2a4047f4e9126168dcb8595432e3321acb1781c5ffd24b1
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M55S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 53fa99c14dbd530921fdbdbad454610ce49b4497e023552cbd2ec5c0ac68cdfe
+  '@type': ImageObject
+  caption: Обложка альбома Defeating Scheme — Becoming Divine
+  caption_en: Defeating Scheme — Becoming Divine album cover
+  caption_lv: Defeating Scheme — Becoming Divine albuma vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

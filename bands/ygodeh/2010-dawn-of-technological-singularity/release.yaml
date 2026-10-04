@@ -17,13 +17,108 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Technological Singularity
+  name: Intro
+  audio:
+    contentUrl: 01-intro.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fc730ed691edcdbfac220f926ebdc4bcae4c3c1d74c1946d16264f047875d7bc
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT1M21S
 - '@type': MusicRecording
   position: 2
-  name: Cybernetic Mind
+  name: Thus Is the Will of the Swarm
+  audio:
+    contentUrl: 02-thus-is-the-will-of-the-swarm.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b074239510a9ce5afbc16b42638b997a60e04c234faf5206e336c31b4712d694
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M19S
 - '@type': MusicRecording
   position: 3
-  name: Artificial Soul
+  name: Lord of Rays
+  audio:
+    contentUrl: 03-lord-of-rays.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 348f6c316bcaf768c4d3775fdf765d614a70cb4d118c7a2e32168f4bb8b5a8e1
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M26S
+- '@type': MusicRecording
+  position: 4
+  name: The Red Plague
+  audio:
+    contentUrl: 04-the-red-plague.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: acc38f2ed38f6f6da4fcd1d0062bb17130f1e53f2a53cce83ee9a11140abcd3e
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M9S
+- '@type': MusicRecording
+  position: 5
+  name: Before the Skies Are Painted Black
+  audio:
+    contentUrl: 05-before-the-skies-are-painted-black.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cbeac27ad6c6cd19ad58c9c7b2ebe6d044f179e5a08598e74cd2d9927475370d
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M54S
+- '@type': MusicRecording
+  position: 6
+  name: Matrix Cracked
+  audio:
+    contentUrl: 06-matrix-cracked.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 567c7cdd2a23bf5ab40b57eb9937fdd01c796f8979660d7caaf1520ae11efaba
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M36S
+- '@type': MusicRecording
+  position: 7
+  name: Misery Index
+  audio:
+    contentUrl: 07-misery-index.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 94d0d49660452e7cb4920d92b0921eb03df2061f370413c6934581bb7d81de05
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M45S
+- '@type': MusicRecording
+  position: 8
+  name: Tilting at Windmills
+  audio:
+    contentUrl: 08-tilting-at-windmills.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 52119b1bc4b718a4f82f1c951af8cc84f7e80bab3c26a7d146d9746c23901f1a
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M17S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

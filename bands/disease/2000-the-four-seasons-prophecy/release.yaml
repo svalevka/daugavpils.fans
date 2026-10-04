@@ -1,0 +1,146 @@
+'@type': MusicAlbum
+name: The Four Seasons Prophecy
+slug: 2000-the-four-seasons-prophecy
+datePublished: '2000'
+byArtist: disease
+genre:
+- Symphonic Black Metal
+- Extreme Metal
+description: 'Дебютный полноформатный альбом даугавпилсской sympho-black metal группы
+  Disease (2000). Записан в составе: Питон (гитара), Антон Савон (гитара), Вадим Ветрин
+  (ударные), Роман Максимов (бас), Максим Гринчук (вокал, тексты, гитара), Владимир
+  Вайнюс (клавишные).'
+description_en: 'Debut full-length album by Daugavpils symphonic black metal band
+  Disease (2000). Recorded with the lineup: Piton (guitar), Anton Savon (guitar),
+  Vadim Vetrin (drums), Roman Maksimov (bass), Maxim Grinchuk (vocals, lyrics, guitar),
+  Vladimir Vainus (keyboards).'
+description_lv: 'Daugavpils simfoblekmetala grupas Disease debijas pilnmetrazas albums
+  (2000). Ierakstits sastava: Pitons (gitara), Antons Savons (gitara), Vadims Vetrins
+  (bungas), Romans Maksimovs (bass), Maksims Grincuks (vokals, teksti, gitara), Vladimirs
+  Vainuss (taustininstrumenti).'
+sameAs:
+- https://www.youtube.com/watch?v=mozL6EbcQEo
+- https://www.metal-archives.com/albums/Disease/The_Four_Seasons_Prophecy/61533
+- https://archive.org/details/daugavpils-fans-disease-2000-the-four-seasons-prophecy
+- https://archive.org/download/daugavpils-fans-disease-2000-the-four-seasons-prophecy/daugavpils-fans-disease-2000-the-four-seasons-prophecy_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Autumnal Cycle
+  audio:
+    contentUrl: 01-autumnal-cycle.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6d410a7f515f7fb55c6ae9f42f90c7b449bdab92de5ded3ccc7a9d32a51aece3
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M39S
+- '@type': MusicRecording
+  position: 2
+  name: Vernal
+  audio:
+    contentUrl: 02-vernal.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 880e28d0a482e28e4af8fc0bdb29cde62bc33f12fac5b01f266e9742df136e44
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M36S
+- '@type': MusicRecording
+  position: 3
+  name: Sterile Prophet
+  audio:
+    contentUrl: 03-sterile-prophet.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 37b5ecd047f7bcd0419c65fe22fb454d6e818542ccff83f267ed48494e25e38a
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M44S
+- '@type': MusicRecording
+  position: 4
+  name: Her Majesty Winter
+  audio:
+    contentUrl: 04-her-majesty-winter.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6a088c58886dd7b06c0ba20e8f1e187ed225f96accbf3fab67dbf7a3e9626752
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M50S
+- '@type': MusicRecording
+  position: 5
+  name: The Prophecy of Four Seasons
+  audio:
+    contentUrl: 05-the-prophecy-of-four-seasons.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 65f576db4a04e0b87773ee6c4efc41b64dd927052270b1c56fd49471d5b9c968
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M14S
+- '@type': MusicRecording
+  position: 6
+  name: Anton Melody
+  audio:
+    contentUrl: 06-anton-melody.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 52e75964953461c445d78e58e3753fecceaef5bbf10c8fce20e5ed9692c06724
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M42S
+- '@type': MusicRecording
+  position: 7
+  name: Eternal Immortal
+  audio:
+    contentUrl: 07-eternal-immortal.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5fe2027ad9b3a99b2e7572f2d0f8f3cfd79e291697940689108f37287ac63ffd
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M49S
+- '@type': MusicRecording
+  position: 8
+  name: Centuries of World
+  audio:
+    contentUrl: 08-centuries-of-world.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f81f6c3a6b4e5b148d93eef35156620284e8a39408315a061fdc3bb5a36fe874
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M4S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c014fb1279f02348d0d96638291910c46b9a18e3b3df4bf27500ff73f2e9901f
+  '@type': ImageObject
+  caption: Обложка альбома The Four Seasons Prophecy
+  caption_en: The Four Seasons Prophecy album cover
+  caption_lv: The Four Seasons Prophecy albuma vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

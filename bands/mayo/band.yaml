@@ -54,7 +54,7 @@ description_lv: MaYo ir Daugavpils rokgrupa, ko 2023. gada izveidoja dziedataja 
   vokalu. 2024. gada grupa izdeva debijas albumu '...On The Puces Street...', kas
   nosaukts par godu Puces ielai Daugavpili.
 sameAs:
-- https://www.youtube.com/results?search_query=mayo+daugavpils
+- https://www.youtube.com/watch?v=RJg2N_uazEg
 - https://archive.org/details/daugavpils-fans-mayo
 - https://archive.org/download/daugavpils-fans-mayo/daugavpils-fans-mayo_archive.torrent
 image:
@@ -69,4 +69,14 @@ image:
   caption_en: MaYo band photo
   caption_lv: Grupas MaYo foto
   depicts: []
-video: []
+video:
+- contentUrl: media/mayo-tici.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 519ac10e2d14c81ea5530aca109f7f6e7778cd5817d939d4452fad9ddcac955a
+  '@type': VideoObject
+  name: Tici (Official Music Video)
+  bitrate: 622 kbps
+  duration: PT2M34S

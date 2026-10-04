@@ -6,9 +6,9 @@ byArtist: elpa
 genre:
 - Art Rock
 - Progressive Rock
-description: Легендарная рок-сюита группы «Элпа» на стихи Леона Бриедиса (1986).
-description_en: Legendary rock suite by ELPA to lyrics by Leons Briedis (1986).
-description_lv: Grupas ELPA legendara roksuita ar Leona Brieda vardiem (1986).
+description: Легендарная рок-сюита группы «Элпа» на стихи Леонида Брейкша (1986).
+description_en: Legendary rock suite by ELPA to lyrics by Leonīds Breikšs (1986).
+description_lv: Grupas ELPA legendara roksuita ar Leonida Breiksa vardiem (1986).
 sameAs:
 - https://www.discogs.com/artist/2301980-Elpa
 - https://archive.org/details/daugavpils-fans-elpa-1986-ticiba
@@ -16,16 +16,17 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Ezers
-- '@type': MusicRecording
-  position: 2
-  name: Senā dziesma
-- '@type': MusicRecording
-  position: 3
-  name: Ticība
-- '@type': MusicRecording
-  position: 4
-  name: Miers
+  name: Ticība (Kantāte)
+  audio:
+    contentUrl: 01-ticiba.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d9fbf263d02594f928426b03b46cbcae6cb657a8ca4fbd78848e95cbcff75a52
+    '@type': AudioObject
+    bitrate: 185 kbps
+    duration: PT37M7S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

@@ -1,5 +1,5 @@
 '@type': MusicAlbum
-name: Lepetnīks
+name: Ļepetnīks
 slug: 2008-lepetniks
 datePublished: '2008'
 byArtist: dabasu-durovys
@@ -10,19 +10,154 @@ description: Дебютный студийный альбом группы Dabas
 description_en: Debut studio album by Dabasu Durovys (2008).
 description_lv: Grupas Dabasu Durovys debijas studijas albums (2008).
 sameAs:
+- https://dabasudurovys.bandcamp.com/album/epetn-ks
 - https://dabasudurovys.lv/
 - https://archive.org/details/daugavpils-fans-dabasu-durovys-2008-lepetniks
 - https://archive.org/download/daugavpils-fans-dabasu-durovys-2008-lepetniks/daugavpils-fans-dabasu-durovys-2008-lepetniks_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: Lepetnīks
+  name: Bezpruotā
+  audio:
+    contentUrl: 01-bezpruota.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0eb8919a7a3f038614107254c22f285746509c103dad1b87f1c5a1c88f97ceba
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M16S
 - '@type': MusicRecording
   position: 2
-  name: Pavasars
+  name: Čajs Ar madu
+  audio:
+    contentUrl: 02-cajs-ar-madu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ab9a9286773e218cd96e4837027a0a9c156b8362810fcd4bdd21c2b53076abd3
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M43S
 - '@type': MusicRecording
   position: 3
-  name: Daugavpils
+  name: Vipingys blūzs
+  audio:
+    contentUrl: 03-vipingys-bluzs.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d852b342e7964fcc56fe19fcf53b1e0b5a668e7339bc494b74a1ab270d0367ae
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M38S
+- '@type': MusicRecording
+  position: 4
+  name: Soldons leits
+  audio:
+    contentUrl: 04-soldons-leits.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a0ffdfd068727c1c7ce170893f9aa09b59884fa90c510495acdb530326db9f7e
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M31S
+- '@type': MusicRecording
+  position: 5
+  name: Zemeņu Zapte
+  audio:
+    contentUrl: 05-zemenu-zapte.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: dbb34a25f4d42c9a0b034fb44c5a20abae1e87d8b40715efb013e76a9bf685f3
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M51S
+- '@type': MusicRecording
+  position: 6
+  name: Uobeļi kreit
+  audio:
+    contentUrl: 06-uobeli-kreit.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5734876b73f8c09243e2100bc28941d674c7ccad2f119e211a5f424592f7d93f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M23S
+- '@type': MusicRecording
+  position: 7
+  name: Oktobris
+  audio:
+    contentUrl: 07-oktobris.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1fb874b009d1fa69fa1a3f251ea4d3a6152d696be61a1dc3c41456901167f9e0
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M38S
+- '@type': MusicRecording
+  position: 8
+  name: Saskuobis pīns
+  audio:
+    contentUrl: 08-saskuobis-pins.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bbbeeb07373b6560bac0ac0955ba97a0ac0216a9e23503b66bc11875f5fe46ef
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M31S
+- '@type': MusicRecording
+  position: 9
+  name: Trejūs naktī
+  audio:
+    contentUrl: 09-trejus-nakti.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 00f7320a59ea352b3a109a97b373e7acc72ed14ee50efd3b8d2bcbcf3baf1577
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M28S
+- '@type': MusicRecording
+  position: 10
+  name: Sirds Syt lānuok
+  audio:
+    contentUrl: 10-sirds-syt-lanuok.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6992121a3886f9835cb0da86f6391a532f1a0210b7a44555e08697afacb72d9a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M28S
+- '@type': MusicRecording
+  position: 11
+  name: Maņ Nav
+  audio:
+    contentUrl: 11-man-nav.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1ba86eb61cd875b0ad1f51a87af73f03ad3f843a2799ce4b82b64ce37c2f28c4
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M12S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

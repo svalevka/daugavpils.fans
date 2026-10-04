@@ -50,7 +50,7 @@ description_lv: Robotplant bija atmosferiska sugaze un indie roka grupa, ko Daug
   Reaction (ieraksti saglabajusies DunaburgFM lentas) un 2010. gada izdeva pilnmetrazas
   albumu 'Seen and Felt', prezentejot to Nabaklab Riga.
 sameAs:
-- https://www.youtube.com/results?search_query=robotplant+seen+and+felt
+- https://www.youtube.com/watch?v=azWcoZ9wbHE
 - https://archive.org/details/daugavpils-fans-robotplant
 - https://archive.org/download/daugavpils-fans-robotplant/daugavpils-fans-robotplant_archive.torrent
 image:
@@ -65,4 +65,14 @@ image:
   caption_en: Robotplant band photo
   caption_lv: Grupas Robotplant foto
   depicts: []
-video: []
+video:
+- contentUrl: media/robotplant-the-things.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 587cbd3da110be7682ca9f2b4d3ed9992bb3d34e3f23f2cca1a4fa13e25f7c7a
+  '@type': VideoObject
+  name: The Things (Live)
+  bitrate: 541 kbps
+  duration: PT5M18S

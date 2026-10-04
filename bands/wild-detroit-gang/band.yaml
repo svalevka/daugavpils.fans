@@ -57,6 +57,7 @@ description_lv: Wild Detroit Gang ir Daugavpils hardroka un bluzroka grupa, kuru
 sameAs:
 - https://wilddetroitgang.bandcamp.com/
 - https://www.youtube.com/c/WildDetroitGang
+- https://www.youtube.com/watch?v=79sZ_3Toc3o
 - https://archive.org/details/daugavpils-fans-wild-detroit-gang
 - https://archive.org/download/daugavpils-fans-wild-detroit-gang/daugavpils-fans-wild-detroit-gang_archive.torrent
 image:
@@ -71,4 +72,14 @@ image:
   caption_en: Wild Detroit Gang band photo
   caption_lv: Grupas Wild Detroit Gang foto
   depicts: []
-video: []
+video:
+- contentUrl: media/wild-detroit-gang-pagatnes-veja.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2fc215d7c9f076e94274060ad4296bd5c87503ebd20cc82f79b2362f3f9fb193
+  '@type': VideoObject
+  name: Pagātnes vējā (Official Video)
+  bitrate: 477 kbps
+  duration: PT3M34S

@@ -6,27 +6,134 @@ byArtist: robotplant
 genre:
 - Shoegaze
 - Indie Rock
-description: Полноформатный студийный альбом даугавпилсской шугейз-группы Robotplant
-  (2010).
-description_en: Full-length studio album by Daugavpils shoegaze outfit Robotplant
-  (2010).
-description_lv: Daugavpils sugaze grupas Robotplant pilnmetrazas studijas albums (2010).
+- Post-Punk
+description: Дебютный полноформатный студийный альбом даугавпилсской шугейз/инди-рок
+  группы Robotplant (2010).
+description_en: Debut full-length studio album by Daugavpils shoegaze/indie rock band
+  Robotplant (2010).
+description_lv: Daugavpils sugēza un indiroka grupas Robotplant debijas pilnmetrazas
+  studijas albums (2010).
 sameAs:
 - https://archive.org/details/daugavpils-fans-robotplant-2010-seen-and-felt
 - https://archive.org/download/daugavpils-fans-robotplant-2010-seen-and-felt/daugavpils-fans-robotplant-2010-seen-and-felt_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: Seen and Felt
+  name: Once More
+  audio:
+    contentUrl: 01-once-more.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 848bf035a5a4f11c53b802115f6abb94bda007e2ff5fc3970bfb5d56276ddd29
+    '@type': AudioObject
+    bitrate: 245 kbps
+    duration: PT3M12S
 - '@type': MusicRecording
   position: 2
-  name: Slow Dive
+  name: Runnin'
+  audio:
+    contentUrl: 02-runnin.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7cb5e999462708abcc950bb7b53851a7e7f461fe297dbf5270fcac1d35ed0a14
+    '@type': AudioObject
+    bitrate: 231 kbps
+    duration: PT5M6S
 - '@type': MusicRecording
   position: 3
-  name: Echo Chamber
+  name: Quicksilver Queen
+  audio:
+    contentUrl: 03-quicksilver-queen.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 507b5da0f2c80d62766a952605f07d3a6658b3d52cd30ced3e236de8df77fe71
+    '@type': AudioObject
+    bitrate: 234 kbps
+    duration: PT4M54S
 - '@type': MusicRecording
   position: 4
-  name: Morning Light
+  name: Inout
+  audio:
+    contentUrl: 04-inout.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: db0a75a26c179daff8558c46511b41f68f115ce75bfe7fee0e69a2509cb2bf9d
+    '@type': AudioObject
+    bitrate: 234 kbps
+    duration: PT3M43S
+- '@type': MusicRecording
+  position: 5
+  name: Above the Trees
+  audio:
+    contentUrl: 05-above-the-trees.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0545c0481d45722740f4ab7f181b341ba1d369328269e17b2883f081139635b0
+    '@type': AudioObject
+    bitrate: 232 kbps
+    duration: PT4M16S
+- '@type': MusicRecording
+  position: 6
+  name: Riverflown
+  audio:
+    contentUrl: 06-riverflown.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0a56da6cbab2a84339cab7f5dd05de2e719031a19bedef836076a42a985ee333
+    '@type': AudioObject
+    bitrate: 232 kbps
+    duration: PT3M51S
+- '@type': MusicRecording
+  position: 7
+  name: Apostrophe
+  audio:
+    contentUrl: 07-apostrophe.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b178bbb6d1d50b85f550aa608da606436b42ec503601da69221f517f2ff20956
+    '@type': AudioObject
+    bitrate: 244 kbps
+    duration: PT1M45S
+- '@type': MusicRecording
+  position: 8
+  name: Denis
+  audio:
+    contentUrl: 08-denis.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e955fd0902e033c1d18f2a80ca186396bf74c4a88f4a40a422825656c3f633ff
+    '@type': AudioObject
+    bitrate: 231 kbps
+    duration: PT3M21S
+- '@type': MusicRecording
+  position: 9
+  name: Guest of Honour
+  audio:
+    contentUrl: 09-guest-of-honour.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b9a42708808df39c90b499cb0c26a02c9f815f2bbed915ee6efa1b8f1e8b33d0
+    '@type': AudioObject
+    bitrate: 239 kbps
+    duration: PT3M52S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

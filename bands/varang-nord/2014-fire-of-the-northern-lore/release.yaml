@@ -10,19 +10,94 @@ description: Дебютный студийный альбом даугавпил
 description_en: Debut studio album by Daugavpils folk metal band Varang Nord (2014).
 description_lv: Daugavpils folkmetala grupas Varang Nord debijas studijas albums (2014).
 sameAs:
-- https://varangnord.bandcamp.com/album/fire-of-the-northern-lore
+- https://varangnord.bandcamp.com/album/fire-of-the-north
 - https://archive.org/details/daugavpils-fans-varang-nord-2014-fire-of-the-northern-lore
 - https://archive.org/download/daugavpils-fans-varang-nord-2014-fire-of-the-northern-lore/daugavpils-fans-varang-nord-2014-fire-of-the-northern-lore_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: Fire of the Northern Lore
+  name: Wild Hunt
+  alternateName: Дикая охота
+  audio:
+    contentUrl: 01-wild-hunt.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5a8e95844ee465ffa4647a056ac15f9c732d519d0dcbdac94320228fcff04a16
+    '@type': AudioObject
+    bitrate: 136 kbps
+    duration: PT3M31S
 - '@type': MusicRecording
   position: 2
-  name: Northmen
+  name: As Men Poured Ale
+  alternateName: Эля мужики налили
+  audio:
+    contentUrl: 02-as-men-poured-ale.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8a8bda695c5427fa17bd0f239c554152b973659a724021f6ec108751e920bced
+    '@type': AudioObject
+    bitrate: 135 kbps
+    duration: PT3M40S
 - '@type': MusicRecording
   position: 3
+  name: Sacrifice for the Old Gods
+  alternateName: Жертва старым богам
+  audio:
+    contentUrl: 03-sacrifice-for-the-old-gods.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ce112fe68c2afd8bd88fd75b1c21284174deb70dd0c34ed2907f393079612a76
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M49S
+- '@type': MusicRecording
+  position: 4
   name: Blood for Blood
+  alternateName: Кровь за кровь
+  audio:
+    contentUrl: 04-blood-for-blood.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3668a791cf226f79531dce367dac3b19dfacac32e1bd5fdb0a15333854dc2404
+    '@type': AudioObject
+    bitrate: 135 kbps
+    duration: PT3M42S
+- '@type': MusicRecording
+  position: 5
+  name: Fires of the North
+  alternateName: Огни севера
+  audio:
+    contentUrl: 05-fires-of-the-north.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fd0788ab258bab86a66c3656469f2d72e6593a6bb222d2658cac1e39525543ee
+    '@type': AudioObject
+    bitrate: 136 kbps
+    duration: PT3M30S
+- '@type': MusicRecording
+  position: 6
+  name: Through a White Wasteland
+  alternateName: Сквозь белую пустошь
+  audio:
+    contentUrl: 06-through-a-white-wasteland.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: aeee94e675a2a5a080eb527349ccf0dc1abbcf71eab8c2baa076215393f0423a
+    '@type': AudioObject
+    bitrate: 136 kbps
+    duration: PT3M18S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

@@ -15,13 +15,144 @@ sameAs:
 track:
 - '@type': MusicRecording
   position: 1
-  name: Master of the Forest
+  name: Warriors' Song
+  alternateName: Песня воинов
+  audio:
+    contentUrl: 01-warriors-song.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4a88022c9830a39f0cf6c21cbcb2e31e64faed5da39c1cc46066b99ddbf33404
+    '@type': AudioObject
+    bitrate: 134 kbps
+    duration: PT2M23S
 - '@type': MusicRecording
   position: 2
-  name: Battle Song
+  name: Berserker
+  alternateName: Берсеркер
+  audio:
+    contentUrl: 02-berserker.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 227f2abf99d558599c79a25fa13a276aba2e515cfa8adb58a525dce330d27be6
+    '@type': AudioObject
+    bitrate: 132 kbps
+    duration: PT4M9S
 - '@type': MusicRecording
   position: 3
-  name: Warchant
+  name: Eagle's Blood
+  alternateName: Кровь орла
+  audio:
+    contentUrl: 03-eagles-blood.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 60a7e98fc6322bc77e177279155575ef351547901533dee9047156336b054b8d
+    '@type': AudioObject
+    bitrate: 131 kbps
+    duration: PT4M35S
+- '@type': MusicRecording
+  position: 4
+  name: Warchant of Forests
+  alternateName: Боевой гимн лесов
+  audio:
+    contentUrl: 04-warchant-of-forests.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5a2f96fb027a0b52e43d743cf9eb09dbb4dcb5febdb5b849e0ad17b75d66f345
+    '@type': AudioObject
+    bitrate: 132 kbps
+    duration: PT3M21S
+- '@type': MusicRecording
+  position: 5
+  name: In Halls of the Fallen
+  alternateName: В залах павших
+  audio:
+    contentUrl: 05-in-halls-of-the-fallen.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 17a3b1416d12a83a3646d77f0b624ce26104c74a6620fd9a80f3415a414be9f0
+    '@type': AudioObject
+    bitrate: 132 kbps
+    duration: PT4M11S
+- '@type': MusicRecording
+  position: 6
+  name: Glory Found in Battle
+  alternateName: Слава, добытая в сече
+  audio:
+    contentUrl: 06-glory-found-in-battle.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 03a9010155a5ad2fcb77c4df4b5cfc17912219cab80bf12b7819dd7bf8c1877f
+    '@type': AudioObject
+    bitrate: 132 kbps
+    duration: PT3M31S
+- '@type': MusicRecording
+  position: 7
+  name: Beer and Vodka
+  alternateName: Пиво с водкой
+  audio:
+    contentUrl: 07-beer-and-vodka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 543ba5e592d413945f16def82d96603e6f0297be165146bfb97f9e4d6d46d8e6
+    '@type': AudioObject
+    bitrate: 138 kbps
+    duration: PT1M33S
+- '@type': MusicRecording
+  position: 8
+  name: Blood Surf
+  alternateName: Кровавый прибой
+  audio:
+    contentUrl: 08-blood-surf.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b5345646bb8d69b7310e4d7bdc63710969bbdd1b82171ca4d36b24e3e65f7dcc
+    '@type': AudioObject
+    bitrate: 133 kbps
+    duration: PT2M55S
+- '@type': MusicRecording
+  position: 9
+  name: Wild Freedom
+  alternateName: Дикая воля
+  audio:
+    contentUrl: 09-wild-freedom.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a326e29040aa1e6f460e78dd3c4a97f886da56dd4b6b95f9e6c2e3dc1f87c612
+    '@type': AudioObject
+    bitrate: 131 kbps
+    duration: PT4M21S
+- '@type': MusicRecording
+  position: 10
+  name: Song of the Forest
+  alternateName: Песня леса
+  audio:
+    contentUrl: 10-song-of-the-forest.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 450b7ce6aa973921e4bdf0836ddbe83367ea6290678d57fe6a3a0c395171f947
+    '@type': AudioObject
+    bitrate: 135 kbps
+    duration: PT2M17S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

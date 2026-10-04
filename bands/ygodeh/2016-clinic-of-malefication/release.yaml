@@ -10,19 +10,154 @@ description: Третий студийный релиз YGODEH (2016).
 description_en: Third studio album by YGODEH (2016).
 description_lv: YGODEH tresais studijas albums (2016).
 sameAs:
+- https://ygodeh.bandcamp.com/album/clinic-of-maleficent-reissued-2019
 - https://www.youtube.com/@ygodehband/videos
 - https://archive.org/details/daugavpils-fans-ygodeh-2016-clinic-of-malefication
 - https://archive.org/download/daugavpils-fans-ygodeh-2016-clinic-of-malefication/daugavpils-fans-ygodeh-2016-clinic-of-malefication_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: Clinic of Malefication
+  name: Clinic of Maleficent
+  audio:
+    contentUrl: 01-clinic-of-maleficent.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3fd580c23ccc7c9e9a03601f383967e83a7669dfa83b8a1fa2dc518c2ec222b5
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M12S
 - '@type': MusicRecording
   position: 2
-  name: Synthetic Pathology
+  name: Silent Scream
+  audio:
+    contentUrl: 02-silent-scream.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5c234af85dc1e7dcf9644dae8f5dd88ab53c61647308cd2badb7e0d51a816caf
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M53S
 - '@type': MusicRecording
   position: 3
-  name: Genome Deviation
+  name: Time and Space
+  audio:
+    contentUrl: 03-time-and-space.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d2a46c4e1508368fd817b06b82e57d4f24bbc0cb38dbedb4e1f1724095af19c4
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M54S
+- '@type': MusicRecording
+  position: 4
+  name: Molecules of Containment
+  audio:
+    contentUrl: 04-molecules-of-containment.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3e3f5f77eb5b902b16139bee3763cb5ea710f7b264b83d59233520f52915f32f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M33S
+- '@type': MusicRecording
+  position: 5
+  name: R.I.P. (Rehabilitated Indocrinated Propaganda)
+  audio:
+    contentUrl: 05-r-i-p-rehabilitated-indocrinated-propaganda.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c9d420b6bfdbfc2b2bd4272081cf888f6f547c86af67199bcc009c015a000489
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M37S
+- '@type': MusicRecording
+  position: 6
+  name: Translucent Vision of I
+  audio:
+    contentUrl: 06-translucent-vision-of-i.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a44933632406af5f3d2dfca479b7748c1bccd66b21aa2bd69c67fb6e7b2a405a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M10S
+- '@type': MusicRecording
+  position: 7
+  name: Fragment 5
+  audio:
+    contentUrl: 07-fragment-5.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 23ba3092e54461bcddf9a908d8d01ddb66c8b595ba1cf154a164406108efbd00
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT1M18S
+- '@type': MusicRecording
+  position: 8
+  name: Ballad Experiment
+  audio:
+    contentUrl: 08-ballad-experiment.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 85855c3b63d7de1a05374072c767eee9fa3f76062aaa21b2120bd59c7344d21a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M15S
+- '@type': MusicRecording
+  position: 9
+  name: Sole Deconstructor
+  audio:
+    contentUrl: 09-sole-deconstructor.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: da26989d6b0193c85fe7bb37957e23992ace053b12cc5288655aab98f236d5e6
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M3S
+- '@type': MusicRecording
+  position: 10
+  name: Fragment 4
+  audio:
+    contentUrl: 10-fragment-4.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6780e5dbe66d77cf03b860f1b2786d23c148b9839ef20c61c46ed3ce49457308
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M10S
+- '@type': MusicRecording
+  position: 11
+  name: Bonus Track (Symbolic - Death Cover)
+  audio:
+    contentUrl: 11-bonus-track-symbolic-death-cover.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bfbae52bfb1139e21d9e51f221eb6871b62f0978e8e120ff7f570d13f9c7a36e
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M58S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg

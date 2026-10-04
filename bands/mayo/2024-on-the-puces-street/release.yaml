@@ -6,25 +6,53 @@ byArtist: mayo
 genre:
 - Rock
 - Hard Rock
-description: Дебютный студийный альбом даугавпилсской рок-группы MaYo (2024).
-description_en: Debut studio album by Daugavpils rock group MaYo (2024).
-description_lv: Daugavpils rokgrupas MaYo debijas studijas albums (2024).
+description: Дебютный релиз даугавпилсской рок-группы MaYo (2024).
+description_en: Debut release by Daugavpils rock group MaYo (2024).
+description_lv: Daugavpils rokgrupas MaYo debijas albums (2024).
 sameAs:
+- https://www.youtube.com/channel/UCc8v6YAiYZoQ6ANqyPGE42A
 - https://archive.org/details/daugavpils-fans-mayo-2024-on-the-puces-street
 - https://archive.org/download/daugavpils-fans-mayo-2024-on-the-puces-street/daugavpils-fans-mayo-2024-on-the-puces-street_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: Pūces Street
+  name: Tici
+  audio:
+    contentUrl: 01-tici.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bdc03402daaf5a3dd185e325858f12bbe0368dbd955df0b421191e32fdbd2003
+    '@type': AudioObject
+    bitrate: 221 kbps
+    duration: PT2M34S
 - '@type': MusicRecording
   position: 2
-  name: Night Rider
+  name: Zīmē Ugunī Zīmes
+  audio:
+    contentUrl: 02-zime-uguni-zimes.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 59512c36b882149e21eae8336b5fdfea7ab45f4f4f76c24e909e957541ecba76
+    '@type': AudioObject
+    bitrate: 227 kbps
+    duration: PT4M27S
 - '@type': MusicRecording
   position: 3
-  name: Free Fall
-- '@type': MusicRecording
-  position: 4
-  name: Echoes
+  name: Tavu Dzīvi Pārveidošu
+  audio:
+    contentUrl: 03-tavu-dzivi-parveidosu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1c3b9e8682216cfd9d43d56c34187fa5ee8d7caf622b8aef07f87b0824311492
+    '@type': AudioObject
+    bitrate: 220 kbps
+    duration: PT3M0S
 image:
 - contentUrl: cover.jpg
   encodingFormat: image/jpeg
