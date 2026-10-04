@@ -82,6 +82,7 @@ STATIC_DIR = WEBAPP_DIR / "static"
 DIST_DIR = WEBAPP_DIR / "dist"
 MAINTENANCE_MD = {
     "ru": REPO_ROOT / "MAINTENANCE.md",
+    "lv": REPO_ROOT / "MAINTENANCE-LV.md",
     "en": REPO_ROOT / "MAINTENANCE-EN.md",
 }
 BASE_PATH = os.environ.get("SITE_BASE_PATH", "").rstrip("/")
@@ -127,34 +128,31 @@ def format_duration(iso: str | None) -> str:
 
 
 def localize(obj, field: str, lang: str) -> str | None:
-    """Pick obj.<field>_en for lang="en" (falling back to obj.<field> if no
-    translation exists yet), else obj.<field>. Used for bilingual text fields
-    (description, member name/role, image caption) that carry a Russian
-    canonical value and an optional English translation."""
+    """Pick obj.<field>_en for lang="en", obj.<field>_lv for lang="lv" (falling
+    back to obj.<field> if no translation exists yet), else obj.<field>. Used
+    for multilingual text fields (description, member name/role, image caption)
+    that carry a canonical value and optional translations."""
     base = getattr(obj, field, None)
     if lang == "en":
         return getattr(obj, f"{field}_en", None) or base
+    if lang == "lv":
+        return getattr(obj, f"{field}_lv", None) or base
     return base
 
 
 def localize_list(obj, field: str, lang: str) -> list[str]:
-    """List-field counterpart to localize() - for MusicAlbum.creditText/
-    creditText_en (GitHub issue #42), the one bilingual field that's a list
-    of independent lines rather than one string, so there's no single
-    obj.<field>/<field>_en pair to fall back between as a whole: each line
-    needs its own fallback. tools/models.py's MusicAlbum enforces
-    creditText_en is never longer than creditText (it translates a
-    *prefix* of it, 1:1 by position - entries beyond that just aren't
-    translated yet), so this must use zip_longest, not zip: a plain zip
-    would silently drop every untranslated tail entry instead of falling
-    back to its native-script text."""
+    """List-field counterpart to localize() - for MusicAlbum.creditText /
+    creditText_en / creditText_lv (GitHub issue #42)."""
     base = getattr(obj, field, None) or []
-    if lang != "en":
+    if lang == "en":
+        translated = getattr(obj, f"{field}_en", None) or []
+    elif lang == "lv":
+        translated = getattr(obj, f"{field}_lv", None) or []
+    else:
         return base
-    translated = getattr(obj, f"{field}_en", None) or []
     if not translated:
         return base
-    return [en or ru for ru, en in zip_longest(base, translated, fillvalue=None)]
+    return [loc or ru for ru, loc in zip_longest(base, translated, fillvalue=None)]
 
 
 def license_label(url: str) -> str:
@@ -666,19 +664,19 @@ def generate_feed_items(
             if band_desc:
                 desc_parts.append(f"<p>{html.escape(og_snippet(band_desc, ''))}</p>")
 
-        genre_label = "Genres" if lang == "en" else "Жанр"
+        genre_label = STRINGS[lang].get("feed_genres", "Genres" if lang == "en" else "Žanrs" if lang == "lv" else "Жанр")
         if release.genre:
             desc_parts.append(f"<p><strong>{genre_label}:</strong> {html.escape(', '.join(release.genre))}</p>")
 
         if release.track:
-            tracks_label = "Tracks" if lang == "en" else "Треки"
+            tracks_label = STRINGS[lang].get("feed_tracks", "Tracks" if lang == "en" else "Dziesmas" if lang == "lv" else "Треки")
             desc_parts.append(f"<p><strong>{tracks_label}:</strong></p><ol>")
             for t in release.track:
                 dur = f" ({format_duration(t.audio.duration)})" if t.audio and t.audio.duration else ""
                 desc_parts.append(f"<li>{html.escape(t.name)}{dur}</li>")
             desc_parts.append("</ol>")
 
-        listen_label = "Listen online" if lang == "en" else "Слушать альбом онлайн"
+        listen_label = STRINGS[lang].get("feed_listen_online", "Listen online" if lang == "en" else "Klausīties albumu tiešsaistē" if lang == "lv" else "Слушать альбом онлайн")
         desc_parts.append(f'<p><a href="{link}">→ {listen_label}</a></p>')
 
         description_html = "".join(desc_parts).replace("]]>", "]]]]><![CDATA[>")
@@ -800,6 +798,7 @@ def build() -> None:
             index_tmpl.render(
                 **base_ctx,
                 ru_url=home_url("ru", BASE_PATH),
+                lv_url=home_url("lv", BASE_PATH),
                 en_url=home_url("en", BASE_PATH),
                 home_url=home_url(lang, BASE_PATH),
                 bands=bands,
@@ -825,6 +824,7 @@ def build() -> None:
                 band_tmpl.render(
                     **base_ctx,
                     ru_url=band_url("ru", band.slug, BASE_PATH),
+                    lv_url=band_url("lv", band.slug, BASE_PATH),
                     en_url=band_url("en", band.slug, BASE_PATH),
                     home_url=home_url(lang, BASE_PATH),
                     band=band,
@@ -852,6 +852,7 @@ def build() -> None:
                     media_tmpl.render(
                         **base_ctx,
                         ru_url=band_media_page_url_fn("ru", band.slug, BASE_PATH),
+                        lv_url=band_media_page_url_fn("lv", band.slug, BASE_PATH),
                         en_url=band_media_page_url_fn("en", band.slug, BASE_PATH),
                         home_url=home_url(lang, BASE_PATH),
                         heading=band.name,
@@ -889,6 +890,7 @@ def build() -> None:
                     release_tmpl.render(
                         **base_ctx,
                         ru_url=release_url("ru", band.slug, release.slug, BASE_PATH),
+                        lv_url=release_url("lv", band.slug, release.slug, BASE_PATH),
                         en_url=release_url("en", band.slug, release.slug, BASE_PATH),
                         home_url=home_url(lang, BASE_PATH),
                         band=band,
@@ -915,8 +917,9 @@ def build() -> None:
                     (release_media_out_dir / "index.html").write_text(
                         media_tmpl.render(
                             **base_ctx,
-                            ru_url=release_media_page_url_fn(lang, band.slug, release.slug, BASE_PATH),
-                            en_url=release_media_page_url_fn(lang, band.slug, release.slug, BASE_PATH),
+                            ru_url=release_media_page_url_fn("ru", band.slug, release.slug, BASE_PATH),
+                            lv_url=release_media_page_url_fn("lv", band.slug, release.slug, BASE_PATH),
+                            en_url=release_media_page_url_fn("en", band.slug, release.slug, BASE_PATH),
                             home_url=home_url(lang, BASE_PATH),
                             heading=release.name,
                             back_url=release_url(lang, band.slug, release.slug, BASE_PATH),
@@ -940,6 +943,7 @@ def build() -> None:
             members_tmpl.render(
                 **base_ctx,
                 ru_url=members_index_url_fn("ru", BASE_PATH),
+                lv_url=members_index_url_fn("lv", BASE_PATH),
                 en_url=members_index_url_fn("en", BASE_PATH),
                 home_url=home_url(lang, BASE_PATH),
                 musicians=musicians_view,
@@ -959,6 +963,7 @@ def build() -> None:
                 member_tmpl.render(
                     **base_ctx,
                     ru_url=member_url_fn("ru", m_view["slug"], BASE_PATH),
+                    lv_url=member_url_fn("lv", m_view["slug"], BASE_PATH),
                     en_url=member_url_fn("en", m_view["slug"], BASE_PATH),
                     home_url=home_url(lang, BASE_PATH),
                     members_index_url=members_index_url_fn(lang, BASE_PATH),
@@ -1006,6 +1011,7 @@ def build() -> None:
                 lang_prefix=lang_prefix(lang),
                 base_path=BASE_PATH,
                 ru_url=support_url_fn("ru", BASE_PATH),
+                lv_url=support_url_fn("lv", BASE_PATH),
                 en_url=support_url_fn("en", BASE_PATH),
                 home_url=home_url(lang, BASE_PATH),
                 content=render_maintenance_html(lang),

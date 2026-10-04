@@ -295,6 +295,14 @@ body.lang-en .bio-more[open] summary::before {
   content: "Show less ↑";
 }
 
+body.lang-lv .bio-more summary::before {
+  content: "Lasīt vairāk ↓";
+}
+
+body.lang-lv .bio-more[open] summary::before {
+  content: "Rādīt mazāk ↑";
+}
+
 body.lang-ru .bio-more summary::before {
   content: "Читать дальше ↓";
 }

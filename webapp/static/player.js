@@ -357,6 +357,15 @@
       close: "Закрыть",
       trackError: "сбой archive.org",
     },
+    lv: {
+      title: "Internet Archive (archive.org) serveri īslaicīgi nav pieejami",
+      desc: "Audio un video atskaņošana, kā arī attēli pašlaik var nedarboties īslaicīgu archive.org darbības traucējumu dēļ. Ar jūsu datoru un pārlūkprogrammu viss ir kārtībā.",
+      retry: "Mēģināt vēlreiz",
+      checking: "Pārbauda savienojumu...",
+      stillDown: "Serveri joprojām nav pieejami",
+      close: "Aizvērt",
+      trackError: "archive.org kļūda",
+    },
     en: {
       title: "Internet Archive (archive.org) servers are temporarily unavailable",
       desc: "Audio and video playback, as well as images, may not work right now due to a temporary outage on archive.org. Your computer and browser are working properly.",
@@ -370,7 +379,8 @@
 
   function getLang() {
     var lang = (document.documentElement.lang || "ru").toLowerCase();
-    return lang === "en" ? "en" : "ru";
+    if (lang === "en" || lang === "lv") return lang;
+    return "ru";
   }
 
   function isOutageCached() {

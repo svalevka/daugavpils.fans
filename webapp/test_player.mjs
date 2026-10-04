@@ -329,6 +329,30 @@ test("player.js: showBanner renders English text when lang is en", () => {
   assert.match(banner.textContent, /Retry/);
 });
 
+test("player.js: showBanner renders Latvian text when lang is lv", () => {
+  const { mockWindow, mockDocument } = createMockDom({ lang: "lv" });
+  const context = vm.createContext({
+    window: mockWindow,
+    document: mockDocument,
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    CustomEvent: mockWindow.CustomEvent,
+    fetch: mockWindow.fetch,
+    setTimeout,
+    clearTimeout,
+    Date,
+    JSON,
+  });
+
+  vm.runInContext(playerJsCode, context);
+  const DaugavpilsArchiveOutage = context.window.DaugavpilsArchiveOutage;
+
+  const banner = DaugavpilsArchiveOutage.showBanner();
+  assert.ok(banner);
+  assert.match(banner.textContent, /Internet Archive \(archive\.org\) serveri īslaicīgi nav pieejami/);
+  assert.match(banner.textContent, /Mēģināt vēlreiz/);
+});
+
 test("player.js: handleMediaError marks track row and caches outage", () => {
   const { mockWindow, mockDocument } = createMockDom({ lang: "ru" });
   const context = vm.createContext({

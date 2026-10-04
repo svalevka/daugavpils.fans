@@ -21,6 +21,13 @@ class I18nNegotiationTest(ReviewAppTestCase):
         self.assertIn("Предложить изменение".encode("utf-8"), response.data)
         self.assertIn("Выберите группу".encode("utf-8"), response.data)
 
+    def test_query_param_switches_to_latvian(self):
+        response = self.client.get("/submit?lang=lv")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'lang="lv"', response.data)
+        self.assertIn("Ieteikt labojumu".encode("utf-8"), response.data)
+        self.assertIn("Izvēlieties grupu".encode("utf-8"), response.data)
+
     def test_query_param_switches_to_english(self):
         response = self.client.get("/submit?lang=en")
         self.assertEqual(response.status_code, 200)
@@ -40,21 +47,37 @@ class I18nNegotiationTest(ReviewAppTestCase):
         self.assertIn(b'lang="en"', res2.data)
         self.assertIn(b"Propose an edit", res2.data)
 
-        # Switching to Russian persists
-        res3 = self.client.get("/submit?lang=ru")
+        # Switching to Latvian persists
+        res3 = self.client.get("/submit?lang=lv")
         self.assertEqual(res3.status_code, 200)
-        self.assertIn(b'lang="ru"', res3.data)
+        self.assertIn(b'lang="lv"', res3.data)
 
         res4 = self.client.get("/submit")
         self.assertEqual(res4.status_code, 200)
-        self.assertIn(b'lang="ru"', res4.data)
-        self.assertIn("Предложить изменение".encode("utf-8"), res4.data)
+        self.assertIn(b'lang="lv"', res4.data)
+        self.assertIn("Ieteikt labojumu".encode("utf-8"), res4.data)
+
+        # Switching to Russian persists
+        res5 = self.client.get("/submit?lang=ru")
+        self.assertEqual(res5.status_code, 200)
+        self.assertIn(b'lang="ru"', res5.data)
+
+        res6 = self.client.get("/submit")
+        self.assertEqual(res6.status_code, 200)
+        self.assertIn(b'lang="ru"', res6.data)
+        self.assertIn("Предложить изменение".encode("utf-8"), res6.data)
 
     def test_accept_language_header_negotiation(self):
         # Client preferring English
         res_en = self.client.get("/submit", headers={"Accept-Language": "en-US,en;q=0.9"})
         self.assertEqual(res_en.status_code, 200)
         self.assertIn(b'lang="en"', res_en.data)
+
+        # Client preferring Latvian in a new session
+        client_lv = self.app.test_client()
+        res_lv = client_lv.get("/submit", headers={"Accept-Language": "lv-LV,lv;q=0.9"})
+        self.assertEqual(res_lv.status_code, 200)
+        self.assertIn(b'lang="lv"', res_lv.data)
 
         # Client preferring Russian in a new session
         client2 = self.app.test_client()
@@ -67,6 +90,8 @@ class I18nNegotiationTest(ReviewAppTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         body = response.data.decode("utf-8")
+        # Switcher to Latvian should include target and field query parameters
+        self.assertIn('href="/submit/' + self.fx.band_slug + '/edit?target=band&amp;field=description&amp;lang=lv"', body)
         # Switcher to English should include target and field query parameters
         self.assertIn('href="/submit/' + self.fx.band_slug + '/edit?target=band&amp;field=description&amp;lang=en"', body)
 
@@ -82,6 +107,16 @@ class BilingualContentTest(ReviewAppTestCase):
         self.assertIn("Медиа".encode("utf-8"), res_ru.data)
         self.assertIn("Добавить фото или видео".encode("utf-8"), res_ru.data)
         self.assertIn("Биография / описание".encode("utf-8"), res_ru.data)
+
+        # Latvian
+        res_lv = self.client.get(f"/submit/{self.fx.band_slug}?lang=lv")
+        self.assertEqual(res_lv.status_code, 200)
+        self.assertIn("Ko vēlaties labot vai papildināt?".encode("utf-8"), res_lv.data)
+        self.assertIn("Dalībnieki".encode("utf-8"), res_lv.data)
+        self.assertIn("Pievienot jaunu dalībnieku".encode("utf-8"), res_lv.data)
+        self.assertIn("Mediji".encode("utf-8"), res_lv.data)
+        self.assertIn("Pievienot foto vai video".encode("utf-8"), res_lv.data)
+        self.assertIn("Biogrāfija / apraksts".encode("utf-8"), res_lv.data)
 
         # English
         res_en = self.client.get(f"/submit/{self.fx.band_slug}?lang=en")
@@ -105,6 +140,17 @@ class BilingualContentTest(ReviewAppTestCase):
         self.assertIn("Ваше имя (необязательно)".encode("utf-8"), res_ru.data)
         self.assertIn("Отправить на проверку".encode("utf-8"), res_ru.data)
 
+        # Latvian
+        res_lv = self.client.get(
+            f"/submit/{self.fx.band_slug}/edit?target=band&field=description&lang=lv"
+        )
+        self.assertEqual(res_lv.status_code, 200)
+        self.assertIn("Biogrāfija / apraksts".encode("utf-8"), res_lv.data)
+        self.assertIn("Pašreizējais teksts".encode("utf-8"), res_lv.data)
+        self.assertIn("Jūsu teksta variants".encode("utf-8"), res_lv.data)
+        self.assertIn("Jūsu vārds (neobligāti)".encode("utf-8"), res_lv.data)
+        self.assertIn("Nosūtīt pārbaudei".encode("utf-8"), res_lv.data)
+
         # English
         res_en = self.client.get(
             f"/submit/{self.fx.band_slug}/edit?target=band&field=description&lang=en"
@@ -124,6 +170,13 @@ class BilingualContentTest(ReviewAppTestCase):
         self.assertIn("Имя (на языке оригинала / как пишется)".encode("utf-8"), res_ru.data)
         self.assertIn("Роль / инструмент (необязательно)".encode("utf-8"), res_ru.data)
 
+        # Latvian
+        res_lv = self.client.get(f"/submit/{self.fx.band_slug}/add-member?lang=lv")
+        self.assertEqual(res_lv.status_code, 200)
+        self.assertIn("Pievienot grupas dalībnieku".encode("utf-8"), res_lv.data)
+        self.assertIn("Vārds (oriģinālvalodā / kā rakstīts)".encode("utf-8"), res_lv.data)
+        self.assertIn("Loma / instruments (neobligāti)".encode("utf-8"), res_lv.data)
+
         # English
         res_en = self.client.get(f"/submit/{self.fx.band_slug}/add-member?lang=en")
         self.assertEqual(res_en.status_code, 200)
@@ -139,6 +192,13 @@ class BilingualContentTest(ReviewAppTestCase):
         self.assertIn("data-i18n-video=\"Видео\"".encode("utf-8"), res_ru.data)
         self.assertIn("data-i18n-remove=\"Удалить\"".encode("utf-8"), res_ru.data)
 
+        # Latvian
+        res_lv = self.client.get(f"/submit/{self.fx.band_slug}/media?lang=lv")
+        self.assertEqual(res_lv.status_code, 200)
+        self.assertIn("Pievienot foto vai video".encode("utf-8"), res_lv.data)
+        self.assertIn("data-i18n-video=\"Video\"".encode("utf-8"), res_lv.data)
+        self.assertIn("data-i18n-remove=\"Dzēst\"".encode("utf-8"), res_lv.data)
+
         # English
         res_en = self.client.get(f"/submit/{self.fx.band_slug}/media?lang=en")
         self.assertEqual(res_en.status_code, 200)
@@ -152,6 +212,12 @@ class BilingualContentTest(ReviewAppTestCase):
         self.assertEqual(res_ru.status_code, 201)
         self.assertIn("Спасибо".encode("utf-8"), res_ru.data)
         self.assertIn("Ваше предложение отправлено на проверку".encode("utf-8"), res_ru.data)
+
+        # Text proposal submission in Latvian
+        res_lv = self.submit(proposed_value="Jauns apraksts", lang="lv")
+        self.assertEqual(res_lv.status_code, 201)
+        self.assertIn("Paldies".encode("utf-8"), res_lv.data)
+        self.assertIn("Jūsu priekšlikums ir nosūtīts kuratoru pārbaudei".encode("utf-8"), res_lv.data)
 
         # Text proposal submission in English
         res_en = self.submit(proposed_value="New description", lang="en")

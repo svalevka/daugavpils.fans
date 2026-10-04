@@ -80,46 +80,51 @@ class EditableField:
     kind: Kind
     label: str  # human-readable, for the submission form (English)
     label_ru: str = ""  # human-readable, for the submission form (Russian)
+    label_lv: str = ""  # human-readable, for the submission form (Latvian)
 
     def get_label(self, lang: str = "en") -> str:
         if lang == "ru" and self.label_ru:
             return self.label_ru
+        if lang == "lv" and self.label_lv:
+            return self.label_lv
         return self.label
 
 
 EDITABLE_FIELDS: tuple[EditableField, ...] = (
-    EditableField("band", "description", "scalar", "Biography", "Биография / описание"),
-    EditableField("band", "description_en", "scalar", "Biography (English translation)", "Биография (перевод на английский)"),
-    EditableField("band", "location", "scalar", "Location", "Город / место"),
-    EditableField("band", "alternateName", "list", "Alternate names", "Другие названия"),
-    EditableField("band", "genre", "list", "Genres", "Жанры"),
-    EditableField("member", "name", "scalar", "Member name", "Имя участника"),
-    EditableField("member", "name_en", "scalar", "Member name (transliteration)", "Имя участника (латинская транслитерация)"),
-    EditableField("member", "role", "scalar", "Member role", "Роль / инструменты"),
-    EditableField("member", "role_en", "scalar", "Member role (English translation)", "Роль (на английском)"),
-    EditableField("member", "period", "scalar", "Member period, e.g. '1994-1996'", "Период участия, например «1994–1996»"),
-    EditableField("release", "description", "scalar", "Provenance / liner notes", "История записи / описание"),
-    EditableField("release", "description_en", "scalar", "Provenance / liner notes (English translation)", "История записи (перевод на английский)"),
-    EditableField("release", "genre", "list", "Genres", "Жанры"),
+    EditableField("band", "description", "scalar", "Biography", "Биография / описание", "Biogrāfija / apraksts"),
+    EditableField("band", "description_en", "scalar", "Biography (English translation)", "Биография (перевод на английский)", "Biogrāfija (tulkojums angļu valodā)"),
+    EditableField("band", "location", "scalar", "Location", "Город / место", "Pilsēta / vieta"),
+    EditableField("band", "alternateName", "list", "Alternate names", "Другие названия", "Citi nosaukumi"),
+    EditableField("band", "genre", "list", "Genres", "Жанры", "Žanri"),
+    EditableField("member", "name", "scalar", "Member name", "Имя участника", "Dalībnieka vārds"),
+    EditableField("member", "name_en", "scalar", "Member name (transliteration)", "Имя участника (латинская транслитерация)", "Dalībnieka vārds (transliterācija)"),
+    EditableField("member", "role", "scalar", "Member role", "Роль / инструменты", "Loma / instrumenti"),
+    EditableField("member", "role_en", "scalar", "Member role (English translation)", "Роль (на английском)", "Loma (angļu valodā)"),
+    EditableField("member", "period", "scalar", "Member period, e.g. '1994-1996'", "Период участия, например «1994–1996»", "Darbības periods, piemēram, «1994–1996»"),
+    EditableField("release", "description", "scalar", "Provenance / liner notes", "История записи / описание", "Ieraksta vēsture / apraksts"),
+    EditableField("release", "description_en", "scalar", "Provenance / liner notes (English translation)", "История записи (перевод на английский)", "Ieraksta vēsture (tulkojums angļu valodā)"),
+    EditableField("release", "genre", "list", "Genres", "Жанры", "Žanri"),
     EditableField(
         "release", "creditText", "list", "Recording credits (e.g. a guest musician on this release only)",
         "Участники записи (например, приглашённый музыкант только на этом релизе)",
+        "Ieraksta dalībnieki (piemēram, viesmūziķis tikai šajā ierakstā)",
     ),
     EditableField(
         "release", "creditText_en", "list", "Recording credits (English translation)",
         "Участники записи (перевод на английский)",
+        "Ieraksta dalībnieki (tulkojums angļu valodā)",
     ),
-    EditableField("track", "alternateName", "scalar", "Alternate track title", "Альтернативное название трека"),
-    EditableField("band_image", "caption", "scalar", "Photo caption", "Подпись к фотографии"),
-    EditableField("band_image", "caption_en", "scalar", "Photo caption (English translation)", "Подпись к фотографии (на английском)"),
-    EditableField("band_image", "contentLocation", "scalar", "Photo location", "Место съемки"),
-    EditableField("band_image", "depicts", "list", "Who/what is shown", "Кто/что изображено"),
-    EditableField("release_image", "caption", "scalar", "Photo caption", "Подпись к фотографии"),
-    EditableField("release_image", "caption_en", "scalar", "Photo caption (English translation)", "Подпись к фотографии (на английском)"),
-    EditableField("release_image", "contentLocation", "scalar", "Photo location", "Место съемки"),
-    EditableField("release_image", "depicts", "list", "Who/what is shown", "Кто/что изображено"),
-    EditableField("band_video", "name", "scalar", "Video title", "Название видео"),
-    EditableField("release_video", "name", "scalar", "Video title", "Название видео"),
+    EditableField("track", "alternateName", "scalar", "Alternate track title", "Альтернативное название трека", "Alternatīvs dziesmas nosaukums"),
+    EditableField("band_image", "caption", "scalar", "Photo caption", "Подпись к фотографии", "Fotogrāfijas paraksts"),
+    EditableField("band_image", "caption_en", "scalar", "Photo caption (English translation)", "Подпись к фотографии (на английском)", "Fotogrāfijas paraksts (angļu valodā)"),
+    EditableField("band_image", "contentLocation", "scalar", "Photo location", "Место съемки", "Uzņemšanas vieta"),
+    EditableField("band_image", "depicts", "list", "Who/what is shown", "Кто/что изображено", "Kas attēlots"),
+    EditableField("release_image", "caption", "scalar", "Photo caption", "Подпись к фотографии", "Fotogrāfijas paraksts"),
+    EditableField("release_image", "caption_en", "scalar", "Photo caption (English translation)", "Подпись к фотографии (на английском)", "Fotogrāfijas paraksts (angļu valodā)"),
+    EditableField("release_image", "contentLocation", "scalar", "Photo location", "Место съемки", "Uzņemšanas vieta"),
+    EditableField("release_image", "depicts", "list", "Who/what is shown", "Кто/что изображено", "Kas attēlots"),
+    EditableField("band_video", "name", "scalar", "Video title", "Название видео", "Video nosaukums"),
+    EditableField("release_video", "name", "scalar", "Video title", "Название видео", "Video nosaukums"),
 )
 
 # Pseudo-target for proposing a brand new band member rather than editing

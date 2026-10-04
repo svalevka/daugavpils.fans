@@ -286,6 +286,52 @@ class SearchIndexTest(unittest.TestCase):
         track_item = index[2]
         self.assertEqual(track_item["url"], "/site/en/bands/m-spirit/1995-zadushevnie-pesenki/#track-2")
 
+    def test_generate_search_index_lv(self) -> None:
+        from build import generate_search_index
+        from models import MusicAlbum, MusicGroup
+
+        band = MusicGroup.model_validate({
+            "name": "M. Spirit",
+            "slug": "m-spirit",
+            "foundingDate": "1994",
+            "member": [
+                {"name": "Vladislavs Petkuns", "role": "ģitāra, vokāls"},
+            ],
+        })
+        release = MusicAlbum.model_validate({
+            "name": "Задушевные песенки",
+            "slug": "1995-zadushevnie-pesenki",
+            "datePublished": "1995",
+            "byArtist": "m-spirit",
+            "creditText": ["Kuzja - ieraksts"],
+            "track": [
+                {
+                    "position": 1,
+                    "name": "Dziesma 1",
+                    "audio": {
+                        "contentUrl": "01.mp3",
+                        "encodingFormat": "audio/mpeg",
+                        "identifier": [{"propertyID": "sha256", "value": "abc"}],
+                    },
+                }
+            ],
+        })
+
+        index = generate_search_index("lv", [band], {"m-spirit": [release]}, base_path="")
+        self.assertEqual(len(index), 3)
+
+        band_item = index[0]
+        self.assertEqual(band_item["url"], "/lv/bands/m-spirit/")
+        self.assertEqual(band_item["members"], ["Vladislavs Petkuns"])
+        self.assertEqual(band_item["roles"], ["ģitāra, vokāls"])
+
+        release_item = index[1]
+        self.assertEqual(release_item["url"], "/lv/bands/m-spirit/1995-zadushevnie-pesenki/")
+        self.assertEqual(release_item["credits"], ["Kuzja - ieraksts"])
+
+        track_item = index[2]
+        self.assertEqual(track_item["url"], "/lv/bands/m-spirit/1995-zadushevnie-pesenki/#track-1")
+
 
 class DeepLinkAndOpenGraphTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -677,6 +723,76 @@ class MusicianDirectoryTest(unittest.TestCase):
         self.assertIn("Алексей Красько", rendered)
         self.assertIn("/members/aleksei-kras-ko/", rendered)
 
+    def test_members_directory_template_rendering_latvian(self) -> None:
+        from i18n import STRINGS
+
+        tmpl = self.env.get_template("members.html")
+
+        # 2 bands -> "2 grupas"
+        musicians_2 = [
+            {
+                "slug": "ruslan-kondrus",
+                "display_name": "Ruslans Kondruss",
+                "alternate_names": [],
+                "bands": [
+                    {"band_slug": "b1", "band_name": "B1", "display_role": "ģitāra", "period": None},
+                    {"band_slug": "b2", "band_name": "B2", "display_role": "ģitāra", "period": None},
+                ],
+            },
+        ]
+        rendered_2 = tmpl.render(
+            lang="lv",
+            t=STRINGS["lv"],
+            lang_prefix="lv/",
+            base_path="",
+            home_url="/lv/",
+            ru_url="/members/",
+            lv_url="/lv/members/",
+            en_url="/en/members/",
+            musicians=musicians_2,
+        )
+        self.assertIn("2 grupas", rendered_2)
+
+        # 11 bands -> "11 grupas"
+        musicians_11 = [{
+            "slug": "test",
+            "display_name": "Test",
+            "alternate_names": [],
+            "bands": [{"band_slug": f"b{i}", "band_name": f"B{i}", "display_role": "x", "period": None} for i in range(11)],
+        }]
+        rendered_11 = tmpl.render(
+            lang="lv",
+            t=STRINGS["lv"],
+            lang_prefix="lv/",
+            base_path="",
+            home_url="/lv/",
+            ru_url="/members/",
+            lv_url="/lv/members/",
+            en_url="/en/members/",
+            musicians=musicians_11,
+        )
+        self.assertIn("11 grupas", rendered_11)
+
+        # 21 bands -> "21 grupa"
+        musicians_21 = [{
+            "slug": "test",
+            "display_name": "Test",
+            "alternate_names": [],
+            "bands": [{"band_slug": f"b{i}", "band_name": f"B{i}", "display_role": "x", "period": None} for i in range(21)],
+        }]
+        rendered_21 = tmpl.render(
+            lang="lv",
+            t=STRINGS["lv"],
+            lang_prefix="lv/",
+            base_path="",
+            home_url="/lv/",
+            ru_url="/members/",
+            lv_url="/lv/members/",
+            en_url="/en/members/",
+            musicians=musicians_21,
+        )
+        self.assertIn("21 grupa", rendered_21)
+
     def test_member_profile_template_rendering(self) -> None:
         from i18n import STRINGS
 
@@ -841,6 +957,13 @@ class RSSFeedGenerationTest(unittest.TestCase):
         self.assertEqual(rss_items[0].find("title").text, "M. Spirit — Задушевные песенки (1995)")
         self.assertEqual(rss_items[0].find("enclosure").attrib["type"], "image/jpeg")
 
+        # Latvian feed items and labels
+        items_lv = generate_feed_items("lv", [band], {"m-spirit": [release]}, base_path="")
+        self.assertEqual(len(items_lv), 1)
+        self.assertIn("Žanrs", items_lv[0]["description"])
+        self.assertIn("Dziesmas", items_lv[0]["description"])
+        self.assertIn("Klausīties albumu tiešsaistē", items_lv[0]["description"])
+
     def test_base_template_includes_rss_feed_link(self) -> None:
         from i18n import STRINGS
 
@@ -853,9 +976,23 @@ class RSSFeedGenerationTest(unittest.TestCase):
             base_path="",
             home_url="/",
             ru_url="/",
+            lv_url="/lv/",
             en_url="/en/",
         )
         self.assertIn('<link rel="alternate" type="application/rss+xml" title="Архив музыки Даугавпилса" href="/feed.xml">', html_ru)
+
+        # Latvian
+        html_lv = tmpl.render(
+            lang="lv",
+            t=STRINGS["lv"],
+            lang_prefix="lv/",
+            base_path="",
+            home_url="/lv/",
+            ru_url="/",
+            lv_url="/lv/",
+            en_url="/en/",
+        )
+        self.assertIn('<link rel="alternate" type="application/rss+xml" title="Daugavpils mūzikas arhīvs" href="/lv/feed.xml">', html_lv)
 
         # English
         html_en = tmpl.render(
@@ -865,6 +1002,7 @@ class RSSFeedGenerationTest(unittest.TestCase):
             base_path="/site",
             home_url="/site/en/",
             ru_url="/site/",
+            lv_url="/site/lv/",
             en_url="/site/en/",
         )
         self.assertIn('<link rel="alternate" type="application/rss+xml" title="Daugavpils music archive" href="/site/en/feed.xml">', html_en)
@@ -904,6 +1042,7 @@ class SiteDiscoveryTest(unittest.TestCase):
             base_path="",
             home_url="/",
             ru_url="/",
+            lv_url="/lv/",
             en_url="/en/",
             og_description="Custom description test",
         )
@@ -919,6 +1058,7 @@ class SiteDiscoveryTest(unittest.TestCase):
             base_path="/subpath",
             home_url="/subpath/en/",
             ru_url="/subpath/",
+            lv_url="/subpath/lv/",
             en_url="/subpath/en/",
             og_description="Custom description test",
         )
@@ -938,6 +1078,7 @@ class SiteDiscoveryTest(unittest.TestCase):
             base_path="",
             home_url="/",
             ru_url="/",
+            lv_url="/lv/",
             en_url="/en/",
             bands=[],
             og_description=STRINGS["ru"]["site_tagline"],
@@ -954,6 +1095,7 @@ class SiteDiscoveryTest(unittest.TestCase):
             base_path="",
             home_url="/",
             ru_url="/bands/test-band/",
+            lv_url="/lv/bands/test-band/",
             en_url="/en/bands/test-band/",
             band=band,
             releases=[],
@@ -983,6 +1125,7 @@ class SiteDiscoveryTest(unittest.TestCase):
             base_path="",
             home_url="/",
             ru_url="/bands/test-band/test-album/",
+            lv_url="/lv/bands/test-band/test-album/",
             en_url="/en/bands/test-band/test-album/",
             band=band,
             release=release,
@@ -995,7 +1138,7 @@ class SiteDiscoveryTest(unittest.TestCase):
         )
         self.assertIn('<meta name="description" content="Test release bio.">', release_html)
 
-        # support.html
+        # support.html (Russian)
         support_tmpl = self.env.get_template("support.html")
         support_html = support_tmpl.render(
             lang="ru",
@@ -1004,11 +1147,36 @@ class SiteDiscoveryTest(unittest.TestCase):
             base_path="",
             home_url="/",
             ru_url="/support/",
+            lv_url="/lv/support/",
             en_url="/en/support/",
             content="<p>Maintenance</p>",
             og_description=STRINGS["ru"]["support_desc"],
         )
         self.assertIn(f'<meta name="description" content="{STRINGS["ru"]["support_desc"]}">', support_html)
+
+        # support.html (Latvian)
+        support_lv_html = support_tmpl.render(
+            lang="lv",
+            t=STRINGS["lv"],
+            lang_prefix="lv/",
+            base_path="",
+            home_url="/lv/",
+            ru_url="/support/",
+            lv_url="/lv/support/",
+            en_url="/en/support/",
+            content="<p>Uzturēšana</p>",
+            og_description=STRINGS["lv"]["support_desc"],
+        )
+        self.assertIn(f'<meta name="description" content="{STRINGS["lv"]["support_desc"]}">', support_lv_html)
+
+    def test_render_maintenance_html_latvian(self) -> None:
+        from build import render_maintenance_html
+
+        html_lv = render_maintenance_html("lv")
+        self.assertGreater(len(html_lv), 1000)
+        self.assertIn('<pre class="mermaid">', html_lv)
+        self.assertIn("github.com/svalevka/daugavpils.fans/blob/main/", html_lv)
+        self.assertIn("Kā darbojas šis arhīvs", html_lv)
 
     def test_generate_robots_txt(self) -> None:
         from build import generate_robots_txt
@@ -1081,27 +1249,37 @@ class SiteDiscoveryTest(unittest.TestCase):
         ns = {"ns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
         locs = [elem.text for elem in root.findall("ns:url/ns:loc", ns)]
 
-        # Expected URLs (both ru and en)
+        # Expected URLs (ru, lv, and en)
         self.assertIn("https://daugavpils.fans/", locs)
+        self.assertIn("https://daugavpils.fans/lv/", locs)
         self.assertIn("https://daugavpils.fans/en/", locs)
         self.assertIn("https://daugavpils.fans/bands/band-one/", locs)
+        self.assertIn("https://daugavpils.fans/lv/bands/band-one/", locs)
         self.assertIn("https://daugavpils.fans/en/bands/band-one/", locs)
         self.assertIn("https://daugavpils.fans/bands/band-one/media/", locs)
+        self.assertIn("https://daugavpils.fans/lv/bands/band-one/media/", locs)
         self.assertIn("https://daugavpils.fans/en/bands/band-one/media/", locs)
         self.assertIn("https://daugavpils.fans/bands/band-one/album-one/", locs)
+        self.assertIn("https://daugavpils.fans/lv/bands/band-one/album-one/", locs)
         self.assertIn("https://daugavpils.fans/en/bands/band-one/album-one/", locs)
         self.assertIn("https://daugavpils.fans/bands/band-one/album-one/media/", locs)
+        self.assertIn("https://daugavpils.fans/lv/bands/band-one/album-one/media/", locs)
         self.assertIn("https://daugavpils.fans/en/bands/band-one/album-one/media/", locs)
         self.assertIn("https://daugavpils.fans/bands/band-two/", locs)
+        self.assertIn("https://daugavpils.fans/lv/bands/band-two/", locs)
         # band-two has no media page
         self.assertNotIn("https://daugavpils.fans/bands/band-two/media/", locs)
+        self.assertNotIn("https://daugavpils.fans/lv/bands/band-two/media/", locs)
         # members
         self.assertIn("https://daugavpils.fans/members/", locs)
+        self.assertIn("https://daugavpils.fans/lv/members/", locs)
         self.assertIn("https://daugavpils.fans/en/members/", locs)
         self.assertIn("https://daugavpils.fans/members/john-doe/", locs)
+        self.assertIn("https://daugavpils.fans/lv/members/john-doe/", locs)
         self.assertIn("https://daugavpils.fans/en/members/john-doe/", locs)
         # support
         self.assertIn("https://daugavpils.fans/support/", locs)
+        self.assertIn("https://daugavpils.fans/lv/support/", locs)
         self.assertIn("https://daugavpils.fans/en/support/", locs)
 
         # Test with SITE_BASE_PATH
@@ -1116,11 +1294,73 @@ class SiteDiscoveryTest(unittest.TestCase):
         root_prefixed = ET.fromstring(sitemap_prefixed)
         locs_prefixed = [elem.text for elem in root_prefixed.findall("ns:url/ns:loc", ns)]
         self.assertIn("https://svalevka.github.io/daugavpils.fans/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/lv/", locs_prefixed)
         self.assertIn("https://svalevka.github.io/daugavpils.fans/en/", locs_prefixed)
         self.assertIn("https://svalevka.github.io/daugavpils.fans/bands/band-one/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/lv/bands/band-one/", locs_prefixed)
         self.assertIn("https://svalevka.github.io/daugavpils.fans/en/bands/band-one/", locs_prefixed)
         self.assertIn("https://svalevka.github.io/daugavpils.fans/support/", locs_prefixed)
+        self.assertIn("https://svalevka.github.io/daugavpils.fans/lv/support/", locs_prefixed)
         self.assertIn("https://svalevka.github.io/daugavpils.fans/en/support/", locs_prefixed)
+
+
+class LanguageSwitcherTest(unittest.TestCase):
+    def setUp(self) -> None:
+        templates_dir = Path(__file__).resolve().parent / "templates"
+        self.env = Environment(
+            loader=FileSystemLoader(str(templates_dir)),
+            autoescape=select_autoescape(["html"]),
+        )
+
+    def test_base_template_renders_trilingual_switcher(self) -> None:
+        from i18n import STRINGS
+
+        tmpl = self.env.get_template("base.html")
+
+        # When lang is ru
+        html_ru = tmpl.render(
+            lang="ru",
+            t=STRINGS["ru"],
+            lang_prefix="",
+            base_path="",
+            home_url="/",
+            ru_url="/bands/fobiia/",
+            lv_url="/lv/bands/fobiia/",
+            en_url="/en/bands/fobiia/",
+        )
+        self.assertIn('<a href="/bands/fobiia/" class="active" aria-current="true">RU</a>', html_ru)
+        self.assertIn('<a href="/lv/bands/fobiia/">LV</a>', html_ru)
+        self.assertIn('<a href="/en/bands/fobiia/">EN</a>', html_ru)
+
+        # When lang is lv
+        html_lv = tmpl.render(
+            lang="lv",
+            t=STRINGS["lv"],
+            lang_prefix="lv/",
+            base_path="",
+            home_url="/lv/",
+            ru_url="/bands/fobiia/",
+            lv_url="/lv/bands/fobiia/",
+            en_url="/en/bands/fobiia/",
+        )
+        self.assertIn('<a href="/bands/fobiia/">RU</a>', html_lv)
+        self.assertIn('<a href="/lv/bands/fobiia/" class="active" aria-current="true">LV</a>', html_lv)
+        self.assertIn('<a href="/en/bands/fobiia/">EN</a>', html_lv)
+
+        # When lang is en
+        html_en = tmpl.render(
+            lang="en",
+            t=STRINGS["en"],
+            lang_prefix="en/",
+            base_path="",
+            home_url="/en/",
+            ru_url="/bands/fobiia/",
+            lv_url="/lv/bands/fobiia/",
+            en_url="/en/bands/fobiia/",
+        )
+        self.assertIn('<a href="/bands/fobiia/">RU</a>', html_en)
+        self.assertIn('<a href="/lv/bands/fobiia/">LV</a>', html_en)
+        self.assertIn('<a href="/en/bands/fobiia/" class="active" aria-current="true">EN</a>', html_en)
 
 
 class VisibleSameAsTest(unittest.TestCase):

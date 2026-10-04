@@ -10,11 +10,12 @@
 </head>
 <body>
 <header class="site-header">
-  <a class="site-title" href="https://daugavpils.fans/{% if lang == 'en' %}en/{% endif %}">daugavpils.fans</a>
+  <a class="site-title" href="https://daugavpils.fans/{% if lang != 'ru' %}{{ lang }}/{% endif %}">daugavpils.fans</a>
   <div class="header-right">
-    <a class="support-link" href="https://daugavpils.fans/{% if lang == 'en' %}en/{% endif %}support/">{{ t.support_link }}</a>
+    <a class="support-link" href="https://daugavpils.fans/{% if lang != 'ru' %}{{ lang }}/{% endif %}support/">{{ t.support_link }}</a>
     <nav class="lang-switch" aria-label="Language">
       <a href="{{ lang_switch_url('ru') }}"{% if lang == "ru" %} class="active" aria-current="true"{% endif %}>RU</a>
+      <a href="{{ lang_switch_url('lv') }}"{% if lang == "lv" %} class="active" aria-current="true"{% endif %}>LV</a>
       <a href="{{ lang_switch_url('en') }}"{% if lang == "en" %} class="active" aria-current="true"{% endif %}>EN</a>
     </nav>
   </div>
