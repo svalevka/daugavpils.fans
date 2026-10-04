@@ -276,8 +276,8 @@ class SearchIndexTest(unittest.TestCase):
         band_item = index[0]
         self.assertEqual(band_item["url"], "/site/en/bands/m-spirit/")
         self.assertEqual(band_item["years"], "1994")
-        self.assertEqual(band_item["members"], ["Vladislav Petkun", "Сергей Валевко"])
-        self.assertEqual(band_item["roles"], ["guitar, vocals", "вокал"])
+        self.assertEqual(band_item["members"], ["Vladislav Petkun", "Sergei Valevko"])
+        self.assertEqual(band_item["roles"], ["guitar, vocals", "vocals"])
 
         release_item = index[1]
         self.assertEqual(release_item["url"], "/site/en/bands/m-spirit/1995-zadushevnie-pesenki/")

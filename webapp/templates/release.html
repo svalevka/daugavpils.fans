@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros with context %}
 {% set media_url = partial(release_media_url, band, release) %}
-{% block title %}{{ release.name }} — {{ band.name }} — daugavpils.fans{% endblock %}
+{% set localized_band_name = localize(band, "name", lang) %}
+{% set localized_release_name = localize(release, "name", lang) %}
+{% block title %}{{ localized_release_name }} — {{ localized_band_name }} — daugavpils.fans{% endblock %}
 {% block meta_description %}{{ og_description }}{% endblock %}
 {% block breadcrumb %}
-<div class="breadcrumb"><a href="{{ base_path }}/{{ lang_prefix }}">← {{ t.all_bands }}</a> / <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ band.slug }}/">{{ band.name }}</a></div>
+<div class="breadcrumb"><a href="{{ base_path }}/{{ lang_prefix }}">← {{ t.all_bands }}</a> / <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ band.slug }}/">{{ localized_band_name }}</a></div>
 {% endblock %}
 {% block content %}
-<h1>{{ release.name }}</h1>
+<h1>{{ localized_release_name }}</h1>
 <div class="meta">
-  {{ band.name }} · {{ release.datePublished }}
-  {% if release.genre %} · {{ release.genre | join(", ") }}{% endif %}
+  <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ band.slug }}/">{{ localized_band_name }}</a> · {{ release.datePublished }}
+  {% if release.genre %} · {{ localize_genres(release.genre, lang) | join(", ") }}{% endif %}
 </div>
 
 {% if release.image %}
-{{ macros.gallery(release.image[:photo_teaser_limit], "release-photo", release.name, media_url) }}
+{{ macros.gallery(release.image[:photo_teaser_limit], "release-photo", localized_release_name, media_url) }}
 {% if release.image | length > photo_teaser_limit %}
 <p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_photos.format(n=release.image | length) }}</a></p>
 {% endif %}
@@ -47,14 +49,15 @@
 {% endif %}
 <table class="tracklist">
   {% for track in release.track %}
+  {% set localized_track_name = localize(track, "name", lang) %}
   <tr id="track-{{ track.position }}" class="track-row{% if not track.audio %} track-unpreserved{% endif %}">
     <td class="track-position"><a href="#track-{{ track.position }}" class="track-anchor" title="{{ t.copy_track_link }}" aria-label="{{ t.copy_track_link }}">{{ track.position }}</a></td>
     <td class="track-title">
-      {{ track.name }}
-      {% if track.alternateName %}<div class="meta">{{ track.alternateName }}</div>{% endif %}
+      {{ localized_track_name }}
+      {% if track.alternateName %}<div class="meta">{{ to_latin(track.alternateName) if lang in ("en", "lv") else track.alternateName }}</div>{% endif %}
     </td>
     {% if track.audio %}
-    <td class="track-audio"><audio controls controlsList="nodownload noplaybackrate" preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ track.name }}" data-artist="{{ band.name }}" data-album="{{ release.name }}"{% if release.image %} data-artwork="{{ media_url(release.image[0].contentUrl) }}"{% endif %} data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
+    <td class="track-audio"><audio controls controlsList="nodownload noplaybackrate" preload="none" src="{{ media_url(track.audio.contentUrl) }}" data-track="{{ localized_track_name }}" data-artist="{{ localized_band_name }}" data-album="{{ localized_release_name }}"{% if release.image %} data-artwork="{{ media_url(release.image[0].contentUrl) }}"{% endif %} data-band="{{ band.slug }}" data-release="{{ release.slug }}"></audio></td>
     <td class="track-duration">
       <span class="duration-text">{{ track.audio.duration | duration }}</span>
     </td>
@@ -67,7 +70,7 @@
 
 {% if release.video %}
 <h2>{{ t.video }}</h2>
-{{ macros.video_gallery(release.video[:video_teaser_limit], "release-video", release.name, media_url) }}
+{{ macros.video_gallery(release.video[:video_teaser_limit], "release-video", localized_release_name, media_url) }}
 {% if release.video | length > video_teaser_limit %}
 <p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_videos.format(n=release.video | length) }}</a></p>
 {% endif %}

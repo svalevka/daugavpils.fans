@@ -280,6 +280,137 @@ ROLE_MAP_LV: dict[str, str] = {
 }
 
 
+ROLE_MAP_EN: dict[str, str] = {
+    "вокал": "vocals",
+    "vocals": "vocals",
+    "гитара": "guitar",
+    "guitar": "guitar",
+    "бас": "bass",
+    "bass": "bass",
+    "бас-гитара": "bass guitar",
+    "bass guitar": "bass guitar",
+    "ударные": "drums",
+    "барабаны": "drums",
+    "drums": "drums",
+    "клавиши": "keyboards",
+    "клавишные": "keyboards",
+    "keyboards": "keyboards",
+    "аккордеон": "accordion",
+    "accordion": "accordion",
+    "труба": "trumpet",
+    "trumpet": "trumpet",
+    "скретч": "scratches",
+    "скрэтч": "scratches",
+    "scratches": "scratches",
+    "бэк-вокал": "backing vocals",
+    "backing vocals": "backing vocals",
+    "ритм-гитара": "rhythm guitar",
+    "rhythm guitar": "rhythm guitar",
+    "соло-гитара": "lead guitar",
+    "lead guitar": "lead guitar",
+    "лидер-гитара": "lead guitar",
+    "2-я гитара": "2nd guitar",
+    "вторая гитара": "2nd guitar",
+    "2nd guitar": "2nd guitar",
+    "акустическая гитара": "acoustic guitar",
+    "acoustic guitar": "acoustic guitar",
+    "перкуссия": "percussion",
+    "percussion": "percussion",
+    "бонги": "bongos",
+    "bongos": "bongos",
+    "скрипка": "violin",
+    "violin": "violin",
+    "альт": "viola",
+    "viola": "viola",
+    "контрабас": "double bass",
+    "double bass": "double bass",
+    "голос": "voice",
+    "voice": "voice",
+    "тексты": "lyrics",
+    "lyrics": "lyrics",
+    "слова": "lyrics",
+    "музыка": "music",
+    "music": "music",
+    "запись": "sound recording",
+    "sound recording": "sound recording",
+    "запись звука": "sound recording",
+    "сведение": "mixing",
+    "mixing": "mixing",
+    "программирование ударных": "drum programming",
+    "drum programming": "drum programming",
+    "все инструменты и вокал": "all instruments and vocals",
+    "all instruments and vocals": "all instruments and vocals",
+    "участник записи": "recording contributor",
+    "recording contributor": "recording contributor",
+    "гостевое участие": "guest appearance",
+    "guest appearance": "guest appearance",
+    "автор большинства песен": "primary songwriter",
+    "primary songwriter": "primary songwriter",
+    "песни": "songs",
+    "songs": "songs",
+    "инструменты": "instruments",
+    "instruments": "instruments",
+    "гитары": "guitars",
+    "guitars": "guitars",
+    "аккордеон, вокал": "accordion, vocals",
+    "аккордеон, труба, скретч": "accordion, trumpet, scratches",
+    "барабаны, запись": "drums, sound recording",
+    "бас (временная замена на записи 1995 года)": "bass (temporary substitute for 1995 recording)",
+    "бас, бэк-вокал": "bass, backing vocals",
+    "бас, вокал": "bass, vocals",
+    "бас, музыка для «весны»": "bass, music for \"Vesna\"",
+    "бас-гитара, вокал": "bass guitar, vocals",
+    "бас-гитара, тексты": "bass guitar, lyrics",
+    "вокал (гостевое участие на треке 05)": "vocals (guest appearance on track 05)",
+    "вокал, акустическая гитара": "vocals, acoustic guitar",
+    "вокал, акустическая гитара, бас": "vocals, acoustic guitar, bass",
+    "вокал, акустическая гитара, бас.": "vocals, acoustic guitar, bass",
+    "вокал, бас, клавишные, акустическая гитара": "vocals, bass, keyboards, acoustic guitar",
+    "вокал, бас-гитара": "vocals, bass guitar",
+    "вокал, гитара": "vocals, guitar",
+    "вокал, гитара, аккордеон, сведение": "vocals, guitar, accordion, mixing",
+    "вокал, гитары": "vocals, guitars",
+    "вокал, инструменты": "vocals, instruments",
+    "вокал, ритм-гитара": "vocals, rhythm guitar",
+    "вокал, тексты": "vocals, lyrics",
+    "вокал, тексты, программирование ударных": "vocals, lyrics, drum programming",
+    "гитара, аккордеон": "guitar, accordion",
+    "гитара, бэк-вокал": "guitar, backing vocals",
+    "гитара, вокал": "guitar, vocals",
+    "гитара, вокал, автор большинства песен": "guitar, vocals, primary songwriter",
+    "гитара, вокал, бас, клавиши, ударные": "guitar, vocals, bass, keyboards, drums",
+    "гитара, вокал, клавишные": "guitar, vocals, keyboards",
+    "гитара, лидер-гитара": "guitar, lead guitar",
+    "гитара, музыка": "guitar, music",
+    "гитара, тексты": "guitar, lyrics",
+    "клавиши, вокал": "keyboards, vocals",
+    "музыка для «проникни в мой сад»": "music for \"Pronikni v moy sad\"",
+    "музыка, гитара, бас": "music, guitar, bass",
+    "перкуссия, вокал": "percussion, vocals",
+    "песни, гитара, вокал": "songs, guitar, vocals",
+    "слова, запись звука": "lyrics, sound recording",
+    "соло-гитара, сведение": "lead guitar, mixing",
+    "ударные (второй состав)": "drums (second lineup)",
+    "ударные (первый состав)": "drums (first lineup)",
+    "ударные, клавишные": "drums, keyboards",
+}
+
+
+def translate_role_en(role: str | None) -> str | None:
+    """Translate musical roles into English, falling back to to_latin transliteration."""
+    if not role:
+        return None
+    cand_clean = role.strip().rstrip(".").lower()
+    if cand_clean in ROLE_MAP_EN:
+        return ROLE_MAP_EN[cand_clean]
+    if "," in role:
+        parts = [p.strip().rstrip(".").lower() for p in role.split(",")]
+        translated_parts = [ROLE_MAP_EN.get(p) for p in parts]
+        if all(translated_parts):
+            return ", ".join(translated_parts)
+    return to_latin(role)
+
+
 def translate_role_lv(role: str | None, role_en: str | None = None) -> str | None:
     """Translate musical roles into natural Latvian, falling back to English role or role."""
     if not role and not role_en:
@@ -295,48 +426,210 @@ def translate_role_lv(role: str | None, role_en: str | None = None) -> str | Non
             translated_parts = [ROLE_MAP_LV.get(p) for p in parts]
             if all(translated_parts):
                 return ", ".join(translated_parts)
-    return role_en or role
+    fallback = role_en or translate_role_en(role) or role
+    return to_latin(fallback)
+
+
+GENRE_MAP_LV: dict[str, str] = {
+    "панк-рок": "pankroks",
+    "punk rock": "pankroks",
+    "экспериментальная музыка": "eksperimentālā mūzika",
+    "experimental music": "eksperimentālā mūzika",
+    "лёёёёгкий роцк": "viegls roks",
+    "light rock": "viegls roks",
+    "рок": "roks",
+    "rock": "roks",
+    "хард-рок": "hārdroks",
+    "hard rock": "hārdroks",
+    "метал": "metāls",
+    "metal": "metāls",
+    "хэви-метал": "smagais metāls",
+    "heavy metal": "smagais metāls",
+}
+
+GENRE_MAP_EN: dict[str, str] = {
+    "панк-рок": "punk rock",
+    "punk rock": "punk rock",
+    "экспериментальная музыка": "experimental music",
+    "experimental music": "experimental music",
+    "лёёёёгкий роцк": "light rock",
+    "light rock": "light rock",
+    "рок": "rock",
+    "rock": "rock",
+    "хард-рок": "hard rock",
+    "hard rock": "hard rock",
+    "метал": "metal",
+    "metal": "metal",
+    "хэви-метал": "heavy metal",
+    "heavy metal": "heavy metal",
+}
+
+
+def localize_genre(genre: str | None, lang: str) -> str | None:
+    if not genre:
+        return genre
+    g_clean = genre.strip().lower()
+    if lang == "en":
+        return GENRE_MAP_EN.get(g_clean) or to_latin(genre) or genre
+    if lang == "lv":
+        return GENRE_MAP_LV.get(g_clean) or to_latin(genre) or genre
+    return genre
+
+
+def localize_genres(genres: list[str] | None, lang: str) -> list[str]:
+    if not genres:
+        return []
+    return [localize_genre(g, lang) or g for g in genres]
+
+
+BAND_LATIN_NAMES: dict[str, str] = {
+    "deti-granta": "Deti Granta",
+    "dissident": "Dissident",
+    "drugaia-storona": "Drugaia Storona",
+    "dvinsk": "Dvinsk",
+    "dvojnaja-voda": "Dvojnaja Voda",
+    "fobiia": "Fobiia",
+    "glazki-stekolshchika": "Glazki Stekolshchika",
+    "khoriniye-bega": "Khoriniye Bega",
+    "kriki-martina": "Kriki Martina",
+    "kvazimodo": "Kvazimodo",
+    "megality-podzemnykh-rek": "Megality Podzemnykh Rek",
+    "negei": "NeGei",
+    "stelki-betonshchika": "Stelki Betonshchika",
+    "ukurki": "Ukurki",
+    "viselica": "Viselica",
+    "yura-satan": "Yura Satan",
+}
+
+RELEASE_LATIN_NAMES: dict[str, str] = {
+    "2001-arkhivnye-zapisi": "Arkhivnye zapisi",
+    "2001-deti-granta": "Deti Granta",
+    "2005-singly": "Singly 2005",
+    "1996-bashnya-deda": "Kontsert v Bashne Deda",
+    "2002-pervaia-zapis": "Pervaia zapis",
+    "2003-vtoraia-zapis": "Vtoraia zapis",
+    "2004-zapis-2003-2004": "Zapis 2003-2004",
+    "1993-karmannyi-mir": "Karmannyi Mir",
+    "2004-tak-sluchaetsia": "Tak Sluchaetsia",
+    "2010-naposledok": "Naposledok...",
+    "1998-zhdite-izoptitsa": "Zhdite Izoptitsa",
+    "2007-chernoviaki": "Chernoviaki",
+    "1998-pervaia-zapis": "Pervaia zapis",
+    "2003-kontsert-v-dkkh": "Kontsert v DKKh (04.01.2003)",
+    "2003-kozhannoe-voskresenye": "Kozhannoe Voskresenye",
+    "2005-repetitsionnaia-zapis": "Repetitsionnaia zapis",
+    "1999-edinstvennyi": "Edinstvennyi",
+    "2016-sneg": "Sneg",
+    "1994-pronikni-v-moi-sad": "Pronikni v moy sad",
+    "1996-tvoe-radio-lzhet": "Tvoe radio lzhet",
+    "1995-zadushevnie-pesenki-ms-pankukhina": "Zadushevnye pesenki M.S. Pankukhina",
+    "2007-postupatelnie-dvizheniia": "Postupatelnye Dvizheniia",
+    "2001-ne-ssy": "Ne ssy!",
+    "2002-reznia": "Reznia",
+    "2007-mertvyi-al-bom": "Mertvyi albom",
+    "2011-fon": "Fon",
+    "2017-boets": "Boets",
+}
+
+CYRILLIC_CHAR_RE = re.compile(r"[\u0400-\u04ff]")
+
+
+def to_latin(text: str | None) -> str | None:
+    """Convert Cyrillic text to Latin/English letters, leaving Latin text unchanged."""
+    if not text:
+        return text
+    if not CYRILLIC_CHAR_RE.search(text):
+        return text
+    res = unidecode.unidecode(text)
+    # Remove soft/hard sign quotes unidecode adds in Russian transliteration
+    res = re.sub(r"(?<=[a-zA-Z])['`’](?=[a-zA-Z]|\b)", "", res)
+    res = res.replace("<<", '"').replace(">>", '"')
+    return res
 
 
 def localize(obj, field: str, lang: str) -> str | None:
-    """Pick obj.<field>_en for lang="en", obj.<field>_lv for lang="lv" (falling
-    back to Latin script or base obj.<field> if no translation exists yet), else obj.<field>.
-    Used for multilingual text fields (description, member name/role, image caption)
-    that carry a canonical value and optional translations."""
-    base = getattr(obj, field, None)
+    """Pick obj.<field>_en for lang="en", obj.<field>_lv for lang="lv", else obj.<field>.
+    For lang="lv" and lang="en", guarantees that all returned text is in Latin/English letters
+    with no Cyrillic characters."""
+    def _get(o, attr):
+        if isinstance(o, dict):
+            return o.get(attr)
+        return getattr(o, attr, None)
+
+    base = _get(obj, field)
     if lang == "en":
-        return getattr(obj, f"{field}_en", None) or base
-    if lang == "lv":
-        val_lv = getattr(obj, f"{field}_lv", None)
-        if val_lv:
-            return val_lv
+        val_en = _get(obj, f"{field}_en")
+        if val_en:
+            return to_latin(val_en)
         if field == "role":
-            role_en = getattr(obj, "role_en", None)
+            translated = translate_role_en(base)
+            if translated:
+                return to_latin(translated)
+        if field == "name":
+            slug = _get(obj, "slug")
+            if slug and slug in BAND_LATIN_NAMES:
+                return BAND_LATIN_NAMES[slug]
+            if slug and slug in RELEASE_LATIN_NAMES:
+                return RELEASE_LATIN_NAMES[slug]
+        return to_latin(base)
+
+    if lang == "lv":
+        val_lv = _get(obj, f"{field}_lv")
+        if val_lv:
+            return to_latin(val_lv)
+        if field == "role":
+            role_en = _get(obj, "role_en")
             translated = translate_role_lv(base, role_en)
             if translated:
-                return translated
-            return role_en or base
+                return to_latin(translated)
+            return to_latin(translate_role_en(base) or role_en or base)
         if field == "name":
-            # For member names, if name_lv is not set, prefer Latin transliteration (name_en)
-            # over Cyrillic (name) for a consistent Latin-alphabet experience in Latvian.
-            return getattr(obj, "name_en", None) or base
-        return base
+            val_lv_name = _get(obj, "name_lv")
+            if val_lv_name:
+                return to_latin(val_lv_name)
+            val_en = _get(obj, "name_en")
+            if val_en:
+                return to_latin(val_en)
+            slug = _get(obj, "slug")
+            if slug and slug in BAND_LATIN_NAMES:
+                return BAND_LATIN_NAMES[slug]
+            if slug and slug in RELEASE_LATIN_NAMES:
+                return RELEASE_LATIN_NAMES[slug]
+            return to_latin(base)
+        val_en = _get(obj, f"{field}_en")
+        if val_en:
+            return to_latin(val_en)
+        return to_latin(base)
+
     return base
 
 
 def localize_list(obj, field: str, lang: str) -> list[str]:
     """List-field counterpart to localize() - for MusicAlbum.creditText /
-    creditText_en / creditText_lv (GitHub issue #42)."""
-    base = getattr(obj, field, None) or []
+    creditText_en / creditText_lv (GitHub issue #42). For lang in ('en', 'lv'),
+    guarantees all returned lines are in Latin/English letters."""
+    def _get(o, attr):
+        if isinstance(o, dict):
+            return o.get(attr)
+        return getattr(o, attr, None)
+
+    base = _get(obj, field) or []
     if lang == "en":
-        translated = getattr(obj, f"{field}_en", None) or []
+        translated = _get(obj, f"{field}_en") or []
     elif lang == "lv":
-        translated = getattr(obj, f"{field}_lv", None) or []
+        translated = _get(obj, f"{field}_lv") or []
+        if not translated:
+            translated = _get(obj, f"{field}_en") or []
     else:
         return base
     if not translated:
+        if lang in ("en", "lv"):
+            return [to_latin(item) or "" for item in base]
         return base
-    return [loc or ru for ru, loc in zip_longest(base, translated, fillvalue=None)]
+    result = [loc or ru for ru, loc in zip_longest(base, translated, fillvalue=None)]
+    if lang in ("en", "lv"):
+        result = [to_latin(item) or "" for item in result]
+    return result
 
 
 def license_label(url: str) -> str:
@@ -459,7 +752,7 @@ def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
         if c_en:
             best_en = max(c_en.keys(), key=lambda s: (len(s.split()), c_en[s], len(s)))
         else:
-            best_en = unidecode.unidecode(best_ru)
+            best_en = to_latin(best_ru) or best_ru
 
         c_lv = Counter(m_data.get("names_lv", []))
         if c_lv:
@@ -468,9 +761,9 @@ def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
             best_lv = best_en
 
         if lang == "en":
-            display_name = best_en
+            display_name = to_latin(best_en) or best_en
         elif lang == "lv":
-            display_name = best_lv
+            display_name = to_latin(best_lv) or best_lv
         else:
             display_name = best_ru
 
@@ -478,7 +771,9 @@ def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
         if lang == "en":
             candidates = m_data["nicks_en"] + m_data["names_en"]
             if not candidates:
-                candidates = [unidecode.unidecode(n) for n in m_data["nicks_ru"] + m_data["names_ru"]]
+                candidates = [to_latin(n) for n in m_data["nicks_ru"] + m_data["names_ru"]]
+            else:
+                candidates = [to_latin(n) for n in candidates]
         elif lang == "lv":
             candidates = (
                 m_data.get("nicks_lv", [])
@@ -487,7 +782,9 @@ def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
                 + m_data["names_en"]
             )
             if not candidates:
-                candidates = [unidecode.unidecode(n) for n in m_data["nicks_ru"] + m_data["names_ru"]]
+                candidates = [to_latin(n) for n in m_data["nicks_ru"] + m_data["names_ru"]]
+            else:
+                candidates = [to_latin(n) for n in candidates]
         else:
             candidates = m_data["nicks_ru"] + m_data["names_ru"]
 
@@ -498,11 +795,17 @@ def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
         bands_list: list[dict] = []
         seen_bands: set[tuple[str, str | None]] = set()
         for mem in m_data["memberships"]:
-            band_name = mem["band_name_en"] if lang in ("en", "lv") else mem["band_name"]
+            if lang in ("en", "lv"):
+                band_name = BAND_LATIN_NAMES.get(mem["band_slug"]) or to_latin(mem["band_name_en"]) or to_latin(mem["band_name"])
+            else:
+                band_name = mem["band_name"]
+
             if lang == "en":
-                display_role = mem["role_en"]
+                display_role = translate_role_en(mem.get("role_en") or mem["role"])
             elif lang == "lv":
-                display_role = mem.get("role_lv") or translate_role_lv(mem["role"], mem.get("role_en")) or mem["role_en"]
+                display_role = mem.get("role_lv") or translate_role_lv(mem["role"], mem.get("role_en")) or to_latin(mem.get("role_en"))
+                if display_role:
+                    display_role = to_latin(display_role)
             else:
                 display_role = mem["role"]
             period = mem["period"]
@@ -606,11 +909,24 @@ def _is_public_external_url(url: str) -> bool:
     return True
 
 
-def visible_same_as(model: MusicGroup | MusicAlbum) -> list[str]:
+def visible_same_as(model: MusicGroup | MusicAlbum, lang: str = "ru") -> list[str]:
     """sameAs URLs worth showing a human in the "Ещё" list - archive.org
     and torrent links stay in band.yaml/release.yaml metadata for archive
     preservation and recovery, but aren't surfaced on the page itself."""
-    return [url for url in model.sameAs if _is_public_external_url(url)]
+    urls = [url for url in model.sameAs if _is_public_external_url(url)]
+    if lang in ("en", "lv"):
+        clean_urls = []
+        for u in urls:
+            if CYRILLIC_CHAR_RE.search(u):
+                import urllib.parse
+                parts = urllib.parse.urlsplit(u)
+                path = urllib.parse.quote(parts.path, safe="/%+~")
+                query = urllib.parse.quote(parts.query, safe="=&%+~")
+                clean_urls.append(urllib.parse.urlunsplit((parts.scheme, parts.netloc, path, query, parts.fragment)))
+            else:
+                clean_urls.append(u)
+        return clean_urls
+    return urls
 
 
 def to_jsonld(model: MusicGroup | MusicAlbum) -> str:
@@ -734,12 +1050,12 @@ def generate_search_index(
             years = band.foundingDate
 
         if lang == "en":
-            members = [m.name_en or m.name for m in band.member]
-            roles = [m.role_en or m.role for m in band.member if (m.role or m.role_en)]
+            members = [m.name_en or to_latin(m.name) for m in band.member]
+            roles = [to_latin(translate_role_en(m.role_en or m.role)) for m in band.member if (m.role or m.role_en)]
         elif lang == "lv":
-            members = [getattr(m, "name_lv", None) or m.name_en or m.name for m in band.member]
+            members = [getattr(m, "name_lv", None) or m.name_en or to_latin(m.name) for m in band.member]
             roles = [
-                getattr(m, "role_lv", None) or translate_role_lv(m.role, m.role_en) or m.role_en or m.role
+                getattr(m, "role_lv", None) or translate_role_lv(m.role, m.role_en) or to_latin(translate_role_en(m.role_en or m.role))
                 for m in band.member
                 if (m.role or m.role_en)
             ]
@@ -747,45 +1063,56 @@ def generate_search_index(
             members = [m.name for m in band.member]
             roles = [m.role for m in band.member if m.role]
 
+        band_name = localize(band, "name", lang) or band.name
         band_item: dict = {
             "type": "band",
-            "name": band.name,
+            "name": band_name,
             "url": band_url(lang, band.slug, base_path),
-            "genres": list(band.genre or []),
+            "genres": localize_genres(band.genre, lang),
             "years": years,
-            "members": members,
+            "members": [to_latin(m) or "" for m in members] if lang in ("en", "lv") else members,
         }
         if roles:
-            band_item["roles"] = roles
+            band_item["roles"] = [to_latin(r) or "" for r in roles] if lang in ("en", "lv") else roles
         if band.alternateName:
-            band_item["alternate_names"] = list(band.alternateName)
+            band_item["alternate_names"] = (
+                [to_latin(a) or "" for a in band.alternateName]
+                if lang in ("en", "lv")
+                else list(band.alternateName)
+            )
         items.append(band_item)
 
         for release in releases_by_band.get(band.slug, []):
+            rel_name = localize(release, "name", lang) or release.name
             release_item: dict = {
                 "type": "release",
-                "name": release.name,
-                "band": band.name,
+                "name": rel_name,
+                "band": band_name,
                 "year": release.datePublished,
                 "url": release_url(lang, band.slug, release.slug, base_path),
             }
             if release.genre:
-                release_item["genres"] = list(release.genre)
+                release_item["genres"] = localize_genres(release.genre, lang)
             credits = localize_list(release, "creditText", lang)
             if credits:
                 release_item["credits"] = credits
             items.append(release_item)
 
             for track in release.track:
+                trk_name = localize(track, "name", lang) or track.name
                 track_item: dict = {
                     "type": "track",
-                    "name": track.name,
-                    "band": band.name,
-                    "release": release.name,
+                    "name": trk_name,
+                    "band": band_name,
+                    "release": rel_name,
                     "url": f"{release_url(lang, band.slug, release.slug, base_path)}#track-{track.position}",
                 }
                 if track.alternateName:
-                    track_item["alternate_name"] = track.alternateName
+                    track_item["alternate_name"] = (
+                        to_latin(track.alternateName)
+                        if lang in ("en", "lv")
+                        else track.alternateName
+                    )
                 items.append(track_item)
 
     return items
@@ -856,7 +1183,8 @@ def generate_feed_items(
 
     for band, release, dt in all_releases:
         band_name = localize(band, "name", lang) or band.name
-        title = f"{band_name} — {release.name} ({release.datePublished})"
+        rel_name = localize(release, "name", lang) or release.name
+        title = f"{band_name} — {rel_name} ({release.datePublished})"
         link = f"{SITE_URL}{release_url(lang, band.slug, release.slug, base_path)}"
         pub_date = email.utils.format_datetime(dt)
 
@@ -877,7 +1205,7 @@ def generate_feed_items(
         desc_parts: list[str] = []
         if cover_url:
             desc_parts.append(
-                f'<p><a href="{link}"><img src="{cover_url}" alt="{html.escape(release.name)}" style="max-width: 400px; height: auto;" /></a></p>'
+                f'<p><a href="{link}"><img src="{cover_url}" alt="{html.escape(rel_name)}" style="max-width: 400px; height: auto;" /></a></p>'
             )
 
         rel_desc = localize(release, "description", lang)
@@ -890,14 +1218,15 @@ def generate_feed_items(
 
         genre_label = STRINGS[lang].get("feed_genres", "Genres" if lang == "en" else "Žanrs" if lang == "lv" else "Жанр")
         if release.genre:
-            desc_parts.append(f"<p><strong>{genre_label}:</strong> {html.escape(', '.join(release.genre))}</p>")
+            desc_parts.append(f"<p><strong>{genre_label}:</strong> {html.escape(', '.join(localize_genres(release.genre, lang)))}</p>")
 
         if release.track:
             tracks_label = STRINGS[lang].get("feed_tracks", "Tracks" if lang == "en" else "Dziesmas" if lang == "lv" else "Треки")
             desc_parts.append(f"<p><strong>{tracks_label}:</strong></p><ol>")
             for t in release.track:
+                trk_name = localize(t, "name", lang) or t.name
                 dur = f" ({format_duration(t.audio.duration)})" if t.audio and t.audio.duration else ""
-                desc_parts.append(f"<li>{html.escape(t.name)}{dur}</li>")
+                desc_parts.append(f"<li>{html.escape(trk_name)}{dur}</li>")
             desc_parts.append("</ol>")
 
         listen_label = STRINGS[lang].get("feed_listen_online", "Listen online" if lang == "en" else "Klausīties albumu tiešsaistē" if lang == "lv" else "Слушать альбом онлайн")
@@ -986,6 +1315,8 @@ def build() -> None:
     env.filters["license_label"] = license_label
     env.globals["localize"] = localize
     env.globals["localize_list"] = localize_list
+    env.globals["localize_genres"] = localize_genres
+    env.globals["to_latin"] = to_latin
     env.globals["musician_slug"] = canonical_musician_slug
     env.globals["band_media_url"] = band_media_url
     env.globals["release_media_url"] = release_media_url
@@ -1038,6 +1369,7 @@ def build() -> None:
             band_out_dir = lang_root / "bands" / band.slug
             band_out_dir.mkdir(parents=True, exist_ok=True)
             releases = releases_by_band[band.slug]
+            loc_band_name = localize(band, "name", lang) or band.name
 
             band_has_media_page = needs_media_page(band.image, band.video)
             band_media_page_url = (
@@ -1054,14 +1386,14 @@ def build() -> None:
                     band=band,
                     releases=releases,
                     jsonld=to_jsonld(band),
-                    visible_same_as=visible_same_as(band),
+                    visible_same_as=visible_same_as(band, lang),
                     photo_teaser_limit=PHOTO_TEASER_LIMIT,
                     video_teaser_limit=VIDEO_TEASER_LIMIT,
                     media_page_url=band_media_page_url,
-                    og_title=f"{band.name} — daugavpils.fans",
+                    og_title=f"{loc_band_name} — daugavpils.fans",
                     og_description=og_snippet(
                         localize(band, "description", lang),
-                        f"{band.name} — {band.location or 'Daugavpils, Latvia'}",
+                        f"{loc_band_name} — {band.location or 'Daugavpils, Latvia'}",
                     ),
                     og_image_url=band_media_url(band, band.image[0].contentUrl) if band.image else None,
                     og_type="music.band",
@@ -1079,14 +1411,14 @@ def build() -> None:
                         lv_url=band_media_page_url_fn("lv", band.slug, BASE_PATH),
                         en_url=band_media_page_url_fn("en", band.slug, BASE_PATH),
                         home_url=home_url(lang, BASE_PATH),
-                        heading=band.name,
+                        heading=loc_band_name,
                         back_url=band_url(lang, band.slug, BASE_PATH),
-                        back_label=band.name,
+                        back_label=loc_band_name,
                         images=band.image,
                         videos=band.video,
                         media_url=partial(band_media_url, band),
-                        og_title=f"{band.name} — {STRINGS[lang]['photos_and_video']} — daugavpils.fans",
-                        og_description=f"{band.name} — {STRINGS[lang]['photos_and_video']}",
+                        og_title=f"{loc_band_name} — {STRINGS[lang]['photos_and_video']} — daugavpils.fans",
+                        og_description=f"{loc_band_name} — {STRINGS[lang]['photos_and_video']}",
                         og_image_url=band_media_url(band, band.image[0].contentUrl) if band.image else None,
                         og_type="website",
                         canonical_url=f"{SITE_URL}{band_media_page_url}",
@@ -1096,6 +1428,7 @@ def build() -> None:
             for release in releases:
                 release_out_dir = band_out_dir / release.slug
                 release_out_dir.mkdir(parents=True, exist_ok=True)
+                loc_release_name = localize(release, "name", lang) or release.name
 
                 release_has_media_page = needs_media_page(release.image, release.video)
                 release_media_page_url = (
@@ -1120,14 +1453,14 @@ def build() -> None:
                         band=band,
                         release=release,
                         jsonld=to_jsonld(release),
-                        visible_same_as=visible_same_as(release),
+                        visible_same_as=visible_same_as(release, lang),
                         photo_teaser_limit=PHOTO_TEASER_LIMIT,
                         video_teaser_limit=VIDEO_TEASER_LIMIT,
                         media_page_url=release_media_page_url,
-                        og_title=f"{release.name} — {band.name} — daugavpils.fans",
+                        og_title=f"{loc_release_name} — {loc_band_name} — daugavpils.fans",
                         og_description=og_snippet(
                             localize(release, "description", lang),
-                            f"{release.name} ({release.datePublished}) — {band.name}",
+                            f"{loc_release_name} ({release.datePublished}) — {loc_band_name}",
                         ),
                         og_image_url=rel_og_image,
                         og_type="music.album",
@@ -1145,14 +1478,14 @@ def build() -> None:
                             lv_url=release_media_page_url_fn("lv", band.slug, release.slug, BASE_PATH),
                             en_url=release_media_page_url_fn("en", band.slug, release.slug, BASE_PATH),
                             home_url=home_url(lang, BASE_PATH),
-                            heading=release.name,
+                            heading=loc_release_name,
                             back_url=release_url(lang, band.slug, release.slug, BASE_PATH),
-                            back_label=release.name,
+                            back_label=loc_release_name,
                             images=release.image,
                             videos=release.video,
                             media_url=partial(release_media_url, band, release),
-                            og_title=f"{release.name} — {STRINGS[lang]['photos_and_video']} — daugavpils.fans",
-                            og_description=f"{release.name} — {STRINGS[lang]['photos_and_video']}",
+                            og_title=f"{loc_release_name} — {STRINGS[lang]['photos_and_video']} — daugavpils.fans",
+                            og_description=f"{loc_release_name} — {STRINGS[lang]['photos_and_video']}",
                             og_image_url=rel_og_image,
                             og_type="website",
                             canonical_url=f"{SITE_URL}{release_media_page_url}",

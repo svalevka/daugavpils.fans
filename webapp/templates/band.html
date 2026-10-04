@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros with context %}
 {% set media_url = partial(band_media_url, band) %}
-{% block title %}{{ band.name }} — daugavpils.fans{% endblock %}
+{% set localized_band_name = localize(band, "name", lang) %}
+{% block title %}{{ localized_band_name }} — daugavpils.fans{% endblock %}
 {% block meta_description %}{{ og_description }}{% endblock %}
 {% block breadcrumb %}
 <div class="breadcrumb"><a href="{{ base_path }}/{{ lang_prefix }}">← {{ t.all_bands }}</a></div>
 {% endblock %}
 {% block content %}
-<h1>{{ band.name }}</h1>
+<h1>{{ localized_band_name }}</h1>
 <div class="meta">
   {{ band.location }}{% if band.location and band.foundingDate %} · {% endif %}{% if band.foundingDate %}{{ band.foundingDate }}{% if band.dissolutionDate %}–{{ band.dissolutionDate }}{% endif %}{% endif %}
-  {% if band.genre %} · {{ band.genre | join(", ") }}{% endif %}
+  {% if band.genre %} · {{ localize_genres(band.genre, lang) | join(", ") }}{% endif %}
 </div>
 
 {% if band.alternateName %}
-<p class="meta">{{ t.also_known_as }}: {{ band.alternateName | join(", ") }}</p>
+<p class="meta">{{ t.also_known_as }}: {% for alt in band.alternateName %}{{ to_latin(alt) if lang in ("en", "lv") else alt }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
 {% endif %}
 
 {% if band.description %}
@@ -42,7 +43,7 @@
 
 {% if band.image %}
 <h2>{{ t.photos }}</h2>
-{{ macros.gallery(band.image[:photo_teaser_limit], "band-photo", band.name, media_url) }}
+{{ macros.gallery(band.image[:photo_teaser_limit], "band-photo", localized_band_name, media_url) }}
 {% if band.image | length > photo_teaser_limit %}
 <p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_photos.format(n=band.image | length) }}</a></p>
 {% endif %}
@@ -50,7 +51,7 @@
 
 {% if band.video %}
 <h2>{{ t.video }}</h2>
-{{ macros.video_gallery(band.video[:video_teaser_limit], "band-video", band.name, media_url) }}
+{{ macros.video_gallery(band.video[:video_teaser_limit], "band-video", localized_band_name, media_url) }}
 {% if band.video | length > video_teaser_limit %}
 <p class="view-all"><a href="{{ media_page_url }}">{{ t.view_all_videos.format(n=band.video | length) }}</a></p>
 {% endif %}
@@ -61,7 +62,7 @@
 <ul class="release-list">
   {% for release in releases %}
   <li>
-    <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ band.slug }}/{{ release.slug }}/">{{ release.name }}</a>
+    <a href="{{ base_path }}/{{ lang_prefix }}bands/{{ band.slug }}/{{ release.slug }}/">{{ localize(release, "name", lang) }}</a>
     <span class="meta">({{ release.datePublished }})</span>
     {% if not release.has_audio %} <span class="badge-unpreserved">[{{ t.unpreserved_badge }}]</span>{% endif %}
   </li>
