@@ -8,6 +8,6 @@
 <div class="support-content">
 {{ content | safe }}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({ startOnLoad: true, theme: "dark" });</script>
+<script src="{{ base_path }}/static/mermaid.min.js"></script>
+<script src="{{ base_path }}/static/mermaid-init.js"></script>
 {% endblock %}

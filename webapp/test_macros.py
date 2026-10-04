@@ -113,6 +113,37 @@ class StaticFilesTest(unittest.TestCase):
                 res = subprocess.run(["node", "-c", str(js_file)], capture_output=True, text=True)
                 self.assertEqual(res.returncode, 0, f"{js_file.name} syntax error: {res.stderr}")
 
+    def test_templates_only_load_same_origin_scripts(self) -> None:
+        # daugavpils.fans serves CSP script-src 'self': a CDN <script src> or an
+        # inline executable <script> is silently blocked by the browser (this is
+        # how /support/ ended up showing raw mermaid source instead of diagrams).
+        import re
+
+        webapp_dir = Path(__file__).resolve().parent
+        script_re = re.compile(r"<script\b([^>]*)>(.*?)</script>", re.DOTALL)
+        for template in sorted((webapp_dir / "templates").glob("*.html")):
+            for attrs, body in script_re.findall(template.read_text(encoding="utf-8")):
+                with self.subTest(template=template.name, attrs=attrs.strip()):
+                    if 'type="application/ld+json"' in attrs:
+                        continue
+                    src = re.search(r'src="([^"]*)"', attrs)
+                    self.assertIsNotNone(src, f"inline <script> in {template.name} is blocked by CSP")
+                    self.assertTrue(
+                        src.group(1).startswith("{{ base_path }}/static/"),
+                        f"off-origin script {src.group(1)} in {template.name} is blocked by CSP",
+                    )
+                    self.assertEqual(body.strip(), "")
+                    local = webapp_dir / "static" / src.group(1).removeprefix("{{ base_path }}/static/")
+                    self.assertTrue(local.is_file(), f"{local} is missing")
+
+    def test_support_page_loads_vendored_mermaid(self) -> None:
+        static_dir = Path(__file__).resolve().parent / "static"
+        support = (Path(__file__).resolve().parent / "templates" / "support.html").read_text(encoding="utf-8")
+        self.assertIn('src="{{ base_path }}/static/mermaid.min.js"', support)
+        self.assertIn('src="{{ base_path }}/static/mermaid-init.js"', support)
+        self.assertLess(support.index("mermaid.min.js"), support.index("mermaid-init.js"))
+        self.assertIn("mermaid.initialize(", (static_dir / "mermaid-init.js").read_text(encoding="utf-8"))
+
     def test_favicon_files_exist(self) -> None:
         static_dir = Path(__file__).resolve().parent / "static"
         self.assertTrue((static_dir / "favicon.svg").is_file())
