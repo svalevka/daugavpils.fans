@@ -20,14 +20,14 @@ needs `export_schema.py` re-run afterwards (see `test_export_schema_drift.py`
 below), and if it makes an existing field required, existing `band.yaml`/
 `release.yaml` files may need updating too.
 
-`MusicAlbum.creditText`/`creditText_en` (GitHub issue #42) are release-
+`MusicAlbum.creditText`/`creditText_en`/`creditText_lv` (GitHub issue #42) are release-
 scoped free-text credits for someone who contributed to *that release
 only* (e.g. a guest vocalist), as distinct from `GroupMember`/`member` on
 `MusicGroup`, which is for ongoing band membership - see `GroupMember`'s
 own docstring. `MusicAlbum` sets `validate_assignment=True` (the only
 model in this file that does) specifically so its
 `_check_credit_text_translation_alignment` model validator - `creditText_en`
-must never be longer than `creditText`, since it translates a *prefix* of
+and `creditText_lv` must never be longer than `creditText`, since each translates a *prefix* of
 it (a credit can be added now and translated later; that's normal, not
 an error) - actually fires when `tools/apply_proposal.py`'s generic edit
 path mutates an already-loaded model via plain `setattr()`, not just on

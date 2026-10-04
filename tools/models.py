@@ -66,6 +66,7 @@ class ImageObject(MediaObjectBase):
     type_: str = Field(default="ImageObject", alias="@type")
     caption: Optional[str] = Field(default=None, description="e.g. 'Band photo, 1995'")
     caption_en: Optional[str] = Field(default=None, description="English translation of caption")
+    caption_lv: Optional[str] = Field(default=None, description="Latvian translation of caption")
     contentLocation: Optional[str] = Field(
         default=None, description="Where the photo was taken, e.g. 'Valka, Latvia'"
     )
@@ -106,8 +107,10 @@ class GroupMember(BaseModel):
 
     name: str = Field(description="Name as actually written, in its real script/alphabet")
     name_en: Optional[str] = Field(default=None, description="Latin transliteration of name")
+    name_lv: Optional[str] = Field(default=None, description="Latvian spelling/transliteration of name")
     role: Optional[str] = None
     role_en: Optional[str] = Field(default=None, description="English translation of role")
+    role_lv: Optional[str] = Field(default=None, description="Latvian translation of role")
     period: Optional[str] = Field(default=None, description="e.g. '1994-1996'")
 
 
@@ -131,6 +134,11 @@ class MusicGroup(BaseModel):
     description_en: Optional[str] = Field(
         default=None,
         description="English translation of description, only for editorial/provenance text - "
+        "never used to translate first-hand testimony, which stays in its original words",
+    )
+    description_lv: Optional[str] = Field(
+        default=None,
+        description="Latvian translation of description, only for editorial/provenance text - "
         "never used to translate first-hand testimony, which stays in its original words",
     )
     sameAs: list[str] = Field(default_factory=list, description="External reference URLs")
@@ -167,6 +175,9 @@ class MusicAlbum(BaseModel):
     description_en: Optional[str] = Field(
         default=None, description="English translation of description (editorial/provenance text, not lyrics)"
     )
+    description_lv: Optional[str] = Field(
+        default=None, description="Latvian translation of description (editorial/provenance text, not lyrics)"
+    )
     sameAs: list[str] = Field(default_factory=list, description="External reference URLs")
     track: list[MusicRecording]
     image: list[ImageObject] = Field(default_factory=list, description="Cover art, era photos")
@@ -188,6 +199,13 @@ class MusicAlbum(BaseModel):
         "'not yet translated' meaning every other _en field already has when unset). Must "
         "never be longer than creditText.",
     )
+    creditText_lv: list[str] = Field(
+        default_factory=list,
+        description="Latvian translation of creditText, same optional/fallback convention as "
+        "description_lv/role_lv/caption_lv. Translates a *prefix* of creditText 1:1 by "
+        "position - entries beyond len(creditText_lv) simply aren't translated yet. Must "
+        "never be longer than creditText.",
+    )
 
     @property
     def has_audio(self) -> bool:
@@ -195,19 +213,25 @@ class MusicAlbum(BaseModel):
 
     @model_validator(mode="after")
     def _check_credit_text_translation_alignment(self) -> "MusicAlbum":
-        # <=, not == : creditText and creditText_en are each edited by a
+        # <=, not == : creditText and creditText_en/creditText_lv are each edited by a
         # separate proposal (apply_proposal.py's pipeline only ever
         # touches one field per proposal), so "add a new credit, translate
-        # it later" necessarily passes through a state where creditText_en
+        # it later" necessarily passes through a state where creditText_en/creditText_lv
         # is shorter than creditText - that's the normal, desired
-        # "not yet translated" case, not a bug. Only creditText_en ending
-        # up *longer* (e.g. creditText shrank without creditText_en being
+        # "not yet translated" case, not a bug. Only creditText_en or creditText_lv ending
+        # up *longer* (e.g. creditText shrank without translated lists being
         # trimmed to match) is the actual dangling-translation bug this
         # guards against.
         if len(self.creditText_en) > len(self.creditText):
             raise ValueError(
                 f"creditText_en has {len(self.creditText_en)} entries but creditText only has "
                 f"{len(self.creditText)} - creditText_en must never be longer than creditText "
+                "(it translates a prefix of it, 1:1 by position)"
+            )
+        if len(self.creditText_lv) > len(self.creditText):
+            raise ValueError(
+                f"creditText_lv has {len(self.creditText_lv)} entries but creditText only has "
+                f"{len(self.creditText)} - creditText_lv must never be longer than creditText "
                 "(it translates a prefix of it, 1:1 by position)"
             )
         return self

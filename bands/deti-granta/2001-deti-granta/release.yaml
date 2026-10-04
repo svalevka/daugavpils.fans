@@ -71,6 +71,18 @@ description_en: 'The sole full-length album by Daugavpils ska-punk outfit Deti G
   Stas — accordion, trumpet, scratches
 
   Oleg Samsonov — drums'
+description_lv: |-
+  Vienīgais Daugavpils ska-panka grupas «Deti Granta» pilnmetrāžas albums, kas ierakstīts 2001. gadā Konstantīna Dzedzeļa studijā.
+
+  Albums ir spilgts 2000. gadu sākuma Daugavpils andergraunda enerģijas paraugs: ironisks panka draiva, dzīvespriecīga akordeona, trompetes un hiphopa skretču apvienojums. Līdzās satīriskām pazīstamu dziesmu kaverversijām (ukraiņu tautasdziesma «Ti ž mene pidmanula», «Marķīze» un grupas «A-ha» hits «Take On Me») ierakstā iekļautas arī vietējās jaunatnes kulta dziesmas: «Kosmodrom», «Dunula», «Ostav telefon» un «Son».
+
+  Ieraksta sastāvs:
+  Vantuzs — vokāls
+  Goblins — ģitāra
+  Čuvens — otrā ģitāra
+  Konstantīns Dzedzelis (Dzedzils) — basģitāra
+  Stass — akordeons, trompete, skretčs
+  Oļegs Samsonovs — bungas
 sameAs:
 - https://archive.org/details/daugavpils-fans-deti-granta-2001-deti-granta
 - https://archive.org/download/daugavpils-fans-deti-granta-2001-deti-granta/daugavpils-fans-deti-granta-2001-deti-granta_archive.torrent
@@ -202,5 +214,6 @@ image:
   '@type': ImageObject
   caption: Обложка альбома Дети Гранта
   caption_en: Cover art for Deti Granta
+  caption_lv: Albuma «Deti Granta» vāciņš
   depicts: []
 video: []

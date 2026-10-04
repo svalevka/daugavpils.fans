@@ -56,6 +56,7 @@ STRINGS = {
         "feed_genres": "Жанр",
         "feed_tracks": "Треки",
         "feed_listen_online": "Слушать альбом онлайн",
+        "read_more": "Читать дальше",
     },
     "lv": {
         "archive_title": "Daugavpils mūzikas arhīvs",
@@ -107,6 +108,7 @@ STRINGS = {
         "feed_genres": "Žanrs",
         "feed_tracks": "Dziesmas",
         "feed_listen_online": "Klausīties albumu tiešsaistē",
+        "read_more": "Lasīt tālāk",
     },
     "en": {
         "archive_title": "Daugavpils music archive",
@@ -158,6 +160,7 @@ STRINGS = {
         "feed_genres": "Genres",
         "feed_tracks": "Tracks",
         "feed_listen_online": "Listen online",
+        "read_more": "Read more",
     },
 }
 

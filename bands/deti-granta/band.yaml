@@ -9,28 +9,40 @@ genre:
 member:
 - name: Вантуз
   name_en: Vantuz
+  name_lv: Vantuzs
   role: вокал
   role_en: vocals
+  role_lv: vokāls
 - name: Гоблин
   name_en: Goblin
+  name_lv: Goblins
   role: гитара
   role_en: guitar
+  role_lv: ģitāra
 - name: Чувен
   name_en: Chuven
+  name_lv: Čuvens
   role: гитара
   role_en: guitar
+  role_lv: ģitāra
 - name: Константин Дзедзел
   name_en: Konstantīns Dzedzelis
+  name_lv: Konstantīns Dzedzelis
   role: бас
   role_en: bass
+  role_lv: bass
 - name: Стас
   name_en: Stas
+  name_lv: Stass
   role: аккордеон, труба, скретч
   role_en: accordion, trumpet, scratches
+  role_lv: akordeons, trompete, skretčs
 - name: Олег Самсонов
   name_en: Oleg Samsonov
+  name_lv: Oļegs Samsonovs
   role: ударные
   role_en: drums
+  role_lv: bungas
 description: |-
   Даугавпилсская группа «Дети Гранта» — ярчайший феномен местной андерграундной сцены рубежа 1990-х и 2000-х годов. Команда выделялась безудержным сплавом ска-панка, панк-рока и угарного фолк-стёба, усиленным духовой секцией (аккордеон, труба) и даже хип-хоп скретчингом.
 
@@ -39,6 +51,10 @@ description_en: |-
   Daugavpils group Deti Granta ('Grant's Children') was one of the most vivid phenomena of the local underground scene at the turn of the 1990s and 2000s. The band stood out with an explosive fusion of ska-punk, punk rock, and satirical folk revelry, powered by a brass and accordion section and hip-hop turntablism scratches.
 
   The lineup brought together iconic figures of the Dvinsk underground: charismatic frontman Vantuz (lead vocals), guitarists Goblin and Chuven, bassist and revered recording engineer of countless Daugavpils rock records Konstantīns Dzedzelis (Dzedzel), multi-instrumentalist Stas (accordion, trumpet, scratches), and drummer Oleg Samsonov. In 2001, the band recorded their legendary self-titled album, which circulated widely on cassettes and MP3 across Latvia. The record featured raucous punk adaptations of folk and pop anthems (including Ukrainian folk classic 'Ty zh mene pidmanula', 'Marquise', and A-ha's 'Take On Me') alongside cult original tracks like 'Kosmodrom', 'Dunula', and 'Ostav telefon'.
+description_lv: |-
+  Daugavpils grupa «Deti Granta» («Granta bērni») bija viena no spilgtākajām vietējās pagrīdes skatuves parādībām 1990. un 2000. gadu mijā. Kolektīvs izcēlās ar eksplozīvu ska-panka, pankroka un satīriska folka sajaukumu, ko papildināja pūšamo instrumentu un akordeona sekcija, kā arī hiphopa skretčings.
+
+  Grupas kodolu veidoja Daugavpils andergraunda kulta personības: harizmātiskais solists Vantuzs (vokāls), ģitāristi Goblins un Čuvens, basģitārists un daudzu Daugavpils rokierakstu nemainīgais skaņu inženieris Konstantīns Dzedzelis (Dzedzils), multiinstrumentālists Stass (akordeons, trompete, skretčs) un bundzinieks Oļegs Samsonovs. 2001. gadā grupa ierakstīja savu leģendāro debijas albumu ar tādu pašu nosaukumu, kas kasetēs un MP3 formātā ātri izplatījās visā Latvijā. Tajā iekļautas gan enerģiskas popmūzikas un folka klasikas pankroka versijas (tostarp ukraiņu tautasdziesma «Ti ž mene pidmanula», «Marķīze» un grupas «A-ha» sintīpopa grāvējs «Take On Me»), gan kulta oriģināldziesmas, piemēram, «Kosmodrom», «Dunula» un «Ostav telefon».
 sameAs:
 - https://archive.org/details/daugavpils-fans-deti-granta
 - https://archive.org/download/daugavpils-fans-deti-granta/daugavpils-fans-deti-granta_archive.torrent
@@ -52,5 +68,6 @@ image:
   '@type': ImageObject
   caption: Дети Гранта
   caption_en: Deti Granta
+  caption_lv: Deti Granta
   depicts: []
 video: []

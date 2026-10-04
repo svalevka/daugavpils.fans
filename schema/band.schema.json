@@ -21,6 +21,19 @@
           "description": "Latin transliteration of name",
           "title": "Name En"
         },
+        "name_lv": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latvian spelling/transliteration of name",
+          "title": "Name Lv"
+        },
         "role": {
           "anyOf": [
             {
@@ -45,6 +58,19 @@
           "default": null,
           "description": "English translation of role",
           "title": "Role En"
+        },
+        "role_lv": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latvian translation of role",
+          "title": "Role Lv"
         },
         "period": {
           "anyOf": [
@@ -117,6 +143,19 @@
           "default": null,
           "description": "English translation of caption",
           "title": "Caption En"
+        },
+        "caption_lv": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latvian translation of caption",
+          "title": "Caption Lv"
         },
         "contentLocation": {
           "anyOf": [
@@ -345,6 +384,19 @@
       "default": null,
       "description": "English translation of description, only for editorial/provenance text - never used to translate first-hand testimony, which stays in its original words",
       "title": "Description En"
+    },
+    "description_lv": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Latvian translation of description, only for editorial/provenance text - never used to translate first-hand testimony, which stays in its original words",
+      "title": "Description Lv"
     },
     "sameAs": {
       "description": "External reference URLs",

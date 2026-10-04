@@ -73,7 +73,7 @@
   <p>{{ paras[0] }}</p>
   {% if paras | length > 1 %}
   <details class="bio-more">
-    <summary>Read more</summary>
+    <summary>{{ t.read_more if (t is defined and t.read_more) else "Read more" }}</summary>
     {% for p in paras[1:] %}
     <p>{{ p }}</p>
     {% endfor %}

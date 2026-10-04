@@ -127,16 +127,200 @@ def format_duration(iso: str | None) -> str:
     return f"{minutes}:{seconds:02d}"
 
 
+ROLE_MAP_LV: dict[str, str] = {
+    "вокал": "vokāls",
+    "vocals": "vokāls",
+    "гитара": "ģitāra",
+    "guitar": "ģitāra",
+    "бас": "bass",
+    "bass": "bass",
+    "бас-гитара": "basģitāra",
+    "bass guitar": "basģitāra",
+    "ударные": "bungas",
+    "барабаны": "bungas",
+    "drums": "bungas",
+    "клавиши": "taustiņinstrumenti",
+    "клавишные": "taustiņinstrumenti",
+    "keyboards": "taustiņinstrumenti",
+    "аккордеон": "akordeons",
+    "accordion": "akordeons",
+    "труба": "trompete",
+    "trumpet": "trompete",
+    "скретч": "skretčs",
+    "скрэтч": "skretčs",
+    "scratches": "skretčs",
+    "бэк-вокал": "bekvokāls",
+    "backing vocals": "bekvokāls",
+    "ритм-гитара": "ritma ģitāra",
+    "rhythm guitar": "ritma ģitāra",
+    "соло-гитара": "soloģitāra",
+    "lead guitar": "soloģitāra",
+    "лидер-гитара": "soloģitāra",
+    "2-я гитара": "otrā ģitāra",
+    "вторая гитара": "otrā ģitāra",
+    "2nd guitar": "otrā ģitāra",
+    "акустическая гитара": "akustiskā ģitāra",
+    "acoustic guitar": "akustiskā ģitāra",
+    "перкуссия": "perkusijas",
+    "percussion": "perkusijas",
+    "бонги": "bongi",
+    "bongos": "bongi",
+    "скрипка": "vijole",
+    "violin": "vijole",
+    "альт": "alts",
+    "viola": "alts",
+    "контрабас": "kontrabass",
+    "double bass": "kontrabass",
+    "голос": "balss",
+    "voice": "balss",
+    "тексты": "teksti",
+    "lyrics": "teksti",
+    "слова": "vārdi",
+    "музыка": "mūzika",
+    "music": "mūzika",
+    "запись": "skaņu ieraksts",
+    "sound recording": "skaņu ieraksts",
+    "запись звука": "skaņu ieraksts",
+    "сведение": "miksēšana",
+    "mixing": "miksēšana",
+    "программирование ударных": "bungu programmēšana",
+    "drum programming": "bungu programmēšana",
+    "все инструменты и вокал": "visi instrumenti un vokāls",
+    "all instruments and vocals": "visi instrumenti un vokāls",
+    "участник записи": "ieraksta dalībnieks",
+    "recording contributor": "ieraksta dalībnieks",
+    "гостевое участие": "viesa līdzdalība",
+    "guest appearance": "viesa līdzdalība",
+    "автор большинства песен": "vairuma dziesmu autors",
+    "primary songwriter": "vairuma dziesmu autors",
+    "песни": "dziesmas",
+    "songs": "dziesmas",
+    "инструменты": "instrumenti",
+    "instruments": "instrumenti",
+    "гитары": "ģitāras",
+    "guitars": "ģitāras",
+    "аккордеон, вокал": "akordeons, vokāls",
+    "accordion, vocals": "akordeons, vokāls",
+    "аккордеон, труба, скретч": "akordeons, trompete, skretčs",
+    "accordion, trumpet, scratches": "akordeons, trompete, skretčs",
+    "барабаны, запись": "bungas, skaņu ieraksts",
+    "бас (временная замена на записи 1995 года)": "bass (pagaidu aizvietotājs 1995. gada ierakstā)",
+    "bass (temporary, stood in for the 1995 recording)": "bass (pagaidu aizvietotājs 1995. gada ierakstā)",
+    "бас, бэк-вокал": "bass, bekvokāls",
+    "bass, backing vocals": "bass, bekvokāls",
+    "бас, вокал": "bass, vokāls",
+    "bass, vocals": "bass, vokāls",
+    "бас, музыка для «весны»": "bass, mūzika dziesmai «Vesna»",
+    "bass, music for \"vesna\"": "bass, mūzika dziesmai «Vesna»",
+    "бас-гитара, вокал": "basģitāra, vokāls",
+    "bass guitar, vocals": "basģitāra, vokāls",
+    "бас-гитара, тексты": "basģitāra, teksti",
+    "bass guitar, lyrics": "basģitāra, teksti",
+    "вокал (гостевое участие на треке 05)": "vokāls (viesa līdzdalība 5. celiņā)",
+    "vocals (guest on track 05)": "vokāls (viesa līdzdalība 5. celiņā)",
+    "вокал, акустическая гитара": "vokāls, akustiskā ģitāra",
+    "vocals, acoustic guitar": "vokāls, akustiskā ģitāra",
+    "вокал, акустическая гитара, бас": "vokāls, akustiskā ģitāra, bass",
+    "вокал, акустическая гитара, бас.": "vokāls, akustiskā ģitāra, bass",
+    "вокал, бас, клавишные, акустическая гитара": "vokāls, bass, taustiņinstrumenti, akustiskā ģitāra",
+    "vocals, bass, keyboards, acoustic guitar": "vokāls, bass, taustiņinstrumenti, akustiskā ģitāra",
+    "вокал, бас-гитара": "vokāls, basģitāra",
+    "vocals, bass guitar": "vokāls, basģitāra",
+    "вокал, гитара": "vokāls, ģitāra",
+    "vocals, guitar": "vokāls, ģitāra",
+    "вокал, гитара, аккордеон, сведение": "vokāls, ģitāra, akordeons, miksēšana",
+    "vocals, guitar, accordion, mixing/production": "vokāls, ģitāra, akordeons, miksēšana",
+    "вокал, гитары": "vokāls, ģitāras",
+    "vocals, guitars": "vokāls, ģitāras",
+    "вокал, инструменты": "vokāls, instrumenti",
+    "vocals, instruments": "vokāls, instrumenti",
+    "вокал, ритм-гитара": "vokāls, ritma ģitāra",
+    "vocals, rhythm guitar": "vokāls, ritma ģitāra",
+    "вокал, тексты": "vokāls, teksti",
+    "vocals, lyrics": "vokāls, teksti",
+    "вокал, тексты, программирование ударных": "vokāls, teksti, bungu programmēšana",
+    "vocals, lyrics, drum programming": "vokāls, teksti, bungu programmēšana",
+    "гитара, аккордеон": "ģitāra, akordeons",
+    "guitar, accordion": "ģitāra, akordeons",
+    "гитара, бэк-вокал": "ģitāra, bekvokāls",
+    "guitar, backing vocals": "ģitāra, bekvokāls",
+    "гитара, вокал": "ģitāra, vokāls",
+    "guitar, vocals": "ģitāra, vokāls",
+    "гитара, вокал, автор большинства песен": "ģitāra, vokāls, vairuma dziesmu autors",
+    "guitar, vocals, primary songwriter": "ģitāra, vokāls, vairuma dziesmu autors",
+    "гитара, вокал, бас, клавиши, ударные": "ģitāra, vokāls, bass, taustiņinstrumenti, bungas",
+    "guitar, vocals, bass, keyboards, drums": "ģitāra, vokāls, bass, taustiņinstrumenti, bungas",
+    "гитара, вокал, клавишные": "ģitāra, vokāls, taustiņinstrumenti",
+    "guitar, vocals, keyboards": "ģitāra, vokāls, taustiņinstrumenti",
+    "гитара, лидер-гитара": "ģitāra, soloģitāra",
+    "guitar, lead guitar": "ģitāra, soloģitāra",
+    "гитара, музыка": "ģitāra, mūzika",
+    "guitar, composer": "ģitāra, komponists",
+    "гитара, тексты": "ģitāra, teksti",
+    "клавиши, вокал": "taustiņinstrumenti, vokāls",
+    "keyboards, vocals": "taustiņinstrumenti, vokāls",
+    "музыка для «проникни в мой сад»": "mūzika albumam «Pronikni v moj sad»",
+    "music for \"pronikni v moy sad\"": "mūzika albumam «Pronikni v moj sad»",
+    "музыка, гитара, бас": "mūzika, ģitāra, bass",
+    "music, guitar, bass": "mūzika, ģitāra, bass",
+    "перкуссия, вокал": "perkusijas, vokāls",
+    "percussion, vocals": "perkusijas, vokāls",
+    "песни, гитара, вокал": "dziesmas, ģitāra, vokāls",
+    "songs, guitar, vocals": "dziesmas, ģitāra, vokāls",
+    "слова, запись звука": "vārdi, skaņu ieraksts",
+    "lyrics, sound recording": "vārdi, skaņu ieraksts",
+    "соло-гитара, сведение": "soloģitāra, miksēšana",
+    "lead guitar, mixing": "soloģitāra, miksēšana",
+    "ударные (второй состав)": "bungas (otrais sastāvs)",
+    "drums (second lineup)": "bungas (otrais sastāvs)",
+    "ударные (первый состав)": "bungas (pirmais sastāvs)",
+    "drums (first lineup)": "bungas (pirmais sastāvs)",
+    "ударные, клавишные": "bungas, taustiņinstrumenti",
+    "drums, keyboards": "bungas, taustiņinstrumenti",
+}
+
+
+def translate_role_lv(role: str | None, role_en: str | None = None) -> str | None:
+    """Translate musical roles into natural Latvian, falling back to English role or role."""
+    if not role and not role_en:
+        return None
+    for cand in (role, role_en):
+        if not cand:
+            continue
+        cand_clean = cand.strip().rstrip(".").lower()
+        if cand_clean in ROLE_MAP_LV:
+            return ROLE_MAP_LV[cand_clean]
+        if "," in cand:
+            parts = [p.strip().rstrip(".").lower() for p in cand.split(",")]
+            translated_parts = [ROLE_MAP_LV.get(p) for p in parts]
+            if all(translated_parts):
+                return ", ".join(translated_parts)
+    return role_en or role
+
+
 def localize(obj, field: str, lang: str) -> str | None:
     """Pick obj.<field>_en for lang="en", obj.<field>_lv for lang="lv" (falling
-    back to obj.<field> if no translation exists yet), else obj.<field>. Used
-    for multilingual text fields (description, member name/role, image caption)
+    back to Latin script or base obj.<field> if no translation exists yet), else obj.<field>.
+    Used for multilingual text fields (description, member name/role, image caption)
     that carry a canonical value and optional translations."""
     base = getattr(obj, field, None)
     if lang == "en":
         return getattr(obj, f"{field}_en", None) or base
     if lang == "lv":
-        return getattr(obj, f"{field}_lv", None) or base
+        val_lv = getattr(obj, f"{field}_lv", None)
+        if val_lv:
+            return val_lv
+        if field == "role":
+            role_en = getattr(obj, "role_en", None)
+            translated = translate_role_lv(base, role_en)
+            if translated:
+                return translated
+            return role_en or base
+        if field == "name":
+            # For member names, if name_lv is not set, prefer Latin transliteration (name_en)
+            # over Cyrillic (name) for a consistent Latin-alphabet experience in Latvian.
+            return getattr(obj, "name_en", None) or base
+        return base
     return base
 
 
@@ -228,8 +412,10 @@ def index_musicians(bands: list[MusicGroup]) -> dict[str, dict]:
                     "slug": slug,
                     "names_ru": [],
                     "names_en": [],
+                    "names_lv": [],
                     "nicks_ru": [],
                     "nicks_en": [],
+                    "nicks_lv": [],
                     "memberships": [],
                 }
 
@@ -242,12 +428,18 @@ def index_musicians(bands: list[MusicGroup]) -> dict[str, dict]:
                 musicians[slug]["names_en"].append(clean_en)
                 musicians[slug]["nicks_en"].extend(nicks_en)
 
+            if getattr(m, "name_lv", None):
+                clean_lv, nicks_lv = extract_clean_name_and_nicknames(m.name_lv)
+                musicians[slug]["names_lv"].append(clean_lv)
+                musicians[slug]["nicks_lv"].extend(nicks_lv)
+
             musicians[slug]["memberships"].append({
                 "band_slug": band.slug,
                 "band_name": band.name,
                 "band_name_en": getattr(band, "name_en", None) or band.name,
                 "role": m.role,
                 "role_en": m.role_en or m.role,
+                "role_lv": getattr(m, "role_lv", None),
                 "period": m.period,
             })
 
@@ -269,11 +461,31 @@ def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
         else:
             best_en = unidecode.unidecode(best_ru)
 
-        display_name = best_en if lang == "en" else best_ru
+        c_lv = Counter(m_data.get("names_lv", []))
+        if c_lv:
+            best_lv = max(c_lv.keys(), key=lambda s: (len(s.split()), c_lv[s], len(s)))
+        else:
+            best_lv = best_en
+
+        if lang == "en":
+            display_name = best_en
+        elif lang == "lv":
+            display_name = best_lv
+        else:
+            display_name = best_ru
 
         alt_names: list[str] = []
         if lang == "en":
             candidates = m_data["nicks_en"] + m_data["names_en"]
+            if not candidates:
+                candidates = [unidecode.unidecode(n) for n in m_data["nicks_ru"] + m_data["names_ru"]]
+        elif lang == "lv":
+            candidates = (
+                m_data.get("nicks_lv", [])
+                + m_data.get("names_lv", [])
+                + m_data["nicks_en"]
+                + m_data["names_en"]
+            )
             if not candidates:
                 candidates = [unidecode.unidecode(n) for n in m_data["nicks_ru"] + m_data["names_ru"]]
         else:
@@ -286,8 +498,13 @@ def prepare_musicians_view(musicians: dict[str, dict], lang: str) -> list[dict]:
         bands_list: list[dict] = []
         seen_bands: set[tuple[str, str | None]] = set()
         for mem in m_data["memberships"]:
-            band_name = mem["band_name_en"] if lang == "en" else mem["band_name"]
-            display_role = mem["role_en"] if lang == "en" else mem["role"]
+            band_name = mem["band_name_en"] if lang in ("en", "lv") else mem["band_name"]
+            if lang == "en":
+                display_role = mem["role_en"]
+            elif lang == "lv":
+                display_role = mem.get("role_lv") or translate_role_lv(mem["role"], mem.get("role_en")) or mem["role_en"]
+            else:
+                display_role = mem["role"]
             period = mem["period"]
             band_key = (mem["band_slug"], period)
             if band_key not in seen_bands:
@@ -519,6 +736,13 @@ def generate_search_index(
         if lang == "en":
             members = [m.name_en or m.name for m in band.member]
             roles = [m.role_en or m.role for m in band.member if (m.role or m.role_en)]
+        elif lang == "lv":
+            members = [getattr(m, "name_lv", None) or m.name_en or m.name for m in band.member]
+            roles = [
+                getattr(m, "role_lv", None) or translate_role_lv(m.role, m.role_en) or m.role_en or m.role
+                for m in band.member
+                if (m.role or m.role_en)
+            ]
         else:
             members = [m.name for m in band.member]
             roles = [m.role for m in band.member if m.role]
