@@ -47,6 +47,19 @@ description_en: Radio is Dead was a Daugavpils modern alternative rock group fea
 description_lv: Radio is Dead bija Daugavpils moderna roka grupa ar izteiktam taustinu
   melodijam. Dalibniece pasakumos 'Daugavpils Rok maratons 2018' un 'Rok maratons
   2019', ka ari festivala Chemical Reaction.
-sameAs: []
-image: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-radio-is-dead
+- https://archive.org/download/daugavpils-fans-radio-is-dead/daugavpils-fans-radio-is-dead_archive.torrent
+image:
+- contentUrl: media/radio-is-dead-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 6c0285f84f221efb77870c6ba3a42d568ffc81f905ca1c931d5f275e8a512464
+  '@type': ImageObject
+  caption: Группа Radio is Dead
+  caption_en: Radio is Dead band photo
+  caption_lv: Grupas Radio is Dead foto
+  depicts: []
 video: []

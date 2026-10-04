@@ -11,6 +11,8 @@ description_en: Debut studio album by Daugavpils folk metal band Varang Nord (20
 description_lv: Daugavpils folkmetala grupas Varang Nord debijas studijas albums (2014).
 sameAs:
 - https://varangnord.bandcamp.com/album/fire-of-the-northern-lore
+- https://archive.org/details/daugavpils-fans-varang-nord-2014-fire-of-the-northern-lore
+- https://archive.org/download/daugavpils-fans-varang-nord-2014-fire-of-the-northern-lore/daugavpils-fans-varang-nord-2014-fire-of-the-northern-lore_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -21,7 +23,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Blood for Blood
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3566c4efc337a231ed7afc3ec512a51aea11dd29939b0ea55509381de68f3ff5
+  '@type': ImageObject
+  caption: Обложка альбома Fire of the Northern Lore
+  caption_en: Fire of the Northern Lore album cover
+  caption_lv: Fire of the Northern Lore albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

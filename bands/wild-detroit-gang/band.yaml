@@ -57,5 +57,18 @@ description_lv: Wild Detroit Gang ir Daugavpils hardroka un bluzroka grupa, kuru
 sameAs:
 - https://wilddetroitgang.bandcamp.com/
 - https://www.youtube.com/c/WildDetroitGang
-image: []
+- https://archive.org/details/daugavpils-fans-wild-detroit-gang
+- https://archive.org/download/daugavpils-fans-wild-detroit-gang/daugavpils-fans-wild-detroit-gang_archive.torrent
+image:
+- contentUrl: media/wild-detroit-gang-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ee162e3539345d623f3101dcdcc99f5da3d7b8feef31e5ac81f755308ac24069
+  '@type': ImageObject
+  caption: Группа Wild Detroit Gang
+  caption_en: Wild Detroit Gang band photo
+  caption_lv: Grupas Wild Detroit Gang foto
+  depicts: []
 video: []

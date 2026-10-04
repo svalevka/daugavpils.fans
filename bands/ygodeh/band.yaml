@@ -55,5 +55,39 @@ description_lv: YGODEH ir Daugavpils metalmūzikas projekts un grupas Disease ti
 sameAs:
 - https://www.youtube.com/@ygodehband/videos
 - https://www.metal-archives.com/bands/Ygodeh/3540321557
-image: []
-video: []
+- https://archive.org/details/daugavpils-fans-ygodeh
+- https://archive.org/download/daugavpils-fans-ygodeh/daugavpils-fans-ygodeh_archive.torrent
+image:
+- contentUrl: media/ygodeh-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 1542541fc673d232fc07611fc2b6517dfae64a1abad7299f9772e99d96bd7731
+  '@type': ImageObject
+  caption: Группа YGODEH
+  caption_en: YGODEH band photo
+  caption_lv: Grupas YGODEH foto
+  depicts: []
+- contentUrl: media/ygodeh-logo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c68fafaa7dabed94333eadfeb5af711269b0d73c49891fccb67220dd6d7a101f
+  '@type': ImageObject
+  caption: Логотип группы YGODEH
+  caption_en: YGODEH logo
+  caption_lv: Grupas YGODEH logotips
+  depicts: []
+video:
+- contentUrl: media/ygodeh-vigilante-video.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 6d26e3c6c3e7ddbb6ec81183715d2af8d1d7a3ad76f98b9c063987d4b746b6ec
+  '@type': VideoObject
+  name: Vigilante (Official Music Video)
+  bitrate: 1490 kbps
+  duration: PT4M30S

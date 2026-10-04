@@ -51,5 +51,18 @@ description_lv: Robotplant bija atmosferiska sugaze un indie roka grupa, ko Daug
   albumu 'Seen and Felt', prezentejot to Nabaklab Riga.
 sameAs:
 - https://www.youtube.com/results?search_query=robotplant+seen+and+felt
-image: []
+- https://archive.org/details/daugavpils-fans-robotplant
+- https://archive.org/download/daugavpils-fans-robotplant/daugavpils-fans-robotplant_archive.torrent
+image:
+- contentUrl: media/robotplant-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d4f1e172b57ee093ebce85c3f2ce573558292190a7b324dbe02d79f08cca080f
+  '@type': ImageObject
+  caption: Группа Robotplant
+  caption_en: Robotplant band photo
+  caption_lv: Grupas Robotplant foto
+  depicts: []
 video: []

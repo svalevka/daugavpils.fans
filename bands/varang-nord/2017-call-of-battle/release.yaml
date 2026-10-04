@@ -10,6 +10,8 @@ description_en: Third studio album by Varang Nord (2017).
 description_lv: Varang Nord tresais studijas albums (2017).
 sameAs:
 - https://varangnord.bandcamp.com/album/call-of-battle
+- https://archive.org/details/daugavpils-fans-varang-nord-2017-call-of-battle
+- https://archive.org/download/daugavpils-fans-varang-nord-2017-call-of-battle/daugavpils-fans-varang-nord-2017-call-of-battle_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -20,7 +22,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Crown of the Ice
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 928a2431f7fa0f5b5d151279a2808ac33676bc33adb888648b988506e8ec9e3e
+  '@type': ImageObject
+  caption: Обложка альбома Call of Battle
+  caption_en: Call of Battle album cover
+  caption_lv: Call of Battle albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

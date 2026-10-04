@@ -72,5 +72,39 @@ sameAs:
 - https://varangnord.bandcamp.com/
 - https://www.metal-archives.com/bands/Varang_Nord/3540388487
 - https://www.youtube.com/c/VarangNord
-image: []
-video: []
+- https://archive.org/details/daugavpils-fans-varang-nord
+- https://archive.org/download/daugavpils-fans-varang-nord/daugavpils-fans-varang-nord_archive.torrent
+image:
+- contentUrl: media/varang-nord-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 84a9a16e2bcc7c2ecd5d82a336d571a4b9455efc43d0677e8fdb9bb5720410ab
+  '@type': ImageObject
+  caption: Группа Varang Nord
+  caption_en: Varang Nord band photo
+  caption_lv: Grupas Varang Nord foto
+  depicts: []
+- contentUrl: media/varang-nord-logo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a7b8aeeda0370fee9b865b614963e1e0cbcd7821f0c1e6637939ca6251246752
+  '@type': ImageObject
+  caption: Логотип группы Varang Nord
+  caption_en: Varang Nord logo
+  caption_lv: Grupas Varang Nord logotips
+  depicts: []
+video:
+- contentUrl: media/varang-nord-asna-ausma-video.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: b5965b7695686948ab1063afe96c571ea9c71bc7fc72697effa3814a5e747640
+  '@type': VideoObject
+  name: Ašņa Ausma (Official Music Video)
+  bitrate: 595 kbps
+  duration: PT3M52S

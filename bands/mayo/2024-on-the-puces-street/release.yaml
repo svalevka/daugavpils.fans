@@ -9,7 +9,9 @@ genre:
 description: Дебютный студийный альбом даугавпилсской рок-группы MaYo (2024).
 description_en: Debut studio album by Daugavpils rock group MaYo (2024).
 description_lv: Daugavpils rokgrupas MaYo debijas studijas albums (2024).
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-mayo-2024-on-the-puces-street
+- https://archive.org/download/daugavpils-fans-mayo-2024-on-the-puces-street/daugavpils-fans-mayo-2024-on-the-puces-street_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -23,7 +25,18 @@ track:
 - '@type': MusicRecording
   position: 4
   name: Echoes
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 626f55bdc7af7fe6f9abba295b3e3984741cff968944ab6883ab875eb3175999
+  '@type': ImageObject
+  caption: Обложка альбома ...On The Pūces Street...
+  caption_en: '...On The Puces Street... album cover'
+  caption_lv: '...On The Puces Street... albuma vaks'
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

@@ -72,5 +72,28 @@ description_lv: ELPA ir legendara artroka un progresīvā roka grupa, ko Daugavp
 sameAs:
 - https://www.discogs.com/artist/2301980-Elpa
 - https://www.youtube.com/results?search_query=grupa+elpa+daugavpils
-image: []
-video: []
+- https://archive.org/details/daugavpils-fans-elpa
+- https://archive.org/download/daugavpils-fans-elpa/daugavpils-fans-elpa_archive.torrent
+image:
+- contentUrl: media/elpa-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: dc13eba237dd7dc4720268ae41be3b09ef2ab5a1f934de23db6f0864d949ec49
+  '@type': ImageObject
+  caption: Группа Elpa
+  caption_en: Elpa band photo
+  caption_lv: Grupas Elpa foto
+  depicts: []
+video:
+- contentUrl: media/elpa-sena-dziesma-mikrofons-1986.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 8028a2bf2c01c188e7ed190fb3541fe1078a537fddb88e784d5584ded4787c50
+  '@type': VideoObject
+  name: Senā dziesma (Mikrofons 1986)
+  bitrate: 264 kbps
+  duration: PT5M50S

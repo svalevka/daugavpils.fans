@@ -11,6 +11,8 @@ description_en: Debut studio album by Dabasu Durovys (2008).
 description_lv: Grupas Dabasu Durovys debijas studijas albums (2008).
 sameAs:
 - https://dabasudurovys.lv/
+- https://archive.org/details/daugavpils-fans-dabasu-durovys-2008-lepetniks
+- https://archive.org/download/daugavpils-fans-dabasu-durovys-2008-lepetniks/daugavpils-fans-dabasu-durovys-2008-lepetniks_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -21,7 +23,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Daugavpils
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 26d34e0e1b30c3db59ee20ef190855170eb89211460af124f560d9fd7552b16d
+  '@type': ImageObject
+  caption: Обложка альбома Ļepetnīks
+  caption_en: Lepetniks album cover
+  caption_lv: Lepetniks albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

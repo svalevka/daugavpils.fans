@@ -10,6 +10,8 @@ description_en: Second album by Saintorment (2017).
 description_lv: Grupas Saintorment otrais albums (2017).
 sameAs:
 - https://saintorment.bandcamp.com/album/defective-mind
+- https://archive.org/details/daugavpils-fans-saintorment-2017-defective-mind
+- https://archive.org/download/daugavpils-fans-saintorment-2017-defective-mind/daugavpils-fans-saintorment-2017-defective-mind_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -20,7 +22,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Mental War
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c7821ccc8c82c759f3898498504c021f1207b21a3b1e1dc167b1fc6221ba65a0
+  '@type': ImageObject
+  caption: Обложка альбома Defective Mind
+  caption_en: Defective Mind album cover
+  caption_lv: Defective Mind albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

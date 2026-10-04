@@ -1,0 +1,71 @@
+'@type': MusicAlbum
+name: Trigger Happy
+slug: 2013-trigger-happy
+datePublished: '2013'
+byArtist: asthma
+genre:
+- Thrash Metal
+description: Второй официальный релиз (демо) группы Asthma (2013).
+description_en: Second official release (demo) by Asthma (2013).
+description_lv: Grupas Asthma otrais oficialais ieraksts (demo) (2013).
+sameAs:
+- https://www.metal-archives.com/albums/Asthma/Trigger_Happy/375136
+- https://www.youtube.com/watch?v=n7uIxmDQYoc
+- https://archive.org/details/daugavpils-fans-asthma-2013-trigger-happy
+- https://archive.org/download/daugavpils-fans-asthma-2013-trigger-happy/daugavpils-fans-asthma-2013-trigger-happy_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Digestive Generation
+  audio:
+    contentUrl: 01-digestive-generation.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 97d3a255208eb37a00d90db2c329fa41da0a6f380a0c755289c9add672f56e95
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M4S
+- '@type': MusicRecording
+  position: 2
+  name: Liposuction
+  audio:
+    contentUrl: 02-liposuction.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9c54d2c3df96a874ba969a795bad032ed53218cd43de47ac5a7b83b6266da8a0
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M36S
+- '@type': MusicRecording
+  position: 3
+  name: Anticitizen One
+  audio:
+    contentUrl: 03-anticitizen-one.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d8ab200901652f079b5aa35fdfceb9e81f9b150fac26c20cdfd1d70a6241cf99
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M36S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0faf8a886f50c460e96578ee7b5dcd26dba9aead4d67ff3a5173c7fd0e7d2840
+  '@type': ImageObject
+  caption: Обложка демо Trigger Happy
+  caption_en: Trigger Happy demo cover
+  caption_lv: Trigger Happy demo vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

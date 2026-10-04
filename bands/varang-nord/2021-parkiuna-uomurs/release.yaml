@@ -13,6 +13,8 @@ description_lv: Varang Nord ceturtais albums, kas pilniba ierakstits latgaliesu 
   (2021).
 sameAs:
 - https://varangnord.bandcamp.com/album/p-r-iu-a-uomurs
+- https://archive.org/details/daugavpils-fans-varang-nord-2021-parkiuna-uomurs
+- https://archive.org/download/daugavpils-fans-varang-nord-2021-parkiuna-uomurs/daugavpils-fans-varang-nord-2021-parkiuna-uomurs_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -26,7 +28,18 @@ track:
 - '@type': MusicRecording
   position: 4
   name: Svietņeica
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 353f972a61251b46cc08345976c590630e5daab902e36638926b518a7907de1c
+  '@type': ImageObject
+  caption: Обложка альбома Pārkīuna uomurs
+  caption_en: Parkiuna uomurs album cover
+  caption_lv: Parkiuna uomurs albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

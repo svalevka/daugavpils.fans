@@ -44,5 +44,18 @@ description_lv: Hardweld ir Daugavpils pankroka trio, ko 2014. gada izveidoja Pa
   Daugavpils Rokmaratonos un festivala Chemical Reaction.
 sameAs:
 - https://www.youtube.com/results?search_query=hardweld+daugavpils
-image: []
+- https://archive.org/details/daugavpils-fans-hardweld
+- https://archive.org/download/daugavpils-fans-hardweld/daugavpils-fans-hardweld_archive.torrent
+image:
+- contentUrl: media/hardweld-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a8b878df14856cadca7ee739ffce3f43c37023658b6800454b5f901ab20e2ab7
+  '@type': ImageObject
+  caption: Группа Hardweld
+  caption_en: Hardweld band photo
+  caption_lv: Grupas Hardweld foto
+  depicts: []
 video: []

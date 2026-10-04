@@ -60,5 +60,28 @@ sameAs:
 - https://dabasudurovys.lv/
 - https://www.draugiem.lv/dabasudurovys/
 - https://www.youtube.com/results?search_query=dabasu+durovys
-image: []
-video: []
+- https://archive.org/details/daugavpils-fans-dabasu-durovys
+- https://archive.org/download/daugavpils-fans-dabasu-durovys/daugavpils-fans-dabasu-durovys_archive.torrent
+image:
+- contentUrl: media/dabasu-durovys-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 1064e8593c22b40e7b912f6132fadd16b5efc4dc016eb76fa661558ec1453465
+  '@type': ImageObject
+  caption: Группа Dabasu Durovys
+  caption_en: Dabasu Durovys band photo
+  caption_lv: Grupas Dabasu Durovys foto
+  depicts: []
+video:
+- contentUrl: media/dabasu-durovys-uglis-video.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 70a62c59f4f994d652f1a6eda5e30b8c2b007520f2155a28be72c5eacafdb280
+  '@type': VideoObject
+  name: Ūglis (Oficiāls Video)
+  bitrate: 1641 kbps
+  duration: PT4M18S

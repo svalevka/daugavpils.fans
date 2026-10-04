@@ -12,6 +12,8 @@ description_lv: Daugavpils industrial death metal projekta YGODEH debijas minial
   (EP) (2010).
 sameAs:
 - https://www.youtube.com/@ygodehband/videos
+- https://archive.org/details/daugavpils-fans-ygodeh-2010-dawn-of-technological-singularity
+- https://archive.org/download/daugavpils-fans-ygodeh-2010-dawn-of-technological-singularity/daugavpils-fans-ygodeh-2010-dawn-of-technological-singularity_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -22,7 +24,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Artificial Soul
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7650af9bcaa64bdf818648740956517840128c01ce447adef1e6e5d52b45a371
+  '@type': ImageObject
+  caption: Обложка альбома Dawn of Technological Singularity
+  caption_en: Dawn of Technological Singularity album cover
+  caption_lv: Dawn of Technological Singularity albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

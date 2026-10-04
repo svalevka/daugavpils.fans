@@ -11,6 +11,8 @@ description_en: Second album by Metrs (2014).
 description_lv: Grupas Metrs otrais albums (2014).
 sameAs:
 - https://www.draugiem.lv/metrs/
+- https://archive.org/details/daugavpils-fans-metrs-2014-labaka-diena
+- https://archive.org/download/daugavpils-fans-metrs-2014-labaka-diena/daugavpils-fans-metrs-2014-labaka-diena_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -21,7 +23,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Lietus
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: faa509dea3f8cfa241e862ef9fc21bbc1012273c0a28f8c93001d108e08d2c6f
+  '@type': ImageObject
+  caption: Обложка альбома Labākā diena
+  caption_en: Labaka diena album cover
+  caption_lv: Labaka diena albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

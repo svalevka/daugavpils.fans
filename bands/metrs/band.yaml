@@ -58,5 +58,28 @@ description_lv: Metrs ir viena no ilgvetigakajam un iecienitakajam Daugavpils al
   izdeva albumus 'Pirmais albums' (1998), 'Labaka diena' (2014) un 'Enas' (2018).
 sameAs:
 - https://www.draugiem.lv/metrs/
-image: []
-video: []
+- https://archive.org/details/daugavpils-fans-metrs
+- https://archive.org/download/daugavpils-fans-metrs/daugavpils-fans-metrs_archive.torrent
+image:
+- contentUrl: media/metrs-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 949b24f63388328e181c4aec7d4a5e60568edababa28cff4a499e87a67c129b6
+  '@type': ImageObject
+  caption: Группа Metrs
+  caption_en: Metrs band photo
+  caption_lv: Grupas Metrs foto
+  depicts: []
+video:
+- contentUrl: media/metrs-labaka-diena-video.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7dee226af0e28200ea4178916fc8534fe7dde50042225d8490069508a95d682b
+  '@type': VideoObject
+  name: Labākā diena (Official Video)
+  bitrate: 1374 kbps
+  duration: PT4M9S

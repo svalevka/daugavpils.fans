@@ -56,5 +56,39 @@ description_lv: Saintorment ir Daugavpils thrash metal grupa, dibinata 2013. gad
 sameAs:
 - https://saintorment.bandcamp.com/
 - https://www.metal-archives.com/bands/Saintorment/3540398687
-image: []
-video: []
+- https://archive.org/details/daugavpils-fans-saintorment
+- https://archive.org/download/daugavpils-fans-saintorment/daugavpils-fans-saintorment_archive.torrent
+image:
+- contentUrl: media/saintorment-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d8f88718cfb500194042bf865faa22f34ef2c5a45e2a0ccab5bae257f20f7ddf
+  '@type': ImageObject
+  caption: Группа Saintorment
+  caption_en: Saintorment band photo
+  caption_lv: Grupas Saintorment foto
+  depicts: []
+- contentUrl: media/saintorment-logo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3a3b62b19a6ae68e5fab831ca0f118fb875d259b6b994d40675fff764e789190
+  '@type': ImageObject
+  caption: Логотип группы Saintorment
+  caption_en: Saintorment logo
+  caption_lv: Grupas Saintorment logotips
+  depicts: []
+video:
+- contentUrl: media/saintorment-in-denial-live.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7bdb50abc6009fc51e5abda2a3a9f07b58bdd5312531ca89c793ce6fcc0c8db0
+  '@type': VideoObject
+  name: In Denial (Live in Daugavpils)
+  bitrate: 2448 kbps
+  duration: PT4M43S

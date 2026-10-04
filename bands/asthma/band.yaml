@@ -11,37 +11,146 @@ location: Daugavpils, Latvia
 genre:
 - Thrash Metal
 - Death Metal
-- Folk Metal
 member:
-- name: Максим Попов
-  name_en: Maksims Popovs
-  name_lv: Maksims Popovs
-  role: гитара, вокал
-  role_en: guitar, vocals
-  role_lv: gitara, vokals
+- name: Максим «Mr. Volff» Попов
+  name_en: Maxim "Mr. Volff" Popov
+  name_lv: Maksims "Mr. Volff" Popovs
+  role: соло-гитара
+  role_en: lead guitars
+  role_lv: solo gitara
   period: 2009-2014
-- name: Артур Соколов (Портвейн)
-  name_en: Artur Sokolov (Portvein)
-  name_lv: Arturs Sokolovs (Portvein)
-  role: бас-гитара, вокал
-  role_en: bass guitar, vocals
-  role_lv: basgitara, vokals
-  period: 2009-2014
-description: Asthma (ранее выступавшая под названием «Балагуры») — даугавпилсская
-  трэш/дэт-метал группа, созданная Максимом Поповым и Артуром Соколовым. Коллектив
-  активно выступал на латвийской андеграундной сцене, участвовал в национальном отборе
-  Wacken Metal Battle Latvia 2013 и послужил прямой ступенью к созданию международно
-  признанной группы Varang Nord.
-description_en: Asthma (initially performing as Balagury) was a Daugavpils thrash/death
-  metal band formed by Maksims Popovs and Artur Sokolov. Active across Latvian underground
-  stages and participating in Wacken Metal Battle Latvia 2013, the band served as
-  the direct precursor to the internationally successful folk metal outfit Varang
-  Nord.
-description_lv: Asthma (sakotneji uzstajas ar nosaukumu Balaguri) bija Daugavpils
-  thrash/death metal grupa, ko izveidoja Maksims Popovs un Arturs Sokolovs. Grupa
-  aktivi koncerteja Latvijas pagraba klubos, piedalijas Wacken Metal Battle Latvia
-  2013 un kluva par tiesu pamatu velakajai grupai Varang Nord.
+- name: Виктор «Абдула» Ринкевич
+  name_en: Victor "Abdula" Rinkevich
+  name_lv: Viktors "Abdula" Rinkevics
+  role: вокал
+  role_en: lead vocals
+  role_lv: vokals
+  period: 2010-2014
+- name: Артур «Портвейн» Соколов
+  name_en: Arthur "Portwein" Sokolov
+  name_lv: Arturs "Portwein" Sokolovs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2009-2010
+- name: Дмитрий Сухановский
+  name_en: Dmitry Suhanovsky
+  name_lv: Dmitrijs Suhanovskis
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2010-2014
+- name: Алекс Прокофьев
+  name_en: Alex Prokofjev
+  name_lv: Alekss Prokofjevs
+  role: гитара
+  role_en: lead guitars
+  role_lv: gitara
+  period: 2010-2014
+- name: Артур Кореев
+  name_en: Arthur Korejev
+  name_lv: Arturs Korejevs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2011-2014
+- name: Александр «Потап» Потапов
+  name_en: Alex "Potap" Potapov
+  name_lv: Aleksandrs "Potap" Potapovs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2009-2011
+- name: Андрей
+  name_en: Andrei
+  name_lv: Andrejs
+  role: ритм-гитара
+  role_en: rhythm guitars
+  role_lv: ritma gitara
+  period: 2009-2010
+- name: Владимир Склема
+  name_en: Vladimir Sklema
+  name_lv: Vladimirs Sklema
+  role: клавишные
+  role_en: keyboards
+  role_lv: taustininstrumenti
+  period: 2009-2011
+- name: Вадим Мамонов
+  name_en: Vadim Mamonov
+  name_lv: Vadims Mamonovs
+  role: вокал
+  role_en: vocals
+  role_lv: vokals
+  period: 2009-2010
+description: Asthma (ранее выступавшая под названием «Балагуры») — знаковая даугавпилсская
+  трэш/дэт-метал группа, основанная в начале 2009 года гитаристом Максимом «Волком»
+  Поповым (Mr. Volff) и барабанщиком Артуром Соколовым (Портвейн). Позже вокалистом
+  группы стал Виктор Ринкевич (Абдула / Фека из группы Свинктр), а за барабаны сел
+  Дмитрий Сухановский. Группа играла бескомпромиссный, скоростной трэш-метал с элементами
+  дэт-метала и панк-рока. В 2009 году группа выпустила полноформатный альбом «Most
+  Evil», в 2013 году — демо «Trigger Happy», и участвовала в национальном отборе «Wacken
+  Metal Battle Latvia 2013». В 2014 году коллектив трансформировался в знаменитую
+  фолк-метал группу Varang Nord.
+description_en: Asthma (originally known as Balagury) was a powerhouse Daugavpils
+  thrash/death metal band formed in early 2009 by lead guitarist Maxim 'Mr. Volff'
+  Popov and drummer Arthur 'Portwein' Sokolov. Later joined by vocalist Victor 'Abdula'
+  Rinkevich (from Svinktr) and drummer Dmitry Suhanovsky, the band played aggressive,
+  relentless thrash/death metal with punk attitude. Asthma released the full-length
+  album 'Most Evil' (2009) and the demo 'Trigger Happy' (2013), competing in the Wacken
+  Metal Battle Latvia 2013. In 2014, the core lineup evolved into the internationally
+  celebrated folk metal outfit Varang Nord.
+description_lv: Asthma (sakotneji pazistama ka Balaguri) bija nozimiga Daugavpils
+  thrash/death metal grupa, kuru 2009. gada sakuma izveidoja sologitarists Maksims
+  'Mr. Volff' Popovs un bungieris Arturs 'Portwein' Sokolovs. Velak grupai pievienojas
+  vokalists Viktors 'Abdula' Rinkevics (no grupas Svinktr) un bungieris Dmitrijs Suhanovskis.
+  Grupa speleja atru un agresivu trasmetalu ar death metal un panka elementiem. Asthma
+  izdeva pilnmetrazas albumu 'Most Evil' (2009), demo 'Trigger Happy' (2013) un piedalijas
+  konkursa Wacken Metal Battle Latvia 2013. 2014. gada grupas kodols parveidojas par
+  starptautiski atzito folkmetala grupu Varang Nord.
 sameAs:
-- https://www.metal-archives.com/bands/Asthma/3540388487
-image: []
-video: []
+- https://www.metal-archives.com/bands/Asthma/3540363869
+- https://www.youtube.com/watch?v=_yerYgQPXPQ
+- https://www.youtube.com/watch?v=n7uIxmDQYoc
+- https://www.youtube.com/watch?v=tzza2u-pwXE
+- https://www.youtube.com/watch?v=p5DhBF5Dv2A
+- https://archive.org/details/daugavpils-fans-asthma
+- https://archive.org/download/daugavpils-fans-asthma/daugavpils-fans-asthma_archive.torrent
+image:
+- contentUrl: media/asthma-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ee2c2df1ec82885b91e611006fa196091ad05894ddce8ed45405693bdaf67b0d
+  '@type': ImageObject
+  caption: Группа Asthma
+  caption_en: Asthma band photo
+  caption_lv: Grupas Asthma foto
+  depicts:
+  - Maxim "Mr. Volff" Popov
+  - Victor "Abdula" Rinkevich
+  - Dmitry Suhanovsky
+  - Alex Prokofjev
+  - Arthur Korejev
+- contentUrl: media/asthma-logo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d4f4a54130a4754ea9931fb7bc6eb8736a5f11502084235cf5925f15ec464a78
+  '@type': ImageObject
+  caption: Логотип группы Asthma
+  caption_en: Asthma logo
+  caption_lv: Grupas Asthma logotips
+  depicts: []
+video:
+- contentUrl: media/asthma-liposuction-2013.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 4be1f8d1fd8647b1393a42c1fa37cf173dc4f975aebe47d0643f44e61fea4a83
+  '@type': VideoObject
+  name: Liposuction (Live Mana Pils Daugavpils, 2013)
+  bitrate: 613 kbps
+  duration: PT3M45S

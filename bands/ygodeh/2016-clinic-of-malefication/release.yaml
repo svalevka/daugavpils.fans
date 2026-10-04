@@ -11,6 +11,8 @@ description_en: Third studio album by YGODEH (2016).
 description_lv: YGODEH tresais studijas albums (2016).
 sameAs:
 - https://www.youtube.com/@ygodehband/videos
+- https://archive.org/details/daugavpils-fans-ygodeh-2016-clinic-of-malefication
+- https://archive.org/download/daugavpils-fans-ygodeh-2016-clinic-of-malefication/daugavpils-fans-ygodeh-2016-clinic-of-malefication_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -21,7 +23,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Genome Deviation
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: db4ad4f1d0cee3be4208abc12f59fd6cb150f521e004668cba74afc17e8f563a
+  '@type': ImageObject
+  caption: Обложка альбома Clinic of Malefication
+  caption_en: Clinic of Malefication album cover
+  caption_lv: Clinic of Malefication albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

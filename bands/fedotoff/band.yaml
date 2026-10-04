@@ -44,5 +44,18 @@ description_lv: FEDOTOFF ir Daugavpils roka projekts, kuru izveidoja Daugavpils 
 sameAs:
 - https://www.facebook.com/fedotoffband/
 - https://chayka.lv/2019/04/05/fedotoff/
-image: []
+- https://archive.org/details/daugavpils-fans-fedotoff
+- https://archive.org/download/daugavpils-fans-fedotoff/daugavpils-fans-fedotoff_archive.torrent
+image:
+- contentUrl: media/fedotoff-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7e2ce452a20deacec152e2daa9e70faf4ae21b17182f23a7c791cb0b1ab8008f
+  '@type': ImageObject
+  caption: Группа FEDOTOFF
+  caption_en: FEDOTOFF band photo
+  caption_lv: Grupas FEDOTOFF foto
+  depicts: []
 video: []

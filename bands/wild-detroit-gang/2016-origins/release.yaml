@@ -11,6 +11,8 @@ description_en: Debut studio album by Wild Detroit Gang (2016).
 description_lv: Grupas Wild Detroit Gang debijas studijas albums (2016).
 sameAs:
 - https://wilddetroitgang.bandcamp.com/album/origins
+- https://archive.org/details/daugavpils-fans-wild-detroit-gang-2016-origins
+- https://archive.org/download/daugavpils-fans-wild-detroit-gang-2016-origins/daugavpils-fans-wild-detroit-gang-2016-origins_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -21,7 +23,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Rock'n'Roll Night
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 1fbf09ee3ee9f0b0365e6ca3dfc6f77915933f8816a388dd7c108abb40992d36
+  '@type': ImageObject
+  caption: Обложка альбома Origins
+  caption_en: Origins album cover
+  caption_lv: Origins albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

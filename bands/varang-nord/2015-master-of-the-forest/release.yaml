@@ -10,6 +10,8 @@ description_en: Second studio album by Varang Nord (2015).
 description_lv: Varang Nord otrais studijas albums (2015).
 sameAs:
 - https://varangnord.bandcamp.com/album/master-of-the-forest
+- https://archive.org/details/daugavpils-fans-varang-nord-2015-master-of-the-forest
+- https://archive.org/download/daugavpils-fans-varang-nord-2015-master-of-the-forest/daugavpils-fans-varang-nord-2015-master-of-the-forest_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -20,7 +22,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Warchant
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 5284303a6ede2fe9d86c03c700cf07aca883804a8db679d2c33aa39b0673e8ab
+  '@type': ImageObject
+  caption: Обложка альбома Master of the Forest
+  caption_en: Master of the Forest album cover
+  caption_lv: Master of the Forest albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

@@ -11,6 +11,8 @@ description_en: Debut studio album by Daugavpils thrash metal band Saintorment (
 description_lv: Daugavpils thrash metal grupas Saintorment debijas albums (2015).
 sameAs:
 - https://saintorment.bandcamp.com/album/well-of-sins
+- https://archive.org/details/daugavpils-fans-saintorment-2015-well-of-sins
+- https://archive.org/download/daugavpils-fans-saintorment-2015-well-of-sins/daugavpils-fans-saintorment-2015-well-of-sins_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -21,7 +23,18 @@ track:
 - '@type': MusicRecording
   position: 3
   name: Apocalypse
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0fea8fcd3fb860886029165d3f6005422398ca6781e1c7a81d7a3af0845eca70
+  '@type': ImageObject
+  caption: Обложка альбома Well of Sins
+  caption_en: Well of Sins album cover
+  caption_lv: Well of Sins albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

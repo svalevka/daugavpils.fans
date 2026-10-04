@@ -11,6 +11,8 @@ description_en: Full-length studio album by YGODEH (2013).
 description_lv: Grupas YGODEH pilnmetrazas studijas albums (2013).
 sameAs:
 - https://www.youtube.com/@ygodehband/videos
+- https://archive.org/details/daugavpils-fans-ygodeh-2013-the-experiment-interrupted
+- https://archive.org/download/daugavpils-fans-ygodeh-2013-the-experiment-interrupted/daugavpils-fans-ygodeh-2013-the-experiment-interrupted_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -24,7 +26,18 @@ track:
 - '@type': MusicRecording
   position: 4
   name: Neural Collapse
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: bdb02f019f39162d88c952d8c1497c7d2cda4979da9009252481ec86edc82457
+  '@type': ImageObject
+  caption: Обложка альбома The Experiment Interrupted
+  caption_en: The Experiment Interrupted album cover
+  caption_lv: The Experiment Interrupted albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

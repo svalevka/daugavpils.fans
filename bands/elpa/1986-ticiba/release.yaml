@@ -11,6 +11,8 @@ description_en: Legendary rock suite by ELPA to lyrics by Leons Briedis (1986).
 description_lv: Grupas ELPA legendara roksuita ar Leona Brieda vardiem (1986).
 sameAs:
 - https://www.discogs.com/artist/2301980-Elpa
+- https://archive.org/details/daugavpils-fans-elpa-1986-ticiba
+- https://archive.org/download/daugavpils-fans-elpa-1986-ticiba/daugavpils-fans-elpa-1986-ticiba_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -24,7 +26,18 @@ track:
 - '@type': MusicRecording
   position: 4
   name: Miers
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 08c2a874b3af0cf9e2e5a55699e985b4d15baf487305c80ccdf8d425ce850096
+  '@type': ImageObject
+  caption: Обложка альбома Ticība
+  caption_en: Ticiba album cover
+  caption_lv: Ticiba albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []

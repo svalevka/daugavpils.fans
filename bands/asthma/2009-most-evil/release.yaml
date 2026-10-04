@@ -1,0 +1,152 @@
+'@type': MusicAlbum
+name: Most Evil
+slug: 2009-most-evil
+datePublished: '2009'
+byArtist: asthma
+genre:
+- Thrash Metal
+- Death Metal
+description: Полноформатный студийный дебютный альбом группы Asthma (2009).
+description_en: Debut full-length studio album by Daugavpils thrash/death metal band
+  Asthma (2009).
+description_lv: Daugavpils thrash/death metal grupas Asthma debijas studijas albums
+  (2009).
+sameAs:
+- https://www.metal-archives.com/albums/Asthma/Most_Evil/375098
+- https://www.youtube.com/watch?v=_yerYgQPXPQ
+- https://archive.org/details/daugavpils-fans-asthma-2009-most-evil
+- https://archive.org/download/daugavpils-fans-asthma-2009-most-evil/daugavpils-fans-asthma-2009-most-evil_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Intro
+  audio:
+    contentUrl: 01-intro.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e60a97859968da0e267f71dc64811583489e8012013da035d88cb2f4db944c16
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M45S
+- '@type': MusicRecording
+  position: 2
+  name: Schizophasic Intention
+  audio:
+    contentUrl: 02-schizophasic-intention.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 24bf10db1787fedf9735ac453a3bc35543ae2ec8545956a7070d133815be71e2
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M33S
+- '@type': MusicRecording
+  position: 3
+  name: Grooming the Fury
+  audio:
+    contentUrl: 03-grooming-the-fury.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 38bcb7cb0c7bd6c6ddf786d6aca43911d273317ba00ad7bb5ca416fbd2199964
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M18S
+- '@type': MusicRecording
+  position: 4
+  name: Intro Untitled
+  audio:
+    contentUrl: 04-intro-untitled.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f7238c36e489f71cddbb8a519e15c875ccab10e711a08ec394f1e1528c1c78d1
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT6M48S
+- '@type': MusicRecording
+  position: 5
+  name: Clockwork Device
+  audio:
+    contentUrl: 05-clockwork-device.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c40c9482c628489a45a622fbe5a372a850fcbe7efa9d630090908572eb89649f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M0S
+- '@type': MusicRecording
+  position: 6
+  name: Worldwide Marionette Cheater
+  audio:
+    contentUrl: 06-worldwide-marionette-cheater.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3be838853c4d16c2dded46e558c186fbab3ad1fb0e7df88499b04f94032be1d4
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M59S
+- '@type': MusicRecording
+  position: 7
+  name: Intro Arabic
+  audio:
+    contentUrl: 07-intro-arabic.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 59338ec598bc59b9142afc4d41dea3f327712fd6dbaa8ee1a19d2578769aa3f0
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M55S
+- '@type': MusicRecording
+  position: 8
+  name: Down to Oblivion
+  audio:
+    contentUrl: 08-down-to-oblivion.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 931264f21ec1bac03a57afb86302f098edd16f5443e61399ff556560e51e2a73
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M35S
+- '@type': MusicRecording
+  position: 9
+  name: Crossing the Styx
+  audio:
+    contentUrl: 09-crossing-the-styx.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ed15bbeb66e575bb37a7a1cdb8b0bcbd81a741395aab41de8eb40ae9c28a6bce
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M46S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3cb98ae45ff100a07ffaed46ba15345f22485ba72b2fa19bd9ea05ec2a3fc494
+  '@type': ImageObject
+  caption: Обложка альбома Most Evil
+  caption_en: Most Evil album cover
+  caption_lv: Most Evil albuma vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

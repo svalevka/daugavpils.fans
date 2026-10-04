@@ -30,5 +30,18 @@ description_lv: SECTLINEFOR ir Pavela 'Pitona' Stepanova (grupu Disease un YGODE
   Projekts spele tumsu mehanizetu industrialo elektroniku kopa ar smagam gitaram.
 sameAs:
 - https://www.youtube.com/@ygodehband/videos
-image: []
+- https://archive.org/details/daugavpils-fans-sectlinefor
+- https://archive.org/download/daugavpils-fans-sectlinefor/daugavpils-fans-sectlinefor_archive.torrent
+image:
+- contentUrl: media/sectlinefor-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0bfb593f31c770d2950e280cb3208cf3aed323b1563b87fd26d6c466816ce7ab
+  '@type': ImageObject
+  caption: Группа Sectlinefor
+  caption_en: Sectlinefor band photo
+  caption_lv: Grupas Sectlinefor foto
+  depicts: []
 video: []

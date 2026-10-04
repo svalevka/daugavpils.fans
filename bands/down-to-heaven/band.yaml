@@ -48,6 +48,19 @@ description_en: Down to Heaven was a Daugavpils melodic metal and symphonic rock
 description_lv: Down to Heaven bija Daugavpils melodiska metala un simfoniska roka
   grupa, kas darbojās 2010. gados. Grupas prieksgala bija dziedataja un pianiste Julija.
   Kolektivs regulari uzstajas Chemical Reaction festivalos un Daugavpils rokpasakumos.
-sameAs: []
-image: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-down-to-heaven
+- https://archive.org/download/daugavpils-fans-down-to-heaven/daugavpils-fans-down-to-heaven_archive.torrent
+image:
+- contentUrl: media/down-to-heaven-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2ec9c87033c46d7aa42f9827b305091b7fabfe83e0f03a45918febce0e610672
+  '@type': ImageObject
+  caption: Группа Down to Heaven
+  caption_en: Down to Heaven band photo
+  caption_lv: Grupas Down to Heaven foto
+  depicts: []
 video: []

@@ -55,5 +55,18 @@ description_lv: MaYo ir Daugavpils rokgrupa, ko 2023. gada izveidoja dziedataja 
   nosaukts par godu Puces ielai Daugavpili.
 sameAs:
 - https://www.youtube.com/results?search_query=mayo+daugavpils
-image: []
+- https://archive.org/details/daugavpils-fans-mayo
+- https://archive.org/download/daugavpils-fans-mayo/daugavpils-fans-mayo_archive.torrent
+image:
+- contentUrl: media/mayo-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d7a6f12c992684cd3721b6794ba5bdc1f8d2d7354e3cef14dd886744066f53b0
+  '@type': ImageObject
+  caption: Группа MaYo
+  caption_en: MaYo band photo
+  caption_lv: Grupas MaYo foto
+  depicts: []
 video: []

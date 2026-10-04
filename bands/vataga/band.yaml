@@ -66,5 +66,18 @@ description_lv: Vataga (sakotneji radusies 1990. gadu beigas ar nosaukumu Weedid
   Voda). Grupa izcelas ar energiskiem koncertiem un smagam rifu partijam.
 sameAs:
 - https://www.youtube.com/results?search_query=vataga+daugavpils
-image: []
+- https://archive.org/details/daugavpils-fans-vataga
+- https://archive.org/download/daugavpils-fans-vataga/daugavpils-fans-vataga_archive.torrent
+image:
+- contentUrl: media/vataga-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: f60d0d5859c7e42d2b453d1f58d62b42c8102b492bcf267f08eb9a35cc36555e
+  '@type': ImageObject
+  caption: Группа Ватага
+  caption_en: Vataga group photo
+  caption_lv: Grupas Vataga foto
+  depicts: []
 video: []

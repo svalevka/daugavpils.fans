@@ -11,7 +11,9 @@ description: Полноформатный студийный альбом дау
 description_en: Full-length studio album by Daugavpils shoegaze outfit Robotplant
   (2010).
 description_lv: Daugavpils sugaze grupas Robotplant pilnmetrazas studijas albums (2010).
-sameAs: []
+sameAs:
+- https://archive.org/details/daugavpils-fans-robotplant-2010-seen-and-felt
+- https://archive.org/download/daugavpils-fans-robotplant-2010-seen-and-felt/daugavpils-fans-robotplant-2010-seen-and-felt_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
@@ -25,7 +27,18 @@ track:
 - '@type': MusicRecording
   position: 4
   name: Morning Light
-image: []
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c7a5d437a43c172d915b67a39277a2f5a70cd0875e21198f74cba22cf9137b33
+  '@type': ImageObject
+  caption: Обложка альбома Seen and Felt
+  caption_en: Seen and Felt album cover
+  caption_lv: Seen and Felt albuma vaks
+  depicts: []
 video: []
 creditText: []
 creditText_en: []
