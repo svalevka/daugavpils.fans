@@ -1,0 +1,53 @@
+'@type': MusicAlbum
+name: Синглы 2008
+slug: 2008-singly
+datePublished: '2008'
+byArtist: loengrin
+genre:
+- Rock
+description: Две песни, выложенные группой для скачивания на своём сайте loengrin.ucoz.lv.
+  «Ночное волшебство» написана в 2007 году (выложена 12.10.2008); «Вестник Зари» записана
+  в октябре 2008 года (выложена 02.11.2008). Других сведений о записи не сохранилось.
+description_en: Two songs the band posted for download on its website loengrin.ucoz.lv.
+  "Nochnoe volshebstvo" (Night Magic) was written in 2007 (posted 12 Oct 2008); "Vestnik
+  Zari" (Herald of Dawn) was recorded in October 2008 (posted 2 Nov 2008). No further
+  details about the recordings survive.
+description_lv: Divas dziesmas, ko grupa ievietoja lejupielādei savā vietnē loengrin.ucoz.lv.
+  «Nočnoje volšebstvo» («Nakts burvība») sarakstīta 2007. gadā (ievietota 12.10.2008);
+  «Vestnik Zari» («Rītausmas vēstnesis») ierakstīta 2008. gada oktobrī (ievietota
+  02.11.2008). Citas ziņas par ierakstu nav saglabājušās.
+sameAs:
+- http://loengrin.ucoz.lv/load/
+- https://archive.org/details/daugavpils-fans-loengrin-2008-singly
+- https://archive.org/download/daugavpils-fans-loengrin-2008-singly/daugavpils-fans-loengrin-2008-singly_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Ночное волшебство
+  audio:
+    contentUrl: 01-nochnoe-volshebstvo.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a716335308cec29d3075ae0ae3d5f6e9e1acbf4f7471767b2b969bf8a2bdfc52
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M15S
+- '@type': MusicRecording
+  position: 2
+  name: Вестник Зари
+  audio:
+    contentUrl: 02-vestnik-zari.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a13ac68f58d6d33e0f9490520b5872f4912a43a5095d459fd9c6aa1a7c60a20f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M42S
+image: []
+video: []
+creditText: []
+creditText_en: []
