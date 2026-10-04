@@ -1,0 +1,28 @@
+'@type': MusicAlbum
+name: Well of Sins
+slug: 2015-well-of-sins
+datePublished: '2015'
+byArtist: saintorment
+genre:
+- Thrash Metal
+description: Дебютный студийный альбом даугавпилсской трэш-метал группы Saintorment
+  (2015).
+description_en: Debut studio album by Daugavpils thrash metal band Saintorment (2015).
+description_lv: Daugavpils thrash metal grupas Saintorment debijas albums (2015).
+sameAs:
+- https://saintorment.bandcamp.com/album/well-of-sins
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Well of Sins
+- '@type': MusicRecording
+  position: 2
+  name: Madness
+- '@type': MusicRecording
+  position: 3
+  name: Apocalypse
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

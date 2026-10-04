@@ -1,0 +1,31 @@
+'@type': MusicAlbum
+name: Ticība
+slug: 1986-ticiba
+datePublished: '1986'
+byArtist: elpa
+genre:
+- Art Rock
+- Progressive Rock
+description: Легендарная рок-сюита группы «Элпа» на стихи Леона Бриедиса (1986).
+description_en: Legendary rock suite by ELPA to lyrics by Leons Briedis (1986).
+description_lv: Grupas ELPA legendara roksuita ar Leona Brieda vardiem (1986).
+sameAs:
+- https://www.discogs.com/artist/2301980-Elpa
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Ezers
+- '@type': MusicRecording
+  position: 2
+  name: Senā dziesma
+- '@type': MusicRecording
+  position: 3
+  name: Ticība
+- '@type': MusicRecording
+  position: 4
+  name: Miers
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

@@ -1,0 +1,29 @@
+'@type': MusicAlbum
+name: Dawn of Technological Singularity
+slug: 2010-dawn-of-technological-singularity
+datePublished: '2010'
+byArtist: ygodeh
+genre:
+- Industrial Metal
+- Melodic Death Metal
+description: Дебютный мини-альбом (EP) даугавпилсской группы YGODEH (2010).
+description_en: Debut EP by Daugavpils industrial/death metal project YGODEH (2010).
+description_lv: Daugavpils industrial death metal projekta YGODEH debijas minialbums
+  (EP) (2010).
+sameAs:
+- https://www.youtube.com/@ygodehband/videos
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Technological Singularity
+- '@type': MusicRecording
+  position: 2
+  name: Cybernetic Mind
+- '@type': MusicRecording
+  position: 3
+  name: Artificial Soul
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

@@ -1,0 +1,70 @@
+'@type': MusicGroup
+name: Неврастения
+slug: nevrasteniya
+alternateName:
+- Nevrasteniya
+foundingDate: '1997'
+dissolutionDate: '1998'
+location: Daugavpils, Latvia
+genre:
+- Punk Rock
+- Hardcore Punk
+member:
+- name: Александр «Гридас» Гридасов
+  name_en: Aleksandr "Gridas" Gridasov
+  name_lv: Aleksandrs "Gridas" Gridasovs
+  role: гитара, вокал
+  role_en: guitar, vocals
+  role_lv: ģitāra, vokāls
+  period: 1997-1998
+- name: Александр «Шура» Таманс
+  name_en: Aleksandrs "Shura" Tamans
+  name_lv: Aleksandrs "Sura" Tamans
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1997-1998
+- name: Андрей «Сокол» Сокольников
+  name_en: Andrei "Sokol" Sokolnikov
+  name_lv: Andrejs "Sokol" Sokoļņikovs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basģitāra
+  period: 1997-1998
+- name: Геннадий Русецкий
+  name_en: Gennady Rusetsky
+  name_lv: Genadijs Ruseckis
+  role: гитара
+  role_en: guitar
+  role_lv: ģitāra
+  period: 1997-1998
+description: 'Панк-группа «Неврастения» образовалась в Даугавпилсе в 1997 году. Репетиции
+  проходили в гаражах и подвальных помещениях города. В состав вошли Александр Гридасов
+  (Гридас), Александр Таманс (Шура), Андрей Сокольников (Сокол) и Геннадий Русецкий.
+  Именно во время совместных репетиций «Неврастении» музыканты познакомились с молодым
+  Артуром Петровым (Будулаем), который приходил слушать группу и вскоре начал играть
+  с Гридасом. Осенью 1998 года из-за творческих разногласий группа распалась, дав
+  начало двум знаковым коллективам даугавпилсской сцены: Александр Гридасов вместе
+  с Будулаем создали панк-группу «Виселица», а Александр Таманс с Соколом основали
+  группу «Двойная Вода».'
+description_en: 'The punk rock band Nevrasteniya formed in Daugavpils in 1997. Rehearsing
+  in local garages and basement spaces, the lineup consisted of Aleksandr Gridasov
+  (''Gridas''), Aleksandrs Tamans (''Shura''), Andrei Sokolnikov (''Sokol''), and
+  Gennady Rusetsky. During their rehearsals, the band met young Artur Petrov (''Budulajs''),
+  who regularly hung out to listen and soon began playing with Gridas. In autumn 1998,
+  creative differences led to the band''s dissolution, directly giving birth to two
+  cornerstone acts of the Daugavpils underground: Gridasov and Budulajs went on to
+  form Viselica, while Tamans and Sokolnikov founded Dvojnaja Voda.'
+description_lv: 'Pankroka grupa Nevrasteniya izveidojas Daugavpili 1997. gada. Meiginajumi
+  notika vietejas garazas un pagrabos. Sastava speleja Aleksandrs Gridasovs (Gridas),
+  Aleksandrs Tamans (Sura), Andrejs Sokolnikovs (Sokol) un Genadijs Ruseckis. Meiginajumu
+  laika vinus iepazina jaunais Arturs Petrovs (Budulajs), kurs biezi klausijas grupu
+  un driz saka muzicet kopa ar Gridasovu. 1998. gada rudeni radošo domstarpibu del
+  grupa izjuka, kluvod par tieso pamatu divam nozimigam Daugavpils grupam: Gridasovs
+  un Budulajs nodibinaja grupu Viselica, bet Tamans un Sokolnikovs izveidoja grupu
+  Dvojnaja Voda.'
+sameAs:
+- https://tamans.lv/
+- https://tamans.lv/history.php
+image: []
+video: []

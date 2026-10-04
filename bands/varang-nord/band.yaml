@@ -1,0 +1,76 @@
+'@type': MusicGroup
+name: Varang Nord
+slug: varang-nord
+alternateName:
+- Varang Nord Band
+foundingDate: '2014'
+location: Daugavpils, Latvia
+genre:
+- Folk Metal
+- Pagan Metal
+- Death Metal
+member:
+- name: Максим «Волк» Попов
+  name_en: Maksims "Wolf" Popovs
+  name_lv: Maksims "Wolf" Popovs
+  role: вокал, гитара
+  role_en: lead vocals, guitar
+  role_lv: vokals, gitara
+  period: 2014-present
+- name: Данила Лопуха
+  name_en: Danila Lopuha
+  name_lv: Danila Lopuha
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2014-present
+- name: Елена Калниша
+  name_en: Jelena Kalnisa
+  name_lv: Jelena Kalnisa
+  role: аккордеон
+  role_en: accordion
+  role_lv: akordeons
+  period: 2014-present
+- name: Айгар Зейза
+  name_en: Aigars Zeiza
+  name_lv: Aigars Zeiza
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2014-present
+- name: Вячеслав Янов
+  name_en: Vjaceslavs Janovs
+  name_lv: Vjaceslavs Janovs
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2014-present
+description: Varang Nord — ведущая фолк-метал группа Латвии, основанная в Даугавпилсе
+  в 2014 году Максимом «Волком» Поповым (ранее лидером трэш-метал группы Asthma).
+  Группа исполняет агрессивный викинг/фолк-метал с живым аккордеоном и текстами на
+  латгальском, русском и английском языках. В 2019 году Varang Nord добились исторического
+  триумфа, став победителями мирового финала «Wacken Metal Battle» на легендарном
+  фестивале Wacken Open Air в Германии. Дискография включает альбомы «Fire of the
+  Northern Lore» (2014), «Master of the Forest» (2015), «Call of Battle» (2017) и
+  признанный шедевр «Pārķiuņa uomurs» (2021).
+description_en: Varang Nord is Latvia's premier folk metal act, founded in Daugavpils
+  in 2014 by Maksims 'Wolf' Popovs (former leader of thrash outfit Asthma). Blending
+  ferocious melodic death metal with authentic folk accordion and themes from Baltic
+  and Norse folklore sung in Latgalian, Russian, and English, the band achieved global
+  recognition in 2019 by winning the prestigious international Wacken Metal Battle
+  at Wacken Open Air in Germany. Their discography features 'Fire of the Northern
+  Lore' (2014), 'Master of the Forest' (2015), 'Call of Battle' (2017), and the acclaimed
+  Latgalian-language masterpiece 'Pārķiuņa uomurs' (2021).
+description_lv: Varang Nord ir vadosa Latvijas folkmetala grupa, kuru Daugavpili 2014.
+  gada izveidoja Maksims 'Wolf' Popovs (ieprieks grupas Asthma lidere). Apvienojot
+  agresivu death metal ar akordeona skanam un Latgales folkloras temam, grupa guva
+  vesterisku triumfu 2019. gada, uzvarot starptautiskaja konkursa 'Wacken Metal Battle'
+  festivala Wacken Open Air Vacija. Grupas konta ir albumi 'Fire of the Northern Lore'
+  (2014), 'Master of the Forest' (2015), 'Call of Battle' (2017) un augsti vertetais
+  latgaliesu valoda iedziedatais albums 'Parkiuna uomurs' (2021).
+sameAs:
+- https://varangnord.bandcamp.com/
+- https://www.metal-archives.com/bands/Varang_Nord/3540388487
+- https://www.youtube.com/c/VarangNord
+image: []
+video: []

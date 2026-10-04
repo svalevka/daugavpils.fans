@@ -1,0 +1,48 @@
+'@type': MusicGroup
+name: FEDOTOFF
+slug: fedotoff
+alternateName:
+- Fedotoff Band
+foundingDate: '2016'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Folk Rock
+- Acoustic Rock
+member:
+- name: Алексей «Рэд» Федотов
+  name_en: Aleksei "Red" Fedotov
+  name_lv: Aleksejs "Red" Fedotovs
+  role: вокал, гитара, автор песен
+  role_en: lead vocals, guitar, songwriter
+  role_lv: vokals, gitara, dziesmu autors
+  period: 2016-present
+- name: Инга Федотова
+  name_en: Inga Fedotova
+  name_lv: Inga Fedotova
+  role: вокал, перкуссия
+  role_en: vocals, percussion
+  role_lv: vokals, sitaminstrumenti
+  period: 2016-present
+description: FEDOTOFF — даугавпилсский рок-проект, созданный музыкантом и композитором
+  Алексеем «Рэдом» Федотовым (основателем легендарной группы STOP и заведующим музыкальной
+  частью Даугавпилсского театра) и певицей Ингой Федотовой. Коллектив сочетает мелодичный
+  альтернативный рок, элементы авторской песни и фолк-мотивы. Группа активно концертирует
+  в Латвии, выпустила альбомы «Vaļi uz sauszemes / Киты на суше» (2019) и «Человек-Пластилин»
+  (2022).
+description_en: FEDOTOFF is a Daugavpils-based rock project formed by musician, songwriter,
+  and Daugavpils Theatre music director Aleksejs 'Red' Fedotovs (founder and frontman
+  of STOP) alongside vocalist Inga Fedotova. The band combines melodic alternative
+  rock, singer-songwriter traditions, and folk rock textures. Active on regional concert
+  stages, FEDOTOFF released the albums 'Vali uz sauszemes / Kity na sushe' (2019)
+  and 'Chelovek-Plastilin' (2022).
+description_lv: FEDOTOFF ir Daugavpils roka projekts, kuru izveidoja Daugavpils teatra
+  muzikalas dalas vaditajs un grupas STOP dibinatajs Aleksejs 'Red' Fedotovs kopa
+  ar dziedataju Ingu Fedotovu. Grupa apvieno melodisku alternativo roku, autordziesmu
+  un folkloras motīvus. FEDOTOFF aktivi koncertē Latgale un visā Latvija, izdevusi
+  albumus 'Vali uz sauszemes' (2019) un 'Chelovek-Plastilin' (2022).
+sameAs:
+- https://www.facebook.com/fedotoffband/
+- https://chayka.lv/2019/04/05/fedotoff/
+image: []
+video: []

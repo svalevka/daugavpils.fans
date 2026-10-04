@@ -1,0 +1,76 @@
+'@type': MusicGroup
+name: Элпа
+slug: elpa
+alternateName:
+- Elpa
+- Grupa ELPA
+foundingDate: '1983'
+location: Daugavpils, Latvia
+genre:
+- Art Rock
+- Progressive Rock
+- Symphonic Rock
+member:
+- name: Валдис Рундзанс
+  name_en: Valdis Rundzans
+  name_lv: Valdis Rundzans
+  role: бас-гитара, руководитель
+  role_en: bass guitar, bandleader
+  role_lv: basgitara, grupas vaditajs
+  period: 1983-present
+- name: Янис Логинс
+  name_en: Janis Logins
+  name_lv: Janis Logins
+  role: клавишные, вокал
+  role_en: keyboards, vocals
+  role_lv: taustininstrumenti, vokals
+  period: 1983-1995
+- name: Айвар Брок
+  name_en: Aivars Broks
+  name_lv: Aivars Broks
+  role: клавишные, фортепиано
+  role_en: keyboards, piano
+  role_lv: taustininstrumenti, klavieres
+  period: 1983-1990
+- name: Валерий Никитин
+  name_en: Valerijs Nikitins
+  name_lv: Valerijs Nikitins
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 1983-present
+- name: Илмарс Апсе
+  name_en: Ilmars Apse
+  name_lv: Ilmars Apse
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1983-present
+description: «Элпа» (ELPA) — легендарная арт-рок и прогрессив-рок группа, основанная
+  в Даугавпилсе в 1983 году бас-гитаристом Валдисом Рундзансом и клавишником Янисом
+  Логинсом (1961–1995). В состав вошли выдающиеся музыканты города, в том числе Айвар
+  Брок (ныне директор Даугавпилсской музыкальной средней школы имени Станислава Брока).
+  «Элпа» стала символом латвийского прогрессивного рока, лауреатом крупнейшего всесоюзного
+  рок-фестиваля «Лиепаяс Дзинтарс» (1986, 1987) и опросов «Микрофон» с песнями «Ezers»
+  и «Senā dziesma». Группа создала рок-сюиту «Ticība» (1986) на стихи Леона Бриедиса
+  и выпустила монументальный альбом «Karavāna» (2008).
+description_en: ELPA is the pioneering art-rock and progressive rock group formed
+  in Daugavpils in 1983 by bassist Valdis Rundzāns and keyboardist/composer Jānis
+  Logins (1961–1995). Its lineup included top city musicians, among them classical
+  pianist Aivars Broks (now director of Staņislavs Broks Daugavpils Music High School).
+  ELPA became an enduring landmark of Latvian progressive rock, winning major awards
+  at Liepājas Dzintars (1986, 1987) and high placings in the Mikrofons surveys with
+  songs like 'Ezers' and 'Senā dziesma'. They composed the celebrated rock suite 'Ticība'
+  (1986) and album 'Karavāna' (2008).
+description_lv: ELPA ir legendara artroka un progresīvā roka grupa, ko Daugavpili
+  1983. gada nodibinaja basists Valdis Rundzāns un taustininstrumentalists Janis Logins
+  (1961–1995). Sastava darbojās izcili pilsetas muzikanti, tostarp Aivars Broks (Stanislava
+  Broka Daugavpils Muzikas vidusskolas direktors). ELPA kluva par Latvijas progresiva
+  roka vizitkarti, triumfejot festivala 'Liepajas Dzintars' (1986, 1987) un Mikrofona
+  aptaujas ar dziesmam 'Ezers' un 'Sena dziesma'. Grupa radija monumentalus darbus
+  'Ticiba' (1986) un albumu 'Karavana' (2008).
+sameAs:
+- https://www.discogs.com/artist/2301980-Elpa
+- https://www.youtube.com/results?search_query=grupa+elpa+daugavpils
+image: []
+video: []

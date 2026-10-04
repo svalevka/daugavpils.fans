@@ -1,0 +1,27 @@
+'@type': MusicAlbum
+name: Ēnas
+slug: 2018-enas
+datePublished: '2018'
+byArtist: metrs
+genre:
+- Alternative Rock
+description: Третий студийный альбом группы Metrs (2018).
+description_en: Third studio album by Metrs (2018).
+description_lv: Grupas Metrs tresais studijas albums (2018).
+sameAs:
+- https://www.draugiem.lv/metrs/
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Ēnas
+- '@type': MusicRecording
+  position: 2
+  name: Rīts
+- '@type': MusicRecording
+  position: 3
+  name: Gaisma
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

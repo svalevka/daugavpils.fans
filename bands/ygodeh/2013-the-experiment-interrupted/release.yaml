@@ -1,0 +1,31 @@
+'@type': MusicAlbum
+name: The Experiment Interrupted
+slug: 2013-the-experiment-interrupted
+datePublished: '2013'
+byArtist: ygodeh
+genre:
+- Industrial Metal
+- Melodic Death Metal
+description: Полноформатный студийный альбом группы YGODEH (2013).
+description_en: Full-length studio album by YGODEH (2013).
+description_lv: Grupas YGODEH pilnmetrazas studijas albums (2013).
+sameAs:
+- https://www.youtube.com/@ygodehband/videos
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Interrupted Experiment
+- '@type': MusicRecording
+  position: 2
+  name: Biomechanical Era
+- '@type': MusicRecording
+  position: 3
+  name: Digital Dissection
+- '@type': MusicRecording
+  position: 4
+  name: Neural Collapse
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

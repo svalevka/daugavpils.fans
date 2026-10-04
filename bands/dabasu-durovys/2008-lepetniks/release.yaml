@@ -1,0 +1,28 @@
+'@type': MusicAlbum
+name: Lepetnīks
+slug: 2008-lepetniks
+datePublished: '2008'
+byArtist: dabasu-durovys
+genre:
+- Pop-Rock
+- Folk Rock
+description: Дебютный студийный альбом группы Dabasu Durovys (2008).
+description_en: Debut studio album by Dabasu Durovys (2008).
+description_lv: Grupas Dabasu Durovys debijas studijas albums (2008).
+sameAs:
+- https://dabasudurovys.lv/
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Lepetnīks
+- '@type': MusicRecording
+  position: 2
+  name: Pavasars
+- '@type': MusicRecording
+  position: 3
+  name: Daugavpils
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

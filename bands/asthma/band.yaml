@@ -1,0 +1,47 @@
+'@type': MusicGroup
+name: Asthma
+slug: asthma
+alternateName:
+- Asthma Band
+- Балагуры
+- Balagury
+foundingDate: '2009'
+dissolutionDate: '2014'
+location: Daugavpils, Latvia
+genre:
+- Thrash Metal
+- Death Metal
+- Folk Metal
+member:
+- name: Максим Попов
+  name_en: Maksims Popovs
+  name_lv: Maksims Popovs
+  role: гитара, вокал
+  role_en: guitar, vocals
+  role_lv: gitara, vokals
+  period: 2009-2014
+- name: Артур Соколов (Портвейн)
+  name_en: Artur Sokolov (Portvein)
+  name_lv: Arturs Sokolovs (Portvein)
+  role: бас-гитара, вокал
+  role_en: bass guitar, vocals
+  role_lv: basgitara, vokals
+  period: 2009-2014
+description: Asthma (ранее выступавшая под названием «Балагуры») — даугавпилсская
+  трэш/дэт-метал группа, созданная Максимом Поповым и Артуром Соколовым. Коллектив
+  активно выступал на латвийской андеграундной сцене, участвовал в национальном отборе
+  Wacken Metal Battle Latvia 2013 и послужил прямой ступенью к созданию международно
+  признанной группы Varang Nord.
+description_en: Asthma (initially performing as Balagury) was a Daugavpils thrash/death
+  metal band formed by Maksims Popovs and Artur Sokolov. Active across Latvian underground
+  stages and participating in Wacken Metal Battle Latvia 2013, the band served as
+  the direct precursor to the internationally successful folk metal outfit Varang
+  Nord.
+description_lv: Asthma (sakotneji uzstajas ar nosaukumu Balaguri) bija Daugavpils
+  thrash/death metal grupa, ko izveidoja Maksims Popovs un Arturs Sokolovs. Grupa
+  aktivi koncerteja Latvijas pagraba klubos, piedalijas Wacken Metal Battle Latvia
+  2013 un kluva par tiesu pamatu velakajai grupai Varang Nord.
+sameAs:
+- https://www.metal-archives.com/bands/Asthma/3540388487
+image: []
+video: []

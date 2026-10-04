@@ -1,0 +1,28 @@
+'@type': MusicAlbum
+name: Labākā diena
+slug: 2014-labaka-diena
+datePublished: '2014'
+byArtist: metrs
+genre:
+- Alternative Rock
+- Pop-Rock
+description: Второй альбом группы Metrs (2014).
+description_en: Second album by Metrs (2014).
+description_lv: Grupas Metrs otrais albums (2014).
+sameAs:
+- https://www.draugiem.lv/metrs/
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Labākā diena
+- '@type': MusicRecording
+  position: 2
+  name: Pilsēta
+- '@type': MusicRecording
+  position: 3
+  name: Lietus
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

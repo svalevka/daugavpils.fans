@@ -1,0 +1,28 @@
+'@type': MusicAlbum
+name: Origins
+slug: 2016-origins
+datePublished: '2016'
+byArtist: wild-detroit-gang
+genre:
+- Hard Rock
+- Blues Rock
+description: Дебютный студийный альбом группы Wild Detroit Gang (2016).
+description_en: Debut studio album by Wild Detroit Gang (2016).
+description_lv: Grupas Wild Detroit Gang debijas studijas albums (2016).
+sameAs:
+- https://wilddetroitgang.bandcamp.com/album/origins
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Origins
+- '@type': MusicRecording
+  position: 2
+  name: Stay
+- '@type': MusicRecording
+  position: 3
+  name: Rock'n'Roll Night
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

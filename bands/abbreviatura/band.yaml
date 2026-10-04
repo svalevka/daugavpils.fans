@@ -1,0 +1,51 @@
+'@type': MusicGroup
+name: Аббревиатура
+slug: abbreviatura
+alternateName:
+- ABBREVIATURA
+foundingDate: '2010'
+dissolutionDate: '2015'
+location: Daugavpils, Latvia
+genre:
+- Alternative Metal
+- Nu-Metal
+member:
+- name: Артём
+  name_en: Artjoms
+  name_lv: Artjoms
+  role: вокал
+  role_en: lead vocals
+  role_lv: vokals
+  period: 2010-2015
+- name: Павел
+  name_en: Pavels
+  name_lv: Pavels
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2010-2015
+- name: Михаил
+  name_en: Mihails
+  name_lv: Mihails
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2010-2015
+- name: Андрей
+  name_en: Andrejs
+  name_lv: Andrejs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2010-2015
+description: «Аббревиатура» (ABBREVIATURA) — даугавпилсская альтернативная метал-группа,
+  выступавшая на городских рок-площадках и фестивале Chemical Reaction в начале 2010-х
+  годов.
+description_en: ABBREVIATURA was a Daugavpils alternative metal band active on the
+  city's youth rock stage and Chemical Reaction festival in the early 2010s.
+description_lv: Abbreviatura (ABBREVIATURA) bija Daugavpils alternatīvā metāla grupa,
+  kas aktīvi uzstājās pilsētas rokpasākumos un festivālā Chemical Reaction 2010. gadu
+  sākumā.
+sameAs: []
+image: []
+video: []

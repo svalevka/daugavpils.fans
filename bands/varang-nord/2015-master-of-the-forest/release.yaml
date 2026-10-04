@@ -1,0 +1,27 @@
+'@type': MusicAlbum
+name: Master of the Forest
+slug: 2015-master-of-the-forest
+datePublished: '2015'
+byArtist: varang-nord
+genre:
+- Folk Metal
+description: Второй студийный альбом группы Varang Nord (2015).
+description_en: Second studio album by Varang Nord (2015).
+description_lv: Varang Nord otrais studijas albums (2015).
+sameAs:
+- https://varangnord.bandcamp.com/album/master-of-the-forest
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Master of the Forest
+- '@type': MusicRecording
+  position: 2
+  name: Battle Song
+- '@type': MusicRecording
+  position: 3
+  name: Warchant
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

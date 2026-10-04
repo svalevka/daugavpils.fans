@@ -1,0 +1,55 @@
+'@type': MusicGroup
+name: Robotplant
+slug: robotplant
+alternateName:
+- Robot Plant
+- Robet Plunt
+foundingDate: '2008'
+dissolutionDate: '2012'
+location: Daugavpils, Latvia
+genre:
+- Shoegaze
+- Post-Punk
+- Indie Rock
+member:
+- name: Эдгар Цибульский
+  name_en: Edgars Cibulskis
+  name_lv: Edgars Cibulskis
+  role: гитара, вокал
+  role_en: guitar, vocals
+  role_lv: gitara, vokals
+  period: 2008-2012
+- name: Марис Берзиньш
+  name_en: Maris Berzins
+  name_lv: Maris Berzins
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2008-2012
+- name: Янис Калниньш
+  name_en: Janis Kalnins
+  name_lv: Janis Kalnins
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2008-2012
+description: Robotplant — самобытная даугавпилсская шугейз и инди-рок группа, образованная
+  в 2008 году. Коллектив сочетал гитарный нойз-поп, меланхоличный пост-панк и мечтательное
+  звучание в традициях My Bloody Valentine и Sonic Youth. Выступали на даугавпилсском
+  фестивале Chemical Reaction (сохранились записи в архиве DunaburgFM), а в 2010 году
+  выпустили полноформатный альбом «Seen and Felt», презентованный в рижском клубе
+  Nabaklab.
+description_en: Robotplant was an atmospheric shoegaze and indie rock trio formed
+  in Daugavpils in 2008. Blending noise-pop, melancholic post-punk, and dreamy reverb
+  reminiscent of My Bloody Valentine and Sonic Youth, the band performed at the Chemical
+  Reaction festival (cataloged on DunaburgFM tapes as 'Robet Plunt') and released
+  their full-length album 'Seen and Felt' in 2010 at Nabaklab in Riga.
+description_lv: Robotplant bija atmosferiska sugaze un indie roka grupa, ko Daugavpili
+  2008. gada izveidoja Edgars Cibulskis, Maris Berzins un Janis Kalnins. Grupas skanejums
+  apvienoja noisa popu, postpanku un sapnigās gitaras. Grupa uzstajas festivala Chemical
+  Reaction (ieraksti saglabajusies DunaburgFM lentas) un 2010. gada izdeva pilnmetrazas
+  albumu 'Seen and Felt', prezentejot to Nabaklab Riga.
+sameAs:
+- https://www.youtube.com/results?search_query=robotplant+seen+and+felt
+image: []
+video: []

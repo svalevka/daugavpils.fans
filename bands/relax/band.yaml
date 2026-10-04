@@ -1,0 +1,56 @@
+'@type': MusicGroup
+name: Relax
+slug: relax
+alternateName:
+- Relax Project
+foundingDate: '1998'
+dissolutionDate: '2000'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Russian Rock
+member:
+- name: Алексей «Рэд» Федотов
+  name_en: Aleksei "Red" Fedotov
+  name_lv: Aleksejs "Red" Fedotovs
+  role: вокал, гитара
+  role_en: vocals, guitar
+  role_lv: vokals, gitara
+  period: 1998-2000
+- name: Алексей Бородин
+  name_en: Aleksei Borodin
+  name_lv: Aleksejs Borodins
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 1998-2000
+- name: Андрей Гржибовский
+  name_en: Andrei Grzhibovsky
+  name_lv: Andrejs Grzibovskis
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 1998-2000
+- name: Александр Комаров
+  name_en: Aleksandr Komarov
+  name_lv: Aleksandrs Komarovs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1998-2000
+description: Relax — даугавпилсский рок-проект, созданный музыкантами группы STOP
+  (Алексей «Рэд» Федотов, Алексей Бородин, Андрей Гржибовский, Александр Комаров)
+  после ее распада осенью 1998 года. Музыканты продолжили работу над более экспериментальным
+  и атмосферным звучанием русского рока и альтернативы, выступая в местных клубах
+  до 2000 года.
+description_en: Relax was a Daugavpils rock project formed by members of STOP (Aleksei
+  'Red' Fedotov, Aleksei Borodin, Andrei Grzhibovsky, and Aleksandr Komarov) following
+  STOP's disbandment in autumn 1998. The band explored a more experimental, atmospheric
+  branch of Russian rock and alternative music, performing in local venues until 2000.
+description_lv: Relax bija Daugavpils roka projekts, kuru izveidoja grupas STOP dalibnieki
+  (Aleksejs 'Red' Fedotovs, Aleksejs Borodins, Andrejs Grzibovskis un Aleksandrs Komarovs)
+  pec STOP izjukšanas 1998. gada rudeni. Kolektivs speleja eksperimentalu un atmosferisku
+  roku vietējos klubos lidz 2000. gadam.
+sameAs: []
+image: []
+video: []

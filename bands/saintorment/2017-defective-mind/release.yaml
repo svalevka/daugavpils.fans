@@ -1,0 +1,27 @@
+'@type': MusicAlbum
+name: Defective Mind
+slug: 2017-defective-mind
+datePublished: '2017'
+byArtist: saintorment
+genre:
+- Thrash Metal
+description: Второй альбом группы Saintorment (2017).
+description_en: Second album by Saintorment (2017).
+description_lv: Grupas Saintorment otrais albums (2017).
+sameAs:
+- https://saintorment.bandcamp.com/album/defective-mind
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Defective Mind
+- '@type': MusicRecording
+  position: 2
+  name: Killing Machine
+- '@type': MusicRecording
+  position: 3
+  name: Mental War
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

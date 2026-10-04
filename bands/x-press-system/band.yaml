@@ -1,0 +1,47 @@
+'@type': MusicGroup
+name: X-Press System
+slug: x-press-system
+alternateName:
+- X-Press System Band
+foundingDate: '1999'
+dissolutionDate: '2002'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Nu-Metal
+member:
+- name: Артур Козлов
+  name_en: Arturs Kozlovs
+  name_lv: Arturs Kozlovs
+  role: вокал, гитара
+  role_en: vocals, guitar
+  role_lv: vokals, gitara
+  period: 1999-2002
+- name: Дмитрий Смирнов
+  name_en: Dmitrijs Smirnovs
+  name_lv: Dmitrijs Smirnovs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 1999-2002
+- name: Владислав Морозов
+  name_en: Vladislavs Morozovs
+  name_lv: Vladislavs Morozovs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1999-2002
+description: X-Press System — даугавпилсская альтернативная группа рубежа тысячелетий.
+  Выступала на знаковых городских рок-мероприятиях, включая фестиваль «Latgales Gaisma
+  / Stalkers» в сентябре 2000 года, вместе с Carpe Diem, CrossFire и «Двойная Вода».
+description_en: X-Press System was a Daugavpils alternative rock and nu-metal trio
+  at the turn of the millennium. They performed at major local rock events, notably
+  the September 2000 'Latgales Gaisma / Stalkers' open-air festival alongside Carpe
+  Diem, CrossFire, and Dvojnaja Voda.
+description_lv: X-Press System bija Daugavpils alternativā roka un nu-metal trio tukstosgades
+  mija. Grupa speleja lielos Daugavpils pasakumos, tostarp brivdabas festivala 'Latgales
+  Gaisma / Stalkers' 2000. gada septembri kopa ar Carpe Diem, CrossFire un Dvojnaja
+  Voda.
+sameAs: []
+image: []
+video: []

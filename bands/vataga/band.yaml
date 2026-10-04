@@ -1,0 +1,70 @@
+'@type': MusicGroup
+name: Ватага
+slug: vataga
+alternateName:
+- Vataga
+- Weedidas
+foundingDate: '1997'
+location: Daugavpils, Latvia
+genre:
+- Crossover
+- Rap-Rock
+- Alternative Hip-Hop
+member:
+- name: Владимир Раковский
+  name_en: Vladimir Rakovsky
+  name_lv: Vladimirs Rakovskis
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1997-present
+- name: Стас Шиманский
+  name_en: Stas Shimansky
+  name_lv: Stass Simanskis
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 1997-present
+- name: Роман Комар
+  name_en: Romans Komars
+  name_lv: Romans Komars
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 1997-present
+- name: Константин Дзедзель
+  name_en: Konstantins Dzedzel
+  name_lv: Konstantins Dzedzels
+  role: вокал, МС
+  role_en: vocals, MC
+  role_lv: vokals, MC
+  period: 1997-present
+- name: Арманд Озолиньш
+  name_en: Armands Ozolins
+  name_lv: Armands Ozolins
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2004-present
+description: «Ватага» (первоначально выступавшая как Weedidas в конце 1990-х) — культовый
+  даугавпилсский рэп-рок и кроссовер-проект, объединивший ведущих музыкантов городской
+  альтернативной сцены. В состав вошли барабанщик Владимир Раковский, басист Стас
+  Шиманский и гитарист Роман Комар (все из группы «Другая Сторона»), вокалист Константин
+  Дзедзель («Дети Гранта», «Shoom») и гитарист Арманд Озолиньш («Двойная Вода»). Коллектив
+  прославился мощными живыми выступлениями с тяжелым гитарным драйвом и плотным ритмом.
+description_en: Vataga (originally emerging in the late 1990s under the moniker Weedidas)
+  is an iconic Daugavpils rap-rock and crossover supergroup uniting top players of
+  the city's alternative underground. The lineup features drummer Vladimir Rakovsky,
+  bassist Stas Shimansky, and guitarist Romans Komars (all from Drugaia Storona),
+  MC/frontman Konstantins Dzedzel (Deti Granta, Shoom), and guitarist Armands Ozolins
+  (Dvojnaja Voda). Known for explosive live shows mixing heavy riffs and hip-hop delivery.
+description_lv: Vataga (sakotneji radusies 1990. gadu beigas ar nosaukumu Weedidas)
+  ir ievērojams Daugavpils rap-rock un crossover projekts, kas apvienoja pilsetas
+  alternativās muzikas liderspeletajus. Sastava muziceja bungieris Vladimirs Rakovskis,
+  basists Stass Simanskis un gitarists Romans Komars (visi no Drugaia Storona), vokālists
+  Konstantins Dzedzels (Deti Granta, Shoom) un gitarists Armands Ozolins (Dvojnaja
+  Voda). Grupa izcelas ar energiskiem koncertiem un smagam rifu partijam.
+sameAs:
+- https://www.youtube.com/results?search_query=vataga+daugavpils
+image: []
+video: []

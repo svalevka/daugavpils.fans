@@ -1,0 +1,64 @@
+'@type': MusicGroup
+name: Dabasu Durovys
+slug: dabasu-durovys
+alternateName:
+- Dabasu Durovys Band
+foundingDate: '2006'
+location: Daugavpils, Latvia
+genre:
+- Pop-Rock
+- Folk Rock
+- Latgalian Rock
+member:
+- name: Арнис Слобожанин
+  name_en: Arnis Slobozanins
+  name_lv: Arnis Slobozanins
+  role: вокал, гитара, автор песен
+  role_en: lead vocals, guitar, songwriter
+  role_lv: vokals, gitara, dziesmu autors
+  period: 2006-present
+- name: Александр Таманс
+  name_en: Aleksandrs Tamans
+  name_lv: Aleksandrs Tamans
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2006-present
+- name: Эгилс Лейманис
+  name_en: Egils Leimanis
+  name_lv: Egils Leimanis
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2006-present
+- name: Валдис Рундзанс-мл.
+  name_en: Valdis Rundzans Jr.
+  name_lv: Valdis Rundzans jaun.
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2006-present
+description: Dabasu Durovys («Двери Небес») — флагманская латгальская поп-рок и фолк-рок
+  группа, основанная в Даугавпилсе в 2006 году музыкантом Арнисом Слобожаниным при
+  участии барабанщика Александра Таманса (основателя группы «Двойная Вода»). Коллектив
+  пишет и поет на латгальском языке, является многократным лауреатом латгальской культурной
+  премии «Boņuks» и участником крупнейших латвийских фестивалей. В их активе альбомы
+  «Lepetnīks» (2008), «Stykins» (2010), «Pādīs vuords» (2014) и «Bāka» (2018).
+description_en: Dabasu Durovys ('Doors of Heaven') is the flagship Latgalian pop-rock
+  and folk-rock band founded in Daugavpils in 2006 by singer-songwriter Arnis Slobožaņins
+  alongside drummer Aleksandrs Tamans (founder of Dvojnaja Voda). Singing primarily
+  in Latgalian, the band has won numerous Boņuks cultural awards and remains a fixture
+  of Latvian festivals. Their discography includes 'Lepetnīks' (2008), 'Stykins' (2010),
+  'Pādīs vuords' (2014), and 'Bāka' (2018).
+description_lv: Dabasu Durovys ir viena no vadošajām Latgales poproka un folkroka
+  grupam, kuru Daugavpili 2006. gada izveidoja dziesminieks Arnis Slobozanins kopa
+  ar bungieri Aleksandru Tamanu (Dvojnaja Voda dibinataju). Grupa raksta un dzied
+  latgaliesu valoda, ir daudzkarteja Latgaliesu kulturas gada balvas 'Bonuks' laureāte.
+  Izdoti albumi 'Lepetniks' (2008), 'Stykins' (2010), 'Padis vuords' (2014) un 'Baka'
+  (2018).
+sameAs:
+- https://dabasudurovys.lv/
+- https://www.draugiem.lv/dabasudurovys/
+- https://www.youtube.com/results?search_query=dabasu+durovys
+image: []
+video: []

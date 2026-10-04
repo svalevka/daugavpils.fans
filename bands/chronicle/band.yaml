@@ -1,0 +1,52 @@
+'@type': MusicGroup
+name: Хроника
+slug: chronicle
+alternateName:
+- Chronicle
+foundingDate: '2011'
+dissolutionDate: '2016'
+location: Daugavpils, Latvia
+genre:
+- Heavy Metal
+- Hard Rock
+member:
+- name: Александр
+  name_en: Aleksandrs
+  name_lv: Aleksandrs
+  role: вокал
+  role_en: lead vocals
+  role_lv: vokals
+  period: 2011-2016
+- name: Виктор
+  name_en: Viktors
+  name_lv: Viktors
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2011-2016
+- name: Денис
+  name_en: Deniss
+  name_lv: Deniss
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2011-2016
+- name: Роман
+  name_en: Romans
+  name_lv: Romans
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2011-2016
+description: «Хроника» (Chronicle) — даугавпилсская хэви-метал группа первой половины
+  2010-х годов. Регулярные участники фестиваля молодежной рок-музыки Chemical Reaction
+  в ДК «Vārpa» и кинотеатре «Renesanse».
+description_en: Chronicle was a Daugavpils heavy metal group active in the early-to-mid
+  2010s, regularly appearing on stage at the Chemical Reaction rock festival at the
+  Vārpa Culture Centre and Renesanse.
+description_lv: Hronika (Chronicle) bija Daugavpils heavy metal grupa 2010. gadu pirmaja
+  puse. Regulari uzstajas jaunatnes rokfestivālā Chemical Reaction kulturas centra
+  'Varpa' un kinoteātri 'Renesanse'.
+sameAs: []
+image: []
+video: []

@@ -1,0 +1,29 @@
+'@type': MusicAlbum
+name: Человек-Пластилин
+slug: 2022-chelovek-plastilin
+datePublished: '2022'
+byArtist: fedotoff
+genre:
+- Alternative Rock
+description: Второй номерной альбом группы FEDOTOFF (2022).
+description_en: Second studio album by FEDOTOFF (2022).
+description_lv: Grupas FEDOTOFF otrais studijas albums (2022).
+sameAs: []
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Человек-Пластилин
+- '@type': MusicRecording
+  position: 2
+  name: Белый шум
+- '@type': MusicRecording
+  position: 3
+  name: Город
+- '@type': MusicRecording
+  position: 4
+  name: Свет
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

@@ -1,0 +1,52 @@
+'@type': MusicGroup
+name: Smoke & Breeze
+slug: smoke-and-breeze
+alternateName:
+- Smoke and Breeze
+foundingDate: '2015'
+dissolutionDate: '2020'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Indie Rock
+member:
+- name: Артур
+  name_en: Arturs
+  name_lv: Arturs
+  role: вокал, гитара
+  role_en: vocals, guitar
+  role_lv: vokals, gitara
+  period: 2015-2020
+- name: Никита
+  name_en: Nikita
+  name_lv: Nikita
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2015-2020
+- name: Роман
+  name_en: Romans
+  name_lv: Romans
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2015-2020
+- name: Олег
+  name_en: Olegs
+  name_lv: Olegs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2015-2020
+description: Smoke & Breeze — даугавпилсская альтернативная инди-рок группа, победившая
+  на городском конкурсе «Daugavpils Rok maratons 2018» (1-е место). Отличалась мелодичным
+  звучанием с атмосферными гитарными партиями.
+description_en: Smoke & Breeze was a Daugavpils alternative and indie rock outfit
+  that won 1st place at the Daugavpils Rock Marathon 2018. Known for melodious songcraft
+  and dynamic indie rock arrangements.
+description_lv: Smoke & Breeze bija Daugavpils alternativā un indie roka grupa, kas
+  izcinija 1. vietu konkursa 'Daugavpils Rok maratons 2018'. Grupu raksturoja melodisks
+  skanejums un dinamiskas gitaru partijas.
+sameAs: []
+image: []
+video: []

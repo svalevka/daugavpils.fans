@@ -1,0 +1,56 @@
+'@type': MusicGroup
+name: Каллисто
+slug: callisto
+alternateName:
+- Callisto
+- Kallisto
+foundingDate: '1998'
+dissolutionDate: '2003'
+location: Daugavpils, Latvia
+genre:
+- Melodic Rock
+- Russian Rock
+member:
+- name: Олег Воробьев
+  name_en: Olegs Vorobjovs
+  name_lv: Olegs Vorobjovs
+  role: вокал, гитара
+  role_en: lead vocals, guitar
+  role_lv: vokals, gitara
+  period: 1998-2003
+- name: Павел Иванов
+  name_en: Pavels Ivanovs
+  name_lv: Pavels Ivanovs
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 1998-2003
+- name: Андрей Михайлов
+  name_en: Andrejs Mihailovs
+  name_lv: Andrejs Mihailovs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 1998-2003
+- name: Игорь Козлов
+  name_en: Igors Kozlovs
+  name_lv: Igors Kozlovs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1998-2003
+description: «Каллисто» — даугавпилсская мелодичная рок-группа конца 1990-х и начала
+  2000-х годов. Регулярные партнеры по сцене и соратники групп «Двойная Вода» и STOP
+  на концертных площадках Даугавпилса (ДКХ, клуб железнодорожников, открытые городские
+  фестивали).
+description_en: Callisto was a Daugavpils melodic rock band active in the late 1990s
+  and early 2000s. They were frequent stage companions of Dvojnaja Voda and STOP across
+  local concert venues, including DKKh, the Railway Club, and open-air municipal rock
+  concerts.
+description_lv: Kallisto bija Daugavpils melodiska roka grupa 1990. gadu beigas un
+  2000. gadu sakuma. Grupa regulari uzstajas kopa ar Dvojnaja Voda un STOP Daugavpils
+  koncertzales, DKKh un brivdabas rokfestivālos.
+sameAs:
+- https://tamans.lv/history.php
+image: []
+video: []

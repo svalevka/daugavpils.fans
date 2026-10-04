@@ -1,0 +1,48 @@
+'@type': MusicGroup
+name: Hardweld
+slug: hardweld
+alternateName:
+- Hardweld Band
+foundingDate: '2014'
+location: Daugavpils, Latvia
+genre:
+- Punk Rock
+- Pop-Punk
+- Skate Punk
+member:
+- name: Павел Буланов
+  name_en: Pavels Bulanovs
+  name_lv: Pavels Bulanovs
+  role: вокал, гитара
+  role_en: vocals, guitar
+  role_lv: vokals, gitara
+  period: 2014-present
+- name: Сергей Максимов
+  name_en: Sergejs Maksimovs
+  name_lv: Sergejs Maksimovs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2014-present
+- name: Артём Васильев
+  name_en: Artjoms Vasiljevs
+  name_lv: Artjoms Vasiljevs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2014-present
+description: Hardweld — даугавпилсская панк-рок группа, созданная в 2014 году Павлом
+  Булановым. Коллектив играет бодрый, мелодичный скейт-панк и поп-панк. Постоянные
+  участники даугавпилсских рок-марафонов, фестивалей Chemical Reaction и клубных сейшенов
+  в Латгалии.
+description_en: Hardweld is a Daugavpils punk rock power trio formed in 2014 by Pāvels
+  Bulanovs. Playing high-energy skate punk and melodic pop-punk, the band has been
+  a frequent performer at the Daugavpils Rock Marathon, Chemical Reaction festival
+  series, and regional club gigs.
+description_lv: Hardweld ir Daugavpils pankroka trio, ko 2014. gada izveidoja Pavels
+  Bulanovs. Grupa spele atru skeitpanku un melodisku pop-panku, regularu dalibniece
+  Daugavpils Rokmaratonos un festivala Chemical Reaction.
+sameAs:
+- https://www.youtube.com/results?search_query=hardweld+daugavpils
+image: []
+video: []

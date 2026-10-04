@@ -1,0 +1,53 @@
+'@type': MusicGroup
+name: Lust'n'Dust
+slug: lust-n-dust
+alternateName:
+- Lust N Dust
+foundingDate: '2015'
+dissolutionDate: '2019'
+location: Daugavpils, Latvia
+genre:
+- Post-Hardcore
+- Emo
+- Alternative Rock
+member:
+- name: Владислав
+  name_en: Vladislavs
+  name_lv: Vladislavs
+  role: вокал
+  role_en: lead vocals
+  role_lv: vokals
+  period: 2015-2019
+- name: Даниил
+  name_en: Daniils
+  name_lv: Daniils
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2015-2019
+- name: Артём
+  name_en: Artjoms
+  name_lv: Artjoms
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2015-2019
+- name: Кирилл
+  name_en: Kirils
+  name_lv: Kirils
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2015-2019
+description: Lust'n'Dust — молодежная альтернативная пост-хардкор группа из Даугавпилса.
+  Заняла 2-е место на общегородском конкурсе «Daugavpils Rok maratons 2018», став
+  одной из самых заметных молодых тяжелых команд города конца 2010-х годов.
+description_en: Lust'n'Dust was a Daugavpils post-hardcore and emo/alternative rock
+  band. They won 2nd place at the Daugavpils Rock Marathon 2018, marking them as one
+  of the standout youth rock acts in Latgale in the late 2010s.
+description_lv: Lust'n'Dust bija Daugavpils post-hardcore un alternativā roka jaunatnes
+  grupa. Iegūva 2. vietu konkursa 'Daugavpils Rok maratons 2018', kluvod par vienu
+  no spilgtakajam smagas muzikas jaunajam grupam Latgale.
+sameAs: []
+image: []
+video: []

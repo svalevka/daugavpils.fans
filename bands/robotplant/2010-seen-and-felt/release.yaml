@@ -1,0 +1,32 @@
+'@type': MusicAlbum
+name: Seen and Felt
+slug: 2010-seen-and-felt
+datePublished: '2010'
+byArtist: robotplant
+genre:
+- Shoegaze
+- Indie Rock
+description: Полноформатный студийный альбом даугавпилсской шугейз-группы Robotplant
+  (2010).
+description_en: Full-length studio album by Daugavpils shoegaze outfit Robotplant
+  (2010).
+description_lv: Daugavpils sugaze grupas Robotplant pilnmetrazas studijas albums (2010).
+sameAs: []
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Seen and Felt
+- '@type': MusicRecording
+  position: 2
+  name: Slow Dive
+- '@type': MusicRecording
+  position: 3
+  name: Echo Chamber
+- '@type': MusicRecording
+  position: 4
+  name: Morning Light
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

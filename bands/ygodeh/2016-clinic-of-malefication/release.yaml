@@ -1,0 +1,28 @@
+'@type': MusicAlbum
+name: Clinic of Malefication
+slug: 2016-clinic-of-malefication
+datePublished: '2016'
+byArtist: ygodeh
+genre:
+- Industrial Metal
+- Melodic Death Metal
+description: Третий студийный релиз YGODEH (2016).
+description_en: Third studio album by YGODEH (2016).
+description_lv: YGODEH tresais studijas albums (2016).
+sameAs:
+- https://www.youtube.com/@ygodehband/videos
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Clinic of Malefication
+- '@type': MusicRecording
+  position: 2
+  name: Synthetic Pathology
+- '@type': MusicRecording
+  position: 3
+  name: Genome Deviation
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

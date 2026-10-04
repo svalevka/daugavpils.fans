@@ -1,0 +1,58 @@
+'@type': MusicGroup
+name: Artstorm
+slug: artstorm
+alternateName:
+- Artstorm Project
+foundingDate: '2004'
+dissolutionDate: '2006'
+location: Daugavpils, Latvia
+genre:
+- Heavy Metal
+- Power Metal
+member:
+- name: Ярослав Гаврилов
+  name_en: Jaroslavs Gavrilovs
+  name_lv: Jaroslavs Gavrilovs
+  role: гитара, музыка
+  role_en: guitar, composer
+  role_lv: gitara, komponists
+  period: 2004-2006
+- name: Дмитрий Денисов
+  name_en: Dmitrijs Denisovs
+  name_lv: Dmitrijs Denisovs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2004-2006
+- name: Владислав Качановский
+  name_en: Vladislavs Kachanovsky
+  name_lv: Vladislavs Kacanovskis
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2004-2006
+- name: Александр Голев
+  name_en: Aleksandr Golev
+  name_lv: Aleksandrs Golevs
+  role: вокал
+  role_en: vocals
+  role_lv: vokals
+  period: 2004-2006
+description: Artstorm — даугавпилсский хэви-метал проект, образованный в 2004 году
+  гитаристом и основателем группы Legion Ярославом Гавриловым вместе с ритм-секцией
+  Legion (басист Дмитрий Денисов, барабанщик Владислав Качановский) и вокалистом Александром
+  Голевым. Группа записала ряд студийных композиций в стиле мелодичного хэви/пауэр-метала
+  («Содом», «В Элизиум»).
+description_en: Artstorm was a Daugavpils heavy metal project formed in 2004 by Legion
+  founder and lead guitarist Jaroslavs Gavrilovs, joined by the Legion rhythm section
+  (bassist Dmitrijs Denisovs, drummer Vladislavs Kachanovsky) and vocalist Aleksandr
+  Golev. The band recorded several melodic heavy and power metal demo tracks including
+  'Sodom' and 'V Elizium'.
+description_lv: Artstorm bija Daugavpils smaga metala projekts, kuru 2004. gada izveidoja
+  grupas Legion dibinatajs un gitarists Jaroslavs Gavrilovs kopa ar Legion ritma sekciju
+  (basists Dmitrijs Denisovs, bungieris Vladislavs Kacanovskis) un dziedataju Aleksandru
+  Golevu. Grupa ierakstija vairakas melodiskas heavy/power metal kompozicijas ('Sodom',
+  'V Elizium').
+sameAs: []
+image: []
+video: []

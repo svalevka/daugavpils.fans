@@ -1,0 +1,60 @@
+'@type': MusicGroup
+name: Saintorment
+slug: saintorment
+alternateName:
+- Saintorment Band
+foundingDate: '2013'
+location: Daugavpils, Latvia
+genre:
+- Thrash Metal
+member:
+- name: Сергей Каршев
+  name_en: Sergejs Karsevs
+  name_lv: Sergejs Karsevs
+  role: вокал, бас-гитара
+  role_en: lead vocals, bass guitar
+  role_lv: vokals, basgitara
+  period: 2013-present
+- name: Максим Попов
+  name_en: Maksims Popovs
+  name_lv: Maksims Popovs
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2013-2017
+- name: Артур Буценец
+  name_en: Arturs Bucenecs
+  name_lv: Arturs Bucenecs
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2013-present
+- name: Виталий Присяжнюк
+  name_en: Vitalijs Prisjaznuks
+  name_lv: Vitalijs Prisjaznuks
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2013-present
+description: Saintorment — даугавпилсская олдскульная трэш-метал группа, образованная
+  в 2013 году. В состав вошли опытные музыканты города, включая Максима «Волка» Попова
+  (Varang Nord) и Артура Буценеца. Группа играет скоростной, бескомпромиссный трэш-метал
+  в традициях Kreator, Slayer и ранней Sepultura. Saintorment гастролировали по странам
+  Балтии и Восточной Европы, выпустив альбомы «Well of Sins» (2015) и «Defective Mind»
+  (2017).
+description_en: Saintorment is an old-school thrash metal outfit founded in Daugavpils
+  in 2013. Its lineup brought together prominent local musicians, including Maksims
+  'Wolf' Popovs (Varang Nord) and Artūrs Buceņecs. Delivering aggressive, high-speed
+  thrash in the vein of Slayer, Kreator, and early Sepultura, Saintorment toured extensively
+  across the Baltic states and Eastern Europe, releasing 'Well of Sins' (2015) and
+  'Defective Mind' (2017).
+description_lv: Saintorment ir Daugavpils thrash metal grupa, dibinata 2013. gada.
+  Tās sastāva speleja labakie vietējie smagas muzikas interpreti, tostarp Maksims
+  'Wolf' Popovs (Varang Nord) un Arturs Bucenecs. Saintorment izpilda atru, agresivu
+  trasu klasiskajas Slayer un Kreator tradicijas, koncertēja Baltija un Austrumeiropa,
+  izdeva albumus 'Well of Sins' (2015) un 'Defective Mind' (2017).
+sameAs:
+- https://saintorment.bandcamp.com/
+- https://www.metal-archives.com/bands/Saintorment/3540398687
+image: []
+video: []

@@ -1,0 +1,52 @@
+'@type': MusicGroup
+name: Radio is Dead
+slug: radio-is-dead
+alternateName:
+- Radio Is Dead Band
+foundingDate: '2016'
+dissolutionDate: '2021'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Modern Rock
+member:
+- name: Ника Хотулева
+  name_en: Nika Hotulova
+  name_lv: Nika Hotulova
+  role: клавишные, вокал
+  role_en: keyboards, vocals
+  role_lv: taustininstrumenti, vokals
+  period: 2016-2021
+- name: Андрей
+  name_en: Andrejs
+  name_lv: Andrejs
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2016-2021
+- name: Дмитрий
+  name_en: Dmitrijs
+  name_lv: Dmitrijs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2016-2021
+- name: Эдгар
+  name_en: Edgars
+  name_lv: Edgars
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2016-2021
+description: Radio is Dead — даугавпилсская альтернативная рок-группа с яркой клавишной
+  мелодикой, участник конкурсов «Daugavpils Rok maratons 2018» и «Rok maratons 2019»,
+  а также фестивалей серии Chemical Reaction.
+description_en: Radio is Dead was a Daugavpils modern alternative rock group featuring
+  keyboard-driven melodic structures. The band participated in the Daugavpils Rock
+  Marathons of 2018 and 2019, as well as the Chemical Reaction circuit.
+description_lv: Radio is Dead bija Daugavpils moderna roka grupa ar izteiktam taustinu
+  melodijam. Dalibniece pasakumos 'Daugavpils Rok maratons 2018' un 'Rok maratons
+  2019', ka ari festivala Chemical Reaction.
+sameAs: []
+image: []
+video: []

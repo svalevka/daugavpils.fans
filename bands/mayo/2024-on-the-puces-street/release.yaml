@@ -1,0 +1,30 @@
+'@type': MusicAlbum
+name: '...On The Pūces Street...'
+slug: 2024-on-the-puces-street
+datePublished: '2024'
+byArtist: mayo
+genre:
+- Rock
+- Hard Rock
+description: Дебютный студийный альбом даугавпилсской рок-группы MaYo (2024).
+description_en: Debut studio album by Daugavpils rock group MaYo (2024).
+description_lv: Daugavpils rokgrupas MaYo debijas studijas albums (2024).
+sameAs: []
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Pūces Street
+- '@type': MusicRecording
+  position: 2
+  name: Night Rider
+- '@type': MusicRecording
+  position: 3
+  name: Free Fall
+- '@type': MusicRecording
+  position: 4
+  name: Echoes
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

@@ -1,0 +1,55 @@
+'@type': MusicGroup
+name: Имаго
+slug: imago
+alternateName:
+- Imago
+foundingDate: '1992'
+dissolutionDate: '1995'
+location: Daugavpils, Latvia
+genre:
+- Hard Rock
+- Heavy Metal
+member:
+- name: Юрис Иванов
+  name_en: Juris Ivanovs
+  name_lv: Juris Ivanovs
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 1992-1995
+- name: Алексей Петров
+  name_en: Aleksejs Petrovs
+  name_lv: Aleksejs Petrovs
+  role: вокал
+  role_en: vocals
+  role_lv: vokals
+  period: 1992-1995
+- name: Михаил Семенов
+  name_en: Mihails Semjonovs
+  name_lv: Mihails Semjonovs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 1992-1995
+- name: Дмитрий Васильев
+  name_en: Dmitrijs Vasiljevs
+  name_lv: Dmitrijs Vasiljevs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1992-1995
+description: «Имаго» (Imago) — даугавпилсская рок-группа начала 1990-х годов, сформированная
+  студентами Рижского технического университета (РТУ) в Даугавпилсе. Совместно с группами
+  «Двинск» и «Нейссерия» была хедлайнером исторического рок-фестиваля в студенческом
+  клубе РТУ в 1993 году, заложившего основы новой волны даугавпилсского рока.
+description_en: Imago was an early-1990s Daugavpils hard rock band founded by students
+  of the Riga Technical University (RTU) Daugavpils branch. Together with Dvinsk and
+  Neisseria, they co-headlined the historic 1993 RTU Student Club festival, which
+  sparked the post-Soviet revival of the Daugavpils underground rock community.
+description_lv: Imago bija 1990. gadu sakuma Daugavpils rokgrupa, ko dibinaja Rigas
+  Tehniska universitates (RTU) Daugavpils filiales studenti. Kopa ar grupam Dvinsk
+  un Neisseria vini bija vesturiska 1993. gada RTU Studentu kluba festivala hedlaineri,
+  aizsakot Daugavpils neatkariga roka jaunatnes kustibu.
+sameAs: []
+image: []
+video: []

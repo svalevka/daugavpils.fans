@@ -1,0 +1,33 @@
+'@type': MusicAlbum
+name: Pārķiuņa uomurs
+slug: 2021-parkiuna-uomurs
+datePublished: '2021'
+byArtist: varang-nord
+genre:
+- Folk Metal
+- Pagan Metal
+description: Четвертый альбом Varang Nord, полностью спетый на латгальском языке (2021).
+description_en: Fourth album by Varang Nord, recorded entirely in the Latgalian language
+  (2021).
+description_lv: Varang Nord ceturtais albums, kas pilniba ierakstits latgaliesu valoda
+  (2021).
+sameAs:
+- https://varangnord.bandcamp.com/album/p-r-iu-a-uomurs
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Cīsareits
+- '@type': MusicRecording
+  position: 2
+  name: Stuojies!
+- '@type': MusicRecording
+  position: 3
+  name: Pārķiuņa uomurs
+- '@type': MusicRecording
+  position: 4
+  name: Svietņeica
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

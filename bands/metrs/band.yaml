@@ -1,0 +1,62 @@
+'@type': MusicGroup
+name: Metrs
+slug: metrs
+alternateName:
+- Metrs Band
+foundingDate: '1993'
+dissolutionDate: '2019'
+location: Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Pop-Rock
+- Indie Rock
+member:
+- name: Андрей Зелч
+  name_en: Andrejs Zelcs
+  name_lv: Andrejs Zelcs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1993-2019
+- name: Эдмунд Таманис
+  name_en: Edmunds Tamanis
+  name_lv: Edmunds Tamanis
+  role: бас-гитара, вокал
+  role_en: bass guitar, vocals
+  role_lv: basgitara, vokals
+  period: 1993-2019
+- name: Улдис Рулюкс
+  name_en: Uldis Ruluks
+  name_lv: Uldis Ruluks
+  role: гитара, вокал
+  role_en: guitar, vocals
+  role_lv: gitara, vokals
+  period: 1993-2019
+- name: Гунтарс Шембель
+  name_en: Guntars Sembels
+  name_lv: Guntars Sembels
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 1993-2019
+description: Metrs — одна из старейших и наиболее уважаемых альтернативных рок-групп
+  Даугавпилса. Образована в 1993 году студентами Даугавпилсского педагогического университета
+  (ДПУ / ДУ). В составе играл барабанщик Андрей Зелч (также участник группы Carpe
+  Diem) и бас-гитарист Эдмунд Таманис. На протяжении более четверти века группа активно
+  выступала на фестивалях по всей Латвии, выпустив альбомы «Pirmais albums» (1998),
+  «Labākā diena» (2014) и «Ēnas» (2018).
+description_en: Metrs is one of Daugavpils' longest-standing and most respected alternative
+  rock bands, formed in 1993 by students at Daugavpils Pedagogical University (DPU
+  / DU). The lineup featured drummer Andrejs Zelcs (also drummer of Carpe Diem) and
+  bassist Edmunds Tamanis. Spanning over 25 years of activity on Latvian festival
+  and club circuits, the band released 'Pirmais albums' (1998), 'Labākā diena' (2014),
+  and 'Ēnas' (2018).
+description_lv: Metrs ir viena no ilgvetigakajam un iecienitakajam Daugavpils alternativā
+  roka grupam, dibinata 1993. gada Daugavpils Pedagogiskas universitates (DPU / DU)
+  studentu vide. Sastava speleja bungieris Andrejs Zelcs (ari Carpe Diem bungieris)
+  un basists Edmunds Tamanis. Grupa aktivi koncertēja vairak neka ceturtdalgadsimtu,
+  izdeva albumus 'Pirmais albums' (1998), 'Labaka diena' (2014) un 'Enas' (2018).
+sameAs:
+- https://www.draugiem.lv/metrs/
+image: []
+video: []

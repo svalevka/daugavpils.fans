@@ -1,0 +1,28 @@
+'@type': MusicAlbum
+name: Fire of the Northern Lore
+slug: 2014-fire-of-the-northern-lore
+datePublished: '2014'
+byArtist: varang-nord
+genre:
+- Folk Metal
+description: Дебютный студийный альбом даугавпилсской фолк-метал группы Varang Nord
+  (2014).
+description_en: Debut studio album by Daugavpils folk metal band Varang Nord (2014).
+description_lv: Daugavpils folkmetala grupas Varang Nord debijas studijas albums (2014).
+sameAs:
+- https://varangnord.bandcamp.com/album/fire-of-the-northern-lore
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Fire of the Northern Lore
+- '@type': MusicRecording
+  position: 2
+  name: Northmen
+- '@type': MusicRecording
+  position: 3
+  name: Blood for Blood
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

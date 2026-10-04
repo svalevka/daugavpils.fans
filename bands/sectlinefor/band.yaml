@@ -1,0 +1,34 @@
+'@type': MusicGroup
+name: SECTLINEFOR
+slug: sectlinefor
+alternateName:
+- Sectlinefor
+foundingDate: '2012'
+location: Daugavpils, Latvia
+genre:
+- Industrial Metal
+- Cyber Metal
+- Experimental
+member:
+- name: Павел Степанов (Питон)
+  name_en: Pavel Stepanov (Piton)
+  name_lv: Pavels Stepanovs (Piton)
+  role: все инструменты, программирование
+  role_en: all instruments, programming
+  role_lv: visi instrumenti, programmesana
+  period: 2012-present
+description: SECTLINEFOR — экспериментальный сольный индустриальный кибер-метал проект
+  Павла «Питона» Степанова (основателя групп Disease и YGODEH) из Даугавпилса. Проект
+  исследует звучание мрачного механизированного индастриала, электронных ритмов и
+  тяжелых гитарных текстур.
+description_en: SECTLINEFOR is an experimental solo industrial cyber-metal project
+  by Pavel 'Piton' Stepanov (founder of Disease and YGODEH) from Daugavpils. The project
+  explores bleak mechanized industrial beats, harsh electronic synthesis, and layered
+  heavy guitar textures.
+description_lv: SECTLINEFOR ir Pavela 'Pitona' Stepanova (grupu Disease un YGODEH
+  dibinataja) eksperimentals solo industrial kiber-metala projekts no Daugavpils.
+  Projekts spele tumsu mehanizetu industrialo elektroniku kopa ar smagam gitaram.
+sameAs:
+- https://www.youtube.com/@ygodehband/videos
+image: []
+video: []

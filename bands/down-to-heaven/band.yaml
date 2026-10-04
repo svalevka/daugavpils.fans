@@ -1,0 +1,53 @@
+'@type': MusicGroup
+name: Down to Heaven
+slug: down-to-heaven
+alternateName:
+- Down To Heaven
+foundingDate: '2012'
+dissolutionDate: '2018'
+location: Daugavpils, Latvia
+genre:
+- Melodic Metal
+- Symphonic Rock
+member:
+- name: Юлия
+  name_en: Julija
+  name_lv: Julija
+  role: вокал, клавишные
+  role_en: vocals, keyboards
+  role_lv: vokals, taustininstrumenti
+  period: 2012-2018
+- name: Павел
+  name_en: Pavels
+  name_lv: Pavels
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2012-2018
+- name: Вадим
+  name_en: Vadims
+  name_lv: Vadims
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2012-2018
+- name: Максим
+  name_en: Maksims
+  name_lv: Maksims
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2012-2018
+description: Down to Heaven — даугавпилсская группа, сочетавшая элементы мелодик-метала,
+  симфо-рока и альтернативы. Фронтвумен коллектива Юлия отвечала за чистый академичный
+  вокал и фортепианные аранжировки. Группа регулярно выступала на фестивале Chemical
+  Reaction и городских рок-концертах в середине 2010-х годов.
+description_en: Down to Heaven was a Daugavpils melodic metal and symphonic rock group
+  active in the 2010s, fronted by singer/pianist Yulia alongside guitarist Pavel.
+  They were regular fixtures at the Chemical Reaction festival and local rock showcases.
+description_lv: Down to Heaven bija Daugavpils melodiska metala un simfoniska roka
+  grupa, kas darbojās 2010. gados. Grupas prieksgala bija dziedataja un pianiste Julija.
+  Kolektivs regulari uzstajas Chemical Reaction festivalos un Daugavpils rokpasakumos.
+sameAs: []
+image: []
+video: []

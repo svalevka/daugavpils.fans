@@ -1,0 +1,27 @@
+'@type': MusicAlbum
+name: Wild Detroit Gang
+slug: 2019-wild-detroit-gang
+datePublished: '2019'
+byArtist: wild-detroit-gang
+genre:
+- Hard Rock
+description: Второй одноименный студийный альбом группы Wild Detroit Gang (2019).
+description_en: Second self-titled studio album by Wild Detroit Gang (2019).
+description_lv: Grupas Wild Detroit Gang otrais pasnosauktais albums (2019).
+sameAs:
+- https://wilddetroitgang.bandcamp.com/album/wild-detroit-gang
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Wild
+- '@type': MusicRecording
+  position: 2
+  name: Detroit
+- '@type': MusicRecording
+  position: 3
+  name: Gang
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

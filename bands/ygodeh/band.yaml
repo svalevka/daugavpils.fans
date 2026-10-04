@@ -1,0 +1,59 @@
+'@type': MusicGroup
+name: YGODEH
+slug: ygodeh
+alternateName:
+- Ygodeh Band
+foundingDate: '2009'
+location: Daugavpils, Latvia
+genre:
+- Industrial Metal
+- Melodic Death Metal
+- Symphonic Metal
+member:
+- name: Павел Степанов (Питон)
+  name_en: Pavel Stepanov (Piton)
+  name_lv: Pavels Stepanovs (Piton)
+  role: гитара, программирование, музыка
+  role_en: guitars, programming, composer
+  role_lv: gitara, programmesana, komponists
+  period: 2009-present
+- name: Виктор Ринкевич (Фека / Абдула)
+  name_en: Viktor Rinkevich (Feka / Abdula)
+  name_lv: Viktors Rinkevics (Feka / Abdula)
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2009-present
+- name: Вадим Ветрин (Vadozz)
+  name_en: Vadim Vetrin (Vadozz)
+  name_lv: Vadims Vetrins (Vadozz)
+  role: перкуссия, ударные
+  role_en: percussion, drums
+  role_lv: sitaminstrumenti, bungas
+  period: 2009-present
+description: YGODEH — даугавпилсский метал-проект, ставший прямым студийным продолжением
+  группы Disease. Создан Павлом «Питоном» Степановым при участии барабанщика группы
+  Свинктр Виктора Ринкевича (Фека / Абдула) и барабанщика Disease Вадима Ветрина.
+  Коллектив развивает мощное индустриальное и симфоническое дэт-метал звучание, сочетая
+  агрессивные гитарные полиритмы, электронные секвенции и симфоническую монументальность.
+  Дискография группы включает EP «Dawn of Technological Singularity» (2010), альбомы
+  «The Experiment Interrupted» (2013) и «Clinic of Malefication» (2016).
+description_en: YGODEH is a Daugavpils metal project formed as the direct studio continuation
+  of Disease. Founded by Pavel 'Piton' Stepanov alongside Viktor Rinkevich ('Feka
+  / Abdula' from Svinktr) and Vadim Vetrin ('Vadozz' from Disease/Viselica), the project
+  explores industrial and melodic death metal, driven by complex guitar rhythms, electronic
+  synthesis, and symphonic orchestration. Their discography includes the EP 'Dawn
+  of Technological Singularity' (2010), and albums 'The Experiment Interrupted' (2013)
+  and 'Clinic of Malefication' (2016).
+description_lv: YGODEH ir Daugavpils metalmūzikas projekts un grupas Disease tiesa
+  studijas turpinataja. To izveidoja Pavels 'Pitons' Stepanovs kopa ar Viktoru Rinkevicu
+  ('Feka / Abdula' no grupas Svinktr) un Vadimu Vetrinu ('Vadozz' no Disease/Viselica).
+  Grupa muzice industrial un melodiska death metal zanra, apvienojot sarezgitas gitaru
+  partijas, elektroniku un simfonisko skanejumu. Izdevusi EP 'Dawn of Technological
+  Singularity' (2010), ka ari albumus 'The Experiment Interrupted' (2013) un 'Clinic
+  of Malefication' (2016).
+sameAs:
+- https://www.youtube.com/@ygodehband/videos
+- https://www.metal-archives.com/bands/Ygodeh/3540321557
+image: []
+video: []

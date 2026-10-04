@@ -1,0 +1,61 @@
+'@type': MusicGroup
+name: Wild Detroit Gang
+slug: wild-detroit-gang
+alternateName:
+- WDG
+foundingDate: '2014'
+location: Daugavpils, Latvia
+genre:
+- Hard Rock
+- Blues Rock
+member:
+- name: Янис Дрегерис
+  name_en: Janis Dregeris
+  name_lv: Janis Dregeris
+  role: вокал, гитара
+  role_en: lead vocals, guitar
+  role_lv: vokals, gitara
+  period: 2014-present
+- name: Татьяна Низюлько
+  name_en: Tatjana Nizjulko
+  name_lv: Tatjana Nizjulko
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2014-present
+- name: Матисс Ушканс
+  name_en: Matiss Uskans
+  name_lv: Matiss Uskans
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2014-present
+- name: Артур Буценец
+  name_en: Arturs Bucenecs
+  name_lv: Arturs Bucenecs
+  role: соло-гитара
+  role_en: lead guitar
+  role_lv: solo gitara
+  period: 2014-present
+description: Wild Detroit Gang — даугавпилсская хард-рок и блюз-рок группа, основанная
+  вокалистом и гитаристом Янисом Дрегерисом в 2014 году. Став постоянными резидентами
+  легендарного даугавпилсского клуба «Artilērijas Pagrabi», группа снискала славу
+  одного из самых взрывных рок-составов Латгалии. Коллектив регулярно гастролирует
+  по Латвии и за рубежом, выпустив альбомы «Origins» (2016) и «Wild Detroit Gang»
+  (2019).
+description_en: Wild Detroit Gang is a hard rock and blues rock powerhouse formed
+  in Daugavpils in 2014 by frontman and guitarist Jānis Drēģeris. Becoming house favorites
+  at the iconic Daugavpils underground club Artilērijas Pagrabi, the group quickly
+  built a reputation for blistering, high-octane rock performances across Latvia and
+  neighboring countries. Discography includes 'Origins' (2016) and their eponymous
+  album 'Wild Detroit Gang' (2019).
+description_lv: Wild Detroit Gang ir Daugavpils hardroka un bluzroka grupa, kuru 2014.
+  gada dibinaja solists un gitarists Janis Dregeris. Kluvod par kulta krodzina 'Artilerijas
+  Pagrabi' rezidentiem, grupa izpelnijas slavu ka viena no karstakajam un jaudigakajam
+  Latgales rokgrupam. Grupa aktivi koncerte Latvija un arvalstis, izdevusi albumus
+  'Origins' (2016) un 'Wild Detroit Gang' (2019).
+sameAs:
+- https://wilddetroitgang.bandcamp.com/
+- https://www.youtube.com/c/WildDetroitGang
+image: []
+video: []

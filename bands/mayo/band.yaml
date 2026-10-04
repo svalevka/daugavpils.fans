@@ -1,0 +1,59 @@
+'@type': MusicGroup
+name: MaYo
+slug: mayo
+alternateName:
+- MaYo Band
+foundingDate: '2023'
+location: Daugavpils, Latvia
+genre:
+- Rock
+- Hard Rock
+- Alternative Rock
+member:
+- name: Юлия Росовская
+  name_en: Julija Rosovska
+  name_lv: Julija Rosovska
+  role: вокал
+  role_en: lead vocals
+  role_lv: vokals
+  period: 2023-present
+- name: Владимир Дроздовский
+  name_en: Vladimirs Drozdovskis
+  name_lv: Vladimirs Drozdovskis
+  role: гитара
+  role_en: guitar
+  role_lv: gitara
+  period: 2023-present
+- name: Дмитрий Васильев
+  name_en: Dmitrij Vasiljev
+  name_lv: Dmitrijs Vasiljevs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2023-present
+- name: Ромуальд Яковлев
+  name_en: Romuald Jakovlev
+  name_lv: Romualds Jakovlevs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2023-present
+description: MaYo — даугавпилсская рок-группа, основанная в 2023 году вокалисткой
+  Юлией Росовской и опытным гитаристом Владимиром Дроздовским (известным по группам
+  Disease, Silversand и CrossFire). Коллектив играет энергичный хард-рок и альтернативный
+  рок с сильным женским вокалом. В 2024 году группа выпустила дебютный полноформатный
+  альбом «...On The Pūces Street...», названный в честь улицы Пуцес в Даугавпилсе.
+description_en: MaYo is a Daugavpils rock band founded in 2023 by frontwoman Julija
+  Rosovska and seasoned guitarist Vladimirs Drozdovskis (veteran of Disease, Silversand,
+  and CrossFire). The group performs dynamic hard rock and alternative rock characterized
+  by driving rhythm and expressive female vocals. In 2024, they released their debut
+  full-length album '...On The Pūces Street...', named after Pūces Street in Daugavpils.
+description_lv: MaYo ir Daugavpils rokgrupa, ko 2023. gada izveidoja dziedataja Julija
+  Rosovska un pieredzejusais gitarists Vladimirs Drozdovskis (spelejis Disease, Silversand
+  un CrossFire). Grupa izpilda energisku hardroku un alternativo roku ar spilgtu sieviesu
+  vokalu. 2024. gada grupa izdeva debijas albumu '...On The Puces Street...', kas
+  nosaukts par godu Puces ielai Daugavpili.
+sameAs:
+- https://www.youtube.com/results?search_query=mayo+daugavpils
+image: []
+video: []

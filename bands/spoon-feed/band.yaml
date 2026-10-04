@@ -1,0 +1,45 @@
+'@type': MusicGroup
+name: Spoon Feed
+slug: spoon-feed
+alternateName:
+- Spoon Feed Band
+foundingDate: '1999'
+dissolutionDate: '2002'
+location: Daugavpils, Latvia
+genre:
+- Grunge
+- Alternative Rock
+member:
+- name: Сергей Федоров
+  name_en: Sergejs Fjodorovs
+  name_lv: Sergejs Fjodorovs
+  role: гитара, вокал
+  role_en: guitar, vocals
+  role_lv: gitara, vokals
+  period: 1999-2002
+- name: Виктор Зайцев
+  name_en: Viktors Zaicevs
+  name_lv: Viktors Zaicevs
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 1999-2002
+- name: Денис Павлов
+  name_en: Deniss Pavlovs
+  name_lv: Deniss Pavlovs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 1999-2002
+description: Spoon Feed — даугавпилсская гранж/альтернативная рок-группа рубежа 1990-х
+  и 2000-х годов. Участник молодежных рок-концертов и фестиваля «Latgales Gaisma /
+  Stalkers» в 2000 году.
+description_en: Spoon Feed was a Daugavpils grunge and alternative rock band formed
+  around 1999. They were active in the youth club scene and performed at the 'Latgales
+  Gaisma / Stalkers' festival in autumn 2000.
+description_lv: Spoon Feed bija Daugavpils grandza un alternativā roka grupa 1990.
+  gadu beigas. Piedalijas jaunatnes rokpasakumos un festivala 'Latgales Gaisma / Stalkers'
+  2000. gada rudeni.
+sameAs: []
+image: []
+video: []

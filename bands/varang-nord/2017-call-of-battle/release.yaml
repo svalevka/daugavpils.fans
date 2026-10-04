@@ -1,0 +1,27 @@
+'@type': MusicAlbum
+name: Call of Battle
+slug: 2017-call-of-battle
+datePublished: '2017'
+byArtist: varang-nord
+genre:
+- Folk Metal
+description: Третий студийный альбом Varang Nord (2017).
+description_en: Third studio album by Varang Nord (2017).
+description_lv: Varang Nord tresais studijas albums (2017).
+sameAs:
+- https://varangnord.bandcamp.com/album/call-of-battle
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Intro
+- '@type': MusicRecording
+  position: 2
+  name: Call of Battle
+- '@type': MusicRecording
+  position: 3
+  name: Crown of the Ice
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []
