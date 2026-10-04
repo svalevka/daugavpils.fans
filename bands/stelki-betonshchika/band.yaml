@@ -21,8 +21,8 @@ member:
   role: клавиши, вокал
   role_en: keyboards, vocals
   period: '1996'
-- name: Гунна
-  name_en: Gunna
+- name: Гуна
+  name_en: Guna
   role: аккордеон, вокал
   role_en: accordion, vocals
   period: '1996'
@@ -55,7 +55,7 @@ description: 'Да, был такой проект. Название родил�
 
   Тося (клавиши, вокал)
 
-  Гунна (аккордеон, вокал)
+  Гуна (аккордеон, вокал)
 
   Рыб (песни, гитара, вокал)
 
@@ -80,7 +80,7 @@ description_en: 'Yes, there was such a project. The name was born much later and
 
   Tosya (keyboards, vocals)
 
-  Gunna (accordion, vocals)
+  Guna (accordion, vocals)
 
   Ryb (songs, guitar, vocals)
 
