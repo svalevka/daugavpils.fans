@@ -40,8 +40,11 @@ import json
 import os
 import re
 import shutil
+import socket
 import subprocess
 import sys
+
+socket.setdefaulttimeout(30)
 import urllib.parse
 from collections import Counter
 from functools import partial
@@ -1015,14 +1018,22 @@ def require_media_published(bands: list[MusicGroup], releases_by_band: dict[str,
 
     missing: list[str] = []
     try:
+        from concurrent.futures import ThreadPoolExecutor
+
+        checks: list[tuple[str, list[str]]] = []
         for band in bands:
-            missing.extend(
-                _missing_from_item(band_item_id(band.slug), [m.contentUrl for m in band.image + band.video])
-            )
+            urls = [m.contentUrl for m in band.image + band.video]
+            if urls:
+                checks.append((band_item_id(band.slug), urls))
             for release in releases_by_band[band.slug]:
                 content_urls = [t.audio.contentUrl for t in release.track if t.audio is not None]
                 content_urls += [m.contentUrl for m in release.image + release.video]
-                missing.extend(_missing_from_item(release_item_id(band.slug, release.slug), content_urls))
+                if content_urls:
+                    checks.append((release_item_id(band.slug, release.slug), content_urls))
+
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            for res in ex.map(lambda c: _missing_from_item(c[0], c[1]), checks):
+                missing.extend(res)
     except ArchiveOrgUnavailableError:
         return
 

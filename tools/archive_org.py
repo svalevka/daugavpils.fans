@@ -56,3 +56,14 @@ def secondary_mirror_url(item_id: str, content_url: str, base_url: str = "https:
     """
     base = base_url.rstrip("/")
     return f"{base}/{item_id}/{content_url}"
+
+
+def file_md5(path: Path | str) -> str:
+    """Calculate MD5 hex digest for a file. Used strictly for Archive.org API checksum comparisons."""
+    import hashlib
+    h = hashlib.md5(usedforsecurity=False)
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+

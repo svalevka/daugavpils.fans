@@ -37,3 +37,4 @@ webapp/dist/
 *.key
 *.crt
 review-app-data/
+scratch/

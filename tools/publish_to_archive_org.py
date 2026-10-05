@@ -47,7 +47,7 @@ socket.setdefaulttimeout(180)
 
 import yaml
 
-from archive_org import archive_org_url, band_item_id, item_page_url, item_torrent_url, metadata_item_id, release_item_id
+from archive_org import archive_org_url, band_item_id, file_md5, item_page_url, item_torrent_url, metadata_item_id, release_item_id
 from models import MusicAlbum, MusicGroup
 from pydantic import ValidationError
 
@@ -255,33 +255,53 @@ def sync_to_b2_mirror(item_id: str, files: dict[str, Path], bucket: str, dry_run
     return True
 
 
-def publish_metadata_bundle(bands_dir: Path, dry_run: bool) -> None:
-    """Uploads every band.yaml/release.yaml under bands_dir into one
-    dedicated archive.org item (metadata_item_id()), each at its path
-    relative to bands_dir (e.g. "m-spirit/band.yaml",
-    "m-spirit/1995-.../release.yaml"). Run last, after the per-band/release
-    loop, so every file's sameAs (recorded by publish_item above) is already
-    in its final state before this upload. checksum=True means only files
-    that actually changed get re-uploaded."""
+def publish_metadata_bundle(bands_dir: Path, dry_run: bool, target_bands: set[str] | None = None) -> None:
+    """Uploads band.yaml/release.yaml under bands_dir into one
+    dedicated archive.org item (metadata_item_id()).
+
+    Uses a fast client-side differential check against remote item.files
+    so only missing or genuinely modified YAML files are sent to Archive.org,
+    avoiding slow sequential S3 requests and Archive.org rate-limiting."""
+    import internetarchive as ia
+
     yaml_files = sorted(p for p in bands_dir.rglob("*.yaml") if p.name in ("band.yaml", "release.yaml"))
-    files = {p.relative_to(bands_dir).as_posix(): p for p in yaml_files}
+    if target_bands is not None:
+        yaml_files = [p for p in yaml_files if p.relative_to(bands_dir).parts[0] in target_bands]
+
+    all_files = {p.relative_to(bands_dir).as_posix(): p for p in yaml_files}
     item_id = metadata_item_id()
 
-    print(f"\n{item_id}: metadata backup ({len(files)} file(s))")
-    for rel_path in sorted(files):
+    # Pre-fetch remote file catalog to compare MD5 hashes locally
+    remote_md5s: dict[str, str] = {}
+    try:
+        remote_item = ia.get_item(item_id)
+        if remote_item.exists:
+            remote_md5s = {f["name"]: f.get("md5") for f in remote_item.files if "name" in f}
+    except Exception as exc:
+        print(f"  Note: unable to pre-fetch {item_id} file list ({exc}), will fall back to normal upload.")
+
+    to_upload: dict[str, Path] = {}
+    for rel_path, path in all_files.items():
+        if rel_path not in remote_md5s or remote_md5s[rel_path] != file_md5(path):
+            to_upload[rel_path] = path
+
+    if not to_upload:
+        print(f"\n{item_id}: metadata backup bundle is already up to date ({len(all_files)} file(s) checked).")
+        return
+
+    print(f"\n{item_id}: syncing {len(to_upload)} changed/new file(s) (out of {len(all_files)} total) to metadata backup")
+    for rel_path in sorted(to_upload):
         print(f"    {rel_path} -> {archive_org_url(item_id, rel_path)}")
 
     if dry_run:
         return
-
-    import internetarchive as ia
 
     max_retries = 5
     for attempt in range(max_retries):
         try:
             ia.upload(
                 item_id,
-                files={rel_path: str(path) for rel_path, path in files.items()},
+                files={rel_path: str(path) for rel_path, path in to_upload.items()},
                 metadata={
                     "mediatype": "data",
                     "title": "Daugavpils Music Archive - metadata backup",
@@ -298,11 +318,11 @@ def publish_metadata_bundle(bands_dir: Path, dry_run: bool) -> None:
         except Exception as exc:
             err = str(exc)
             if ("503" in err or "Slow Down" in err or "reduce your request rate" in err) and attempt < max_retries - 1:
-                wait_time = (attempt + 1) * 60
+                wait_time = (attempt + 1) * 30
                 print(f"    Rate limit / 503 Slow Down hit on metadata bundle. Waiting {wait_time}s before retrying (attempt {attempt + 1}/{max_retries})...")
                 time.sleep(wait_time)
             elif attempt < max_retries - 1:
-                wait_time = (attempt + 1) * 15
+                wait_time = (attempt + 1) * 10
                 print(f"    Error uploading metadata bundle ({exc}). Retrying in {wait_time}s (attempt {attempt + 1}/{max_retries})...")
                 time.sleep(wait_time)
             else:
@@ -426,7 +446,7 @@ def main() -> int:
     if requested is not None and (unknown := requested - seen):
         print(f"\nWarning: --bands slug(s) not found under {bands_dir}: {', '.join(sorted(unknown))}")
 
-    publish_metadata_bundle(bands_dir, args.dry_run)
+    publish_metadata_bundle(bands_dir, args.dry_run, target_bands=requested)
 
     if not all_ok:
         print("\nFinished with errors.")
