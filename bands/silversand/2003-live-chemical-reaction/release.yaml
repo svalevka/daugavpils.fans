@@ -1,0 +1,88 @@
+'@type': MusicAlbum
+name: Live at Chemical Reaction (14.03.2003)
+slug: 2003-live-chemical-reaction
+datePublished: '2003'
+byArtist: silversand
+genre:
+- Electronic Rock
+- Synth Rock
+- Alternative Rock
+description: Концертная запись выступления группы Silversand на фестивале Chemical
+  Reaction 14 марта 2003 года в Даугавпилсе.
+description_en: Live concert recording of Silversand performing at Chemical Reaction
+  festival on March 14, 2003 in Daugavpils.
+description_lv: Grupas Silversand uzstasanas koncertieraksts festivala Chemical Reaction
+  2003. gada 14. marta Daugavpili.
+sameAs:
+- https://www.youtube.com/watch?v=PM2sABZk9FI
+- https://archive.org/details/daugavpils-fans-silversand-2003-live-chemical-reaction
+- https://archive.org/download/daugavpils-fans-silversand-2003-live-chemical-reaction/daugavpils-fans-silversand-2003-live-chemical-reaction_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Трек 1
+  audio:
+    contentUrl: 01-live-track-1.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 94fbcbf46888c558221edbba7017d198f2e534433d198655e4b7fb4f9480e8ca
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M58S
+- '@type': MusicRecording
+  position: 2
+  name: Трек 2
+  audio:
+    contentUrl: 02-live-track-2.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 42b2bf5eaaa4be01da24b07dc599197077948e84ddac97bec6841e90d72cd599
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M42S
+- '@type': MusicRecording
+  position: 3
+  name: Трек 3
+  audio:
+    contentUrl: 03-live-track-3.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 78570719ba8148cbfcf9a2c2c565b9f79a90a5f92fcd7a11a66b1e1d2f306371
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M42S
+- '@type': MusicRecording
+  position: 4
+  name: Трек 4
+  audio:
+    contentUrl: 04-live-track-4.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c490b3d83e37e380fefe648e1141f6b9bf939aaa00a81baa69803dafa2dbbda1
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT6M16S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 3f22b0f258ddb9de527a96c3824bc3e428da8ddb1ef225d3088b5d317ed4f56c
+  '@type': ImageObject
+  caption: Обложка концерта Silversand Chemical Reaction 2003
+  caption_en: Silversand Chemical Reaction 2003 live cover
+  caption_lv: Silversand Chemical Reaction 2003 vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

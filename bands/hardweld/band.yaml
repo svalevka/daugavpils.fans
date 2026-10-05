@@ -31,19 +31,40 @@ member:
   role_en: drums
   role_lv: sitamie instrumenti
   period: 2014-present
+- name: Александр Устинов
+  name_en: Aleksandrs Ustinovs
+  name_lv: Aleksandrs Ustinovs
+  role: соло-гитара
+  role_en: lead guitar
+  role_lv: solo gitara
+  period: 2018-present
+- name: Алексей Григорьев
+  name_en: Aleksejs Grigorjevs
+  name_lv: Aleksejs Grigorjevs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2018-present
 description: Hardweld — даугавпилсская панк-рок группа, созданная в 2014 году Павлом
-  Булановым. Коллектив играет бодрый, мелодичный скейт-панк и поп-панк. Постоянные
-  участники даугавпилсских рок-марафонов, фестивалей Chemical Reaction и клубных сейшенов
-  в Латгалии.
-description_en: Hardweld is a Daugavpils punk rock power trio formed in 2014 by Pāvels
-  Bulanovs. Playing high-energy skate punk and melodic pop-punk, the band has been
-  a frequent performer at the Daugavpils Rock Marathon, Chemical Reaction festival
-  series, and regional club gigs.
-description_lv: Hardweld ir Daugavpils pankroka trio, ko 2014. gada izveidoja Pavels
-  Bulanovs. Grupa spele atru skeitpanku un melodisku pop-panku, regularu dalibniece
-  Daugavpils Rokmaratonos un festivala Chemical Reaction.
+  Булановым. Коллектив играет бодрый, мелодичный скейт-панк и поп-панк. Призеры даугавпилсского
+  «Rok maratons 2018» (где гитарист Александр Устинов и барабанщик Алексей Григорьев
+  получили индивидуальные награды), участники фестивалей Chemical Reaction и клубных
+  сейшенов в Латгалии. 13 сентября 2019 года группа презентовала свой альбом в клубе
+  Artilērijas pagrabi.
+description_en: Hardweld is a Daugavpils punk rock power trio formed in 2014 by Pavels
+  Bulanovs. Playing high-energy skate punk and melodic pop-punk, the band won 3rd
+  place at the Daugavpils Rok maratons 2018 (with individual prizes for guitarist
+  Aleksandrs Ustinovs and drummer Aleksejs Grigorjevs), regularly performing at Chemical
+  Reaction and Artilerijas pagrabi.
+description_lv: Hardweld ir Daugavpils pankroka grupa, ko 2014. gada izveidoja Pavels
+  Bulanovs. Grupa spele atru skeitpanku un melodisku pop-panku, 3. vietas ieguveja
+  Daugavpils Rokmaratona 2018 (kur Aleksandrs Ustinovs un Aleksejs Grigorjevs sanema
+  individualas balvas). 2019. gada 13. septembri grupa prezenteja savu albumu kluba
+  Artilerijas pagrabi.
 sameAs:
-- https://www.youtube.com/results?search_query=hardweld+daugavpils
+- https://www.youtube.com/@hardweldofficial3261
+- https://www.youtube.com/watch?v=ZxQRZ5hxP-Q
+- https://www.youtube.com/watch?v=RQ1cHRgFtQM
 - https://archive.org/details/daugavpils-fans-hardweld
 - https://archive.org/download/daugavpils-fans-hardweld/daugavpils-fans-hardweld_archive.torrent
 image:
@@ -58,4 +79,14 @@ image:
   caption_en: Hardweld band photo
   caption_lv: Grupas Hardweld foto
   depicts: []
-video: []
+video:
+- contentUrl: media/hardweld-poverit-v-sny-live-2019.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 75155232859db56a0f2c942843cc336ef190be446577720551e58db4287e0698
+  '@type': VideoObject
+  name: Поверить в сны (Live в Artilērijas pagrabi, 2019)
+  bitrate: 413 kbps
+  duration: PT3M24S

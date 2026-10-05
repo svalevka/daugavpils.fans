@@ -53,6 +53,30 @@ description_lv: Artstorm bija Daugavpils smaga metala projekts, kuru 2004. gada 
   (basists Dmitrijs Denisovs, bungieris Vladislavs Kacanovskis) un dziedataju Aleksandru
   Golevu. Grupa ierakstija vairakas melodiskas heavy/power metal kompozicijas ('Sodom',
   'V Elizium').
-sameAs: []
-image: []
-video: []
+sameAs:
+- https://www.youtube.com/watch?v=3ru6vR4CHjk
+- https://archive.org/details/daugavpils-fans-artstorm
+- https://archive.org/download/daugavpils-fans-artstorm/daugavpils-fans-artstorm_archive.torrent
+image:
+- contentUrl: media/artstorm-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0fdd1f48f05b33553628df0aa386ea0e8dc31fc95a60b9dbf649feff8bc7a032
+  '@type': ImageObject
+  caption: Artstorm на фестивале Chemical Reaction 2004
+  caption_en: Artstorm live at Chemical Reaction 2004
+  caption_lv: Artstorm Chemical Reaction 2004
+  depicts: []
+video:
+- contentUrl: media/artstorm-tender-surrender-2004.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: dc9e1590c069d93438a8f6b80e578827a0ce006fb508fc7f6e72965bfde4760f
+  '@type': VideoObject
+  name: Tender Surrender (Live at Chemical Reaction, 08.10.2004)
+  bitrate: 792 kbps
+  duration: PT4M59S

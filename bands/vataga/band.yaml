@@ -65,7 +65,7 @@ description_lv: Vataga (sakotneji radusies 1990. gadu beigas ar nosaukumu Weedid
   Konstantins Dzedzels (Deti Granta, Shoom) un gitarists Armands Ozolins (Dvojnaja
   Voda). Grupa izcelas ar energiskiem koncertiem un smagam rifu partijam.
 sameAs:
-- https://www.youtube.com/results?search_query=vataga+daugavpils
+- https://www.youtube.com/watch?v=052GA8umc2Y
 - https://archive.org/details/daugavpils-fans-vataga
 - https://archive.org/download/daugavpils-fans-vataga/daugavpils-fans-vataga_archive.torrent
 image:
@@ -80,4 +80,14 @@ image:
   caption_en: Vataga group photo
   caption_lv: Grupas Vataga foto
   depicts: []
-video: []
+video:
+- contentUrl: media/vataga-live-daugavpils.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 678ff103f42b4f88183a5d67077226ebea815f3dd2fdadf81b293c2f48987d5e
+  '@type': VideoObject
+  name: Мы желаем вам ватаги (Live в Даугавпилсе)
+  bitrate: 762 kbps
+  duration: PT5M9S

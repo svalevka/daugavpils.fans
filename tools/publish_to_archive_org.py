@@ -37,10 +37,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import socket
 import subprocess
 import sys
 import time
 from pathlib import Path
+
+socket.setdefaulttimeout(180)
 
 import yaml
 
@@ -273,21 +276,38 @@ def publish_metadata_bundle(bands_dir: Path, dry_run: bool) -> None:
 
     import internetarchive as ia
 
-    ia.upload(
-        item_id,
-        files={rel_path: str(path) for rel_path, path in files.items()},
-        metadata={
-            "mediatype": "data",
-            "title": "Daugavpils Music Archive - metadata backup",
-            "description": (
-                "Full backup of every band.yaml/release.yaml from "
-                "https://github.com/svalevka/daugavpils.fans, independent of GitHub. "
-                "See that repo's MAINTENANCE.md for context."
-            ),
-        },
-        checksum=True,
-        verbose=True,
-    )
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            ia.upload(
+                item_id,
+                files={rel_path: str(path) for rel_path, path in files.items()},
+                metadata={
+                    "mediatype": "data",
+                    "title": "Daugavpils Music Archive - metadata backup",
+                    "description": (
+                        "Full backup of every band.yaml/release.yaml from "
+                        "https://github.com/svalevka/daugavpils.fans, independent of GitHub. "
+                        "See that repo's MAINTENANCE.md for context."
+                    ),
+                },
+                checksum=True,
+                verbose=True,
+            )
+            break
+        except Exception as exc:
+            err = str(exc)
+            if ("503" in err or "Slow Down" in err or "reduce your request rate" in err) and attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 60
+                print(f"    Rate limit / 503 Slow Down hit on metadata bundle. Waiting {wait_time}s before retrying (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait_time)
+            elif attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 15
+                print(f"    Error uploading metadata bundle ({exc}). Retrying in {wait_time}s (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait_time)
+            else:
+                print(f"    Warning: metadata bundle upload failed after {max_retries} attempts: {exc}")
+
 
 
 def band_metadata(band: MusicGroup) -> dict[str, str]:

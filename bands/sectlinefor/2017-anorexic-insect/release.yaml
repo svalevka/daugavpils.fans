@@ -1,0 +1,182 @@
+'@type': MusicAlbum
+name: Anorexic Insect
+slug: 2017-anorexic-insect
+datePublished: '2017'
+byArtist: sectlinefor
+genre:
+- Industrial Metal
+- Cyber Metal
+- Experimental
+description: Дебютный полноформатный студийный альбом даугавпилсского индастриал-проекта
+  SECTLINEFOR (2017).
+description_en: Debut full-length studio album by Daugavpils industrial project SECTLINEFOR
+  (2017).
+description_lv: Daugavpils industriala projekta SECTLINEFOR debijas pilnmetrazas studijas
+  albums (2017).
+sameAs:
+- https://sectlinefor.bandcamp.com/album/anorexic-insect
+- https://archive.org/details/daugavpils-fans-sectlinefor-2017-anorexic-insect
+- https://archive.org/download/daugavpils-fans-sectlinefor-2017-anorexic-insect/daugavpils-fans-sectlinefor-2017-anorexic-insect_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Anorexic Insect
+  audio:
+    contentUrl: 01-anorexic-insect.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 19af5f23e026a2b80d7ca09678f9e89aa98fec2d670177a59c333b1a40c6e43c
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M42S
+- '@type': MusicRecording
+  position: 2
+  name: The Aftertaste Of Soap
+  audio:
+    contentUrl: 02-the-aftertaste-of-soap.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1814cdab62c6b76e1fc3462828685125e35c100739a1952f6aa8dd4370b704b3
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M0S
+- '@type': MusicRecording
+  position: 3
+  name: My Neighbour Was On TV...
+  audio:
+    contentUrl: 03-my-neighbour-was-on-tv.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: eb703dc64a03b18377af9fff645dcf306de5e6ee71e3108012d261a7cdb136ed
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT2M59S
+- '@type': MusicRecording
+  position: 4
+  name: Birthmark Photograph
+  audio:
+    contentUrl: 04-birthmark-photograph.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0cadd0430f4d7882184d57918a748d621d2ce5b345e6fff65b0d50063d5c9f5d
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M43S
+- '@type': MusicRecording
+  position: 5
+  name: Orange Soda
+  audio:
+    contentUrl: 05-orange-soda.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5ae16d999b41e3d8d785150512ee23afbafb28986b4be5804fb4ad3c06bff79c
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M35S
+- '@type': MusicRecording
+  position: 6
+  name: Checkmate
+  audio:
+    contentUrl: 06-checkmate.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0eeabe02611b828173d5cd1eda862f361c499550af9b7e2063ed434530ee1d7a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M32S
+- '@type': MusicRecording
+  position: 7
+  name: Congratulations
+  audio:
+    contentUrl: 07-congratulations.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6e23da8d51b73ee2bd83cfc70c576af2f3acbc22cb6840cb75f77e8233f3e104
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M17S
+- '@type': MusicRecording
+  position: 8
+  name: Gag Reflex Of Stray Dogs
+  audio:
+    contentUrl: 08-gag-reflex-of-stray-dogs.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3b977259845cf25bc09f80a9fefde1158f743f8fa66270c456edc837169f043a
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M48S
+- '@type': MusicRecording
+  position: 9
+  name: I'm Not Having That Much Fun Anymore
+  audio:
+    contentUrl: 09-im-not-having-that-much-fun-anymore.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 47699bf38b9643f4d566c47023ec660d081bd1e71641380e9329559d30f4ac50
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M54S
+- '@type': MusicRecording
+  position: 10
+  name: Little Handjobs
+  audio:
+    contentUrl: 10-little-handjobs.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1919531d52d10d431ad5808b27bf195a526861466021e88165f1bc8b49b82c45
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT4M28S
+- '@type': MusicRecording
+  position: 11
+  name: The Door And The Secret Behind
+  audio:
+    contentUrl: 11-the-door-and-the-secret-behind.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ca92210f11e68364ec703667be4aae1235cfabfc260defb4f574518e14ff013d
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT3M47S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 321436714ab53c4e5c95b8bfad19cba68ffb92ec9ca43a6f70356217236a669c
+  '@type': ImageObject
+  caption: Обложка альбома Anorexic Insect
+  caption_en: Anorexic Insect album cover
+  caption_lv: Anorexic Insect albuma vaks
+  depicts: []
+video: []
+creditText:
+- Павел Степанов (Питон) — все инструменты, вокал, программирование, сведение
+creditText_en:
+- Pavel Stepanov (Piton) — all instruments, vocals, programming, mixing
+creditText_lv:
+- Pavels Stepanovs (Piton) — visi instrumenti, vokals, programmesana, miksesana

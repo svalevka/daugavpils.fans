@@ -1,0 +1,86 @@
+'@type': MusicAlbum
+name: Live at Chemical Reaction (08.10.2004)
+slug: 2004-live-chemical-reaction
+datePublished: '2004'
+byArtist: artstorm
+genre:
+- Heavy Metal
+- Power Metal
+description: Концертная запись выступления группы Artstorm на фестивале Chemical Reaction
+  8 октября 2004 года в Даугавпилсе.
+description_en: Live concert recording of Artstorm performing at Chemical Reaction
+  festival on October 8, 2004 in Daugavpils.
+description_lv: Grupas Artstorm uzstasanas koncertieraksts festivala Chemical Reaction
+  2004. gada 8. oktobri Daugavpili.
+sameAs:
+- https://www.youtube.com/watch?v=3ru6vR4CHjk
+- https://archive.org/details/daugavpils-fans-artstorm-2004-live-chemical-reaction
+- https://archive.org/download/daugavpils-fans-artstorm-2004-live-chemical-reaction/daugavpils-fans-artstorm-2004-live-chemical-reaction_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Трек 1
+  audio:
+    contentUrl: 01-live-track-1.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 814338a3b4a6c92ba902bdf0e1dd1a170e5729d687fc761ce4f0e488154c363a
+    '@type': AudioObject
+    bitrate: 186 kbps
+    duration: PT5M1S
+- '@type': MusicRecording
+  position: 2
+  name: Трек 2
+  audio:
+    contentUrl: 02-live-track-2.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 270915df7f4e87316489a7a8004c16906f6cb96673e0b02c6e680b1bea4d1281
+    '@type': AudioObject
+    bitrate: 222 kbps
+    duration: PT2M45S
+- '@type': MusicRecording
+  position: 3
+  name: Tender Surrender
+  audio:
+    contentUrl: 03-tender-surrender.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6a2dc22191b0bbea8fbe4ca03f70405570d28cf7fa572b367b77b46236669b01
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M59S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0fdd1f48f05b33553628df0aa386ea0e8dc31fc95a60b9dbf649feff8bc7a032
+  '@type': ImageObject
+  caption: Обложка концерта Artstorm Chemical Reaction 2004
+  caption_en: Artstorm Chemical Reaction 2004 live cover
+  caption_lv: Artstorm Chemical Reaction 2004 vaks
+  depicts: []
+video: []
+creditText:
+- Ярослав Гаврилов - гитара
+- Дмитрий Денисов - бас-гитара
+- Владислав Качановский - ударные
+- Александр Голев - вокал
+creditText_en:
+- Jaroslavs Gavrilovs - guitar
+- Dmitrijs Denisovs - bass guitar
+- Vladislavs Kachanovsky - drums
+- Aleksandr Golev - vocals
+creditText_lv:
+- Jaroslavs Gavrilovs - gitara
+- Dmitrijs Denisovs - basgitara
+- Vladislavs Kacanovskis - bungas
+- Aleksandrs Golevs - vokals

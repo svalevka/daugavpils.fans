@@ -1,0 +1,88 @@
+'@type': MusicAlbum
+name: Live в клубе «Улитка»
+slug: 2008-live-ulitka
+datePublished: '2008'
+byArtist: soya-peace-orchestra
+genre:
+- Alternative Rock
+- Experimental Rock
+- Punk Rock
+description: Концертная запись выступления группы Soya Peace Orchestra в даугавпилсском
+  клубе «Улитка» (Gliemezis) 22 ноября 2008 года.
+description_en: Live concert recording of Soya Peace Orchestra at Daugavpils club
+  Ulitka (Gliemezis) on November 22, 2008.
+description_lv: Soya Peace Orchestra uzstasanas koncertieraksts Daugavpils kluba Ulitka
+  (Gliemezis) 2008. gada 22. novembri.
+sameAs:
+- https://www.youtube.com/@TheSoyapeace
+- https://archive.org/details/daugavpils-fans-soya-peace-orchestra-2008-live-ulitka
+- https://archive.org/download/daugavpils-fans-soya-peace-orchestra-2008-live-ulitka/daugavpils-fans-soya-peace-orchestra-2008-live-ulitka_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Колхоз
+  audio:
+    contentUrl: 01-kolhoz.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3d3b4de56e16c0a07a403d2f0f192595f764ee91ddde560810a3cfbd9fb3e0d9
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M1S
+- '@type': MusicRecording
+  position: 2
+  name: Утренний блюз
+  audio:
+    contentUrl: 02-utrenniy-blyuz.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 68dcfc4d7fe4bb772a2a920d1e3985f01bcf72b129f606b21da39c704aa5ba4f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M30S
+- '@type': MusicRecording
+  position: 3
+  name: Свалка открыток
+  audio:
+    contentUrl: 03-svalka-otkrytok.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1bfbae5ff8ae9c33f1963d010d4a0358a910cb307b1b67ff5ab9359feb31e05e
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M57S
+- '@type': MusicRecording
+  position: 4
+  name: Отрицалово
+  audio:
+    contentUrl: 04-otritsalovo.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6a3931a5e14024c0a38c80c12037131ed5a3be29e511bb56b17736ec80c46d50
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M36S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 86415fae23d6be4dcf63c70d14e3b19a76aefc41dbdcd029e083c953ca2dc30a
+  '@type': ImageObject
+  caption: Обложка концертной записи в клубе «Улитка»
+  caption_en: Live at Ulitka club cover
+  caption_lv: Live kluba Ulitka vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

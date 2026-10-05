@@ -1,0 +1,49 @@
+'@type': MusicAlbum
+name: Live at First Concert
+slug: 2018-live-first-concert
+datePublished: '2018'
+byArtist: radio-is-dead
+genre:
+- Alternative Rock
+- Grunge
+- Post-Punk
+description: Концертная запись первого выступления даугавпилсской рок-группы Radio
+  is Dead (2018).
+description_en: Live recording of the debut concert performance by Daugavpils rock
+  band Radio is Dead (2018).
+description_lv: Daugavpils rokgrupas Radio is Dead debijas uzstasanas koncertieraksts
+  (2018).
+sameAs:
+- https://www.youtube.com/watch?v=vi3qNUzP1nQ
+- https://archive.org/details/daugavpils-fans-radio-is-dead-2018-live-first-concert
+- https://archive.org/download/daugavpils-fans-radio-is-dead-2018-live-first-concert/daugavpils-fans-radio-is-dead-2018-live-first-concert_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Live at First Concert
+  audio:
+    contentUrl: 01-live-first-concert.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ad27358511f3e49d7f1939edd41a6cb84ea49b5c21f3364cfba0991b0cee93e3
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT21M44S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 5a9acd4886bb16b9f634da75964d188c2bf8ace5275b738bad93d1ec16653435
+  '@type': ImageObject
+  caption: Обложка концертной записи Radio is Dead
+  caption_en: Radio is Dead live cover
+  caption_lv: Radio is Dead uzstasanas vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

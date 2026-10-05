@@ -1,0 +1,202 @@
+'@type': MusicAlbum
+name: Vaļi uz sauszemes / Киты на суше
+slug: 2019-vali-uz-sauszemes
+datePublished: '2019'
+byArtist: fedotoff
+genre:
+- Alternative Rock
+- Folk Rock
+- Acoustic Rock
+description: Дебютный студийный альбом даугавпилсской группы FEDOTOFF (2019).
+description_en: Debut studio album by Daugavpils band FEDOTOFF (2019).
+description_lv: Daugavpils grupas FEDOTOFF debijas studijas albums (2019).
+sameAs:
+- https://chayka.lv/2019/04/05/fedotoff/
+- https://www.youtube.com/watch?v=8e-rzgiKtJM
+- https://archive.org/details/daugavpils-fans-fedotoff-2019-vali-uz-sauszemes
+- https://archive.org/download/daugavpils-fans-fedotoff-2019-vali-uz-sauszemes/daugavpils-fans-fedotoff-2019-vali-uz-sauszemes_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Нарисуй
+  audio:
+    contentUrl: 01-narisuy.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 686ca4accb203daa09be663e7530d5c456623194b3398bc4d7adada0d59f6937
+    '@type': AudioObject
+    bitrate: 260 kbps
+    duration: PT4M6S
+- '@type': MusicRecording
+  position: 2
+  name: Забери
+  audio:
+    contentUrl: 02-zaberi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2c4e3dd2cf3ca212140eb546c9950a4c726d9b3677bbd58499ca791a3f6fec9b
+    '@type': AudioObject
+    bitrate: 257 kbps
+    duration: PT4M24S
+- '@type': MusicRecording
+  position: 3
+  name: Выше звёзд
+  audio:
+    contentUrl: 03-vyshe-zvyozd.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: da44414e6ea83628b63c4e90f842b0fbd50d135533af6cadeed26c2fd4ca1321
+    '@type': AudioObject
+    bitrate: 271 kbps
+    duration: PT2M49S
+- '@type': MusicRecording
+  position: 4
+  name: Ночная
+  audio:
+    contentUrl: 04-nochnaya.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d27435b5d6894326de48f75344e1371c17898d59d9683dcefc00d1b061bf224e
+    '@type': AudioObject
+    bitrate: 262 kbps
+    duration: PT3M19S
+- '@type': MusicRecording
+  position: 5
+  name: Полено-земля
+  audio:
+    contentUrl: 05-poleno-zemlya.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3411a538fbb1e45026f736f0766e862b8f4a6e6fe001d2829fe5ab06edcd2ed4
+    '@type': AudioObject
+    bitrate: 261 kbps
+    duration: PT3M13S
+- '@type': MusicRecording
+  position: 6
+  name: Деревенская
+  audio:
+    contentUrl: 06-derevenskaya.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2b511715bbc9b5feb0422e115229daefbe724dfb58dcdac1d9a4f99aec9b3374
+    '@type': AudioObject
+    bitrate: 251 kbps
+    duration: PT4M14S
+- '@type': MusicRecording
+  position: 7
+  name: Мотыльки
+  audio:
+    contentUrl: 07-motylki.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e11d1cbb67406f4cb7b6cff7aea3b45afe68c35ac125ffd65a86a263a109f053
+    '@type': AudioObject
+    bitrate: 253 kbps
+    duration: PT4M24S
+- '@type': MusicRecording
+  position: 8
+  name: Сатир
+  audio:
+    contentUrl: 08-satir.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c98f0ae57e0e3643d411ff5ac6876258794c227896ed6fc981bcd81d20d7e2f6
+    '@type': AudioObject
+    bitrate: 263 kbps
+    duration: PT4M14S
+- '@type': MusicRecording
+  position: 9
+  name: Далёкая луна
+  audio:
+    contentUrl: 09-dalyokaya-luna.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7781bc47fa6f67042c1d06df7b98d8cc9ac8ab9c959eb806d73f3ab9179ad2eb
+    '@type': AudioObject
+    bitrate: 249 kbps
+    duration: PT4M43S
+- '@type': MusicRecording
+  position: 10
+  name: Рука
+  audio:
+    contentUrl: 10-ruka.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3657805b081f20a6c51f190803a33c6b603a6dfebcf579ffc69a1c208c7fa007
+    '@type': AudioObject
+    bitrate: 255 kbps
+    duration: PT2M32S
+- '@type': MusicRecording
+  position: 11
+  name: Бери с собой гитару
+  audio:
+    contentUrl: 11-beri-s-soboy-gitaru.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 091a2cd3b9fcbe0b4b53a10bb62b267481addc66d7bc26e6862297382dde546a
+    '@type': AudioObject
+    bitrate: 252 kbps
+    duration: PT2M43S
+- '@type': MusicRecording
+  position: 12
+  name: Холод вечеров
+  audio:
+    contentUrl: 12-holod-vecherov.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 02f9a32e7dbad44eb9fad3224175d7fa35735993d58789e314749c3d690dbc3c
+    '@type': AudioObject
+    bitrate: 258 kbps
+    duration: PT5M10S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a309a246af63694c3b9aad1aeac5c202dc981eec9f13fbd3e3c19a09b313de8d
+  '@type': ImageObject
+  caption: Обложка альбома Vaļi uz sauszemes / Киты на суше
+  caption_en: Vali uz sauszemes / Kity na sushe album cover
+  caption_lv: Vali uz sauszemes albuma vaks
+  depicts: []
+video: []
+creditText:
+- Алексей (Рэд) Федотов - вокал, гитары
+- Инга Федотова - вокал, гитара, мелодика, аккордеон
+- Владимир Куранов - бас-гитара
+- Донат Цимошка - ударные
+creditText_en:
+- Aleksei (Red) Fedotov - lead vocals, guitars
+- Inga Fedotova - vocals, guitar, melodica, accordion
+- Vladimir Kuranov - bass guitar
+- Donat Cimoska - drums
+creditText_lv:
+- Aleksejs (Red) Fedotovs - vokals, gitaras
+- Inga Fedotova - vokals, gitara, melodika, akordeons
+- Vladimirs Kuranovs - basgitara
+- Donats Cimoska - sitaminstrumenti

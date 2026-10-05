@@ -1,0 +1,47 @@
+'@type': MusicAlbum
+name: Live at Artilērijas pagrabi
+slug: 2017-live
+datePublished: '2017'
+byArtist: smoke-and-breeze
+genre:
+- Alternative Rock
+- Indie Rock
+description: Концертная запись выступления группы Smoke & Breeze в клубе Artilērijas
+  pagrabi (2017).
+description_en: Live performance by Smoke & Breeze at Artilerijas pagrabi club (2017).
+description_lv: Grupas Smoke & Breeze uzstasanas ieraksts kluba Artilerijas pagrabi
+  (2017).
+sameAs:
+- https://www.youtube.com/watch?v=2jgVMx5vTGo
+- https://archive.org/details/daugavpils-fans-smoke-and-breeze-2017-live
+- https://archive.org/download/daugavpils-fans-smoke-and-breeze-2017-live/daugavpils-fans-smoke-and-breeze-2017-live_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Live at Artilērijas pagrabi
+  audio:
+    contentUrl: 01-live-artilerijas-pagrabi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ce73277ba7b594b3741d0a8c8d4e92c5969190c8c77fd20aa6204f8d373e8faf
+    '@type': AudioObject
+    bitrate: 165 kbps
+    duration: PT3M14S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 12e9fd13bde9d45681c38be83793831385a418ec08f932a9f91ea2d6249008e0
+  '@type': ImageObject
+  caption: Обложка концертной записи Smoke & Breeze
+  caption_en: Smoke & Breeze live cover
+  caption_lv: Smoke & Breeze koncerta vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

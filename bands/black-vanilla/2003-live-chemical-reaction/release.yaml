@@ -1,0 +1,100 @@
+'@type': MusicAlbum
+name: Live at Chemical Reaction (14.03.2003)
+slug: 2003-live-chemical-reaction
+datePublished: '2003'
+byArtist: black-vanilla
+genre:
+- Rock
+- Alternative Rock
+description: Концертная запись выступления группы Black Vanilla на фестивале Chemical
+  Reaction 14 марта 2003 года в Даугавпилсе.
+description_en: Live concert recording of Black Vanilla performing at Chemical Reaction
+  festival on March 14, 2003 in Daugavpils.
+description_lv: Grupas Black Vanilla uzstasanas koncertieraksts festivala Chemical
+  Reaction 2003. gada 14. marta Daugavpili.
+sameAs:
+- https://www.youtube.com/watch?v=e4i--hor8E0
+- https://archive.org/details/daugavpils-fans-black-vanilla-2003-live-chemical-reaction
+- https://archive.org/download/daugavpils-fans-black-vanilla-2003-live-chemical-reaction/daugavpils-fans-black-vanilla-2003-live-chemical-reaction_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Трек 1
+  audio:
+    contentUrl: 01-live-track-1.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6c2d03185ce436c700c5170113e09f45746e9aa719556c12acbf2568ff640abe
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M41S
+- '@type': MusicRecording
+  position: 2
+  name: Трек 2
+  audio:
+    contentUrl: 02-live-track-2.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b8ee94c0cff0094febe16296e8f8647dab3125d11d3f2e849978026261ed4bea
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M57S
+- '@type': MusicRecording
+  position: 3
+  name: Трек 3
+  audio:
+    contentUrl: 03-live-track-3.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2f84392fac13a76e2592a3b3a4aa4eb85ac4eb0aa07ef9065bc6940d6c66e5f6
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M19S
+- '@type': MusicRecording
+  position: 4
+  name: Трек 4
+  audio:
+    contentUrl: 04-live-track-4.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 36c1d4af57dc80560fa669270d70ea1fce4b76bb67d83186cf8e0888fe8049a6
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M11S
+- '@type': MusicRecording
+  position: 5
+  name: Трек 5
+  audio:
+    contentUrl: 05-live-track-5.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 28c91f40970ca734d6f9cf0b94c012abcfd6a01f7b1bcd939803f8adda86c5e6
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M46S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 1140b32e3199d47839b61a52771615a0280d76caeef4888ab1d9c901eeab077f
+  '@type': ImageObject
+  caption: Обложка концерта Black Vanilla Chemical Reaction 2003
+  caption_en: Black Vanilla Chemical Reaction 2003 live cover
+  caption_lv: Black Vanilla Chemical Reaction 2003 vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

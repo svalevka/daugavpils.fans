@@ -44,9 +44,33 @@ description: Smoke & Breeze — даугавпилсская альтернат�
 description_en: Smoke & Breeze was a Daugavpils alternative and indie rock outfit
   that won 1st place at the Daugavpils Rock Marathon 2018. Known for melodious songcraft
   and dynamic indie rock arrangements.
-description_lv: Smoke & Breeze bija Daugavpils alternativā un indie roka grupa, kas
+description_lv: Smoke & Breeze bija Daugavpils alternativa un indie roka grupa, kas
   izcinija 1. vietu konkursa 'Daugavpils Rok maratons 2018'. Grupu raksturoja melodisks
   skanejums un dinamiskas gitaru partijas.
-sameAs: []
-image: []
-video: []
+sameAs:
+- https://www.youtube.com/watch?v=2jgVMx5vTGo
+- https://archive.org/details/daugavpils-fans-smoke-and-breeze
+- https://archive.org/download/daugavpils-fans-smoke-and-breeze/daugavpils-fans-smoke-and-breeze_archive.torrent
+image:
+- contentUrl: media/smoke-and-breeze-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 9c70c7fc689d6c0dd4db2db533a877f8b3ac18f6411a263fab329b79998debb0
+  '@type': ImageObject
+  caption: Smoke & Breeze живое выступление
+  caption_en: Smoke & Breeze live performance
+  caption_lv: Smoke & Breeze uzstasanas
+  depicts: []
+video:
+- contentUrl: media/smoke-and-breeze-live-2017.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: df2dcf8ea6c7da29325337f690cdef2bec1e74b870f05224dda71cb6034dd142
+  '@type': VideoObject
+  name: Smoke & Breeze (Live at Artilērijas pagrabi 2017)
+  bitrate: 2160 kbps
+  duration: PT3M14S

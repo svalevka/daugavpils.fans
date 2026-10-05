@@ -1,0 +1,86 @@
+'@type': MusicAlbum
+name: Избранное / Singles
+slug: 2006-izbrannoe
+datePublished: '2006'
+byArtist: vataga
+genre:
+- Hip-Hop
+- Rap
+description: Сборник треков и синглов первопроходцев даугавпилсского хип-хопа группы
+  Vataga.
+description_en: Collection of tracks and singles by Daugavpils hip-hop pioneers Vataga.
+description_lv: Daugavpils hiphopa pionieru grupas Vataga dziesmu un singlu izlase.
+sameAs:
+- https://vk.com/club3741044
+- https://www.youtube.com/watch?v=zOmqFUJvwE8
+- https://archive.org/details/daugavpils-fans-vataga-2006-izbrannoe
+- https://archive.org/download/daugavpils-fans-vataga-2006-izbrannoe/daugavpils-fans-vataga-2006-izbrannoe_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Мечта (feat. Nega Plast)
+  audio:
+    contentUrl: 01-mechta.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ccb66ecf6cdab29f48169c2f0c42466bd5fc95c4c719c8b57fb148a9628f3f30
+    '@type': AudioObject
+    bitrate: 254 kbps
+    duration: PT4M3S
+- '@type': MusicRecording
+  position: 2
+  name: Daugavpils & Vilnius (feat. G&G Sindikatas)
+  audio:
+    contentUrl: 02-daugavpils-and-vilnius.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c53827f75df16df7d52b838390dc1c21e6dced9dc3aded32566440d646d7f674
+    '@type': AudioObject
+    bitrate: 223 kbps
+    duration: PT2M56S
+- '@type': MusicRecording
+  position: 3
+  name: Холодный город
+  audio:
+    contentUrl: 03-kholodny-gorod.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5709c6212740958b8462863969c940eff1f3071ac69bc535d656d6eb2fd6bd96
+    '@type': AudioObject
+    bitrate: 239 kbps
+    duration: PT1M40S
+- '@type': MusicRecording
+  position: 4
+  name: Одна
+  audio:
+    contentUrl: 04-odna.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8cdc2ca33702b5cbb27ec327f036015c4a41be672697a6be49532bf7ddbf770b
+    '@type': AudioObject
+    bitrate: 249 kbps
+    duration: PT3M9S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: c86744a6a50117be72a43f9c230aa4f62ad6ecf952c79edde7bd697906ad60f5
+  '@type': ImageObject
+  caption: Обложка релиза Vataga
+  caption_en: Vataga release cover
+  caption_lv: Vataga relizes vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

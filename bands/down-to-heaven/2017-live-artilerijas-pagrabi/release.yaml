@@ -1,0 +1,113 @@
+'@type': MusicAlbum
+name: Live at Artilērijas pagrabi
+slug: 2017-live-artilerijas-pagrabi
+datePublished: '2017'
+byArtist: down-to-heaven
+genre:
+- Alternative Rock
+- Post-Grunge
+description: Концертная запись выступления группы Down to Heaven в клубе Artilērijas
+  pagrabi (2017).
+description_en: Live recording of Down to Heaven performing at Artilerijas pagrabi
+  club (2017).
+description_lv: Grupas Down to Heaven uzstasanas koncertieraksts kluba Artilerijas
+  pagrabi (2017).
+sameAs:
+- https://www.youtube.com/watch?v=xHuUyZMlRRs
+- https://archive.org/details/daugavpils-fans-down-to-heaven-2017-live-artilerijas-pagrabi
+- https://archive.org/download/daugavpils-fans-down-to-heaven-2017-live-artilerijas-pagrabi/daugavpils-fans-down-to-heaven-2017-live-artilerijas-pagrabi_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Спасти тебя
+  audio:
+    contentUrl: 01-spasti-tebya.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f35810db9efab407ac59926abbe44541d31bdc82a2b1f7ec462a17625e2b3f0d
+    '@type': AudioObject
+    bitrate: 252 kbps
+    duration: PT4M30S
+- '@type': MusicRecording
+  position: 2
+  name: Я буду там
+  audio:
+    contentUrl: 02-ya-budu-tam.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 57f7ec786fdaf4f04371fb4acbd30ffb2b673fdb1c2f129b9d339dbf7dab72ce
+    '@type': AudioObject
+    bitrate: 250 kbps
+    duration: PT5M52S
+- '@type': MusicRecording
+  position: 3
+  name: Твоя тень
+  audio:
+    contentUrl: 03-tvoya-ten.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 283ef6d25b26e24663e327efb19ab59eb9dc3cd35cc26e5f06cbf006f99a39a6
+    '@type': AudioObject
+    bitrate: 249 kbps
+    duration: PT4M49S
+- '@type': MusicRecording
+  position: 4
+  name: Hope
+  audio:
+    contentUrl: 04-hope.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9bf960bae07848a6bc423eb924d05e71d05fb067562ac7c95175e87b3c5ac360
+    '@type': AudioObject
+    bitrate: 247 kbps
+    duration: PT6M21S
+- '@type': MusicRecording
+  position: 5
+  name: The Distance
+  audio:
+    contentUrl: 05-the-distance.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b9502d1f151a678886a170f38f6ac3da8066335d9b279c06ccd272d18dcfbad3
+    '@type': AudioObject
+    bitrate: 249 kbps
+    duration: PT5M16S
+- '@type': MusicRecording
+  position: 6
+  name: Она (feat. Lydia Zaychenko)
+  audio:
+    contentUrl: 06-ona.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fe08d69f7a7144fa6a500dbf9ef6c46a516709ef3985d04e96615949bb8ce83c
+    '@type': AudioObject
+    bitrate: 249 kbps
+    duration: PT7M22S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7e5b4d2cc378f01a76223193285f745f97fc6e343d27ef6a1fc0a7a9ad7ad57d
+  '@type': ImageObject
+  caption: Обложка концерта Down to Heaven в Artilērijas pagrabi
+  caption_en: Down to Heaven Live at Artilerijas pagrabi cover
+  caption_lv: Down to Heaven uzstasanas vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

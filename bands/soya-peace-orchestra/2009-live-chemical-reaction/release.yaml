@@ -1,0 +1,49 @@
+'@type': MusicAlbum
+name: Live at Chemical Reaction 2009
+slug: 2009-live-chemical-reaction
+datePublished: '2009'
+byArtist: soya-peace-orchestra
+genre:
+- Alternative Rock
+- Experimental Rock
+- Punk Rock
+description: Концертная запись выступления группы Soya Peace Orchestra на фестивале
+  «Chemical Reaction» (2009).
+description_en: Live concert recording of Soya Peace Orchestra at the Chemical Reaction
+  festival (2009).
+description_lv: Soya Peace Orchestra uzstasanas koncertieraksts festivala Chemical
+  Reaction (2009).
+sameAs:
+- https://www.youtube.com/watch?v=nle_feb_a54
+- https://archive.org/details/daugavpils-fans-soya-peace-orchestra-2009-live-chemical-reaction
+- https://archive.org/download/daugavpils-fans-soya-peace-orchestra-2009-live-chemical-reaction/daugavpils-fans-soya-peace-orchestra-2009-live-chemical-reaction_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Live at Chemical Reaction 2009
+  audio:
+    contentUrl: 01-live-chemical-reaction-2009.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f394bf38622e5d9db1aa73e8a0e92d7858378d8e6e0ced3a1c7562c8a5a7ccd4
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT13M6S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 42de42065c4a33460928a39d85ba10056496ee338f622911fcffca55abf31301
+  '@type': ImageObject
+  caption: Обложка концертной записи Chemical Reaction 2009
+  caption_en: Chemical Reaction 2009 live cover
+  caption_lv: Chemical Reaction 2009 vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

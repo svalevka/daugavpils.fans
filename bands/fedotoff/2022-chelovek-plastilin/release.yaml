@@ -1,0 +1,220 @@
+'@type': MusicAlbum
+name: Человек - Пластилин
+slug: 2022-chelovek-plastilin
+datePublished: '2022'
+byArtist: fedotoff
+genre:
+- Alternative Rock
+- Folk Rock
+- Acoustic Rock
+description: Второй студийный альбом даугавпилсской группы FEDOTOFF (2022).
+description_en: Second studio album by Daugavpils band FEDOTOFF (2022).
+description_lv: Daugavpils grupas FEDOTOFF otrais studijas albums (2022).
+sameAs:
+- https://www.youtube.com/watch?v=rpeAAmVqxAo
+- https://archive.org/details/daugavpils-fans-fedotoff-2022-chelovek-plastilin
+- https://archive.org/download/daugavpils-fans-fedotoff-2022-chelovek-plastilin/daugavpils-fans-fedotoff-2022-chelovek-plastilin_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Человек Пластилин
+  audio:
+    contentUrl: 01-chelovek-plastilin.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0810c8753dfafcaba28e5ec7da4022da552ef85fd2cdf689c7544763d448118f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M45S
+- '@type': MusicRecording
+  position: 2
+  name: Полнолуние
+  audio:
+    contentUrl: 02-polnolunie.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: db6b0e34eef3c74b5e803dc6bcd3292f0134e852efcea3ee043db8d71695a46f
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M32S
+- '@type': MusicRecording
+  position: 3
+  name: Осень
+  audio:
+    contentUrl: 03-osen.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9ca9257d396fe0738409e31037d16f2d0be3fd72357bfa891692a5f2185fb49a
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M23S
+- '@type': MusicRecording
+  position: 4
+  name: Жизнь Прекрасна
+  audio:
+    contentUrl: 04-zhizn-prekrasna.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 155e2c67cc59eea798a17b7df6ba8b4b737e8c8a3379d090da4fb798b2f2bef9
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M34S
+- '@type': MusicRecording
+  position: 5
+  name: Благодарю
+  audio:
+    contentUrl: 05-blagodaryu.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 63c5ecaa206470382dd30ad9244eee0bef29cab2f6f85804ab0b8b829505a392
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M11S
+- '@type': MusicRecording
+  position: 6
+  name: Цивилизация
+  audio:
+    contentUrl: 06-tsivilizatsiya.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1692a29915d2dc547b74760420cbbca5e6ff4b9f6dfac56c67a364ffbc2ebf19
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M24S
+- '@type': MusicRecording
+  position: 7
+  name: Наши птицы
+  audio:
+    contentUrl: 07-nashi-ptitsy.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f6f4536095a7ca45d114068a4189e18ec09d337b2658a8847cfeca03189c2cfa
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M40S
+- '@type': MusicRecording
+  position: 8
+  name: Кони
+  audio:
+    contentUrl: 08-koni.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 620010cd236e85f9150531417be8153761b004c9e0d8c67d5912f386be2a90d1
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M39S
+- '@type': MusicRecording
+  position: 9
+  name: Всё Превращается В Мусор
+  audio:
+    contentUrl: 09-vsyo-prevraschaetsya-v-musor.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a6bcdad211664648e3b8ced8a12a7395196228faefd5b82ef8e730c7c3b5ac53
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M37S
+- '@type': MusicRecording
+  position: 10
+  name: Морфин
+  audio:
+    contentUrl: 10-morfin.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8600c382c300fd58926f2572570f191318a6e7cfa37dba94d0a91e2dc07bd931
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M18S
+- '@type': MusicRecording
+  position: 11
+  name: Встречи
+  audio:
+    contentUrl: 11-vstrechi.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 743b53d76f1c0fb16a6ed7f3825a4cd5a6a361695f4a1c862f8a06941dbbe922
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT5M4S
+- '@type': MusicRecording
+  position: 12
+  name: Не Зима
+  audio:
+    contentUrl: 12-ne-zima.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 7d91fb31b1b8df18d77809eb430f8c9d3147e83e96372f1f47956844326c184d
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT4M31S
+- '@type': MusicRecording
+  position: 13
+  name: Silentium!
+  audio:
+    contentUrl: 13-silentium.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 4267ed2ef934d23662bd53f589f56f1e3b917127e3ca83412b9bd0ae4e8d1053
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M56S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: b7669ec4ccae85f86e1ebe48a154b5ae6304201b9fc65147a3f44a6a8f20c34d
+  '@type': ImageObject
+  caption: Обложка альбома Человек - Пластилин
+  caption_en: Chelovek - Plastilin album cover
+  caption_lv: Chelovek - Plastilin albuma vaks
+  depicts: []
+video: []
+creditText:
+- Алексей (Рэд) Федотов - гитары, вокал
+- Инга Федотова - ак.гитара, вокал, аккордеон, мелодика
+- Павел Галлер - эл.гитара
+- Андрей Парневич - бас-гитара
+- Владимир Куранов - бас-гитара
+- Донат Ромуальдович - ударные, перкуссия
+creditText_en:
+- Aleksei (Red) Fedotov - guitars, vocals
+- Inga Fedotova - acoustic guitar, vocals, accordion, melodica
+- Pavel Galler - electric guitar
+- Andrei Parnevich - bass guitar
+- Vladimir Kuranov - bass guitar
+- Donat Romualdovich - drums, percussion
+creditText_lv:
+- Aleksejs (Red) Fedotovs - gitaras, vokals
+- Inga Fedotova - akustiska gitara, vokals, akordeons, melodika
+- Pavels Gallers - elektrogitara
+- Andrejs Parnevics - basgitara
+- Vladimirs Kuranovs - basgitara
+- Donats Romualdovics - sitaminstrumenti, perkisijas

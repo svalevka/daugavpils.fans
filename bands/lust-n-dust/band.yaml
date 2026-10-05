@@ -49,6 +49,9 @@ description_lv: Lust'n'Dust bija Daugavpils post-hardcore un alternativā roka j
   grupa. Iegūva 2. vietu konkursa 'Daugavpils Rok maratons 2018', kluvod par vienu
   no spilgtakajam smagas muzikas jaunajam grupam Latgale.
 sameAs:
+- https://www.facebook.com/lustndustband/
+- https://vk.com/lustndust
+- https://www.youtube.com/watch?v=pEjfCY2Lqzo
 - https://archive.org/details/daugavpils-fans-lust-n-dust
 - https://archive.org/download/daugavpils-fans-lust-n-dust/daugavpils-fans-lust-n-dust_archive.torrent
 image:
@@ -63,4 +66,14 @@ image:
   caption_en: Lust n Dust band photo
   caption_lv: Grupas Lust n Dust foto
   depicts: []
-video: []
+video:
+- contentUrl: media/lust-n-dust-ghostly-shadows.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: ea8ffed9a589b63fe3ef4c710c011011072aa8136b1eb1749dffd16101241c24
+  '@type': VideoObject
+  name: Ghostly Shadows / Virginity (Official Music Video)
+  bitrate: 577 kbps
+  duration: PT6M20S

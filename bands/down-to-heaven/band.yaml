@@ -49,6 +49,7 @@ description_lv: Down to Heaven bija Daugavpils melodiska metala un simfoniska ro
   grupa, kas darbojās 2010. gados. Grupas prieksgala bija dziedataja un pianiste Julija.
   Kolektivs regulari uzstajas Chemical Reaction festivalos un Daugavpils rokpasakumos.
 sameAs:
+- https://www.youtube.com/watch?v=7cu_12UUzcw
 - https://archive.org/details/daugavpils-fans-down-to-heaven
 - https://archive.org/download/daugavpils-fans-down-to-heaven/daugavpils-fans-down-to-heaven_archive.torrent
 image:
@@ -63,4 +64,14 @@ image:
   caption_en: Down to Heaven band photo
   caption_lv: Grupas Down to Heaven foto
   depicts: []
-video: []
+video:
+- contentUrl: media/down-to-heaven-af19-ya-s-toboy.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 05bc1053fe2e38486c363ef06c600bc5fc21e4fb18e81246ee8e8700491067be
+  '@type': VideoObject
+  name: Я с тобой (Live Artilērijas Festivāls 2019)
+  bitrate: 547 kbps
+  duration: PT4M10S

@@ -1,0 +1,62 @@
+'@type': MusicAlbum
+name: Ghostly Shadows / Virginity
+slug: 2016-ghostly-shadows
+datePublished: '2016'
+byArtist: lust-n-dust
+genre:
+- Hard Rock
+- Sleaze Rock
+- Glam Metal
+description: Дебютный сингл и видеоклип даугавпилсской хард-рок группы Lust'n'Dust
+  (2016).
+description_en: Debut single and music video by Daugavpils hard rock band Lust'n'Dust
+  (2016).
+description_lv: Daugavpils smaga roka grupas Lust'n'Dust debijas singls un videoklips
+  (2016).
+sameAs:
+- https://www.youtube.com/watch?v=pEjfCY2Lqzo
+- https://archive.org/details/daugavpils-fans-lust-n-dust-2016-ghostly-shadows
+- https://archive.org/download/daugavpils-fans-lust-n-dust-2016-ghostly-shadows/daugavpils-fans-lust-n-dust-2016-ghostly-shadows_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Ghostly Shadows
+  audio:
+    contentUrl: 01-ghostly-shadows.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6d26eea72ab179eca3a5061052bab8e7bb6367bd2382ecdff6b71508a86d0547
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M55S
+- '@type': MusicRecording
+  position: 2
+  name: Virginity
+  audio:
+    contentUrl: 02-virginity.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 81524e1c1ae0f36415743fad6543136bd3dc9280c03309888544d963c0ea9ee6
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT2M5S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: b2bd78d36d6380fcc8f3bfe8c2f081ae11db99fab9973926e9c4e9432b74498e
+  '@type': ImageObject
+  caption: Обложка релиза Ghostly Shadows / Virginity
+  caption_en: Ghostly Shadows / Virginity release cover
+  caption_lv: Ghostly Shadows / Virginity relizes vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

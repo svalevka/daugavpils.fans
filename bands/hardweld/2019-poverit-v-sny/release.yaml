@@ -1,0 +1,48 @@
+'@type': MusicAlbum
+name: Поверить в сны (Live)
+slug: 2019-poverit-v-sny
+datePublished: '2019'
+byArtist: hardweld
+genre:
+- Punk Rock
+- Pop-Punk
+description: Концертная запись презентации песни «Поверить в сны» группы HardWeld
+  в даугавпилсском клубе Artilērijas pagrabi (13 сентября 2019 года).
+description_en: Live performance recording from HardWeld's album presentation at Artilērijas
+  pagrabi in Daugavpils (September 13, 2019).
+description_lv: Koncertieraksts no grupas HardWeld albuma prezentacijas kluba Artilerijas
+  pagrabi Daugavpili (2019. gada 13. septembri).
+sameAs:
+- https://www.youtube.com/watch?v=ZxQRZ5hxP-Q
+- https://archive.org/details/daugavpils-fans-hardweld-2019-poverit-v-sny
+- https://archive.org/download/daugavpils-fans-hardweld-2019-poverit-v-sny/daugavpils-fans-hardweld-2019-poverit-v-sny_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Поверить в сны
+  audio:
+    contentUrl: 01-poverit-v-sny.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cdd7307398b3ecb87097b281aa241dd2bf54c51a383cf87cdb71872aa4b75062
+    '@type': AudioObject
+    bitrate: 192 kbps
+    duration: PT3M24S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 734b603f3196ea6c1c302ed3764856fc8a57d6c1e65989cb5ad4a0087f27f667
+  '@type': ImageObject
+  caption: Обложка релиза Поверить в сны
+  caption_en: Poverit v sny cover
+  caption_lv: Poverit v sny vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

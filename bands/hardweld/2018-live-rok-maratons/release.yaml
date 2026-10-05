@@ -1,0 +1,48 @@
+'@type': MusicAlbum
+name: Live at Daugavpils Rok maratons 2018
+slug: 2018-live-rok-maratons
+datePublished: '2018'
+byArtist: hardweld
+genre:
+- Hard Rock
+- Heavy Metal
+description: Полная концертная запись победного выступления группы HardWeld на фестивале
+  «Daugavpils Rok maratons 2018».
+description_en: Full concert recording of HardWeld's winning performance at Daugavpils
+  Rok maratons 2018 festival.
+description_lv: Pilns koncertieraksts no grupas HardWeld uzvaretaju uzstasanas festivala
+  'Daugavpils Rok maratons 2018'.
+sameAs:
+- https://www.youtube.com/watch?v=RQ1cHRgFtQM
+- https://archive.org/details/daugavpils-fans-hardweld-2018-live-rok-maratons
+- https://archive.org/download/daugavpils-fans-hardweld-2018-live-rok-maratons/daugavpils-fans-hardweld-2018-live-rok-maratons_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Live set (Rok maratons 2018)
+  audio:
+    contentUrl: 01-live-rok-maratons-2018.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: aed1bd9c542d8dd505d20be1bbd1beac8ca007aa77a5d1a306505bb84e91d0f8
+    '@type': AudioObject
+    bitrate: 104 kbps
+    duration: PT22M50S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: f5d0b34ffb0f1b84fb33a8e63cc82c201bed40250b1c659294d1b4282477b289
+  '@type': ImageObject
+  caption: Обложка концертной записи HardWeld Rok maratons 2018
+  caption_en: HardWeld Rok maratons 2018 live cover
+  caption_lv: HardWeld Rok maratons 2018 vaks
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []
