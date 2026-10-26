@@ -1,0 +1,198 @@
+'@type': MusicAlbum
+name: Бодро по доброму
+slug: 1996-bodro-po-dobromu
+datePublished: '1996'
+byArtist: stelki-betonshchika
+genre: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+sameAs:
+- https://archive.org/details/daugavpils-fans-stelki-betonshchika-1996-bodro-po-dobromu
+- https://archive.org/download/daugavpils-fans-stelki-betonshchika-1996-bodro-po-dobromu/daugavpils-fans-stelki-betonshchika-1996-bodro-po-dobromu_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: VOLOSI
+  audio:
+    contentUrl: 01-volosi.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1cf6049f72e255d090b387b0c9a289b4b37b8c06c797df96ad440fd7a2cbe808
+    '@type': AudioObject
+    bitrate: 639 kbps
+    duration: PT3M16S
+- '@type': MusicRecording
+  position: 2
+  name: MAKI
+  audio:
+    contentUrl: 02-maki.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 217875e130efb154ebb130261995f6656f72c1e6a5009d522c388b9593e9361e
+    '@type': AudioObject
+    bitrate: 630 kbps
+    duration: PT2M53S
+- '@type': MusicRecording
+  position: 3
+  name: TUCHKA
+  audio:
+    contentUrl: 03-tuchka.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1698d6227fbbe45894716538c42b2494b134471fdfacfd1b501f8d0798680622
+    '@type': AudioObject
+    bitrate: 680 kbps
+    duration: PT1M50S
+- '@type': MusicRecording
+  position: 4
+  name: ATAKUJUSCHAJA BALERINA
+  audio:
+    contentUrl: 04-atakujuschaja-balerina.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ed6fce48693bc3a9a1f72dc53ab91a7a3d6db801c8544162d68830483af73626
+    '@type': AudioObject
+    bitrate: 644 kbps
+    duration: PT4M14S
+- '@type': MusicRecording
+  position: 5
+  name: GNUSNAJA PRAVDA
+  audio:
+    contentUrl: 05-gnusnaja-pravda.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 60e957e66b872f0435993dd1fdca0d71dcf0ee5813f2b614107483a32582773c
+    '@type': AudioObject
+    bitrate: 646 kbps
+    duration: PT2M53S
+- '@type': MusicRecording
+  position: 6
+  name: PRONIKNI V MOJ SAD
+  audio:
+    contentUrl: 06-pronikni-v-moj-sad.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3a9d55981107c18243c334e601693396164e7780c37d052b8abfafb35c188a3a
+    '@type': AudioObject
+    bitrate: 645 kbps
+    duration: PT2M55S
+- '@type': MusicRecording
+  position: 7
+  name: POJDEM SO MNOJ
+  audio:
+    contentUrl: 07-pojdem-so-mnoj.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ec02e0db614b5f1f4cb600c8358f987053bac50d3283e07f0d63636393a99b62
+    '@type': AudioObject
+    bitrate: 706 kbps
+    duration: PT2M33S
+- '@type': MusicRecording
+  position: 8
+  name: VOSK NA VOSK
+  audio:
+    contentUrl: 08-vosk-na-vosk.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: fb3de0b2782b02d05f1b3da9c3a199ac7798bd0467f8ee36bf8a9154ee0af7aa
+    '@type': AudioObject
+    bitrate: 674 kbps
+    duration: PT3M6S
+- '@type': MusicRecording
+  position: 9
+  name: SEMJ
+  audio:
+    contentUrl: 09-semj.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: eabb6162585f8b5a3d14579da1539bdcad0bf4a5988ffaafc7bac3e107349160
+    '@type': AudioObject
+    bitrate: 631 kbps
+    duration: PT3M0S
+- '@type': MusicRecording
+  position: 10
+  name: UUUU
+  audio:
+    contentUrl: 10-uuuu.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 01ad57c004570955bd37bc9538a25b87b0f60f9ae566792b6052ae3e763f490b
+    '@type': AudioObject
+    bitrate: 728 kbps
+    duration: PT4M2S
+- '@type': MusicRecording
+  position: 11
+  name: MAMA NE VERNETSJA
+  audio:
+    contentUrl: 11-mama-ne-vernetsja.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e30d70cbaf30d57f6e5339631670daae11eed9c45cda3ad98e0b834154afc10e
+    '@type': AudioObject
+    bitrate: 640 kbps
+    duration: PT2M12S
+- '@type': MusicRecording
+  position: 12
+  name: VESNA
+  audio:
+    contentUrl: 12-vesna.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2ac9c0ab0fbcfe42635dc4875f96d35e43c99e6c67554aaa09c132f4f7787129
+    '@type': AudioObject
+    bitrate: 608 kbps
+    duration: PT1M50S
+- '@type': MusicRecording
+  position: 13
+  name: KUDA POPA-L
+  audio:
+    contentUrl: 13-kuda-popa-l.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 067cfa4068a1600b5ff350f6b609270ec8702b40b4f4daeb0bb62fec5b045d81
+    '@type': AudioObject
+    bitrate: 637 kbps
+    duration: PT2M41S
+- '@type': MusicRecording
+  position: 14
+  name: BEGI, BEGI
+  audio:
+    contentUrl: 14-begi-begi.flac
+    encodingFormat: audio/flac
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8f99a0353911b95f97343a4ae9fff8c4ef5eb2536b0d3854e4b3345362a4f2c5
+    '@type': AudioObject
+    bitrate: 597 kbps
+    duration: PT4M11S
+image: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []
