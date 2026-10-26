@@ -191,7 +191,15 @@ track:
     '@type': AudioObject
     bitrate: 597 kbps
     duration: PT4M11S
-image: []
+image:
+- contentUrl: photo-2026-10-26-21-59-38.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 2389c8fc323920ee542e26dbfd751efa78a4366c5528ce2bdf0ed7010af0c310
+  '@type': ImageObject
+  depicts: []
 video: []
 creditText: []
 creditText_en: []
