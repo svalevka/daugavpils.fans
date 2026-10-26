@@ -721,3 +721,298 @@ test("album_upload.js: track removal, audio ended, 429 rate limit, and non-audio
   assert.equal(submitBtn.disabled, false);
 });
 
+test("album_upload.js: client-side size limits immediately warn and block submission, and parses server error JSON", () => {
+  const { root, sandbox, docListeners, getLastXHR } = setupMockEnvironment();
+
+  const form = new MockElement("form");
+  form.setAttribute("data-album-form", "true");
+  form.setAttribute("action", "/submit-release");
+  form.setAttribute("data-msg-uploading", "Uploading... {percent}% ({loaded} / {total})");
+  form.setAttribute("data-msg-track-too-large", "Track '{name}' ({size}) exceeds {max}.");
+  form.setAttribute("data-msg-album-too-large", "Total audio size ({size}) exceeds {max}.");
+  form.setAttribute("data-msg-cover-too-large", "Cover image ({size}) exceeds {max}.");
+  form.setAttribute("data-msg-server-error", "Server error ({status}).");
+  form.setAttribute("data-max-track-bytes", String(50 * 1024 * 1024));
+  form.setAttribute("data-max-album-bytes", String(350 * 1024 * 1024));
+  form.setAttribute("data-max-cover-bytes", String(15 * 1024 * 1024));
+
+  const nameInput = new MockElement("input", "name");
+  nameInput.value = "Great Album";
+  form.appendChild(nameInput);
+
+  const yearInput = new MockElement("input", "date_published");
+  yearInput.value = "1996";
+  form.appendChild(yearInput);
+
+  const coverInput = new MockElement("input", "cover");
+  coverInput.setAttribute("data-album-cover-input", "true");
+  coverInput.files = [];
+  form.appendChild(coverInput);
+
+  const coverPreview = new MockElement("div");
+  coverPreview.setAttribute("data-album-cover-preview", "true");
+  form.appendChild(coverPreview);
+
+  const audioInput = new MockElement("input");
+  audioInput.setAttribute("data-album-audio-input", "true");
+  audioInput.files = [];
+  form.appendChild(audioInput);
+
+  const addAudioBtn = new MockElement("button");
+  addAudioBtn.setAttribute("data-album-add-audio", "true");
+  form.appendChild(addAudioBtn);
+
+  const dropzone = new MockElement("div");
+  dropzone.setAttribute("data-album-dropzone", "true");
+  form.appendChild(dropzone);
+
+  const trackList = new MockElement("div");
+  trackList.setAttribute("data-album-track-list", "true");
+  form.appendChild(trackList);
+
+  const progressContainer = new MockElement("div");
+  progressContainer.setAttribute("data-album-progress", "true");
+  progressContainer.style.display = "none";
+  form.appendChild(progressContainer);
+
+  const errorBanner = new MockElement("div");
+  errorBanner.setAttribute("data-album-upload-error", "true");
+  errorBanner.style.display = "none";
+  form.appendChild(errorBanner);
+
+  const submitBtn = new MockElement("button");
+  submitBtn.setAttribute("data-album-submit", "true");
+  form.appendChild(submitBtn);
+
+  root.appendChild(form);
+
+  vm.runInNewContext(albumUploadJs, sandbox);
+  (docListeners.get("DOMContentLoaded") || []).forEach((h) => h());
+
+  // 1. Single track exceeding 50 MB
+  const bigTrack = { name: "oversized.wav", type: "audio/wav", size: 60 * 1024 * 1024 };
+  dropzone.dispatchEvent({
+    type: "drop",
+    preventDefault() {},
+    stopPropagation() {},
+    dataTransfer: { files: [bigTrack] }
+  });
+
+  assert.equal(trackList.children.length, 1);
+  assert.equal(errorBanner.style.display, "block", "Error banner shown for oversized track");
+  assert.match(errorBanner.textContent, /Track 'oversized\.wav' \(60\.0 MB\) exceeds 50\.0 MB\./);
+  assert.equal(submitBtn.disabled, true, "Submit button disabled when track is oversized");
+
+  // Remove the oversized track
+  const removeBtn = trackList.children[0].querySelector(".btn-remove");
+  removeBtn.click();
+  assert.equal(trackList.children.length, 0);
+  assert.equal(errorBanner.style.display, "none", "Error banner cleared after removing oversized track");
+
+  // 2. Multiple tracks within individual limit but exceeding total 350 MB limit (e.g. 10 x 40MB = 400MB)
+  const tracksBatch = [];
+  for (let i = 1; i <= 10; i++) {
+    tracksBatch.push({ name: `track_${i}.wav`, type: "audio/wav", size: 40 * 1024 * 1024 });
+  }
+  dropzone.dispatchEvent({
+    type: "drop",
+    preventDefault() {},
+    stopPropagation() {},
+    dataTransfer: { files: tracksBatch }
+  });
+
+  assert.equal(trackList.children.length, 10);
+  assert.equal(errorBanner.style.display, "block", "Error banner shown for album exceeding 350 MB");
+  assert.match(errorBanner.textContent, /Total audio size \(400\.0 MB\) exceeds 350\.0 MB\./);
+  assert.equal(submitBtn.disabled, true, "Submit button disabled when album exceeds 350 MB");
+
+  // Remove two tracks (8 x 40 = 320 MB < 350 MB)
+  trackList.children[9].querySelector(".btn-remove").click();
+  trackList.children[8].querySelector(".btn-remove").click();
+  assert.equal(trackList.children.length, 8);
+  assert.equal(errorBanner.style.display, "none", "Error banner cleared once below 350 MB");
+  assert.equal(submitBtn.disabled, false, "Submit button re-enabled");
+
+  // 3. Oversized cover image (20 MB > 15 MB)
+  coverInput.files = [{ name: "huge_cover.jpg", size: 20 * 1024 * 1024 }];
+  coverInput.dispatchEvent({ type: "change" });
+  assert.equal(errorBanner.style.display, "block", "Error banner shown for oversized cover");
+  assert.match(errorBanner.textContent, /Cover image \(20\.0 MB\) exceeds 15\.0 MB\./);
+  assert.equal(submitBtn.disabled, true, "Submit disabled with oversized cover");
+
+  // Valid cover (2 MB)
+  coverInput.files = [{ name: "cover.jpg", size: 2 * 1024 * 1024 }];
+  coverInput.dispatchEvent({ type: "change" });
+  assert.equal(errorBanner.style.display, "none", "Error banner cleared with valid cover");
+  assert.equal(submitBtn.disabled, false, "Submit re-enabled");
+
+  // 4. Test server JSON error extraction on HTTP 400
+  form.dispatchEvent({
+    type: "submit",
+    preventDefault() {}
+  });
+  const xhr = getLastXHR();
+  xhr.status = 400;
+  xhr.responseText = JSON.stringify({ error: "Total album audio size (420.0 MB) exceeds the 350 MB limit. Please compress audio files to FLAC or MP3." });
+  xhr.onload();
+
+  assert.equal(errorBanner.style.display, "block");
+  assert.equal(
+    errorBanner.textContent,
+    "Total album audio size (420.0 MB) exceeds the 350 MB limit. Please compress audio files to FLAC or MP3.",
+    "Specific server error message is displayed to user"
+  );
+});
+
+test("band_upload.js: client-side size limits immediately warn and block submission, and parses server error JSON", () => {
+  const { root, sandbox, docListeners, getLastXHR } = setupMockEnvironment();
+
+  const form = new MockElement("form");
+  form.setAttribute("data-band-form", "true");
+  form.setAttribute("action", "/submit-band");
+  form.setAttribute("data-msg-uploading", "Uploading... {percent}% ({loaded} / {total})");
+  form.setAttribute("data-msg-track-too-large", "Track '{name}' ({size}) exceeds {max}.");
+  form.setAttribute("data-msg-album-too-large", "Total audio size ({size}) exceeds {max}.");
+  form.setAttribute("data-msg-cover-too-large", "Cover image ({size}) exceeds {max}.");
+  form.setAttribute("data-msg-photo-too-large", "Photo ({size}) exceeds {max}.");
+  form.setAttribute("data-msg-server-error", "Server error ({status}).");
+  form.setAttribute("data-max-track-bytes", String(50 * 1024 * 1024));
+  form.setAttribute("data-max-album-bytes", String(350 * 1024 * 1024));
+  form.setAttribute("data-max-cover-bytes", String(15 * 1024 * 1024));
+  form.setAttribute("data-max-photo-bytes", String(25 * 1024 * 1024));
+
+  const nameInput = new MockElement("input", "name");
+  nameInput.value = "New Band";
+  form.appendChild(nameInput);
+
+  const photoInput = new MockElement("input");
+  photoInput.setAttribute("data-band-photo-input", "true");
+  photoInput.files = [];
+  form.appendChild(photoInput);
+
+  const photoPreview = new MockElement("img");
+  photoPreview.setAttribute("data-band-photo-preview", "true");
+  form.appendChild(photoPreview);
+
+  const releaseToggle = new MockElement("input");
+  releaseToggle.setAttribute("data-band-has-release-toggle", "true");
+  releaseToggle.checked = false;
+  form.appendChild(releaseToggle);
+
+  const releaseSection = new MockElement("div");
+  releaseSection.setAttribute("data-band-release-section", "true");
+  releaseSection.style.display = "none";
+  form.appendChild(releaseSection);
+
+  const relNameInput = new MockElement("input", "release_name");
+  relNameInput.value = "First Release";
+  releaseSection.appendChild(relNameInput);
+
+  const relYearInput = new MockElement("input", "release_date_published");
+  relYearInput.value = "1998";
+  releaseSection.appendChild(relYearInput);
+
+  const coverInput = new MockElement("input");
+  coverInput.setAttribute("data-band-cover-input", "true");
+  coverInput.files = [];
+  releaseSection.appendChild(coverInput);
+
+  const coverPreview = new MockElement("div");
+  coverPreview.setAttribute("data-band-cover-preview", "true");
+  releaseSection.appendChild(coverPreview);
+
+  const audioInput = new MockElement("input");
+  audioInput.setAttribute("data-band-audio-input", "true");
+  audioInput.files = [];
+  releaseSection.appendChild(audioInput);
+
+  const addAudioBtn = new MockElement("button");
+  addAudioBtn.setAttribute("data-band-add-audio", "true");
+  releaseSection.appendChild(addAudioBtn);
+
+  const dropzone = new MockElement("div");
+  dropzone.setAttribute("data-band-dropzone", "true");
+  releaseSection.appendChild(dropzone);
+
+  const trackList = new MockElement("div");
+  trackList.setAttribute("data-band-track-list", "true");
+  releaseSection.appendChild(trackList);
+
+  const progressContainer = new MockElement("div");
+  progressContainer.setAttribute("data-band-progress", "true");
+  progressContainer.style.display = "none";
+  form.appendChild(progressContainer);
+
+  const errorBanner = new MockElement("div");
+  errorBanner.setAttribute("data-band-upload-error", "true");
+  errorBanner.style.display = "none";
+  form.appendChild(errorBanner);
+
+  const submitBtn = new MockElement("button");
+  submitBtn.setAttribute("data-band-submit", "true");
+  form.appendChild(submitBtn);
+
+  root.appendChild(form);
+
+  vm.runInNewContext(bandUploadJs, sandbox);
+  (docListeners.get("DOMContentLoaded") || []).forEach((h) => h());
+
+  // Band only: valid initially
+  assert.equal(submitBtn.disabled, false);
+
+  // 1. Oversized band photo (30 MB > 25 MB)
+  photoInput.files = [{ name: "big_photo.jpg", size: 30 * 1024 * 1024 }];
+  photoInput.dispatchEvent({ type: "change" });
+  assert.equal(errorBanner.style.display, "block", "Error banner shown for oversized photo");
+  assert.match(errorBanner.textContent, /Photo \(30\.0 MB\) exceeds 25\.0 MB\./);
+  assert.equal(submitBtn.disabled, true, "Submit button disabled with oversized photo");
+
+  // Fix photo
+  photoInput.files = [{ name: "photo.jpg", size: 5 * 1024 * 1024 }];
+  photoInput.dispatchEvent({ type: "change" });
+  assert.equal(errorBanner.style.display, "none");
+  assert.equal(submitBtn.disabled, false);
+
+  // 2. Enable release section and add tracks > 350 MB
+  releaseToggle.checked = true;
+  releaseToggle.dispatchEvent({ type: "change" });
+
+  const tracksBatch = [];
+  for (let i = 1; i <= 10; i++) {
+    tracksBatch.push({ name: `track_${i}.wav`, type: "audio/wav", size: 40 * 1024 * 1024 });
+  }
+  dropzone.dispatchEvent({
+    type: "drop",
+    preventDefault() {},
+    stopPropagation() {},
+    dataTransfer: { files: tracksBatch }
+  });
+
+  assert.equal(errorBanner.style.display, "block", "Error banner shown for release > 350 MB");
+  assert.match(errorBanner.textContent, /Total audio size \(400\.0 MB\) exceeds 350\.0 MB\./);
+  assert.equal(submitBtn.disabled, true);
+
+  // Fix tracks to under 350 MB
+  trackList.children[9].querySelector(".btn-remove").click();
+  trackList.children[8].querySelector(".btn-remove").click();
+  assert.equal(errorBanner.style.display, "none");
+  assert.equal(submitBtn.disabled, false);
+
+  // 3. Test server JSON error extraction
+  form.dispatchEvent({
+    type: "submit",
+    preventDefault() {}
+  });
+  const xhr = getLastXHR();
+  xhr.status = 400;
+  xhr.responseText = JSON.stringify({ error: "Band photo rejected: not a recognized image or video file" });
+  xhr.onload();
+
+  assert.equal(errorBanner.style.display, "block");
+  assert.equal(
+    errorBanner.textContent,
+    "Band photo rejected: not a recognized image or video file",
+    "Specific server error message is displayed to user"
+  );
+});
+

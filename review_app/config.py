@@ -166,6 +166,9 @@ class Config:
             ),
             max_photo_upload_bytes=int(os.environ.get("MAX_PHOTO_UPLOAD_BYTES", str(25 * 1024 * 1024))),
             max_video_upload_bytes=int(os.environ.get("MAX_VIDEO_UPLOAD_BYTES", str(500 * 1024 * 1024))),
+            max_track_upload_bytes=int(os.environ.get("MAX_TRACK_UPLOAD_BYTES", str(50 * 1024 * 1024))),
+            max_album_total_bytes=int(os.environ.get("MAX_ALBUM_TOTAL_BYTES", str(350 * 1024 * 1024))),
+            max_cover_upload_bytes=int(os.environ.get("MAX_COVER_UPLOAD_BYTES", str(15 * 1024 * 1024))),
             max_total_upload_storage_bytes=int(
                 os.environ.get("MAX_TOTAL_UPLOAD_STORAGE_BYTES", str(2 * 1024 * 1024 * 1024))
             ),

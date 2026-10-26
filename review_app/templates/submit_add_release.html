@@ -15,7 +15,13 @@
       data-msg-pause="{{ t.pause_audio }}"
       data-msg-draft-restored="{{ t.draft_restored }}"
       data-msg-draft-clear="{{ t.draft_clear }}"
-      data-msg-draft-cleared="{{ t.draft_cleared }}">
+      data-msg-draft-cleared="{{ t.draft_cleared }}"
+      data-msg-track-too-large="{{ t.upload_track_too_large }}"
+      data-msg-album-too-large="{{ t.upload_album_too_large }}"
+      data-msg-cover-too-large="{{ t.upload_cover_too_large }}"
+      data-max-track-bytes="{{ config.get('MAX_TRACK_UPLOAD_BYTES', 52428800) }}"
+      data-max-album-bytes="{{ config.get('MAX_ALBUM_TOTAL_BYTES', 367001600) }}"
+      data-max-cover-bytes="{{ config.get('MAX_COVER_UPLOAD_BYTES', 15728640) }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="band_slug" value="{{ band_slug }}">
 

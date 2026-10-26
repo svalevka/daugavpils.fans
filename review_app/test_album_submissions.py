@@ -134,8 +134,10 @@ class AlbumSubmissionPostTest(ReviewAppTestCase):
     def test_missing_required_fields_aborts_400(self):
         resp = self.submit_album(name="")
         self.assertEqual(resp.status_code, 400)
+        self.assertIn("error", resp.get_json())
         resp = self.submit_album(date_published="")
         self.assertEqual(resp.status_code, 400)
+        self.assertIn("error", resp.get_json())
 
     def test_unknown_band_aborts_404(self):
         resp = self.submit_album(band_slug="non-existent-band")
@@ -144,14 +146,30 @@ class AlbumSubmissionPostTest(ReviewAppTestCase):
     def test_no_tracks_aborts_400(self):
         resp = self.submit_album(track_tuples=[])
         self.assertEqual(resp.status_code, 400)
+        self.assertIn("error", resp.get_json())
 
     def test_missing_challenge_answer_aborts_400(self):
         resp = self.submit_album(challenge_answer="")
         self.assertEqual(resp.status_code, 400)
+        self.assertIn("error", resp.get_json())
 
     def test_incorrect_challenge_answer_aborts_400(self):
         resp = self.submit_album(challenge_answer="random spam text")
         self.assertEqual(resp.status_code, 400)
+        self.assertIn("error", resp.get_json())
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_album_exceeding_total_size_limit_returns_400_with_clear_error(self, _mock_probe):
+        self.app.config["MAX_ALBUM_TOTAL_BYTES"] = 200
+        resp = self.submit_album(
+            name="Oversized Album",
+            track_tuples=[("01-song.mp3", MP3_BYTES * 3)],
+        )
+        self.assertEqual(resp.status_code, 400)
+        data = resp.get_json()
+        self.assertIsNotNone(data)
+        self.assertIn("error", data)
+        self.assertIn("exceeds the 0 MB limit", data["error"])
 
     @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
     def test_valid_cyrillic_challenge_answer_accepted(self, _mock_probe):

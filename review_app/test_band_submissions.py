@@ -163,6 +163,23 @@ class BandSubmissionPostTest(ReviewAppTestCase):
     def test_incorrect_challenge_answer_aborts_400(self):
         resp = self.submit_band(name="Spam Band", challenge_answer="random spam 123")
         self.assertEqual(resp.status_code, 400)
+        self.assertIn("error", resp.get_json())
+
+    @patch("audio_validation.probe_audio_file", return_value=MOCK_PROBE_RESULT)
+    def test_band_release_exceeding_total_size_limit_returns_400_with_clear_error(self, _mock_probe):
+        self.app.config["MAX_ALBUM_TOTAL_BYTES"] = 200
+        resp = self.submit_band(
+            name="Oversized Band",
+            has_release="1",
+            release_name="Oversized Release",
+            release_date_published="1999",
+            track_tuples=[("01-song.mp3", MP3_BYTES * 3)],
+        )
+        self.assertEqual(resp.status_code, 400)
+        data = resp.get_json()
+        self.assertIsNotNone(data)
+        self.assertIn("error", data)
+        self.assertIn("exceeds the 0 MB limit", data["error"])
 
     def test_valid_cyrillic_challenge_answer_accepted(self):
         resp = self.submit_band(name="Даугава", challenge_answer="Даугавпилс")

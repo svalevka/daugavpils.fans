@@ -28,9 +28,16 @@
     var msgNetworkError = form.getAttribute("data-msg-network-error") || "Network error during upload. Please check your internet connection and try again.";
     var msgRateLimit = form.getAttribute("data-msg-rate-limit") || "Too many submissions. Please wait an hour before submitting again.";
     var msgServerError = form.getAttribute("data-msg-server-error") || "Server error ({status}). Please check your files and try again.";
+    var msgTrackTooLarge = form.getAttribute("data-msg-track-too-large") || "File '{name}' ({size}) exceeds the {max} limit.";
+    var msgAlbumTooLarge = form.getAttribute("data-msg-album-too-large") || "Total audio size ({size}) exceeds the {max} limit. Please compress audio files to FLAC or MP3.";
+    var msgCoverTooLarge = form.getAttribute("data-msg-cover-too-large") || "Cover image ({size}) exceeds the {max} limit.";
     var msgPreview = form.getAttribute("data-msg-preview") || "Preview track";
     var msgPause = form.getAttribute("data-msg-pause") || "Pause";
     var origSubmitText = submitButton.getAttribute("data-original-text") || submitButton.textContent || "Submit for review";
+
+    var maxTrackBytes = parseInt(form.getAttribute("data-max-track-bytes"), 10) || (50 * 1024 * 1024);
+    var maxAlbumBytes = parseInt(form.getAttribute("data-max-album-bytes"), 10) || (350 * 1024 * 1024);
+    var maxCoverBytes = parseInt(form.getAttribute("data-max-cover-bytes"), 10) || (15 * 1024 * 1024);
 
     // Array of {file: File, title: string}
     var tracks = [];
@@ -87,12 +94,60 @@
       return (bytes / (1024 * 1024)).toFixed(1) + " MB";
     }
 
+    function validateFiles() {
+      if (coverInput && coverInput.files && coverInput.files[0]) {
+        var coverFile = coverInput.files[0];
+        if (coverFile.size > maxCoverBytes) {
+          return msgCoverTooLarge
+            .replace("{size}", formatBytes(coverFile.size))
+            .replace("{max}", formatBytes(maxCoverBytes));
+        }
+      }
+
+      for (var i = 0; i < tracks.length; i++) {
+        var t = tracks[i];
+        if (t.file && t.file.size > maxTrackBytes) {
+          return msgTrackTooLarge
+            .replace("{name}", t.file.name)
+            .replace("{size}", formatBytes(t.file.size))
+            .replace("{max}", formatBytes(maxTrackBytes));
+        }
+      }
+
+      var totalAudio = tracks.reduce(function (sum, trackItem) {
+        return sum + (trackItem.file ? trackItem.file.size : 0);
+      }, 0);
+      if (totalAudio > maxAlbumBytes) {
+        return msgAlbumTooLarge
+          .replace("{size}", formatBytes(totalAudio))
+          .replace("{max}", formatBytes(maxAlbumBytes));
+      }
+
+      return null;
+    }
+
     function updateSubmitState() {
       var nameInput = form.querySelector("#name");
       var yearInput = form.querySelector("#date_published");
       var hasTitle = nameInput && nameInput.value.trim().length > 0;
       var hasYear = yearInput && /^\d{4}$/.test(yearInput.value.trim());
-      submitButton.disabled = !(tracks.length > 0 && hasTitle && hasYear);
+      var valError = validateFiles();
+
+      if (valError) {
+        if (errorBanner) {
+          errorBanner.textContent = valError;
+          errorBanner.style.display = "block";
+          errorBanner.setAttribute("data-is-val-error", "true");
+        }
+        submitButton.disabled = true;
+      } else {
+        if (errorBanner && errorBanner.getAttribute("data-is-val-error") === "true") {
+          errorBanner.textContent = "";
+          errorBanner.style.display = "none";
+          errorBanner.removeAttribute("data-is-val-error");
+        }
+        submitButton.disabled = !(tracks.length > 0 && hasTitle && hasYear);
+      }
     }
 
     // Drag and drop state for track list reordering
@@ -356,6 +411,7 @@
           img.style.cssText = "max-width: 160px; max-height: 160px; border-radius: 4px; object-fit: cover; margin-top: 6px;";
           coverPreview.appendChild(img);
         }
+        updateSubmitState();
       });
     }
 
@@ -367,6 +423,7 @@
     function showError(message) {
       if (progressContainer) progressContainer.style.display = "none";
       if (errorBanner) {
+        errorBanner.removeAttribute("data-is-val-error");
         errorBanner.textContent = message;
         errorBanner.style.display = "block";
       } else {
@@ -380,6 +437,12 @@
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       if (tracks.length === 0) return;
+
+      var valError = validateFiles();
+      if (valError) {
+        showError(valError);
+        return;
+      }
 
       stopPreview();
 
@@ -445,7 +508,17 @@
         } else if (xhr.status === 429) {
           showError(msgRateLimit);
         } else {
-          showError(msgServerError.replace("{status}", xhr.status));
+          var errMsg = null;
+          try {
+            var data = JSON.parse(xhr.responseText);
+            if (data && data.error) {
+              errMsg = data.error;
+            }
+          } catch (e) {}
+          if (!errMsg && xhr.responseText && xhr.responseText.length < 500 && xhr.responseText.indexOf("<html") === -1) {
+            errMsg = xhr.responseText.trim();
+          }
+          showError(errMsg || msgServerError.replace("{status}", xhr.status));
         }
       };
 

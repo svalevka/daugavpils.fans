@@ -98,7 +98,7 @@ def create_album_proposal():
 
     if not challenge.verify_challenge(request.form.get("challenge_answer")):
         logger.warning("Album submission rejected: anti-bot challenge failed for IP %s", ip)
-        abort(400)
+        return {"error": "Anti-bot challenge verification failed. Please check the answer."}, 400
 
     band_slug = request.form.get("band_slug", "").strip()
     album_name = request.form.get("name", "").strip()
@@ -111,7 +111,7 @@ def create_album_proposal():
     submitter_contact = request.form.get("submitter_contact", "").strip() or None
 
     if not band_slug or not album_name or not date_published:
-        abort(400)
+        return {"error": "Missing required fields (band, album name, or release year)."}, 400
 
     checkout = current_app.config["ARCHIVE_CHECKOUT_PATH"]
     try:
@@ -121,18 +121,18 @@ def create_album_proposal():
 
     try:
         release_slug = audio_validation.generate_release_slug(album_name, date_published)
-    except audio_validation.AudioValidationError:
-        abort(400)
+    except audio_validation.AudioValidationError as exc:
+        return {"error": f"Could not generate release slug: {exc}"}, 400
 
     # Check if release already exists in archive
     existing_release_dir = Path(checkout) / "bands" / band_slug / release_slug
     if (existing_release_dir / "release.yaml").exists():
-        abort(400)
+        return {"error": f"Release '{release_slug}' already exists in the archive for this band."}, 400
 
     # Check files
     audio_files = [f for f in request.files.getlist("tracks") if f and f.filename]
     if not audio_files:
-        abort(400)
+        return {"error": "No audio tracks were provided."}, 400
 
     uploads_dir = current_app.config["MEDIA_UPLOADS_PATH"]
     max_track_bytes = current_app.config.get("MAX_TRACK_UPLOAD_BYTES", 50 * 1024 * 1024)
@@ -156,7 +156,7 @@ def create_album_proposal():
             cover_stored_filename = stored_name
         except media_uploads.UploadRejected as exc:
             logger.warning("Cover image upload rejected: %s", exc)
-            abort(400)
+            return {"error": f"Cover image rejected: {exc}"}, 400
 
     # Save audio files
     tracks_list: list[dict] = []
@@ -178,16 +178,24 @@ def create_album_proposal():
             logger.warning("Audio upload rejected: %s", exc)
             for f in saved_files:
                 f.unlink(missing_ok=True)
-            abort(400)
+            return {"error": f"Audio track '{file_storage.filename}' rejected: {exc}"}, 400
 
         file_path = Path(uploads_dir) / stored_filename
         saved_files.append(file_path)
         total_audio_bytes += size
 
         if total_audio_bytes > max_album_total_bytes:
+            logger.warning(
+                "Album submission rejected: total audio bytes (%d) exceeds limit (%d)",
+                total_audio_bytes, max_album_total_bytes
+            )
             for f in saved_files:
                 f.unlink(missing_ok=True)
-            abort(400)
+            max_mb = max_album_total_bytes // (1024 * 1024)
+            current_mb = total_audio_bytes / (1024 * 1024)
+            return {
+                "error": f"Total album audio size ({current_mb:.1f} MB) exceeds the {max_mb} MB limit. Please compress audio files to FLAC or MP3."
+            }, 400
 
         try:
             probe_info = audio_validation.probe_audio_file(file_path)
@@ -195,7 +203,7 @@ def create_album_proposal():
             logger.warning("ffprobe audio validation failed for %s: %s", file_storage.filename, exc)
             for f in saved_files:
                 f.unlink(missing_ok=True)
-            abort(400)
+            return {"error": f"Audio track '{file_storage.filename}' validation failed: {exc}"}, 400
 
         sha256 = audio_validation.sha256_of(file_path)
         track_title = (
