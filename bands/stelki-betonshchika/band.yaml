@@ -232,4 +232,12 @@ image:
     value: 89e85eedbe34d76010e8e11e8f515d60fb623a2e6a7c4aba87c4ab8e20c5f05d
   '@type': ImageObject
   depicts: []
+- contentUrl: media/stelki-betonshchika-photo-2026-10-26-21-59-42.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 18c727e8d3ef05d19b9fde533e588ecdf5cfae24af13401109ad372d7e616a48
+  '@type': ImageObject
+  depicts: []
 video: []
