@@ -108,13 +108,14 @@ description: 'После окончания группы «Квазимодо» 
   на кассете группу «Глазки стекольщика», а на другой стороне поместили то, что мы
   записали с девчонками. И, как бы подыгрывая названию основной группы, написали на
   другой стороне: «Стельки бетонщика».'
-description_en: 'After the disbanding of the band "Kvazimodo", the musical paths
-  of its members diverged. Varik, Andrei Zelch, and Kuzya formed the band Carpe Diem,
+description_en: 'After the disbanding of the band "Kvazimodo", the musical paths of
+  its members diverged. Varik, Andrei Zelch, and Kuzya formed the band Carpe Diem,
   while I fell into the atmosphere of hitchhiking, Rezekne hippies, Daugavpils artists,
   raves, and freedom from work and unpleasant obligations.
 
 
-  I gladly hitchhiked across my native Latvia, meeting new people and playing the guitar.
+  I gladly hitchhiked across my native Latvia, meeting new people and playing the
+  guitar.
 
 
   I remember that many of the creative crowd hanging out at the "Saucer" [central
@@ -129,7 +130,8 @@ description_en: 'After the disbanding of the band "Kvazimodo", the musical paths
 
 
   At some point, I asked my friends from the "Saucer" — Guna, who played the accordion,
-  and Tosya, who played the piano — to play along with what I was strumming on the guitar.
+  and Tosya, who played the piano — to play along with what I was strumming on the
+  guitar.
 
 
   We began rehearsing from time to time at my place in Pervomayka.
@@ -148,8 +150,8 @@ description_en: 'After the disbanding of the band "Kvazimodo", the musical paths
   — once again at "Jaunība".
 
 
-  He told us: "My equipment is broken, only one channel works." But did that really matter
-  to me then? It no longer mattered to me at all.
+  He told us: "My equipment is broken, only one channel works." But did that really
+  matter to me then? It no longer mattered to me at all.
 
 
   Jansons sighed, and we recorded everything onto a single channel. With hiss, crackle,
@@ -175,8 +177,8 @@ description_lv: 'Pēc grupas «Kvazimodo» darbības beigām dalībnieku muzikā
 
   Atceros, ka daudzi no radošajiem cilvēkiem, kas pulcējās pie «Šķīvja» pilsētas centrā,
   iemitinājās Dzelzceļa tehnikuma kopmītnēs, uzdodoties par «Saules» mākslas skolas
-  studentiem. Tur pašizpausmes uzplūdā durvis acumirklī tika apzīmētas ar visādām zivīm,
-  acīm un šur tur smirdīgiem suņiem.
+  studentiem. Tur pašizpausmes uzplūdā durvis acumirklī tika apzīmētas ar visādām
+  zivīm, acīm un šur tur smirdīgiem suņiem.
 
 
   Dzīve tajās kopmītnēs ritēja ļoti jautri. Ciemos brauca hipiji, iegriezās vietējie
@@ -199,8 +201,8 @@ description_lv: 'Pēc grupas «Kvazimodo» darbības beigām dalībnieku muzikā
   spēlēt elektrisko mūziku.
 
 
-  Savukārt tās dziesmas, kuras spēlējām ar meitenēm, devāmies ierakstīt pie Aivara Jansona
-  — atkal jau tajā pašā «Jaunībā».
+  Savukārt tās dziesmas, kuras spēlējām ar meitenēm, devāmies ierakstīt pie Aivara
+  Jansona — atkal jau tajā pašā «Jaunībā».
 
 
   Bet viņš mums teica: «Man aparatūra ir salūzusi, strādā tikai viens kanāls». Bet
@@ -214,9 +216,20 @@ description_lv: 'Pēc grupas «Kvazimodo» darbības beigām dalībnieku muzikā
   Lūk, tik nenopietni beidzās tā pašdarbība, kurai tolaik pat vēl nebija nosaukuma.
 
 
-  Nosaukums parādījās tikai vēlāk, kad pēc kāda laika mēs ar Vaidu kasetē izdevām grupu
-  «Glazki stekoļščika», bet otrā pusē ievietojām to, ko bijām ierakstījuši ar meitenēm.
-  Un, it kā apspēlējot pamatgrupas nosaukumu, otrā pusē uzrakstījām: «Steļki betonščika».'
-sameAs: []
-image: []
+  Nosaukums parādījās tikai vēlāk, kad pēc kāda laika mēs ar Vaidu kasetē izdevām
+  grupu «Glazki stekoļščika», bet otrā pusē ievietojām to, ko bijām ierakstījuši ar
+  meitenēm. Un, it kā apspēlējot pamatgrupas nosaukumu, otrā pusē uzrakstījām: «Steļki
+  betonščika».'
+sameAs:
+- https://archive.org/details/daugavpils-fans-stelki-betonshchika
+- https://archive.org/download/daugavpils-fans-stelki-betonshchika/daugavpils-fans-stelki-betonshchika_archive.torrent
+image:
+- contentUrl: media/stelki-betonshchika-photo-2026-10-26-21-59-34.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 89e85eedbe34d76010e8e11e8f515d60fb623a2e6a7c4aba87c4ab8e20c5f05d
+  '@type': ImageObject
+  depicts: []
 video: []
