@@ -657,34 +657,85 @@ def call_ai_api(
     }
 
     all_images: list[tuple[bytes, str]] = []
-    if image_bytes:
-        all_images.append((image_bytes, image_mime or "image/jpeg"))
-    if images:
-        all_images.extend(images)
+    if getattr(ai_config, "vision_enabled", True):
+        if image_bytes:
+            all_images.append((image_bytes, image_mime or "image/jpeg"))
+        if images:
+            all_images.extend(images)
 
-    if all_images:
-        user_content: Any = [{"type": "text", "text": user_prompt}]
-        for img_data, mime in all_images:
-            b64 = base64.b64encode(img_data).decode("ascii")
-            user_content.append(
-                {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}}
-            )
-    else:
-        user_content = user_prompt
+    def _build_payload(with_images: bool) -> dict[str, Any]:
+        if with_images and all_images:
+            user_content: Any = [{"type": "text", "text": user_prompt}]
+            for img_data, mime in all_images:
+                b64 = base64.b64encode(img_data).decode("ascii")
+                user_content.append(
+                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}}
+                )
+        else:
+            prompt_text = user_prompt
+            if (image_bytes or images) and not with_images:
+                prompt_text += (
+                    "\n\n[Note: Image attachments omitted because the configured AI endpoint/model "
+                    "does not support image inputs. Evaluate based on metadata, filename, provenance, and caption.]"
+                )
+            user_content = prompt_text
 
-
-    payload = {
-        "model": ai_config.model,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_content},
-        ],
-        "temperature": 0.1,
-    }
+        return {
+            "model": ai_config.model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_content},
+            ],
+            "temperature": 0.1,
+        }
 
     url = f"{ai_config.base_url.rstrip('/')}/chat/completions"
-    response = requests.post(url, headers=headers, json=payload, timeout=ai_config.timeout_seconds)
-    response.raise_for_status()
+
+    if all_images:
+        payload = _build_payload(with_images=True)
+        response = requests.post(url, headers=headers, json=payload, timeout=ai_config.timeout_seconds)
+        if response.status_code >= 400:
+            error_body = response.text
+            # If the provider rejected the request due to multimodal/image content not being supported:
+            # (e.g. z.ai: "messages.content.type is invalid, allowed values: ['text']", or 400 with image_url)
+            is_image_rejection = (
+                response.status_code == 400
+                and any(
+                    phrase in error_body.lower()
+                    for phrase in [
+                        "allowed values: ['text']",
+                        "allowed values: [\"text\"]",
+                        "image_url",
+                        "multimodal",
+                        "content.type is invalid",
+                        "does not support image",
+                        "vision",
+                        "1210",
+                    ]
+                )
+            )
+            if is_image_rejection:
+                logger.warning(
+                    "AI provider rejected image payload (%s). Falling back to text-only evaluation.",
+                    error_body[:200],
+                )
+                payload = _build_payload(with_images=False)
+                response = requests.post(url, headers=headers, json=payload, timeout=ai_config.timeout_seconds)
+
+            if response.status_code >= 400:
+                raise requests.HTTPError(
+                    f"{response.status_code} Client Error: {response.reason} for url: {url} - {response.text}",
+                    response=response,
+                )
+    else:
+        payload = _build_payload(with_images=False)
+        response = requests.post(url, headers=headers, json=payload, timeout=ai_config.timeout_seconds)
+        if response.status_code >= 400:
+            raise requests.HTTPError(
+                f"{response.status_code} Client Error: {response.reason} for url: {url} - {response.text}",
+                response=response,
+            )
+
     data = response.json()
     choices = data.get("choices", [])
     if not choices:

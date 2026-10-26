@@ -3,15 +3,24 @@ name: Бодро по доброму
 slug: 1996-bodro-po-dobromu
 datePublished: '1996'
 byArtist: stelki-betonshchika
-genre: []
+genre:
+- Acoustic Rock
+- Hippie Rock
+- Psychedelic Folk
 license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: |-
+  Единственный магнитоальбом проекта, записанный в 1996 году в Даугавпилсе в студии «Яуниба» у Айвара Янсона. Из-за неисправности пульта запись велась на один канал, что сформировало характерное аналоговое звучание альбома. Позже материал был выпущен на второй стороне магнитофонной кассеты «Ждите Изоптица» группы «Глазки стекольщика».
+description_en: |-
+  The project's sole tape album, recorded in 1996 in Daugavpils at Aivars Jansons' "Jaunība" studio. Due to a malfunction with the mixing console, the session was recorded onto a single channel, giving the record its distinctive raw analogue sound. The recording was later issued on the B-side of the cassette "Zhdite Izoptitsa" by Glazki Stekolshchika.
+description_lv: |-
+  Projekta vienīgais magnētalbums, ierakstīts 1996. gadā Daugavpilī Aivara Jansona studijā «Jaunība». Pults bojājuma dēļ ieraksts tika veikts vienā kanālā, radot albumam raksturīgo analogo skanējumu. Vēlāk materiāls tika izdots grupas «Glazki stekoļščika» kasetes «Zhdite Izoptitsa» B pusē.
 sameAs:
 - https://archive.org/details/daugavpils-fans-stelki-betonshchika-1996-bodro-po-dobromu
 - https://archive.org/download/daugavpils-fans-stelki-betonshchika-1996-bodro-po-dobromu/daugavpils-fans-stelki-betonshchika-1996-bodro-po-dobromu_archive.torrent
 track:
 - '@type': MusicRecording
   position: 1
-  name: VOLOSI
+  name: Волосы
   audio:
     contentUrl: 01-volosi.flac
     encodingFormat: audio/flac
@@ -24,7 +33,7 @@ track:
     duration: PT3M16S
 - '@type': MusicRecording
   position: 2
-  name: MAKI
+  name: Маки
   audio:
     contentUrl: 02-maki.flac
     encodingFormat: audio/flac
@@ -37,7 +46,7 @@ track:
     duration: PT2M53S
 - '@type': MusicRecording
   position: 3
-  name: TUCHKA
+  name: Тучка
   audio:
     contentUrl: 03-tuchka.flac
     encodingFormat: audio/flac
@@ -50,7 +59,7 @@ track:
     duration: PT1M50S
 - '@type': MusicRecording
   position: 4
-  name: ATAKUJUSCHAJA BALERINA
+  name: Атакующая балерина
   audio:
     contentUrl: 04-atakujuschaja-balerina.flac
     encodingFormat: audio/flac
@@ -63,7 +72,7 @@ track:
     duration: PT4M14S
 - '@type': MusicRecording
   position: 5
-  name: GNUSNAJA PRAVDA
+  name: Гнусная правда
   audio:
     contentUrl: 05-gnusnaja-pravda.flac
     encodingFormat: audio/flac
@@ -76,7 +85,7 @@ track:
     duration: PT2M53S
 - '@type': MusicRecording
   position: 6
-  name: PRONIKNI V MOJ SAD
+  name: Проникни в мой сад
   audio:
     contentUrl: 06-pronikni-v-moj-sad.flac
     encodingFormat: audio/flac
@@ -89,7 +98,7 @@ track:
     duration: PT2M55S
 - '@type': MusicRecording
   position: 7
-  name: POJDEM SO MNOJ
+  name: Пойдем со мной
   audio:
     contentUrl: 07-pojdem-so-mnoj.flac
     encodingFormat: audio/flac
@@ -102,7 +111,7 @@ track:
     duration: PT2M33S
 - '@type': MusicRecording
   position: 8
-  name: VOSK NA VOSK
+  name: Воск на воск
   audio:
     contentUrl: 08-vosk-na-vosk.flac
     encodingFormat: audio/flac
@@ -115,7 +124,7 @@ track:
     duration: PT3M6S
 - '@type': MusicRecording
   position: 9
-  name: SEMJ
+  name: Семь
   audio:
     contentUrl: 09-semj.flac
     encodingFormat: audio/flac
@@ -128,7 +137,7 @@ track:
     duration: PT3M0S
 - '@type': MusicRecording
   position: 10
-  name: UUUU
+  name: Уууу
   audio:
     contentUrl: 10-uuuu.flac
     encodingFormat: audio/flac
@@ -141,7 +150,7 @@ track:
     duration: PT4M2S
 - '@type': MusicRecording
   position: 11
-  name: MAMA NE VERNETSJA
+  name: Мама не вернется
   audio:
     contentUrl: 11-mama-ne-vernetsja.flac
     encodingFormat: audio/flac
@@ -154,7 +163,7 @@ track:
     duration: PT2M12S
 - '@type': MusicRecording
   position: 12
-  name: VESNA
+  name: Весна
   audio:
     contentUrl: 12-vesna.flac
     encodingFormat: audio/flac
@@ -167,7 +176,7 @@ track:
     duration: PT1M50S
 - '@type': MusicRecording
   position: 13
-  name: KUDA POPA-L
+  name: Куда попал
   audio:
     contentUrl: 13-kuda-popa-l.flac
     encodingFormat: audio/flac
@@ -180,7 +189,7 @@ track:
     duration: PT2M41S
 - '@type': MusicRecording
   position: 14
-  name: BEGI, BEGI
+  name: Беги, беги
   audio:
     contentUrl: 14-begi-begi.flac
     encodingFormat: audio/flac

@@ -18,7 +18,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 
 import ai_agent
-from config import AiConfig
+from config import AiConfig, Config
 from test_support import JPEG_BYTES, ReviewAppTestCase
 from validate import dump_yaml, load_yaml
 
@@ -1195,5 +1195,86 @@ class AiAgentMediaInspectionTest(ReviewAppTestCase):
         resp2 = self.submit_media(caption="Photo 2")
         self.assertEqual(resp2.status_code, 201)
         self.assertEqual(self.mock_ai_failure_alert.call_count, 1)
+
+
+class CallAiApiTest(ReviewAppTestCase):
+    def test_call_ai_api_image_rejection_falls_back_to_text(self):
+        ai_cfg = AiConfig(api_key="secret", base_url="https://api.z.ai/api/coding/paas/v4", vision_enabled=True)
+        first_resp = mock.MagicMock()
+        first_resp.status_code = 400
+        first_resp.reason = "Bad Request"
+        first_resp.text = json.dumps({"error": {"code": "1210", "message": "messages.content.type is invalid, allowed values: ['text']"}})
+
+        second_resp = mock.MagicMock()
+        second_resp.status_code = 200
+        second_resp.json.return_value = {
+            "choices": [{"message": {"content": json.dumps({"decision": "approve", "confidence": 0.9, "reasoning": "Metadata valid"})}}]
+        }
+
+        with mock.patch("requests.post", side_effect=[first_resp, second_resp]) as mock_post:
+            res = ai_agent.call_ai_api(ai_cfg, "Media prompt", image_bytes=b"dummy-image", image_mime="image/jpeg")
+            self.assertIn("approve", res)
+            self.assertEqual(mock_post.call_count, 2)
+            payload_second = mock_post.call_args_list[1][1]["json"]
+            user_msg = payload_second["messages"][1]["content"]
+            self.assertIsInstance(user_msg, str)
+            self.assertIn("[Note: Image attachments omitted", user_msg)
+
+    def test_call_ai_api_vision_disabled_sends_text_only(self):
+        ai_cfg = AiConfig(api_key="secret", base_url="https://api.z.ai/api/coding/paas/v4", vision_enabled=False)
+        mock_resp = mock.MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {
+            "choices": [{"message": {"content": "ok"}}]
+        }
+
+        with mock.patch("requests.post", return_value=mock_resp) as mock_post:
+            res = ai_agent.call_ai_api(ai_cfg, "Media prompt", image_bytes=b"dummy-image")
+            self.assertEqual(res, "ok")
+            mock_post.assert_called_once()
+            payload = mock_post.call_args[1]["json"]
+            user_msg = payload["messages"][1]["content"]
+            self.assertIsInstance(user_msg, str)
+            self.assertIn("[Note: Image attachments omitted", user_msg)
+
+    def test_call_ai_api_unhandled_http_error_includes_response_text(self):
+        ai_cfg = AiConfig(api_key="secret", base_url="https://api.example.com", vision_enabled=False)
+        mock_resp = mock.MagicMock()
+        mock_resp.status_code = 500
+        mock_resp.reason = "Internal Server Error"
+        mock_resp.text = "Custom upstream outage details"
+
+        import requests
+        with mock.patch("requests.post", return_value=mock_resp):
+            with self.assertRaises(requests.HTTPError) as ctx:
+                ai_agent.call_ai_api(ai_cfg, "Test prompt")
+            self.assertIn("Custom upstream outage details", str(ctx.exception))
+
+    def test_ai_config_vision_defaults(self):
+        base_env = {
+            "DATABASE_PATH": "/tmp/review.db",
+            "ARCHIVE_CHECKOUT_PATH": "/tmp/archive",
+            "SECRET_KEY": "secret",
+            "MAINTAINER_EMAIL": "test@example.com",
+            "SMTP_HOST": "localhost",
+            "SMTP_PORT": "25",
+            "SMTP_FROM": "test@example.com",
+            "GITHUB_DISPATCH_TOKEN": "token",
+            "GITHUB_REPO": "test/repo",
+            "REVIEW_APP_CALLBACK_KEY": "key",
+        }
+        with mock.patch.dict("os.environ", {**base_env, "ZAI_BASE_URL": "https://api.z.ai/api/coding/paas/v4"}, clear=True):
+            cfg1 = Config.from_env()
+            self.assertFalse(cfg1.ai.vision_enabled)
+
+        with mock.patch.dict("os.environ", {**base_env, "ZAI_BASE_URL": "https://api.openai.com/v1"}, clear=True):
+            cfg2 = Config.from_env()
+            self.assertTrue(cfg2.ai.vision_enabled)
+
+        with mock.patch.dict("os.environ", {**base_env, "ZAI_BASE_URL": "https://api.z.ai/api/coding/paas/v4", "AI_VISION_ENABLED": "true"}, clear=True):
+            cfg3 = Config.from_env()
+            self.assertTrue(cfg3.ai.vision_enabled)
+
+
 
 

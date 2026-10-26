@@ -515,6 +515,7 @@ RELEASE_LATIN_NAMES: dict[str, str] = {
     "1993-karmannyi-mir": "Karmannyi Mir",
     "2004-tak-sluchaetsia": "Tak Sluchaetsia",
     "2010-naposledok": "Naposledok...",
+    "1996-bodro-po-dobromu": "Bodro po dobromu",
     "1998-zhdite-izoptitsa": "Zhdite Izoptitsa",
     "2007-chernoviaki": "Chernoviaki",
     "1998-pervaia-zapis": "Pervaia zapis",

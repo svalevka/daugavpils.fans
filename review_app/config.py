@@ -54,6 +54,7 @@ class AiConfig:
     model: str = "glm-5.1"
     confidence_threshold: float = 0.80
     timeout_seconds: float = 30.0
+    vision_enabled: bool = True
 
     @property
     def effective_text_mode(self) -> str:
@@ -197,6 +198,11 @@ class Config:
                 model=os.environ.get("ZAI_MODEL", "glm-5.1"),
                 confidence_threshold=float(os.environ.get("AI_CONFIDENCE_THRESHOLD", "0.80")),
                 timeout_seconds=float(os.environ.get("AI_TIMEOUT_SECONDS", "30.0")),
+                vision_enabled=(
+                    os.environ["AI_VISION_ENABLED"].lower() in ("true", "1", "yes")
+                    if "AI_VISION_ENABLED" in os.environ
+                    else "api.z.ai" not in os.environ.get("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/v4").lower()
+                ),
             ),
 
             youtube_cookies_path=(
