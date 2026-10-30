@@ -1,0 +1,132 @@
+'@type': MusicAlbum
+name: Записи 1997 года
+slug: 1997-zapisi-1997-goda
+datePublished: '1997'
+byArtist: yura-satan
+genre:
+- Acoustic Punk
+- Underground Rock
+- Bard Punk
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: '- as described by Vantuz: Кто переписывал у меня грузию и Кузя тоже
+  Юру писал они с Сашкой и Кузей в одном подъезде жили. Ещё там где кришнаиты (дом
+  санитарного просвещения в СССР) одно время был типа рок клуб. Там сатан с Слэйером
+  на акустах концерт давали. Сомневаюсь что было записано.Да Кузя писал. Только у
+  него такой аналоговый ревербератор был и по саунду слышно что он.'
+description_en: '- as described by Vantuz: Someone re-recorded Georgia from me, and
+  Kuzya also recorded Yura, they lived in the same entryway with Sashka and Kuzya.
+  Also where the Krishnas are (the House of Sanitary Education in the USSR) for a
+  time there was like a rock club. There Satan and Slayer played an acoustic gig.
+  I doubt it was recorded. Yes, Kuzya recorded it. Only he had that kind of analog
+  reverberator and you can tell by the sound that it''s him.'
+description_lv: '- kā stāsta Vantuzs: Kāds pārrakstīja no manis «Gruziju», un Kuzja
+  arī ierakstīja Juru, viņi ar Sašku un Kuzju dzīvoja vienā kāpņutelpā. Vēl tur, kur
+  krišnaiti (PSRS sanitārās izglītības nams), kādu laiku bija tāds kā rokklubs. Tur
+  Satans ar Slejeru uz akustiskajām ģitārām sniedza koncertu. Šaubos, vai tas tika
+  ierakstīts. Jā, Kuzja ierakstīja. Tikai viņam bija tāds analogs reverbs, un pēc
+  skanējuma var dzirdēt, ka tas ir viņš.'
+creditText:
+- Геннадий «Кузя» Кузьмин — запись
+creditText_en:
+- Gennady "Kuzya" Kuzmin — recording
+creditText_lv:
+- Gennādijs «Kuzja» Kuzmins — ieraksts
+sameAs:
+- https://archive.org/details/daugavpils-fans-yura-satan-1997-zapisi-1997-goda
+- https://archive.org/download/daugavpils-fans-yura-satan-1997-zapisi-1997-goda/daugavpils-fans-yura-satan-1997-zapisi-1997-goda_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Хорошо
+  audio:
+    '@type': AudioObject
+    contentUrl: 01-khorosho.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT2M7S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f6177021579614b3be4910e2beb1322494203942b99c1ec1c74ed5d27ed89ddf
+- '@type': MusicRecording
+  position: 2
+  name: Черный ворон
+  audio:
+    '@type': AudioObject
+    contentUrl: 02-chernyi-voron.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT1M42S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2d1b27d41eb9a01a25544ab2a86b9b39f31a32f88e1ab7d85cd45cc4b0aecafe
+  alternateName: Чёрный ворон
+- '@type': MusicRecording
+  position: 3
+  name: Листовка
+  audio:
+    '@type': AudioObject
+    contentUrl: 03-listovka.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M9S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 447329c8402c67d65c9d1c0897945f09a681c3a845793edbc6e0e870827196c6
+- '@type': MusicRecording
+  position: 4
+  name: Родина
+  audio:
+    '@type': AudioObject
+    contentUrl: 04-rodina.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT2M29S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 80fa3e7afc1738b1bae316d52b4f2aa4689c6c5a31413797338635b6ec732991
+- '@type': MusicRecording
+  position: 5
+  name: Полицейский произвол
+  audio:
+    '@type': AudioObject
+    contentUrl: 05-politseiskii-proizvol.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT1M28S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6d941a0619183cf5865f7640a134f1f52f5f862e1c662337e2bc71b695e4f880
+- '@type': MusicRecording
+  position: 6
+  name: Очередь за солнцем
+  audio:
+    '@type': AudioObject
+    contentUrl: 06-ochered-za-solntsem.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT2M18S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9a1a814fdde89e503ad95ceb8a35e0c43ac7028fb4e50ada31cec6ffac0b767f
+- '@type': MusicRecording
+  position: 7
+  name: Родина (вариант)
+  audio:
+    '@type': AudioObject
+    contentUrl: 07-rodina-variant.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT2M30S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: c03ddb918f2f2dd47a18891da88ef8d83cbd9b276ffb1fd2d39d122e63a7e7bf
+  alternateName: Родина 2
+image: []
+video: []
