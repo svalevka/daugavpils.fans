@@ -1,0 +1,50 @@
+'@type': MusicGroup
+name: Кислая Изба
+slug: kislaya-izba
+alternateName:
+- Kislaya Izba
+foundingDate: '1998'
+dissolutionDate: '1998'
+location: Valmiera / Daugavpils, Latvia
+genre:
+- Lo-Fi
+- Punk Rock
+- Indie Rock
+- Experimental Rock
+member:
+- name: Владислав «Вайда» Петкун
+  name_en: Vladislav "Vaida" Petkun
+  name_lv: Vladislavs «Vaida» Petkuns
+  role: вокал, гитара, музыка, стихи
+  role_en: vocals, guitar, music, lyrics
+  role_lv: vokāls, ģitāra, mūzika, dzeja
+  period: '1998'
+- name: Александр «Конь» Конев
+  name_en: Aleksandr "Kon" Konev
+  name_lv: Aleksandrs «Zirgs» Koņevs
+  role: вокал, бас-гитара, гитара
+  role_en: vocals, bass guitar, guitar
+  role_lv: vokāls, basģitāra, ģitāra
+  period: '1998'
+description: «Кислая Изба» — совместный лоу-фай и андеграундный панк-рок проект Александра
+  «Коня» Конева (Валмиера, лидер группы «Спички и Кеды») и Владислава «Вайды» Петкуна
+  (Даугавпилс, гитарист и автор песен «M. Spirit» и «Глазки Стекольщика»). Весной
+  1998 года дуэт записал магнитоальбом «Весна Девяносто Восьмого», сочетающий сырой
+  панк, инди-рок, гаражный лоу-фай и абсурдистский юмор, включая кавер на песню «Something
+  Against You» группы Pixies.
+description_en: '"Kislaya Izba" (Sour Hut) was a lo-fi underground punk rock collaboration
+  between Aleksandr "Kon" Konev (Valmiera, frontman of "Spichki i Kedy") and Vladislav
+  "Vaida" Petkun (Daugavpils, guitarist and songwriter for "M. Spirit" and "Glazki
+  Stekolshchika"). In the spring of 1998, the duo recorded the cassette album "Vesna
+  Devyanosto Vosmogo" (Spring of 98), blending raw punk, indie rock, lo-fi aesthetics,
+  and absurdist humor, alongside a cover of Pixies "Something Against You".'
+description_lv: «Kislaja Izba» («Skābā būdiņa») bija Aleksandra «Zirga» Koņeva (Valmiera,
+  grupas «Spichki i Kedy» līderis) un Vladislava «Vaidas» Petkuna (Daugavpils, grupu
+  «M. Spirit» un «Glazki Stekoļščika» ģitārists un dziesmu autors) kopīgs lo-fi pagrīdes
+  pankroka projekts. 1998. gada pavasarī duets ierakstīja kasešu albumu «Vesna Devjanosto
+  Vosmogo» («Deviņdesmit astotā gada pavasaris»), kurā apvienots jēls panks, indie
+  roks, lo-fi estētika un absurds humors, tostarp grupas Pixies dziesmas «Something
+  Against You» kaverversija.
+sameAs: []
+image: []
+video: []

@@ -12,43 +12,59 @@ genre:
 member:
 - name: Эд
   name_en: Ed
+  name_lv: Eds
   role: вокал, гитара
   role_en: vocals, guitar
+  role_lv: vokāls, ģitāra
   period: '1998'
 - name: Валерий «Варик»
   name_en: Valery "Varik"
+  name_lv: Valērijs «Variks»
   role: бас, вокал
   role_en: bass, vocals
+  role_lv: bass, vokāls
   period: 1998-2005
 - name: Руслан «Гоблин» Кондрусь
   name_en: Ruslan "Goblin" Kondrus
+  name_lv: Ruslans «Goblins» Kondruss
   role: гитара
   role_en: guitar
+  role_lv: ģitāra
   period: '1998'
 - name: Геннадий «Кузя» Кузьмин
   name_en: Gennady "Kuzya" Kuzmin
+  name_lv: Gennādijs «Kuzja» Kuzmins
   role: гитара, аккордеон
   role_en: guitar, accordion
+  role_lv: ģitāra, akordeons
   period: 1998-2003
 - name: Вадим «Вадя» Сидоров
   name_en: Vadim "Vadya" Sidorov
+  name_lv: Vadims «Vadja» Sidorovs
   role: ударные
   role_en: drums
+  role_lv: sitamie instrumenti
   period: 1998-2005
 - name: Слоик
   name_en: Sloik
+  name_lv: Sloiks
   role: вокал
   role_en: vocals
+  role_lv: vokāls
   period: '2003'
 - name: Олита Кузьмина
   name_en: Olita Kuzmina
+  name_lv: Olita Kuzmina
   role: вокал
   role_en: vocals
+  role_lv: vokāls
   period: '2005'
 - name: Арманд
   name_en: Armand
+  name_lv: Armands
   role: гитара
   role_en: guitar
+  role_lv: ģitāra
   period: '2005'
 description: '- У меня есть пару вещей. Попробуем сделать?
 

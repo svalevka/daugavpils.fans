@@ -1,0 +1,123 @@
+'@type': MusicGroup
+name: Спички и Кеды
+slug: spichki-i-kedy
+alternateName:
+- Spichki i Kedy
+- Спички
+foundingDate: '1999'
+dissolutionDate: '2004'
+location: Valmiera, Latvia
+genre:
+- Punk Rock
+- Ska Punk
+- Reggae
+member:
+- name: Александр «Конь» Конев
+  name_en: Aleksandr "Kon" Konev
+  name_lv: Aleksandrs «Zirgs» Koņevs
+  role: вокал, гитара, бэк-вокал
+  role_en: vocals, guitar, backing vocals
+  role_lv: vokāls, ģitāra, bekvokāls
+  period: 1999-2004
+- name: Лёва
+  name_en: Lyova
+  name_lv: Ļova
+  role: бас-гитара, бэк-вокал
+  role_en: bass guitar, backing vocals
+  role_lv: basģitāra, bekvokāls
+  period: 1999-2004
+- name: Енот
+  name_en: Enot
+  name_lv: Jenots
+  role: ударные, бонги, бэк-вокал
+  role_en: drums, bongos, backing vocals
+  role_lv: sitamie instrumenti, bongo, bekvokāls
+  period: 1999-2004
+- name: Кришьянис
+  name_en: Krišjānis
+  name_lv: Krišjānis
+  role: бонги, перкуссия
+  role_en: bongos, percussion
+  role_lv: bongo, perkusijas
+  period: 1999-2004
+- name: Потс
+  name_en: Pots
+  name_lv: Pots
+  role: бонги, перкуссия
+  role_en: bongos, percussion
+  role_lv: bongo, perkusijas
+  period: 1999-2004
+description: Группа «Спички и Кеды» была образована осенью 1999 года в Валмиере Александром
+  «Конём» Коневым. Коллектив играл задорный панк-рок с элементами ска-панка и регги,
+  вдохновляясь латвийской андеграундной сценой (включая даугавпилсский панк, в частности
+  группу «M. Spirit») и независимой культурой 1990-х. Группа активно выступала в Валмиере,
+  Риге и других городах Латвии. В 2002 году коллектив записал полноформатный альбом
+  «И кто ты после этого?», в который вошли четырнадцать треков, включая кавер-версии
+  на «...16; 17...» группы M. Spirit и «Лечебницу» питерской «Химеры». Группа просуществовала
+  до 2004 года.
+description_en: '"Spichki i Kedy" (Matches and Sneakers) was formed in the autumn
+  of 1999 in Valmiera, Latvia, by Aleksandr "Kon" Konev. The band played upbeat punk
+  rock infused with ska-punk and reggae rhythms, drawing inspiration from the Latvian
+  underground scene (including Daugavpils punk and M. Spirit) and 1990s indie culture.
+  They actively performed in Valmiera, Riga, and across Latvia. In 2002, the band
+  recorded their full-length album "I kto ty posle etogo?" (And Who Are You After
+  That?), featuring 14 tracks alongside covers of M. Spirits "...16; 17..." and Saint
+  Petersburg band Chimeras "Lechebnitsa". The band was active until 2004.'
+description_lv: Grupa «Spichki i Kedy» («Sērkociņi un kedas») tika dibināta 1999.
+  gada rudenī Valmierā, tās dibinātājs un līderis bija Aleksandrs «Zirgs» Koņevs.
+  Kolektīvs spēlēja enerģisku pankroku ar ska-panka un regeja elementiem, iedvesmojoties
+  no Latvijas pagrīdes mūzikas (tostarp Daugavpils panka un grupas «M. Spirit») un
+  1990. gadu neatkarīgās kultūras. Grupa aktīvi koncertēja Valmierā, Rīgā un citās
+  Latvijas pilsētās. 2002. gadā tapa pilna garuma albums «I kto ty posle etogo?» («Un
+  kas tu pēc tā esi?»), kurā iekļauti 14 skaņdarbi, tostarp Daugavpils grupas M. Spirit
+  («...16; 17...») un Sanktpēterburgas grupas «Himera» («Lečebņica») kaverversijas.
+  Grupa pastāvēja līdz 2004. gadam.
+sameAs:
+- https://archive.org/details/daugavpils-fans-spichki-i-kedy
+- https://archive.org/download/daugavpils-fans-spichki-i-kedy/daugavpils-fans-spichki-i-kedy_archive.torrent
+image:
+- '@type': ImageObject
+  contentUrl: media/spichki-i-kedy-band-photo.jpg
+  caption: Группа «Спички и Кеды» (Енот, Лёва, Конь). Фото для буклета фестиваля,
+    опубликованное в зине «Не стесняйся, сделай копию» №1 (2001).
+  caption_en: 'Spichki i Kedy (Enot, Lyova, Kon). Festival booklet photo published
+    in zine "Ne stesnyaisya, sdelai kopiyu" #1 (2001).'
+  caption_lv: Grupa «Spichki i Kedy» (Jenots, Ļova, Zirgs). Festivāla bukleta fotoattēls,
+    publicēts zīnā «Ne steņajsja, sdelaj kopiju» Nr. 1 (2001).
+  contentLocation: Valmiera, Latvia
+  depicts:
+  - Александр «Конь» Конев
+  - Лёва
+  - Енот
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7181dcb4fc388d854e6cbfb45b6288c13fe1ab442bbbadb1934b11493e96e954
+  encodingFormat: image/jpeg
+- '@type': ImageObject
+  contentUrl: media/spichki-i-kedy-zine-interview-p1.jpg
+  caption: Интервью группы «Спички и Кеды» в самиздат-зине «Не стесняйся, сделай копию»
+    №1 (2001), страница 1.
+  caption_en: 'Interview with Spichki i Kedy in DIY zine "Ne stesnyaisya, sdelai kopiyu"
+    #1 (2001), page 1.'
+  caption_lv: Grupas «Spichki i Kedy» intervija pašizdota zīnā «Ne steņajsja, sdelaj
+    kopiju» Nr. 1 (2001), 1. lappuse.
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 009e7b6676e5e74a3c4c61f4d4630a074b7b1e145b480a536b0aeaf6d6c45242
+  encodingFormat: image/jpeg
+- '@type': ImageObject
+  contentUrl: media/spichki-i-kedy-zine-interview-p2.jpg
+  caption: Интервью группы «Спички и Кеды» в самиздат-зине «Не стесняйся, сделай копию»
+    №1 (2001), страница 2.
+  caption_en: 'Interview with Spichki i Kedy in DIY zine "Ne stesnyaisya, sdelai kopiyu"
+    #1 (2001), page 2.'
+  caption_lv: Grupas «Spichki i Kedy» intervija pašizdota zīnā «Ne steņajsja, sdelaj
+    kopiju» Nr. 1 (2001), 2. lappuse.
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: a22a896eaff9ddb04024af53ed4a54a63fe32569bf16f6aa4cfb27e2dd22beb0
+  encodingFormat: image/jpeg
+video: []

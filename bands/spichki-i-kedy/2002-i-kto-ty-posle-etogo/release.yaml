@@ -1,0 +1,244 @@
+'@type': MusicAlbum
+name: И кто ты после этого?
+slug: 2002-i-kto-ty-posle-etogo
+datePublished: '2002'
+byArtist: spichki-i-kedy
+genre:
+- Punk Rock
+- Ska Punk
+- Reggae
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: Альбом «И кто ты после этого?» записан группой «Спички и Кеды» в 2002
+  году в Валмиере. В альбом вошли четырнадцать треков, сочетающих прямолинейный панк-рок,
+  бодрящий ска и регги, а также дань уважения дружественным коллективам — кавер на
+  «...16; 17...» даугавпилсской группы M. Spirit и «Лечебницу» группы Химера.
+description_en: 'The album "I kto ty posle etogo?" (And Who Are You After That?) was
+  recorded by Spichki i Kedy in 2002 in Valmiera. The 14-track release combines straightforward
+  punk rock, upbeat ska, and reggae, alongside tributes to kindred underground bands:
+  a cover of Daugavpils band M. Spirits "...16; 17..." and Saint Petersburg band Chimeras
+  "Lechebnitsa".'
+description_lv: Albumu «I kto ty posle etogo?» («Un kas tu pēc tā esi?») grupa «Spichki
+  i Kedy» ierakstīja 2002. gadā Valmierā. Četrpadsmit skaņdarbu izlasē apvienots tiešs
+  pankroks, enerģisks ska un regejs, kā arī veltījumi radniecīgām pagrīdes grupām
+  — Daugavpils grupas M. Spirit dziesmas «...16; 17...» un Sanktpēterburgas grupas
+  «Himera» dziesmas «Lečebņica» kaverversijas.
+creditText:
+- Александр «Конь» Конев — вокал, гитара
+- Лёва — бас-гитара, бэк-вокал
+- Енот — ударные, бонги, бэк-вокал
+- Кришьянис — бонги, перкуссия
+- Потс — бонги, перкуссия
+creditText_en:
+- Aleksandr "Kon" Konev — vocals, guitar
+- Lyova — bass guitar, backing vocals
+- Enot — drums, bongos, backing vocals
+- Krišjānis — bongos, percussion
+- Pots — bongos, percussion
+creditText_lv:
+- Aleksandrs «Zirgs» Koņevs — vokāls, ģitāra
+- Ļova — basģitāra, bekvokāls
+- Jenots — sitamie instrumenti, bongo, bekvokāls
+- Krišjānis — bongo, perkusijas
+- Pots — bongo, perkusijas
+sameAs:
+- https://archive.org/details/daugavpils-fans-spichki-i-kedy-2002-i-kto-ty-posle-etogo
+- https://archive.org/download/daugavpils-fans-spichki-i-kedy-2002-i-kto-ty-posle-etogo/daugavpils-fans-spichki-i-kedy-2002-i-kto-ty-posle-etogo_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: В нашу пользу
+  alternateName: v nashu poljzu
+  audio:
+    '@type': AudioObject
+    contentUrl: 01-v-nashu-polzu.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M43S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f1d5beb71229d138fa382233c20581e19421352c4aa990f0b0f7afc3a5342647
+- '@type': MusicRecording
+  position: 2
+  name: Погоны
+  alternateName: pogoni
+  audio:
+    '@type': AudioObject
+    contentUrl: 02-pogoni.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M54S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ca1043c5c273c2d3e138bfe49559a764257bd38008ef9bbaf460e3e209b55310
+- '@type': MusicRecording
+  position: 3
+  name: Гуляя по городу
+  alternateName: gulyaya po gorodu
+  audio:
+    '@type': AudioObject
+    contentUrl: 03-guliaia-po-gorodu.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M51S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a41fb58c8bf4900797cda5b3865c9ca3651273ddbd62259d6dfa03c8b6094da6
+- '@type': MusicRecording
+  position: 4
+  name: В последнее время
+  alternateName: v poslednee vremya
+  audio:
+    '@type': AudioObject
+    contentUrl: 04-v-poslednee-vremia.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT3M44S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0475b2ccbb29fc63b29c2c7cf1fe93fda50ce6a276eb23aabee1e3319e095b3e
+- '@type': MusicRecording
+  position: 5
+  name: Ходят люди
+  alternateName: hodyat lyudi
+  audio:
+    '@type': AudioObject
+    contentUrl: 05-khodiat-liudi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M1S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e1dfe108093b1e86eaf97fb9a6f4bae75bf46685f89ba03595444bbe2e353331
+- '@type': MusicRecording
+  position: 6
+  name: Хорошо
+  alternateName: horosho
+  audio:
+    '@type': AudioObject
+    contentUrl: 06-khorosho.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT3M15S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d469da2f245f07b19c178a992f15a87cab95a2cb364b2863fd74bdc6d51a5fd3
+- '@type': MusicRecording
+  position: 7
+  name: '...16; 17... [M. Spirit cover]'
+  alternateName: '...16; 17...'
+  audio:
+    '@type': AudioObject
+    contentUrl: 07-16-17.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M5S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: bd20143e66ef21ba62d66e2fdda87963836747f7c9a93c494fd6d505b42d0bf5
+- '@type': MusicRecording
+  position: 8
+  name: Не стой под грузом
+  alternateName: ne stoi pod gruzom
+  audio:
+    '@type': AudioObject
+    contentUrl: 08-ne-stoi-pod-gruzom.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M49S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 440706160150e1e287db7fe84b6a2eeec1f3da73eabf2ab984cd34e15902904f
+- '@type': MusicRecording
+  position: 9
+  name: Игрушки [в клетке]
+  alternateName: igrushki [v kletke]
+  audio:
+    '@type': AudioObject
+    contentUrl: 09-igrushki-v-kletke.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT3M51S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 729c06d973a100eb902060e928e12c1dfb7680bc616f31f8ae68688fc9fc33e1
+- '@type': MusicRecording
+  position: 10
+  name: Сегодня пятница
+  alternateName: segodnya pyatnica
+  audio:
+    '@type': AudioObject
+    contentUrl: 10-segodnia-piatnitsa.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M36S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 00659f19999c2aaca6e24c409ba3083697122c3deb8c99e858c964c1087496d8
+- '@type': MusicRecording
+  position: 11
+  name: Война
+  alternateName: voina
+  audio:
+    '@type': AudioObject
+    contentUrl: 11-voina.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT3M38S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 81208c07aaab708babf530081528cee2d4892e069a62fd290eee110e5079099d
+- '@type': MusicRecording
+  position: 12
+  name: Уроки насилия
+  alternateName: uroki nasiliya
+  audio:
+    '@type': AudioObject
+    contentUrl: 12-uroki-nasiliia.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT3M7S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 80255b9c7152593a53bd92262f3cf0591a5d9e8df8fb7e17f209cdba8c633cb4
+- '@type': MusicRecording
+  position: 13
+  name: Лечебница [Химера cover]
+  alternateName: lechebnica
+  audio:
+    '@type': AudioObject
+    contentUrl: 13-lechebnitsa.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M54S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0860dc00263f0c6143332ce3d3da30d9057da7f7911225474023ef602514b20d
+- '@type': MusicRecording
+  position: 14
+  name: Тепла семена
+  alternateName: tepla semena
+  audio:
+    '@type': AudioObject
+    contentUrl: 14-tepla-semena.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M40S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 42c962dcfb23793a90ac2d78d372ced83bcc34ea7ac8704f84ae6a41ec38ba05
+image: []
+video: []

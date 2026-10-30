@@ -1,0 +1,192 @@
+'@type': MusicAlbum
+name: Весна Девяносто Восьмого
+slug: 1998-vesna-devianosto-vosmogo
+datePublished: '1998'
+byArtist: kislaya-izba
+genre:
+- Lo-Fi
+- Punk Rock
+- Indie Rock
+- Experimental Rock
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: Альбом «Весна Девяносто Восьмого» записан весной 1998 года дуэтом Александра
+  «Коня» Конева (Валмиера) и Владислава «Вайды» Петкуна (Даугавпилс). Домашняя лоу-фай
+  запись на аудиокассету, полная спонтанной энергии, экспериментальных ходов и рок-н-ролльного
+  драйва.
+description_en: The album "Vesna Devyanosto Vosmogo" (Spring of 98) was recorded in
+  spring 1998 by the duo of Aleksandr "Kon" Konev (Valmiera) and Vladislav "Vaida"
+  Petkun (Daugavpils). A home lo-fi cassette recording filled with spontaneous energy,
+  experimental ideas, and pure rock n roll spirit.
+description_lv: Albumu «Vesna Devjanosto Vosmogo» («Deviņdesmit astotā gada pavasaris»)
+  1998. gada pavasarī ierakstīja Aleksandra «Zirga» Koņeva (Valmiera) un Vladislava
+  «Vaidas» Petkuna (Daugavpils) duets. Mājas lo-fi kasetes ieraksts, piesātināts ar
+  spontānu enerģiju, eksperimentāliem gājieniem un rokenrola duku.
+creditText:
+- Владислав «Вайда» Петкун — вокал, гитара
+- Александр «Конь» Конев — вокал, бас-гитара
+creditText_en:
+- Vladislav "Vaida" Petkun — vocals, guitar
+- Aleksandr "Kon" Konev — vocals, bass guitar
+creditText_lv:
+- Vladislavs «Vaida» Petkuns — vokāls, ģitāra
+- Aleksandrs «Zirgs» Koņevs — vokāls, basģitāra
+sameAs:
+- https://archive.org/details/daugavpils-fans-kislaya-izba-1998-vesna-devianosto-vosmogo
+- https://archive.org/download/daugavpils-fans-kislaya-izba-1998-vesna-devianosto-vosmogo/daugavpils-fans-kislaya-izba-1998-vesna-devianosto-vosmogo_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Весна (попытка №1)
+  alternateName: 01 Vesna [popitka#1]
+  audio:
+    '@type': AudioObject
+    contentUrl: 01-vesna-popitka-1.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M2S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 8e56cf5d393f48e6943325b1f39b7b0d5c6df242ab61fc9dddde4452bb2822fe
+- '@type': MusicRecording
+  position: 2
+  name: Весна (попытка №2)
+  alternateName: 02 Vesna [popitka#2]
+  audio:
+    '@type': AudioObject
+    contentUrl: 02-vesna-popitka-2.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M53S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5fe27e3f8a8f3069ccfe736dcf7960eb752186ff7c86efaf1166a765ac3836a3
+- '@type': MusicRecording
+  position: 3
+  name: Без злого умысла
+  alternateName: Bez Zlogo Umisla
+  audio:
+    '@type': AudioObject
+    contentUrl: 03-bez-zlogo-umysla.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M30S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3da756150ff0ffba4b323aa5a2f3a17ece16243352c62af4ca11d5b824de2b7d
+- '@type': MusicRecording
+  position: 4
+  name: Параллельные миры прорываются в сны
+  alternateName: Paralleljniye Miri Prorivayutsya V Sni
+  audio:
+    '@type': AudioObject
+    contentUrl: 04-parallelnye-miry-proryvaiutsia-v-sny.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT3M19S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 541bd34e75d2586902035edc7eab8bf33bfb9a70021154fbe98fa7588045e88f
+- '@type': MusicRecording
+  position: 5
+  name: Бунт деревьев
+  alternateName: Bunt Derevjyev
+  audio:
+    '@type': AudioObject
+    contentUrl: 05-bunt-derevev.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M1S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1f83d9980b223a6b7726bdd1d16b00e0b0e663766bf6125cabdbb6546f922f10
+- '@type': MusicRecording
+  position: 6
+  name: Механизмуссс
+  alternateName: Mehanizmuss
+  audio:
+    '@type': AudioObject
+    contentUrl: 06-mekhanizmuss.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M18S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 944269d4a404c08e437e387240c1c87899cf76117b37c66efe1418030d08f38f
+- '@type': MusicRecording
+  position: 7
+  name: Пивная песня
+  alternateName: Pivnaya Pesnya
+  audio:
+    '@type': AudioObject
+    contentUrl: 07-pivnaia-pesnia.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT46S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 36e61fd68f78324da39edf3f3fe7e331a71fc914aabd2f154e202a9eb3335474
+- '@type': MusicRecording
+  position: 8
+  name: Как бы джаз
+  alternateName: Как бы Джязззззззз
+  audio:
+    '@type': AudioObject
+    contentUrl: 08-kak-by-dzhaz.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M23S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: b753d1d9b9c2a4f47dc68cad1ffc5fe1deee3f28fd612495a812a25defe60e75
+- '@type': MusicRecording
+  position: 9
+  name: Без названия
+  alternateName: Unknown Track
+  audio:
+    '@type': AudioObject
+    contentUrl: 09-bez-nazvaniia.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M52S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 2f45ddecbe9c497f88b2cc5a56790723a12673a270a9d9a28eb8542c46999112
+- '@type': MusicRecording
+  position: 10
+  name: Обои
+  alternateName: Oboi
+  audio:
+    '@type': AudioObject
+    contentUrl: 10-oboi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT2M18S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 395c9b84e47425705e966cc1bdd3a415039054e20739e333062bedd0d0bf7183
+- '@type': MusicRecording
+  position: 11
+  name: Something Against You [Pixies cover]
+  alternateName: Something Against You
+  audio:
+    '@type': AudioObject
+    contentUrl: 11-something-against-you.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 320 kbps
+    duration: PT1M7S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 40923dbf80b378e13a779275c52275e09e32fed1efc74b9c5a06c57e3e37f57e
+image: []
+video: []

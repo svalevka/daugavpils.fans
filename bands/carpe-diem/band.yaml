@@ -12,23 +12,31 @@ genre:
 member:
 - name: Геннадий «Кузя» Кузьмин
   name_en: Gennady "Kuzya" Kuzmin
+  name_lv: Gennādijs «Kuzja» Kuzmins
   role: вокал, гитара
   role_en: vocals, guitar
+  role_lv: vokāls, ģitāra
   period: 1996-2000
 - name: Валерий «Варик»
   name_en: Valery "Varik"
+  name_lv: Valērijs «Variks»
   role: бас
   role_en: bass
+  role_lv: bass
   period: '1996'
 - name: Павел «Паша» Петров
   name_en: Pavel "Pasha" Petrov
+  name_lv: Pāvils «Paša» Petrovs
   role: бас
   role_en: bass
+  role_lv: bass
   period: '2000'
 - name: Андрей Зелч
   name_en: Andrei Zelch
+  name_lv: Andris Zelčs
   role: ударные
   role_en: drums
+  role_lv: bungas
   period: 1996-2000
 description: 'Группа Carpe Diem основана в 1996 году. После распада группы Quasimodo,
   бывшие участники этой группы Кузя и Варик, после длительных уговоров между собой,

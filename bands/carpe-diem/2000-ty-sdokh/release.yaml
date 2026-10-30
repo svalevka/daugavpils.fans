@@ -1,0 +1,164 @@
+'@type': MusicAlbum
+name: Ты Сдох
+slug: 2000-ty-sdokh
+datePublished: '2000'
+byArtist: carpe-diem
+genre:
+- Funk
+- Rhythm and Blues
+- Alternative Rock
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description: 'В 2000 году группа Carpe Diem записала альбом «Ты Сдох» в составе: Кузя
+  (вокал, гитара), Паша Петров (бас), Андрей Зелч (ударные).'
+description_en: 'In 2000, Carpe Diem recorded the album "Ty Sdokh" (You Croaked) with
+  the lineup: Kuzya (vocals, guitar), Pasha Petrov (bass), and Andrei Zelch (drums).'
+description_lv: '2000. gadā grupa «Carpe Diem» ierakstīja albumu «Ty Sdokh» («Tu nosprāgi»)
+  sastāvā: Kuzja (vokāls, ģitāra), Paša Petrovs (bass) un Andris Zelčs (bungas).'
+creditText:
+- Геннадий «Кузя» Кузьмин — вокал, гитара
+- Павел «Паша» Петров — бас-гитара
+- Андрей Зелч — ударные
+creditText_en:
+- Gennady "Kuzya" Kuzmin — vocals, guitar
+- Pavel "Pasha" Petrov — bass guitar
+- Andrei Zelch — drums
+creditText_lv:
+- Gennādijs «Kuzja» Kuzmins — vokāls, ģitāra
+- Pāvils «Paša» Petrovs — basģitāra
+- Andris Zelčs — sitamie instrumenti
+sameAs:
+- https://archive.org/details/daugavpils-fans-carpe-diem-2000-ty-sdokh
+- https://archive.org/download/daugavpils-fans-carpe-diem-2000-ty-sdokh/daugavpils-fans-carpe-diem-2000-ty-sdokh_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: Слепой
+  audio:
+    '@type': AudioObject
+    contentUrl: 01-slepoi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT3M57S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 3c743103668d46ce1a168c535a49dec19635e87ee6ae2f60a5a07d71fc131e02
+- '@type': MusicRecording
+  position: 2
+  name: Черт
+  audio:
+    '@type': AudioObject
+    contentUrl: 02-chert.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT5M48S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0e7968cbeac66b4d160ac9415c1c18bda1731bf5e8c0b21f4ad4c8ade875e29f
+- '@type': MusicRecording
+  position: 3
+  name: Туда где
+  audio:
+    '@type': AudioObject
+    contentUrl: 03-tuda-gde.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M39S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 096bfedd2d09377d7d5d04e157d1c17ea19bc0f418925aa3290aa2db19694de0
+- '@type': MusicRecording
+  position: 4
+  name: Обреченная
+  audio:
+    '@type': AudioObject
+    contentUrl: 04-obrechennaia.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT5M8S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0bad01dfa28ceac375888541e47eda13102ee401d6cf54a68031eb784a839df8
+- '@type': MusicRecording
+  position: 5
+  name: Ты сдох
+  audio:
+    '@type': AudioObject
+    contentUrl: 05-ty-sdokh.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M43S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0fc06d3eb0bd2888d2ee47324a9e5264b357e5eae40cf3d8622ddf499f3b583b
+- '@type': MusicRecording
+  position: 6
+  name: Те, кто тонет
+  audio:
+    '@type': AudioObject
+    contentUrl: 06-te-kto-tonet.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M35S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 450e5d7d986ff30f5322f88d8364b4d5a622971cacab5e8357b0554f70685cf0
+- '@type': MusicRecording
+  position: 7
+  name: Умер твой мир
+  audio:
+    '@type': AudioObject
+    contentUrl: 07-umer-tvoi-mir.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M41S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: a544907725732a0eb9fa8cef6023859489f3f5732a19f3550edabff5ded2ea40
+- '@type': MusicRecording
+  position: 8
+  name: Прикол
+  audio:
+    '@type': AudioObject
+    contentUrl: 08-prikol.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT3M17S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e3ec88cad3c7319c28b0d6848b865fbdbc3124491fbbc78301a617abb32e560b
+- '@type': MusicRecording
+  position: 9
+  name: Ты всегда один
+  audio:
+    '@type': AudioObject
+    contentUrl: 09-ty-vsegda-odin.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M12S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: ba3d6a91c1d6a573442f1b168fc314b5e5b9dd769a446ee2133fc24b76c1f5a4
+- '@type': MusicRecording
+  position: 10
+  name: Outro
+  audio:
+    '@type': AudioObject
+    contentUrl: 10-outro.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT3M27S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 5e805163afc89818715bc246c50bc209fea8a5a1e37c7a3c1df2f7b74c99f046
+image: []
+video: []

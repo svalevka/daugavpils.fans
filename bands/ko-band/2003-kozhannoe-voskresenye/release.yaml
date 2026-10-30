@@ -6,7 +6,9 @@ byArtist: ko-band
 genre:
 - Blues Rock
 - Underground Rock
-description: 'После первой записи Эд уехал в Ригу, Гоблин — в Чикаго. Из Лондона вернулся Слоик, и группа собралась в новом составе: репетиции, тусовки и запись альбома «Кожанное Воскресенье».
+description: 'После первой записи Эд уехал в Ригу, Гоблин — в Чикаго. Из Лондона вернулся
+  Слоик, и группа собралась в новом составе: репетиции, тусовки и запись альбома «Кожанное
+  Воскресенье».
 
 
   Состав:
@@ -18,7 +20,9 @@ description: 'После первой записи Эд уехал в Ригу, 
   Варик (бас)
 
   Вадим Сидоров (ударные)'
-description_en: 'After the first recording, Ed left for Riga and Goblin left for Chicago. Sloik returned from London, and the band recorded the album "Kozhannoye Voskresenye" (Leather Sunday).
+description_en: 'After the first recording, Ed left for Riga and Goblin left for Chicago.
+  Sloik returned from London, and the band recorded the album "Kozhannoye Voskresenye"
+  (Leather Sunday).
 
 
   Lineup:
@@ -34,33 +38,155 @@ track:
 - '@type': MusicRecording
   position: 1
   name: Jimm Morrison (cover)
+  audio:
+    '@type': AudioObject
+    contentUrl: 01-jimm-morrison-cover.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT3M50S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 85595edbacc3e284d9017dc67eb8c52ef821dc4def13ac790526b10c91392b4d
 - '@type': MusicRecording
   position: 2
   name: I see you
+  audio:
+    '@type': AudioObject
+    contentUrl: 02-i-see-you.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT2M59S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e5154c46f248edc8a09d53ec06ee015a105d3c4fe9c10cd0cc01138d68c1e5f3
 - '@type': MusicRecording
   position: 3
   name: Блюз
+  audio:
+    '@type': AudioObject
+    contentUrl: 03-bliuz.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT5M53S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f138c69219ca5e9157d9bdc41f530f8a673c2df0c2844c758a1c20195ba72766
 - '@type': MusicRecording
   position: 4
   name: Город
+  audio:
+    '@type': AudioObject
+    contentUrl: 04-gorod.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT2M58S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0c0e50045944ca92bc9b3abd31086664e833f712f671bda249f0831d14672636
 - '@type': MusicRecording
   position: 5
   name: Дамочка с сумочкой
+  audio:
+    '@type': AudioObject
+    contentUrl: 05-damochka-s-sumochkoi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT3M54S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 0b9887e8313fd800a5ddc60c1ea4bb68c6ce2a12b0bf8bd4e84d99a55ade2d98
 - '@type': MusicRecording
   position: 6
   name: Долой
+  audio:
+    '@type': AudioObject
+    contentUrl: 06-doloi.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M10S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 42e385032de0d066f50f80a6bdf74653f9702bd0fc335710a7f4999b386422e5
 - '@type': MusicRecording
   position: 7
   name: Как это просто
+  audio:
+    '@type': AudioObject
+    contentUrl: 07-kak-eto-prosto.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT5M2S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: cb888568fc1d48b18964635979561bed06d3ffdccfb05c6fb08a2846c0b54f10
 - '@type': MusicRecording
   position: 8
   name: Маки
+  audio:
+    '@type': AudioObject
+    contentUrl: 08-maki.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT6M37S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 660ef79c1a51031110ec7d0e3a56c932208ff3faaf2386e199a4a9e22f198265
 - '@type': MusicRecording
   position: 9
   name: Немного скучно
+  audio:
+    '@type': AudioObject
+    contentUrl: 09-nemnogo-skuchno.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT5M7S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e9ea771d462b4d8aafe1d0bdd251ee46204d79fd9761bba48a6afa3efbf51fcb
 - '@type': MusicRecording
   position: 10
   name: Негр
-sameAs: []
+  audio:
+    '@type': AudioObject
+    contentUrl: 10-negr.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT3M19S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: d2511d54075177632b6996d1fb0366e3462e244a2f1e8f9f44ec60b9c61b2016
+sameAs:
+- https://archive.org/details/daugavpils-fans-ko-band-2003-kozhannoe-voskresenye
+- https://archive.org/download/daugavpils-fans-ko-band-2003-kozhannoe-voskresenye/daugavpils-fans-ko-band-2003-kozhannoe-voskresenye_archive.torrent
 image: []
 video: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description_lv: 'Pēc pirmā ieraksta Eds aizbrauca uz Rīgu, bet Goblins uz Čikāgu.
+  No Londonas atgriezās Sloiks, un grupa sanāca jaunā sastāvā: mēģinājumi, tusēšanās
+  un albuma «Kožannoe Voskresenje» (Ādas svētdiena) ieraksts.
+
+
+
+  Sastāvs:
+
+
+  Sloiks (vokāls)
+
+
+  Kuzja (ģitāra)
+
+
+  Variks (bass)
+
+
+  Vadims Sidorovs (sitamie instrumenti)'

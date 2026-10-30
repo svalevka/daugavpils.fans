@@ -10,7 +10,9 @@ description: '- У меня есть пару вещей. Попробуем с�
 
   - Почему бы и нет? Давай.
 
-  Вот так на кухне Эда и было посажено семя, из которого в дальнейшем вырастет Ko Band. Изначально группа была задумана как временный проект: собрались ребята, поиграли, записали и баста.
+  Вот так на кухне Эда и было посажено семя, из которого в дальнейшем вырастет Ko
+  Band. Изначально группа была задумана как временный проект: собрались ребята, поиграли,
+  записали и баста.
 
 
   Состав первой записи (1998 год):
@@ -28,7 +30,8 @@ description_en: '"I have a couple of tunes. Shall we try working them out?"
 
   "Why not? Let''s do it."
 
-  And so, in Ed''s kitchen, the seed was planted from which Ko Band would eventually grow.
+  And so, in Ed''s kitchen, the seed was planted from which Ko Band would eventually
+  grow.
 
 
   Lineup for the first recording (1998):
@@ -46,21 +49,111 @@ track:
 - '@type': MusicRecording
   position: 1
   name: Время философов
+  audio:
+    '@type': AudioObject
+    contentUrl: 01-vremia-filosofov.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M32S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: af4bf71d4948b02c95d9b57babf31aabd85d82d293bf3655b7d72f40a9ec16c8
 - '@type': MusicRecording
   position: 2
   name: 8.08.98
+  audio:
+    '@type': AudioObject
+    contentUrl: 02-8-08-98.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M2S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: e14c2df395d99dd246316e514808bbe7607fb92a39984b717744a1db0f524eec
 - '@type': MusicRecording
   position: 3
   name: Скоростное шоссе
+  audio:
+    '@type': AudioObject
+    contentUrl: 03-skorostnoe-shosse.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT6M0S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 82d4e5ccbc1617d9d2b5e8cadac77ef5b4b5ce8d2a9b8a457cd48c3a68873298
 - '@type': MusicRecording
   position: 4
   name: И беда не беда
+  audio:
+    '@type': AudioObject
+    contentUrl: 04-i-beda-ne-beda.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M7S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: f7db6f2526ed787f3097659c7aaefea42182caff458443babcea8ce128e32ac9
 - '@type': MusicRecording
   position: 5
   name: Come on
+  audio:
+    '@type': AudioObject
+    contentUrl: 05-come-on.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT7M16S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 9da8981aeed4338fed848eba57b6f826da815e6d9a2226adf490ee1f663c5b93
 - '@type': MusicRecording
   position: 6
   name: Самое тихое утро
-sameAs: []
+  audio:
+    '@type': AudioObject
+    contentUrl: 06-samoe-tikhoe-utro.mp3
+    encodingFormat: audio/mpeg
+    bitrate: 192 kbps
+    duration: PT4M45S
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 6283c5e36db1b798e37b0764200dd76ab343183d0968a53e83134bb7719a94cc
+sameAs:
+- https://archive.org/details/daugavpils-fans-ko-band-1998-pervaia-zapis
+- https://archive.org/download/daugavpils-fans-ko-band-1998-pervaia-zapis/daugavpils-fans-ko-band-1998-pervaia-zapis_archive.torrent
 image: []
 video: []
+license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+description_lv: '- Vai man ir pāris dziesmu. Pamēģināsim uztaisīt?
+
+
+  - Kāpēc ne? Aiziet.
+
+
+  Tā Eda virtuvē tika iesēta sēkla, no kuras vēlāk izauga Ko Band. Sākotnēji grupa
+  tika iecerēta kā pagaidu projekts: sanāca puiši, uzspēlēja, ierakstīja un cauri.
+
+
+
+  Pirmā ieraksta sastāvs (1998. gads):
+
+
+  Eds (vokāls, ģitāra)
+
+
+  Variks (vokāls, bass)
+
+
+  Ruslans "Goblins" Kondruss (ģitāra)
+
+
+  Kuzja (ģitāra, akordeons)
+
+
+  Vadims Sidorovs (sitamie instrumenti)'
