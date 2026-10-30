@@ -11,8 +11,9 @@ sys.path.insert(0, str(REPO_ROOT / "webapp"))
 import re
 from pydantic import ValidationError
 
-from models import GroupMember, ImageObject, MusicAlbum, MusicGroup, MusicRecording
+from models import GroupMember, ImageObject, MusicAlbum, MusicGroup, MusicRecording, VideoObject
 from build import (
+    band_has_content,
     localize,
     localize_list,
     localize_genres,
@@ -267,6 +268,51 @@ class LatinZeroCyrillicTest(unittest.TestCase):
                     self.assertZeroCyrillic(c["display_name"])
                     for sb in c["shared_bands"]:
                         self.assertZeroCyrillic(sb)
+
+
+class BandHasContentTest(unittest.TestCase):
+    def test_band_with_no_releases_and_no_media_returns_false(self) -> None:
+        band = MusicGroup(name="Empty Band", slug="empty-band")
+        self.assertFalse(band_has_content(band, []))
+
+    def test_band_with_releases_returns_true(self) -> None:
+        band = MusicGroup(name="Band With Album", slug="band-with-album")
+        releases = [
+            MusicAlbum(
+                name="Album",
+                slug="album",
+                datePublished="2020",
+                byArtist="band-with-album",
+                track=[],
+            )
+        ]
+        self.assertTrue(band_has_content(band, releases))
+
+    def test_band_with_image_returns_true(self) -> None:
+        band = MusicGroup(
+            name="Band With Photo",
+            slug="band-with-photo",
+            image=[
+                ImageObject(
+                    contentUrl="media/photo.jpg",
+                    encodingFormat="image/jpeg",
+                )
+            ],
+        )
+        self.assertTrue(band_has_content(band, []))
+
+    def test_band_with_video_returns_true(self) -> None:
+        band = MusicGroup(
+            name="Band With Video",
+            slug="band-with-video",
+            video=[
+                VideoObject(
+                    contentUrl="media/concert.mp4",
+                    encodingFormat="video/mp4",
+                )
+            ],
+        )
+        self.assertTrue(band_has_content(band, []))
 
 
 if __name__ == "__main__":

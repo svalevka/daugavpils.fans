@@ -4,9 +4,11 @@ Static site builder for the Daugavpils Music Archive website (ADR-0001).
 
 Renders bands/**/*.yaml into plain HTML under webapp/dist/, once per
 language in i18n.LANGS (default "ru" at the site root, others under
-/<lang>/). No media (audio/image/video) is copied anywhere - the Site
-links directly to archive.org, where each band/release's media lives as
-its own item (see tools/archive_org.py, tools/publish_to_archive_org.py).
+/<lang>/). Bands without releases and without media are excluded from
+the static site build until content is contributed. No media
+(audio/image/video) is copied anywhere - the Site links directly to
+archive.org, where each band/release's media lives as its own item (see
+tools/archive_org.py, tools/publish_to_archive_org.py).
 
 Requires the archive to already pass tools/validate.py, and every
 referenced media file to already be published to archive.org - this
@@ -969,6 +971,14 @@ def needs_media_page(images: list, videos: list) -> bool:
     return len(images) > PHOTO_TEASER_LIMIT or len(videos) > VIDEO_TEASER_LIMIT
 
 
+def band_has_content(band: MusicGroup, releases: list[MusicAlbum]) -> bool:
+    """Return True if the band has at least one release or media item (image or video).
+
+    Bands without releases and without media are excluded from the static site build.
+    """
+    return bool(releases or band.image or band.video)
+
+
 def require_valid_archive() -> None:
     if os.environ.get("SITE_SKIP_LOCAL_VALIDATION"):
         print(
@@ -1334,15 +1344,28 @@ def build() -> None:
     env.globals["release_media_url"] = release_media_url
     env.globals["partial"] = partial
 
-    band_dirs = sorted(p for p in BANDS_DIR.iterdir() if p.is_dir())
-    bands = [load_band(d) for d in band_dirs]
-    releases_by_band: dict[str, list[MusicAlbum]] = {}
+    all_band_dirs = sorted(p for p in BANDS_DIR.iterdir() if p.is_dir())
+    all_bands = [load_band(d) for d in all_band_dirs]
+    all_releases_by_band: dict[str, list[MusicAlbum]] = {}
 
-    for band_dir, band in zip(band_dirs, bands):
+    for band_dir, band in zip(all_band_dirs, all_bands):
         release_dirs = sorted(
             p for p in band_dir.iterdir() if p.is_dir() and (p / "release.yaml").exists()
         )
-        releases_by_band[band.slug] = [load_release(d) for d in release_dirs]
+        all_releases_by_band[band.slug] = [load_release(d) for d in release_dirs]
+
+    bands = [
+        band
+        for band in all_bands
+        if band_has_content(band, all_releases_by_band[band.slug])
+    ]
+    releases_by_band = {
+        band.slug: all_releases_by_band[band.slug]
+        for band in bands
+    }
+    excluded_count = len(all_bands) - len(bands)
+    if excluded_count > 0:
+        print(f"Excluded {excluded_count} band(s) with no releases or media from site build.")
 
     require_media_published(bands, releases_by_band)
 
