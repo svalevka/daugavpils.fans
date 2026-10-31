@@ -1,0 +1,48 @@
+'@type': MusicAlbum
+name: 97%
+slug: 2009-97-percent
+datePublished: '2009'
+byArtist: slurm
+genre:
+- Dance Rock
+- Grunge
+- Indie Rock
+description: Студийный сингл «97%» даугавпилсского пауэр-трио SLURM!, записанный в
+  конце 2000-х годов и опубликованный на официальной странице коллектива в сети Draugiem.lv.
+description_en: Studio single '97%' by Daugavpils power trio SLURM!, recorded in the
+  late 2000s and published on the band's official Draugiem.lv page.
+description_lv: Daugavpils pauer-trio SLURM! studijas singls «97%», kas ierakstīts
+  2000. gadu beigās un publicēts grupas oficiālajā Draugiem.lv profilā.
+sameAs:
+- https://archive.org/details/daugavpils-fans-slurm-2009-97-percent
+- https://archive.org/download/daugavpils-fans-slurm-2009-97-percent/daugavpils-fans-slurm-2009-97-percent_archive.torrent
+track:
+- '@type': MusicRecording
+  position: 1
+  name: 97%
+  audio:
+    contentUrl: 01-97-percent.mp3
+    encodingFormat: audio/mpeg
+    identifier:
+    - '@type': PropertyValue
+      propertyID: sha256
+      value: 1da8451402a107b1fc17902e2c4e490d681c4a652e7decec792c2b6c71035c8f
+    '@type': AudioObject
+    bitrate: 128 kbps
+    duration: PT5M53S
+image:
+- contentUrl: cover.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7c2ce11bae6e11d7be5eb578fa603fc8d0aaecefe70a88b81d00f775683f3f50
+  '@type': ImageObject
+  caption: Обложка сингла 97%
+  caption_en: Single cover of 97%
+  caption_lv: Singla 97% vāciņš
+  depicts: []
+video: []
+creditText: []
+creditText_en: []
+creditText_lv: []

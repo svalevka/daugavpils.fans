@@ -1,0 +1,80 @@
+'@type': MusicGroup
+name: Mod Dudes
+slug: mod-dudes
+alternateName: []
+foundingDate: '2023'
+location: Daugavpils, Latvia
+genre:
+- Punk Rock
+- Pop-Punk
+- Alternative Rock
+member: []
+description: Mod Dudes — современная даугавпилсская панк-рок и альт-рок группа, образованная
+  в 2023 году. Коллектив играет задорный и мелодичный панк-рок. Музыканты активно
+  участвуют в культурной жизни Даугавпилса, регулярно выступая на Праздниках города
+  (на сцене в сквере Андрея Пумпура), на открытии мотосезона «Run Number One» (Rock
+  for Bikers), в Доме культуры Форштадта и на рок-фестивале Chemical Reaction. В 2025
+  году коллектив выпустил альбом «Поплыла кукуха».
+description_en: Mod Dudes is a contemporary Daugavpils punk rock and alternative rock
+  band formed in 2023. The group plays energetic and melodic punk rock. They actively
+  participate in Daugavpils musical life, performing at the annual City Festival (in
+  Andrejs Pumpurs Square), motorcycle rallies such as 'Run Number One' (Rock for Bikers),
+  the Forštadts House of Culture, and the Chemical Reaction rock festival. In 2025,
+  they released their album 'Poplyla kukuha'.
+description_lv: Mod Dudes ir mūsdienu Daugavpils pankroka un alternatīvā roka grupa,
+  kas dibināta 2023. gadā. Grupa izpilda melodisku un enerģisku pankroku. Mūziķi aktīvi
+  līdzdarbojas Daugavpils muzikālajā dzīvē, regulāri uzstājoties pilsētas svētkos
+  (Andreja Pumpura skvērā), motosezonas atklāšanā «Run Number One» (Rock for Bikers),
+  Forštates kultūras namā un rokkoncertos Chemical Reaction. 2025. gadā grupa laida
+  klajā albumu «Poplyla kukuha».
+sameAs:
+- https://www.youtube.com/@ModDudes-w9u
+- https://band.link/ModDudes
+- https://open.spotify.com/artist/2udaVmbPhpVk8JznRIM50m
+- https://www.instagram.com/mod_dudes/
+- https://t.me/moddudes
+- https://archive.org/details/daugavpils-fans-mod-dudes
+- https://archive.org/download/daugavpils-fans-mod-dudes/daugavpils-fans-mod-dudes_archive.torrent
+image:
+- contentUrl: media/mod-dudes-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: cbe1cb1458acf5360d44ddc03498e9d39afb816b86937045c9f8f59118f1849c
+  '@type': ImageObject
+  caption: Группа Mod Dudes
+  caption_en: Mod Dudes band photo
+  caption_lv: Grupas Mod Dudes foto
+  depicts: []
+video:
+- contentUrl: media/mod-dudes-uvolen.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 0fc5e84308d5ac2f5975e083e219b51a4fb2443f30e1f6968ecea9df5a58b818
+  '@type': VideoObject
+  name: Уволен (Official Video)
+  bitrate: 361 kbps
+  duration: PT2M46S
+- contentUrl: media/mod-dudes-poplyla-kukuha.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: fb8779734314b8dda5d4af3b42ea92aae93ee2c2f5fc7be50c21ad231f179a29
+  '@type': VideoObject
+  name: Поплыла кукуха (Official Video)
+  bitrate: 404 kbps
+  duration: PT3M27S
+- contentUrl: media/mod-dudes-s-samogo-nachala.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: af7d12732fdbcf2b84bf30df14916e4ba92fdbf9ba6cb6bf1a038dd7c49ed5eb
+  '@type': VideoObject
+  name: С самого начала (Official Video)
+  bitrate: 1102 kbps
+  duration: PT1M56S

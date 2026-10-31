@@ -1,0 +1,88 @@
+'@type': MusicGroup
+name: SLURM!
+slug: slurm
+alternateName:
+- Slurm
+foundingDate: '2008'
+dissolutionDate: '2010'
+location: Daugavpils, Latvia
+genre:
+- Dance Rock
+- Grunge
+- Garage Rock
+- Indie Rock
+member:
+- name: Alex (Алексей)
+  name_en: Alex
+  name_lv: Alex (Aleksis)
+  role: вокал, гитара
+  role_en: vocals, guitar
+  role_lv: vokals, gitara
+  period: 2008-2010
+- name: Beaver (Бивер)
+  name_en: Beaver
+  name_lv: Beaver (Bīvers)
+  role: бас-гитара
+  role_en: bass guitar
+  role_lv: basgitara
+  period: 2008-2010
+- name: Виталий
+  name_en: Vitaly
+  name_lv: Vitalijs
+  role: ударные
+  role_en: drums
+  role_lv: sitamie instrumenti
+  period: 2008-2010
+description: Даугавпилсское пауэр-трио SLURM! было образовано в июне 2008 года музыкантами,
+  ранее игравшими в других коллективах города (включая группу Robotplant). Сами участники
+  характеризовали свой стиль как «дэнс-рок-н-ролл» (dance rock’n’roll), смешивая энергетику
+  гранжа, сырого гаражного рока и прямолинейного инди-драйва. Коллектив регулярно
+  выступал на даугавпилсских сценах, в частности в рок-клубе «Banzai».
+description_en: Daugavpils power trio SLURM! was formed in June 2008 by musicians
+  with backgrounds in other local bands (including Robotplant). The trio characterized
+  their style as 'dance rock’n’roll', combining grunge energy, garage rock grit, and
+  driving indie rock rhythms. The group performed frequently at local venues, notably
+  at the Daugavpils rock club Banzai.
+description_lv: Daugavpils pauer-trio SLURM! tika dibināts 2008. gada jūnijā, apvienojoties
+  mūziķiem no citām vietējām grupām (tostarp Robotplant). Paši dalībnieki savu mūzikas
+  stilu raksturoja kā «dance rock’n’roll», apvienojot grandža enerģiju, garāžroka
+  raupjumu un indīroka ritmus. Grupa aktīvi koncertēja Daugavpilī, īpaši rokkubā «Banzai».
+sameAs:
+- https://www.draugiem.lv/slurm/
+- https://www.youtube.com/watch?v=uHnBEDXFDmw
+- https://www.youtube.com/watch?v=3uxe_roENG8
+- https://archive.org/details/daugavpils-fans-slurm
+- https://archive.org/download/daugavpils-fans-slurm/daugavpils-fans-slurm_archive.torrent
+image:
+- contentUrl: media/slurm-photo.jpg
+  encodingFormat: image/jpeg
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 7c2ce11bae6e11d7be5eb578fa603fc8d0aaecefe70a88b81d00f775683f3f50
+  '@type': ImageObject
+  caption: Группа SLURM!
+  caption_en: SLURM! band photo
+  caption_lv: Grupas SLURM! foto
+  depicts: []
+video:
+- contentUrl: media/slurm-live-banzai-2009-part1.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 19857b3d8e5e14565be8ca3d83c97a33c49997d15704fefccb190aafa2dbb7fc
+  '@type': VideoObject
+  name: Slurm in Banzai (2009) - Part 1
+  bitrate: 857 kbps
+  duration: PT3M49S
+- contentUrl: media/slurm-live-banzai-2009-part2.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d165fa60948a11c9df169295f49a4b565bc752e6e01973c31704cb724cece719
+  '@type': VideoObject
+  name: Slurm in Banzai (2009) - Part 2
+  bitrate: 978 kbps
+  duration: PT8M8S

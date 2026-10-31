@@ -1,0 +1,66 @@
+'@type': MusicGroup
+name: Nothing's New
+slug: nothings-new
+alternateName:
+- Nothing'sNew
+foundingDate: '2010'
+dissolutionDate: '2012'
+location: Daugavpils, Latvia
+genre:
+- Indie Rock
+- Garage Rock
+- Rock'n'Roll
+member: []
+description: Nothing's New — даугавпилсская гаражная и инди-рок группа, активно выступавшая
+  в начале 2010-х годов. Коллектив исполнял энергичный рок-н-ролл, гаражный рок и
+  кавер-версии рок-классики (включая «Twist and Shout»). Группа принимала участие
+  в городских мероприятиях Даугавпилса (в частности, в Празднике города 2011 с концертами
+  в микрорайонах Грива, Новый Форштадт и Ругели), а также выступала в местных рок-кафе.
+description_en: Nothing's New was an energetic garage and indie rock band from Daugavpils
+  active in the early 2010s. Playing raw rock'n'roll, garage anthems, and vibrant
+  covers (notably 'Twist and Shout'), the band performed across Daugavpils venues,
+  including local rock clubs and neighborhood outdoor stages during City Days 2011
+  in Grīva, Jaunā Forštate, and Ruģeļi.
+description_lv: Nothing's New bija Daugavpils garāžroka un indīroka grupa, kas aktīvi
+  darbojās 2010. gadu sākumā. Izpildot enerģisku rokenrolu, garāžas skanējuma kompozīcijas
+  un kaverversijas (tostarp «Twist and Shout»), grupa uzstājās pilsētas klubos un
+  Daugavpils pilsētas svētkos 2011. gadā apkaimju skatuvēs Grīvā, Jaunajā Forštatē
+  un Ruģeļos.
+sameAs:
+- https://www.youtube.com/watch?v=EZsb8xIl4kY
+- https://www.youtube.com/watch?v=GJhmANT38xA
+- https://www.youtube.com/watch?v=L-HvX-03UU4
+- https://archive.org/details/daugavpils-fans-nothings-new
+- https://archive.org/download/daugavpils-fans-nothings-new/daugavpils-fans-nothings-new_archive.torrent
+image: []
+video:
+- contentUrl: media/nothings-new-live-rugeli-2011-part1.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 934a553ac7763a3156d51223acefa0da17bdebd4350e23d16543d9ac07d9fe82
+  '@type': VideoObject
+  name: Live in Ruģeļi (Part 1, 2011)
+  bitrate: 925 kbps
+  duration: PT2M42S
+- contentUrl: media/nothings-new-live-rugeli-2011-part2.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: dbe1662aecf547f40ed764c64261c4ebd8c2972fa84507cd81f36560e6bf179f
+  '@type': VideoObject
+  name: Live in Ruģeļi (Part 2, 2011)
+  bitrate: 957 kbps
+  duration: PT3M35S
+- contentUrl: media/nothings-new-twist-and-shout-live-rugeli-2011.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: 68b5b9ed2e73aa65b12989b7c7058a16b03591cfccb7775e4835e20904456f1c
+  '@type': VideoObject
+  name: Twist and Shout (Live in Ruģeļi, 2011)
+  bitrate: 977 kbps
+  duration: PT2M2S

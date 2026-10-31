@@ -1,0 +1,44 @@
+'@type': MusicGroup
+name: Anti Satika
+slug: anti-satika
+alternateName:
+- Anti-Satika
+foundingDate: '2008'
+dissolutionDate: '2010'
+location: Rēzekne / Daugavpils, Latvia
+genre:
+- Alternative Rock
+- Punk Rock
+member: []
+description: Anti Satika (Anti-Satika) — латгальская альтернативная рок-группа из
+  Резекне, активно участвовавшая в рок-движении региона и регулярно выступавшая в
+  Даугавпилсе. Коллектив делил сцену с даугавпилсскими группами (включая Автопортрет,
+  Архангел и Soya Peace Orchestra), в частности на фестивале Chemical Reaction, в
+  клубе Banzai и на рок-концерте ко Всемирному дню борьбы со СПИДом 5 декабря 2008
+  года в Даугавпилсе.
+description_en: Anti Satika (Anti-Satika) was an alternative rock and punk band from
+  Rēzekne (Latgale) with strong ties to the Daugavpils rock community. The group frequently
+  shared stages with prominent Daugavpils acts such as Avtoportret, Arhangel, and
+  Soya Peace Orchestra, playing at the Chemical Reaction festival, Banzai rock club,
+  and the World AIDS Day rock concert in Daugavpils on December 5, 2008.
+description_lv: Anti Satika (Anti-Satika) bija Latgales alternatīvā roka un pankroka
+  grupa no Rēzeknes, kas aktīvi piedalījās reģiona rokmūzikas dzīvē un regulāri koncertēja
+  Daugavpilī. Grupa dalīja skatuvi ar pazīstamām Daugavpils grupām (tostarp Avtoportret,
+  Arhangel un Soya Peace Orchestra), uzstājoties festivālā Chemical Reaction, klubā
+  Banzai un Pasaules AIDS dienai veltītajā koncertā 2008. gada 5. decembrī Daugavpilī.
+sameAs:
+- https://www.youtube.com/watch?v=kcqqwjYiD9E
+- https://archive.org/details/daugavpils-fans-anti-satika
+- https://archive.org/download/daugavpils-fans-anti-satika/daugavpils-fans-anti-satika_archive.torrent
+image: []
+video:
+- contentUrl: media/anti-satika-live-daugavpils-2008.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: d0c0601e516f80185f06562f6cdf649079da7dd40092f891a7bd6d993de382e7
+  '@type': VideoObject
+  name: Anti Satika (Live in Daugavpils, 05.12.2008)
+  bitrate: 958 kbps
+  duration: PT5M23S
