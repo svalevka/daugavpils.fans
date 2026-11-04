@@ -108,6 +108,8 @@ def pick_band_scope(band_slug: str):
     checkout = current_app.config["ARCHIVE_CHECKOUT_PATH"]
     try:
         band = archive_read.get_band(checkout, band_slug)
+        if band.disabled:
+            abort(404)
         releases = archive_read.list_releases(checkout, band_slug)
     except archive_read.ApplyError:
         abort(404)

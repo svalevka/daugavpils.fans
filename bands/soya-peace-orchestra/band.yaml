@@ -1,6 +1,7 @@
 '@type': MusicGroup
 name: Soya Peace Orchestra
 slug: soya-peace-orchestra
+disabled: true
 alternateName:
 - Соевая Благодать
 - Soya Peace Or Chest Ra

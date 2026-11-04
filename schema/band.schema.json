@@ -301,6 +301,19 @@
       "title": "Slug",
       "type": "string"
     },
+    "disabled": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Whether this band is disabled from the public website",
+      "title": "Disabled"
+    },
     "alternateName": {
       "items": {
         "type": "string"

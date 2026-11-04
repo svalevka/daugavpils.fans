@@ -314,6 +314,30 @@ class BandHasContentTest(unittest.TestCase):
         )
         self.assertTrue(band_has_content(band, []))
 
+    def test_disabled_band_with_content_returns_false(self) -> None:
+        band = MusicGroup(
+            name="Disabled Band",
+            slug="disabled-band",
+            disabled=True,
+            image=[
+                ImageObject(
+                    contentUrl="media/photo.jpg",
+                    encodingFormat="image/jpeg",
+                )
+            ],
+        )
+        releases = [
+            MusicAlbum(
+                name="Album",
+                slug="album",
+                datePublished="2020",
+                byArtist="disabled-band",
+                track=[],
+            )
+        ]
+        self.assertFalse(band_has_content(band, releases))
+        self.assertFalse(band_has_content(band, []))
+
 
 if __name__ == "__main__":
     unittest.main()

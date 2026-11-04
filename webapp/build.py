@@ -4,9 +4,9 @@ Static site builder for the Daugavpils Music Archive website (ADR-0001).
 
 Renders bands/**/*.yaml into plain HTML under webapp/dist/, once per
 language in i18n.LANGS (default "ru" at the site root, others under
-/<lang>/). Bands without releases and without media are excluded from
-the static site build until content is contributed. No media
-(audio/image/video) is copied anywhere - the Site links directly to
+/<lang>/). Bands marked disabled, or without releases and without media,
+are excluded from the static site build. No media (audio/image/video)
+is copied anywhere - the Site links directly to archive.org, where each
 archive.org, where each band/release's media lives as its own item (see
 tools/archive_org.py, tools/publish_to_archive_org.py).
 
@@ -972,10 +972,12 @@ def needs_media_page(images: list, videos: list) -> bool:
 
 
 def band_has_content(band: MusicGroup, releases: list[MusicAlbum]) -> bool:
-    """Return True if the band has at least one release or media item (image or video).
+    """Return True if the band has at least one release or media item (image or video), and is not disabled.
 
-    Bands without releases and without media are excluded from the static site build.
+    Bands marked disabled or without releases and without media are excluded from the static site build.
     """
+    if band.disabled:
+        return False
     return bool(releases or band.image or band.video)
 
 
@@ -1352,12 +1354,14 @@ def build() -> None:
         release_dirs = sorted(
             p for p in band_dir.iterdir() if p.is_dir() and (p / "release.yaml").exists()
         )
-        all_releases_by_band[band.slug] = [load_release(d) for d in release_dirs]
+        all_releases_by_band[band.slug] = [
+            r for r in (load_release(d) for d in release_dirs) if not r.disabled
+        ]
 
     bands = [
         band
         for band in all_bands
-        if band_has_content(band, all_releases_by_band[band.slug])
+        if not band.disabled and band_has_content(band, all_releases_by_band[band.slug])
     ]
     releases_by_band = {
         band.slug: all_releases_by_band[band.slug]
@@ -1365,7 +1369,7 @@ def build() -> None:
     }
     excluded_count = len(all_bands) - len(bands)
     if excluded_count > 0:
-        print(f"Excluded {excluded_count} band(s) with no releases or media from site build.")
+        print(f"Excluded {excluded_count} band(s) (no releases, no media, or marked disabled) from site build.")
 
     require_media_published(bands, releases_by_band)
 

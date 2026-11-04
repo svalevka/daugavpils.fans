@@ -122,6 +122,9 @@ class MusicGroup(BaseModel):
     type_: str = Field(default="MusicGroup", alias="@type")
     name: str = Field(description="Name as actually written, in its real script/alphabet, e.g. 'M. Spirit'")
     slug: str = Field(description="ASCII, URL-safe folder-name version of the name, e.g. 'm-spirit'")
+    disabled: Optional[bool] = Field(
+        default=None, description="Whether this band is disabled from the public website"
+    )
     alternateName: list[str] = Field(default_factory=list)
     foundingDate: Optional[str] = None
     dissolutionDate: Optional[str] = None
@@ -165,6 +168,9 @@ class MusicAlbum(BaseModel):
     type_: str = Field(default="MusicAlbum", alias="@type")
     name: str = Field(description="Album title as actually written, in its real script/alphabet")
     slug: str = Field(description="ASCII, URL-safe folder-name version of the title")
+    disabled: Optional[bool] = Field(
+        default=None, description="Whether this release is disabled from the public website"
+    )
     datePublished: str = Field(description="Year or ISO date")
     byArtist: str = Field(description="Slug of the MusicGroup this release belongs to")
     genre: list[str] = Field(default_factory=list)

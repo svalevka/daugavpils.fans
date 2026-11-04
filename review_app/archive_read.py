@@ -48,7 +48,8 @@ def list_bands(archive_checkout_path: Path) -> list[MusicGroup]:
     for band_dir in sorted(p for p in bands_dir.iterdir() if p.is_dir()):
         if (band_dir / "band.yaml").exists():
             _, _, band = load_band(bands_dir, band_dir.name)
-            bands.append(band)
+            if not band.disabled:
+                bands.append(band)
     return bands
 
 
@@ -59,7 +60,8 @@ def list_releases(archive_checkout_path: Path, band_slug: str) -> list[MusicAlbu
     for release_dir in sorted(p for p in band_dir.iterdir() if p.is_dir()):
         if (release_dir / "release.yaml").exists():
             _, _, release = load_release(band_dir, release_dir.name)
-            releases.append(release)
+            if not release.disabled:
+                releases.append(release)
     return releases
 
 

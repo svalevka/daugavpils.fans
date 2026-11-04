@@ -232,6 +232,27 @@ class NavigationPagesTest(ReviewAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.fx.band_slug.encode(), response.data)
 
+    def test_disabled_band_is_omitted_from_band_picker(self):
+        import yaml
+        band_yaml = Path(self.app.config["ARCHIVE_CHECKOUT_PATH"]) / "bands" / self.fx.band_slug / "band.yaml"
+        raw = yaml.safe_load(band_yaml.read_text())
+        raw["disabled"] = True
+        band_yaml.write_text(yaml.safe_dump(raw))
+
+        response = self.client.get("/submit")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(self.fx.band_slug.encode(), response.data)
+
+    def test_disabled_band_scope_is_not_found(self):
+        import yaml
+        band_yaml = Path(self.app.config["ARCHIVE_CHECKOUT_PATH"]) / "bands" / self.fx.band_slug / "band.yaml"
+        raw = yaml.safe_load(band_yaml.read_text())
+        raw["disabled"] = True
+        band_yaml.write_text(yaml.safe_dump(raw))
+
+        response = self.client.get(f"/submit/{self.fx.band_slug}")
+        self.assertEqual(response.status_code, 404)
+
     def test_edit_form_shows_the_live_current_value(self):
         response = self.client.get(f"/submit/{self.fx.band_slug}/edit?target=band&field=description")
         self.assertEqual(response.status_code, 200)

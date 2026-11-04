@@ -1,6 +1,7 @@
 '@type': MusicGroup
 name: STOP
 slug: stop
+disabled: true
 alternateName: []
 foundingDate: '1996'
 dissolutionDate: '1998'

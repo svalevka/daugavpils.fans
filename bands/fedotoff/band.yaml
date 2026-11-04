@@ -1,6 +1,7 @@
 '@type': MusicGroup
 name: FEDOTOFF
 slug: fedotoff
+disabled: true
 alternateName:
 - Fedotoff Band
 foundingDate: '2016'

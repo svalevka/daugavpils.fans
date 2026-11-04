@@ -320,6 +320,19 @@
       "title": "Slug",
       "type": "string"
     },
+    "disabled": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Whether this release is disabled from the public website",
+      "title": "Disabled"
+    },
     "datePublished": {
       "description": "Year or ISO date",
       "title": "Datepublished",

@@ -1,6 +1,7 @@
 '@type': MusicGroup
 name: Relax
 slug: relax
+disabled: true
 alternateName:
 - Relax Project
 foundingDate: '1998'
