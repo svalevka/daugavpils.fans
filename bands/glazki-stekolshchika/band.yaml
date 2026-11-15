@@ -431,3 +431,13 @@ video:
   name: Sunshine (кавер-версия)
   bitrate: 531 kbps
   duration: PT4M20S
+- contentUrl: media/glazki-stekolshchika-poslednii-sandal.mp4
+  encodingFormat: video/mp4
+  identifier:
+  - '@type': PropertyValue
+    propertyID: sha256
+    value: fb6cff086fa0d917a0a3108bed4fc8d4303f9a2d18195aaaa3e05af66332526e
+  '@type': VideoObject
+  name: Последний сандаль
+  bitrate: 448 kbps
+  duration: PT4M11S
