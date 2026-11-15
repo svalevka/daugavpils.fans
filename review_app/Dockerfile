@@ -45,7 +45,7 @@ COPY review_app/ review_app/
 WORKDIR /app/review_app
 # Offline GeoIP database for visitor country resolution (GitHub issues #34, #91).
 # SHA-256 checksum is verified upon download to ensure asset integrity.
-ARG MMDB_SHA256=4d3587f2f39e8d5dced147bfcaa2a13b1655938930ed020e25929e91e1303fc8
+ARG MMDB_SHA256=bdb2b3f86dc278e5a5df64bc6fbe3de03f4844a5e97945a94df76e77049ee788
 RUN python3 -c "import urllib.request, hashlib, sys; \
     url = 'https://raw.githubusercontent.com/P3TERX/GeoLite.mmdb/download/GeoLite2-Country.mmdb'; \
     data = urllib.request.urlopen(url, timeout=30).read(); \
