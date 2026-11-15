@@ -9,12 +9,11 @@ source), and then hands the media_proposals row off to the ordinary
 AI-review/approve/apply pipeline unchanged - nothing downstream of a
 'pending' row needs to know or care where the file came from.
 
-No transcoding: `_pick_format` only ever selects an already-progressive
-(single-file, combined audio+video) mp4/webm format - the same containers
-media_uploads.py already accepts from direct uploads - and steps down to a
-lower-quality one if the best available exceeds the existing per-video
-size cap, rather than merging separate video-only/audio-only streams or
-re-encoding anything.
+No transcoding: `_pick_format` selects an already-progressive (single-file,
+combined audio+video) mp4/webm format when available, or an adaptive video+audio
+stream pair remuxed via ffmpeg (stream copy, no re-encoding) into mp4/webm when
+progressive formats are not served. It steps down to a lower-quality format if
+the best available exceeds the existing per-video size cap.
 """
 from __future__ import annotations
 
@@ -103,34 +102,126 @@ def _extract_info(
 def _pick_format(info: dict[str, Any], max_bytes: int) -> str:
     """Chooses a format id whose reported size fits within max_bytes,
     preferring the highest quality that fits (see issue #49: auto
-    step-down quality rather than reject outright). Falls back to the
-    smallest available progressive format if no size is reported for
-    any candidate - the actual downloaded bytes are still capped by
-    yt-dlp's own max_filesize option in _download as a belt-and-suspenders
-    check against a format whose reported size was wrong or missing."""
-    candidates = [
+    step-down quality rather than reject outright).
+
+    Supports:
+    1. Progressive formats (single-file, combined audio+video mp4/webm).
+    2. Adaptive stream pairs (separate video-only + audio-only) remuxed into
+       mp4/webm without transcoding via ffmpeg stream copy, for videos where
+       YouTube no longer provides combined progressive streams.
+    """
+    formats = info.get("formats", []) or []
+
+    def size_of(f: dict[str, Any]) -> int:
+        return f.get("filesize") or f.get("filesize_approx") or 0
+
+    # 1. Progressive candidates (single file containing both video and audio)
+    progressive = [
         f
-        for f in info.get("formats", []) or []
+        for f in formats
         if f.get("vcodec") not in (None, "none")
         and f.get("acodec") not in (None, "none")
         and f.get("ext") in _ACCEPTED_EXTS
         and f.get("format_id")
     ]
-    if not candidates:
-        raise FetchError("no combined audio/video format available for this video")
+    sized_prog = [f for f in progressive if size_of(f)]
+    if progressive:
+        fitting_prog = [f for f in sized_prog if size_of(f) <= max_bytes]
+        if fitting_prog:
+            return max(fitting_prog, key=size_of)["format_id"]
+        elif not sized_prog:
+            return progressive[0]["format_id"]
+        # If all progressive formats are oversized, fall through to check adaptive
+        # streams which might have smaller resolutions/bitrates that fit.
 
-    def size_of(f: dict[str, Any]) -> int:
-        return f.get("filesize") or f.get("filesize_approx") or 0
+    # 2. Adaptive stream pairs (separate video-only and audio-only streams)
+    v_candidates = [
+        f
+        for f in formats
+        if f.get("vcodec") not in (None, "none")
+        and f.get("acodec") in (None, "none")
+        and f.get("format_id")
+    ]
+    a_candidates = [
+        f
+        for f in formats
+        if f.get("acodec") not in (None, "none")
+        and f.get("vcodec") in (None, "none")
+        and f.get("format_id")
+    ]
 
-    sized = [f for f in candidates if size_of(f)]
-    fitting = [f for f in sized if size_of(f) <= max_bytes]
-    if fitting:
-        chosen = max(fitting, key=size_of)
-    elif sized:
-        chosen = min(sized, key=size_of)
-    else:
-        chosen = candidates[0]
-    return chosen["format_id"]
+    # Try MP4 video + M4A audio first (universal browser compatibility)
+    v_mp4 = [
+        v
+        for v in v_candidates
+        if v.get("ext") == "mp4" or (v.get("vcodec") or "").startswith(("avc", "h264"))
+    ]
+    a_m4a = [
+        a
+        for a in a_candidates
+        if a.get("ext") in ("m4a", "mp4") or (a.get("acodec") or "").startswith(("mp4a", "aac"))
+    ]
+
+    # Fall back to WebM video + WebM audio
+    v_webm = [
+        v
+        for v in v_candidates
+        if v.get("ext") == "webm" or (v.get("vcodec") or "").startswith(("vp9", "vp8", "av01"))
+    ]
+    a_webm = [
+        a
+        for a in a_candidates
+        if a.get("ext") in ("webm", "m4a") or (a.get("acodec") or "").startswith(("opus", "vorbis"))
+    ]
+
+    pairs: list[dict[str, Any]] = []
+    if v_mp4 and a_m4a:
+        best_a = max(a_m4a, key=lambda a: a.get("abr") or a.get("tbr") or size_of(a))
+        a_size = size_of(best_a)
+        for v in v_mp4:
+            pairs.append({
+                "format_id": f"{v['format_id']}+{best_a['format_id']}",
+                "size": size_of(v) + a_size,
+                "height": v.get("height") or 0,
+                "is_avc": (v.get("vcodec") or "").startswith(("avc", "h264")),
+                "ext": "mp4",
+            })
+    elif v_webm and a_webm:
+        best_a = max(a_webm, key=lambda a: a.get("abr") or a.get("tbr") or size_of(a))
+        a_size = size_of(best_a)
+        for v in v_webm:
+            pairs.append({
+                "format_id": f"{v['format_id']}+{best_a['format_id']}",
+                "size": size_of(v) + a_size,
+                "height": v.get("height") or 0,
+                "is_avc": False,
+                "ext": "webm",
+            })
+
+    if pairs:
+        sized_pairs = [p for p in pairs if p["size"] > 0]
+        fitting_pairs = [p for p in sized_pairs if p["size"] <= max_bytes]
+        if fitting_pairs:
+            # Pick highest resolution, preferring AVC/H.264 if heights match, then highest size
+            chosen = max(fitting_pairs, key=lambda p: (p["height"], p["is_avc"], p["size"]))
+            return chosen["format_id"]
+        elif sized_pairs:
+            # If all adaptive pairs are oversized, pick the smallest one
+            smallest_pair = min(sized_pairs, key=lambda p: p["size"])
+            if progressive and sized_prog:
+                smallest_prog = min(sized_prog, key=size_of)
+                if size_of(smallest_prog) <= smallest_pair["size"]:
+                    return smallest_prog["format_id"]
+            return smallest_pair["format_id"]
+        return pairs[0]["format_id"]
+
+    # If progressive was available but all oversized and no adaptive pairs could be formed:
+    if progressive and sized_prog:
+        return min(sized_prog, key=size_of)["format_id"]
+    elif progressive:
+        return progressive[0]["format_id"]
+
+    raise FetchError("no combined audio/video format available for this video")
 
 
 def _download(
@@ -148,6 +239,8 @@ def _download(
     def _do_download():
         opts = _base_opts(cookiefile)
         opts.update({"format": format_id, "outtmpl": outtmpl, "max_filesize": max_bytes})
+        if "+" in format_id:
+            opts["merge_output_format"] = "mp4"
         with yt_dlp.YoutubeDL(opts) as ydl:
             ydl.download([url])
 

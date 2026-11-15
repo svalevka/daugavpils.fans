@@ -173,6 +173,95 @@ class HappyPathTest(YoutubeMediaSubmissionTestCase):
         self.assertGreater(row["size_bytes"], 0)
         self.assertLessEqual(row["size_bytes"], self.config.max_video_upload_bytes)
 
+    def test_picks_adaptive_stream_pair_when_no_progressive_format(self):
+        # Modern YouTube video format structure: separate DASH video and audio streams
+        adaptive_info = {
+            "title": "Live Video 2026",
+            "uploader": "Test Channel",
+            "duration": 180,
+            "is_live": False,
+            "formats": [
+                {
+                    "format_id": "137",
+                    "ext": "mp4",
+                    "vcodec": "avc1.640028",
+                    "acodec": "none",
+                    "height": 1080,
+                    "filesize": 20 * 1024 * 1024,
+                },
+                {
+                    "format_id": "134",
+                    "ext": "mp4",
+                    "vcodec": "avc1.4d401e",
+                    "acodec": "none",
+                    "height": 360,
+                    "filesize": 5 * 1024 * 1024,
+                },
+                {
+                    "format_id": "140",
+                    "ext": "m4a",
+                    "vcodec": "none",
+                    "acodec": "mp4a.40.2",
+                    "filesize": 3 * 1024 * 1024,
+                },
+            ],
+        }
+        _FakeYoutubeDL.info = adaptive_info
+        response = self.submit_youtube(submitter_contact="fan@example.com")
+        self.assertEqual(response.status_code, 201)
+
+        rows = self.fetch_media_proposals()
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["status"], "pending")
+        self.assertEqual(row["content_type"], "video/mp4")
+
+        # Verify that yt-dlp was invoked with the 1080p stream + audio stream
+        self.assertTrue(_FakeYoutubeDL.captured_opts)
+        download_opts = [o for o in _FakeYoutubeDL.captured_opts if "format" in o]
+        self.assertTrue(download_opts)
+        self.assertEqual(download_opts[0]["format"], "137+140")
+
+    def test_adaptive_stream_pair_steps_down_when_oversized(self):
+        adaptive_info = {
+            "title": "Huge Video",
+            "uploader": "Test Channel",
+            "duration": 3600,
+            "is_live": False,
+            "formats": [
+                {
+                    "format_id": "137",
+                    "ext": "mp4",
+                    "vcodec": "avc1.640028",
+                    "acodec": "none",
+                    "height": 1080,
+                    "filesize": 600 * 1024 * 1024,  # exceeds 500MB cap
+                },
+                {
+                    "format_id": "134",
+                    "ext": "mp4",
+                    "vcodec": "avc1.4d401e",
+                    "acodec": "none",
+                    "height": 360,
+                    "filesize": 40 * 1024 * 1024,  # fits in cap
+                },
+                {
+                    "format_id": "140",
+                    "ext": "m4a",
+                    "vcodec": "none",
+                    "acodec": "mp4a.40.2",
+                    "filesize": 10 * 1024 * 1024,
+                },
+            ],
+        }
+        _FakeYoutubeDL.info = adaptive_info
+        response = self.submit_youtube()
+        self.assertEqual(response.status_code, 201)
+
+        download_opts = [o for o in _FakeYoutubeDL.captured_opts if "format" in o]
+        self.assertTrue(download_opts)
+        self.assertEqual(download_opts[0]["format"], "134+140")
+
     def test_live_stream_is_rejected(self):
         _FakeYoutubeDL.info = dict(FAKE_INFO, is_live=True)
         response = self.submit_youtube(submitter_contact="fan@example.com")
@@ -289,6 +378,67 @@ class FetchFailureTest(YoutubeMediaSubmissionTestCase):
             self.assertIn("timed out", str(ctx.exception))
             # Verify partial files were cleaned up
             self.assertEqual(list(uploads_dir.glob("*.part")), [])
+
+
+class PickFormatUnitTest(unittest.TestCase):
+    def test_progressive_preferred_when_available(self):
+        info = {
+            "formats": [
+                {"format_id": "18", "ext": "mp4", "vcodec": "avc1", "acodec": "mp4a", "filesize": 1000},
+                {"format_id": "137", "ext": "mp4", "vcodec": "avc1", "acodec": "none", "filesize": 5000},
+                {"format_id": "140", "ext": "m4a", "vcodec": "none", "acodec": "mp4a", "filesize": 1000},
+            ]
+        }
+        self.assertEqual(youtube_fetch._pick_format(info, 10000), "18")
+
+    def test_adaptive_mp4_chosen_when_no_progressive(self):
+        info = {
+            "formats": [
+                {"format_id": "137", "ext": "mp4", "vcodec": "avc1", "acodec": "none", "height": 1080, "filesize": 5000},
+                {"format_id": "134", "ext": "mp4", "vcodec": "avc1", "acodec": "none", "height": 360, "filesize": 2000},
+                {"format_id": "140", "ext": "m4a", "vcodec": "none", "acodec": "mp4a", "filesize": 1000},
+            ]
+        }
+        self.assertEqual(youtube_fetch._pick_format(info, 10000), "137+140")
+
+    def test_adaptive_mp4_steps_down_on_size(self):
+        info = {
+            "formats": [
+                {"format_id": "137", "ext": "mp4", "vcodec": "avc1", "acodec": "none", "height": 1080, "filesize": 5000},
+                {"format_id": "134", "ext": "mp4", "vcodec": "avc1", "acodec": "none", "height": 360, "filesize": 2000},
+                {"format_id": "140", "ext": "m4a", "vcodec": "none", "acodec": "mp4a", "filesize": 1000},
+            ]
+        }
+        # 137+140 = 6000 (oversized for max_bytes=4000), 134+140 = 3000 (fits)
+        self.assertEqual(youtube_fetch._pick_format(info, 4000), "134+140")
+
+    def test_adaptive_webm_chosen_when_only_webm_available(self):
+        info = {
+            "formats": [
+                {"format_id": "243", "ext": "webm", "vcodec": "vp9", "acodec": "none", "height": 360, "filesize": 2000},
+                {"format_id": "251", "ext": "webm", "vcodec": "none", "acodec": "opus", "filesize": 1000},
+            ]
+        }
+        self.assertEqual(youtube_fetch._pick_format(info, 10000), "243+251")
+
+    def test_video_only_without_audio_raises_error(self):
+        info = {
+            "formats": [
+                {"format_id": "137", "ext": "mp4", "vcodec": "avc1", "acodec": "none", "filesize": 5000},
+            ]
+        }
+        with self.assertRaises(youtube_fetch.FetchError):
+            youtube_fetch._pick_format(info, 10000)
+
+    def test_oversized_progressive_falls_back_to_fitting_adaptive(self):
+        info = {
+            "formats": [
+                {"format_id": "22", "ext": "mp4", "vcodec": "avc1", "acodec": "mp4a", "filesize": 50000},  # oversized
+                {"format_id": "134", "ext": "mp4", "vcodec": "avc1", "acodec": "none", "height": 360, "filesize": 2000},
+                {"format_id": "140", "ext": "m4a", "vcodec": "none", "acodec": "mp4a", "filesize": 1000},
+            ]
+        }
+        self.assertEqual(youtube_fetch._pick_format(info, 10000), "134+140")
 
 
 class ThrottleTest(YoutubeMediaSubmissionTestCase):
