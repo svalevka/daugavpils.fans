@@ -1,0 +1,85 @@
+name: Weekly security review
+
+# Comprehensive weekly security review of the `cherry` server and the
+# daugavpils.fans application - see documentation/SECURITY_REVIEW.md.
+#
+# GitHub owns the schedule on purpose: a timer on cherry can stop firing
+# without anyone noticing, and cherry is also the thing being reviewed.
+# This workflow has no SSH access to cherry (its firewall is never opened
+# to GitHub's runners - see webapp/deploy/README.md). Instead it asks
+# review_app, over the same authenticated callback API the nightly backup
+# uses, to have a root collector on the host produce a fresh read-only
+# snapshot, and proves freshness with a one-time nonce. If cherry does not
+# answer, that is itself reported as a critical finding.
+#
+# THIS REPOSITORY IS PUBLIC, SO THESE LOGS ARE PUBLIC. Nothing about the
+# server's state may ever be printed, uploaded as an artifact, or put in
+# an issue from here - findings go to the maintainer by email only. The
+# audit steps below write to files and stay silent for that reason.
+#
+# Email is sent only when something is CRITICAL, something changed
+# unexpectedly since last week, or the review could not be completed.
+# Run it by hand with "always_email" to get the full report regardless.
+
+on:
+  schedule:
+    - cron: "17 5 * * 1" # Mondays 05:17 UTC
+  workflow_dispatch:
+    inputs:
+      always_email:
+        description: "Email the full report even if nothing is critical"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Audit dependencies and code (silent - results go to the report only)
+        run: |
+          pip install --quiet pip-audit bandit >/dev/null 2>&1 || true
+          mkdir -p "$RUNNER_TEMP/audit"
+          pip-audit -r review_app/requirements.lock --format json --output "$RUNNER_TEMP/audit/review_app.json" >/dev/null 2>&1 || true
+          pip-audit -r tools/requirements.txt --format json --output "$RUNNER_TEMP/audit/tools.json" >/dev/null 2>&1 || true
+          pip-audit -r webapp/requirements.txt --format json --output "$RUNNER_TEMP/audit/webapp.json" >/dev/null 2>&1 || true
+          bandit -q -r review_app tools webapp -x '*/test_*.py' -f json -o "$RUNNER_TEMP/audit/bandit.json" >/dev/null 2>&1 || true
+          echo "Audit step finished."
+
+      - name: Run the security review
+        env:
+          REVIEW_APP_BASE_URL: ${{ vars.REVIEW_APP_BASE_URL }}
+          REVIEW_APP_CALLBACK_KEY: ${{ secrets.REVIEW_APP_CALLBACK_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          ZAI_BASE_URL: ${{ secrets.ZAI_BASE_URL }}
+          ZAI_MODEL: ${{ secrets.ZAI_MODEL }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SECURITY_REVIEW_EMAIL_TO: ${{ secrets.SECURITY_REVIEW_EMAIL_TO }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ALWAYS_EMAIL: ${{ inputs.always_email }}
+        run: |
+          args=()
+          if [ "$ALWAYS_EMAIL" = "true" ]; then args+=(--always-email); fi
+          python tools/security_review.py \
+            --pip-audit "$RUNNER_TEMP/audit/review_app.json" \
+            --pip-audit "$RUNNER_TEMP/audit/tools.json" \
+            --pip-audit "$RUNNER_TEMP/audit/webapp.json" \
+            --bandit "$RUNNER_TEMP/audit/bandit.json" \
+            "${args[@]}"

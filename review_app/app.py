@@ -58,6 +58,8 @@ def create_app(config: Config) -> Flask:
     app.config["MIN_DISK_FREE_BYTES"] = config.min_disk_free_bytes
     app.config["AI_CONFIG"] = config.ai
     app.config["YOUTUBE_COOKIES_PATH"] = config.youtube_cookies_path
+    app.config["SECURITY_REQUEST_PATH"] = config.resolved_security_request_path()
+    app.config["SECURITY_SNAPSHOT_DIR"] = config.security_snapshot_dir
     app.config["BASE_URL"] = getattr(config, "base_url", None) or os.environ.get(
         "REVIEW_APP_BASE_URL", "https://review.daugavpils.fans"
     )

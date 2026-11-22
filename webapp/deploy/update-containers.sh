@@ -14,7 +14,10 @@ DOCKER_BIN="${DOCKER_BIN:-docker}"
 CURL_BIN="${CURL_BIN:-curl}"
 MAIL_BIN="${MAIL_BIN:-mail}"
 HEALTHCHECK_URL_SITE="${HEALTHCHECK_URL_SITE:-https://daugavpils.fans}"
-HEALTHCHECK_URL_REVIEW="${HEALTHCHECK_URL_REVIEW:-https://review.daugavpils.fans}"
+# /login, not the bare host: review_app has no page at "/" (404), which
+# made this check fail - and the unit end up "failed" - after every
+# perfectly good nightly update.
+HEALTHCHECK_URL_REVIEW="${HEALTHCHECK_URL_REVIEW:-https://review.daugavpils.fans/login}"
 MAINTAINER_EMAIL="${MAINTAINER_EMAIL:-}"
 HEARTBEAT_URL="${HEARTBEAT_URL:-}"
 

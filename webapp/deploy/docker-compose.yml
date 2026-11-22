@@ -56,6 +56,11 @@ services:
       # approved content is already safely in git by the time it
       # matters.
       - ./review-app-data:/data
+      # Weekly security review (documentation/SECURITY_REVIEW.md): the
+      # host-side root collector writes its snapshot here; this container
+      # can only read it. Root-owned on the host - create it before first
+      # start (see README.md) rather than letting Docker auto-create it.
+      - ./security-review:/security-review:ro
     env_file: ./review-app.env
 
 volumes:

@@ -1,0 +1,18 @@
+[Unit]
+Description=Collect a read-only host security snapshot on request (see security_snapshot.py, documentation/SECURITY_REVIEW.md)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Environment=BASE_DIR=/opt/daugavpils-fans
+ExecStart=/usr/bin/python3 -I /opt/daugavpils-fans/security_snapshot.py
+TimeoutStartSec=600
+Nice=10
+# The collector only reads; the one place it writes is its own output dir.
+ProtectSystem=strict
+ReadWritePaths=/opt/daugavpils-fans/security-review
+ProtectHome=read-only
+PrivateTmp=true
+NoNewPrivileges=true

@@ -681,3 +681,53 @@ def get_backup_bundle():
         raise
 
 
+
+
+# Weekly security review (documentation/SECURITY_REVIEW.md). GitHub
+# Actions owns the schedule and has no SSH access to this box, so the
+# only way it can ask for a host-level snapshot is through here: the
+# request endpoint drops a fresh nonce where a host-side systemd path
+# unit is watching, the root collector (webapp/deploy/security_snapshot.py)
+# answers into a directory this container can only read, and the snapshot
+# endpoint hands that answer back. This app never runs anything
+# privileged itself and never sees more than the collector chose to write.
+_SECURITY_REQUEST_COOLDOWN_SECONDS = 60
+_SECURITY_SNAPSHOT_MAX_BYTES = 5 * 1024 * 1024
+
+
+@bp.post("/security-review/request")
+def request_security_snapshot():
+    _require_callback_key()
+    import secrets
+
+    request_path: Path = current_app.config["SECURITY_REQUEST_PATH"]
+    # File mtime rather than an in-memory timestamp: gunicorn runs
+    # several workers, and the cooldown has to hold across all of them.
+    try:
+        if time.time() - request_path.stat().st_mtime < _SECURITY_REQUEST_COOLDOWN_SECONDS:
+            abort(429)
+    except FileNotFoundError:
+        pass
+
+    nonce = secrets.token_hex(16)
+    request_path.write_text(nonce + "\n")
+    return jsonify({"nonce": nonce}), 202
+
+
+def _read_snapshot_file(path: Path):
+    try:
+        if path.stat().st_size > _SECURITY_SNAPSHOT_MAX_BYTES:
+            return None
+        return json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+
+
+@bp.get("/security-review/snapshot")
+def get_security_snapshot():
+    _require_callback_key()
+    snapshot_dir: Path = current_app.config["SECURITY_SNAPSHOT_DIR"]
+    snapshot = _read_snapshot_file(snapshot_dir / "snapshot.json")
+    if snapshot is None:
+        abort(404)
+    return jsonify({"snapshot": snapshot, "previous": _read_snapshot_file(snapshot_dir / "previous.json")})

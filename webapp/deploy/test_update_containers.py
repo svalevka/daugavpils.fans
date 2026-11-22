@@ -35,6 +35,12 @@ BASH_BIN = shutil.which("bash") or "bash"
 
 
 class UpdateContainersScriptTest(unittest.TestCase):
+    def test_default_review_health_url_is_a_page_that_exists(self):
+        # The bare host 404s (review_app has no "/" route), which failed
+        # the unit every night despite a successful update.
+        text = UPDATE_SCRIPT.read_text()
+        self.assertIn('HEALTHCHECK_URL_REVIEW:-https://review.daugavpils.fans/login}', text)
+
     def setUp(self) -> None:
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.tmp_path = Path(self.tmp_dir.name)

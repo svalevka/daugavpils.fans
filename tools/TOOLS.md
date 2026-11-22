@@ -574,6 +574,41 @@ modifying production data or making real Backblaze B2 network calls.
 atomic replacement, pre-restore backup preservation, `--dry-run` behavior,
 corrupted archive detection, and SQLite integrity check failures.
 
+## `security_review.py`
+
+**Problem it solves:** nobody was regularly checking whether the `cherry`
+server and the site were still configured safely - open ports, SSH
+settings, file permissions on secrets, pending security updates, new
+users or keys, vulnerable dependencies, expiring certificates.
+
+**How:** run weekly by `.github/workflows/security-review.yml` (GitHub's
+schedule, on purpose - not a timer on the server). It asks `review_app`
+for a fresh host snapshot (produced on `cherry` by
+`webapp/deploy/security_snapshot.py`), probes the site from the outside,
+reads the workflow's `pip-audit`/`bandit` results, applies fixed rules,
+compares against last week's snapshot to spot changes, asks the z.ai
+model for a second opinion, and emails the maintainer only if something
+is critical, something changed unexpectedly, or the review could not
+finish. The AI can add findings but never remove one. Prints nothing
+about the server (the repo's CI logs are public). Full design:
+`documentation/SECURITY_REVIEW.md`.
+
+**When you'd run it:** you normally don't - it runs itself every Monday.
+To get a full report on demand: `gh workflow run security-review.yml -f
+always_email=true`. Locally, `--print-report` prints the report instead
+of emailing it (needs `REVIEW_APP_CALLBACK_KEY` in the environment).
+
+## `test_security_review.py`
+
+**Problem it solves:** verifies the review's rules, change detection,
+email decision and failure handling without any network access.
+
+**How:** feeds synthetic host snapshots through the rules and the
+week-over-week diff; fakes the snapshot API, outside-in probes, the AI
+reply and SMTP. Also pins the workflow's contract: weekly GitHub
+schedule, read-only token, no artifacts/issues/printed report (public
+logs), and that findings never reach stdout.
+
 ## `requirements.txt`
 
 **Problem it solves:** pins the Python dependencies these tools need

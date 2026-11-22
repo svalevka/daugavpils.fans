@@ -364,6 +364,54 @@ archive.org by itself - it only moves the upload to the dashboard's
   `review-app-data/uploads/` (unbacked-up, so nothing should linger
   there once you're finished with it) and closes out the row.
 
+## Weekly security review (host side)
+
+The weekly security review is scheduled and judged by GitHub Actions -
+see [`documentation/SECURITY_REVIEW.md`](../../documentation/SECURITY_REVIEW.md)
+for the whole design. What lives on this box is only the part that
+answers: a path unit that notices review-app's request file changing and
+runs `security_snapshot.py` once, as root, read-only. There is
+deliberately **no timer** for it here.
+
+Install (the directory must exist, root-owned, *before* review-app is
+recreated with its new `./security-review` mount - otherwise Docker
+creates it itself with the wrong group):
+
+```bash
+sudo install -d -o root -g 10001 -m 750 /opt/daugavpils-fans/security-review
+sudo install -o root -g root -m 700 security_snapshot.py /opt/daugavpils-fans/security_snapshot.py
+sudo install -o root -g root -m 644 daugavpils-fans-security-snapshot.service daugavpils-fans-security-snapshot.path /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now daugavpils-fans-security-snapshot.path
+```
+
+`10001` is the review-app container's user/group (`review_app/Dockerfile`).
+Like `renew-cert.sh`, the collector runs as root and so must stay
+`root:root`, not writable by anyone else (GitHub issue #87) - and unlike
+`docker-compose.yml`/`nginx/`, `sync-and-deploy.sh` does **not** update
+it automatically: after changing `security_snapshot.py` in the repo,
+re-run the second `install` line above.
+
+Check it:
+
+```bash
+systemctl status daugavpils-fans-security-snapshot.path
+journalctl -u daugavpils-fans-security-snapshot.service -n 30
+```
+
+## Automatic reboots after kernel updates
+
+`unattended-upgrades` (Ubuntu's own, enabled by default) installs
+security updates daily, but a new kernel or libc only takes effect after
+a reboot. `52unattended-upgrades-reboot` makes the box reboot itself at
+05:00 UTC whenever an upgrade run leaves `/var/run/reboot-required`
+behind. Containers come back on their own (`restart: unless-stopped`).
+
+```bash
+sudo install -o root -g root -m 644 52unattended-upgrades-reboot /etc/apt/apt.conf.d/52unattended-upgrades-reboot
+apt-config dump | grep Automatic-Reboot    # confirm it took
+```
+
 ## Cert renewal
 
 The Let's Encrypt cert expires 90 days after issuance. Its SAN list includes `daugavpils.fans`, `www.daugavpils.fans`, and `review.daugavpils.fans` (see above).

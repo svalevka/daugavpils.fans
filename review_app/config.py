@@ -133,6 +133,17 @@ class Config:
     # what this archive actually collects. Never committed - same
     # secrets-file handling as review-app.env/cloudflare.ini.
     youtube_cookies_path: Path | None = None
+    # Weekly security review (documentation/SECURITY_REVIEW.md). The
+    # request file is the one thing review_app writes for it - a nonce
+    # the host-side collector (webapp/deploy/security_snapshot.py) picks
+    # up via a systemd path unit; defaults to a sibling of the database
+    # so it lands in the existing review-app-data/ volume. The snapshot
+    # directory is a separate, root-owned, read-only mount.
+    security_request_path: Path | None = None
+    security_snapshot_dir: Path = Path("/security-review")
+
+    def resolved_security_request_path(self) -> Path:
+        return self.security_request_path or (self.database_path.parent / "security-review-request")
 
     def resolved_media_uploads_path(self) -> Path:
         return self.media_uploads_path or (self.database_path.parent / "uploads")
@@ -208,4 +219,8 @@ class Config:
             youtube_cookies_path=(
                 Path(os.environ["YOUTUBE_COOKIES_PATH"]) if "YOUTUBE_COOKIES_PATH" in os.environ else None
             ),
+            security_request_path=(
+                Path(os.environ["SECURITY_REQUEST_PATH"]) if "SECURITY_REQUEST_PATH" in os.environ else None
+            ),
+            security_snapshot_dir=Path(os.environ.get("SECURITY_SNAPSHOT_DIR", "/security-review")),
         )

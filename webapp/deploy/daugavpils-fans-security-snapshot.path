@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch for a security snapshot request from review-app (see documentation/SECURITY_REVIEW.md)
+After=network.target
+
+[Path]
+PathChanged=/opt/daugavpils-fans/review-app-data/security-review-request
+Unit=daugavpils-fans-security-snapshot.service
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+// Installed on cherry as /etc/apt/apt.conf.d/52unattended-upgrades-reboot
+// (see webapp/deploy/README.md, "Automatic reboots after kernel updates").
+//
+// unattended-upgrades already installs security updates daily, but a new
+// kernel (or libc) only takes effect after a reboot - without this the
+// box ran a two-month-old kernel with four newer ones installed and
+// unused. With it, whenever an unattended-upgrade run leaves
+// /var/run/reboot-required behind, the box reboots at the time below.
+//
+// 05:00 UTC: after daugavpils-fans-update-containers.timer (04:00 + up to
+// 30 min) has finished, and the quietest hour for the site. Containers
+// come back on their own (restart: unless-stopped, docker enabled).
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-WithUsers "true";
+Unattended-Upgrade::Automatic-Reboot-Time "05:00";
