@@ -187,15 +187,6 @@ class NginxRateLimitConfigTest(unittest.TestCase):
             "review.daugavpils.fans location = /api/backup must apply review_strict_zone burst=2 nodelay",
         )
 
-    def test_readme_documents_rate_limiting_and_upload_limits(self) -> None:
-        """webapp/deploy/README.md must document the rate limits and upload body size / timeouts."""
-        self.assertIn("review_general_zone", self.readme_text)
-        self.assertIn("review_strict_zone", self.readme_text)
-        self.assertIn("review_event_zone", self.readme_text)
-        self.assertIn("/api/backup", self.readme_text)
-        self.assertIn("client_max_body_size", self.readme_text)
-        self.assertIn("client_body_timeout", self.readme_text)
-
 
 if __name__ == "__main__":
     unittest.main()

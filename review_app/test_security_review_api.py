@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-The two callback-API endpoints behind the weekly security review
-(documentation/SECURITY_REVIEW.md): requesting a host snapshot (drops a
-nonce for the host-side collector) and reading the collector's answer.
+The two callback-API endpoints behind the host review (maintained
+outside this repository): requesting a host snapshot (drops a nonce for
+the host-side collector) and reading the collector's answer.
 """
 from __future__ import annotations
 

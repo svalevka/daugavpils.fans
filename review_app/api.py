@@ -683,13 +683,12 @@ def get_backup_bundle():
 
 
 
-# Weekly security review (documentation/SECURITY_REVIEW.md). GitHub
-# Actions owns the schedule and has no SSH access to this box, so the
-# only way it can ask for a host-level snapshot is through here: the
-# request endpoint drops a fresh nonce where a host-side systemd path
-# unit is watching, the root collector (webapp/deploy/security_snapshot.py)
-# answers into a directory this container can only read, and the snapshot
-# endpoint hands that answer back. This app never runs anything
+# Host review (maintained outside this repository). Its scheduler has no
+# SSH access to this box, so the only way it can ask for a host-level
+# snapshot is through here: the request endpoint drops a fresh nonce
+# where a host-side process is watching, that process answers into a
+# directory this container can only read, and the snapshot endpoint
+# hands that answer back. This app never runs anything
 # privileged itself and never sees more than the collector chose to write.
 _SECURITY_REQUEST_COOLDOWN_SECONDS = 60
 _SECURITY_SNAPSHOT_MAX_BYTES = 5 * 1024 * 1024
