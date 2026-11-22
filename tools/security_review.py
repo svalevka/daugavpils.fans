@@ -207,7 +207,10 @@ def evaluate_host(snap: dict, now: float | None = None) -> list[Finding]:
     for entry in snap.get("file_modes") or []:
         path, mode = entry["path"], _mode(entry)
         base = path.rsplit("/", 1)[-1]
-        if any(marker in path for marker in SECRET_FILE_MARKERS) and entry["kind"] == "file" and mode & 0o044:
+        # /etc/shadow is root:shadow 0640 on a stock Debian/Ubuntu - group
+        # "shadow" reading it is by design, so only "other" counts there.
+        too_open = mode & (0o004 if path == "/etc/shadow" else 0o044)
+        if any(marker in path for marker in SECRET_FILE_MARKERS) and entry["kind"] == "file" and too_open:
             add(CRITICAL, "Secret file is readable by other users", f"{path} is mode {entry['mode']} ({entry['owner']}:{entry['group']})", "chmod 600 it.")
         root_run = entry["kind"] == "file" and (
             path.startswith("/etc/systemd/system/")
@@ -250,8 +253,12 @@ def evaluate_host(snap: dict, now: float | None = None) -> list[Finding]:
         for missing in sorted(OUR_CONTAINERS - names):
             add(CRITICAL, f"Container {missing} does not exist")
 
+    seen_listeners = set()
     for sock in snap.get("listening") or []:
-        if sock["addr"] in ("0.0.0.0", "[::]", "*") and (sock["proto"], sock["port"]) not in EXPECTED_WILDCARD_LISTENERS:
+        # The same service on 0.0.0.0 and [::] is one finding, not two.
+        listener = (sock["process"], sock["proto"], sock["port"])
+        if sock["addr"] in ("0.0.0.0", "[::]", "*") and listener[1:] not in EXPECTED_WILDCARD_LISTENERS and listener not in seen_listeners:
+            seen_listeners.add(listener)
             add(
                 WARNING,
                 f"{sock['process'] or 'A process'} listens on all interfaces ({sock['proto']}/{sock['port']})",

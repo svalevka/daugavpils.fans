@@ -231,6 +231,31 @@ class CollectorResilienceTest(TmpCase):
         )
         self.assertIsNone(ss.collect_app_anomalies(self.tmp / "absent.db"))
 
+    def test_app_anomalies_can_be_read_from_a_read_only_directory(self):
+        # The service runs under ProtectSystem=strict: the collector
+        # cannot create SQLite's -shm/-wal side files next to a WAL db.
+        import sqlite3
+
+        ro_dir = self.tmp / "ro"
+        ro_dir.mkdir()
+        db = ro_dir / "review.db"
+        conn = sqlite3.connect(db)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("CREATE TABLE anomaly_events (created_at TEXT, severity TEXT, anomaly_type TEXT, acknowledged_at TEXT)")
+        conn.execute("INSERT INTO anomaly_events VALUES (datetime('now'), 'WARNING', 'traffic_surge', 'x')")
+        conn.commit()
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        conn.close()
+        for side in ("review.db-wal", "review.db-shm"):
+            (ro_dir / side).unlink(missing_ok=True)
+        os.chmod(ro_dir, 0o555)
+        self.addCleanup(os.chmod, ro_dir, 0o755)
+        self.assertEqual(
+            ss.collect_app_anomalies(db),
+            {"last_7_days": [{"severity": "WARNING", "type": "traffic_surge", "count": 1, "unacknowledged": 0}]},
+        )
+        self.assertEqual(sorted(p.name for p in ro_dir.iterdir()), ["review.db"])
+
 
 class WiringTest(unittest.TestCase):
     def test_path_unit_watches_the_request_file_and_starts_the_service(self):

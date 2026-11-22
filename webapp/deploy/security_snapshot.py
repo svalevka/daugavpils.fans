@@ -465,7 +465,12 @@ def collect_nginx_log(c: Collector) -> dict | None:
 def collect_app_anomalies(db_path: Path) -> dict | None:
     if not db_path.exists():
         return None
-    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=10)
+    # immutable=1: a plain read-only open of a WAL-mode database still
+    # has to create its -shm file next to it, which this service's
+    # read-only sandbox forbids ("unable to open database file"). The
+    # cost is that rows still only in the WAL can be missed - fine for a
+    # 7-day summary.
+    conn = sqlite3.connect(f"file:{db_path}?mode=ro&immutable=1", uri=True, timeout=10)
     try:
         rows = conn.execute(
             "SELECT severity, anomaly_type, COUNT(*), SUM(acknowledged_at IS NULL) FROM anomaly_events "

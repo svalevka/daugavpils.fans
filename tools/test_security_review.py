@@ -116,6 +116,24 @@ class EvaluateHostTest(unittest.TestCase):
         snap["file_modes"][1]["mode"] = "0644"
         self.assertIn("Secret file is readable by other users", titles(sr.evaluate_host(snap), sr.CRITICAL))
 
+    def test_stock_etc_shadow_permissions_are_not_a_finding(self):
+        snap = healthy_snapshot()
+        snap["file_modes"].append({"path": "/etc/shadow", "owner": "root", "group": "shadow", "mode": "0640", "kind": "file"})
+        self.assertEqual(titles(sr.evaluate_host(snap), sr.CRITICAL), [])
+
+    def test_world_readable_etc_shadow_is_critical(self):
+        snap = healthy_snapshot()
+        snap["file_modes"].append({"path": "/etc/shadow", "owner": "root", "group": "shadow", "mode": "0644", "kind": "file"})
+        self.assertIn("Secret file is readable by other users", titles(sr.evaluate_host(snap), sr.CRITICAL))
+
+    def test_same_service_on_ipv4_and_ipv6_is_reported_once(self):
+        snap = healthy_snapshot()
+        snap["listening"] += [
+            {"proto": "tcp", "addr": "0.0.0.0", "port": "631", "process": "cupsd"},
+            {"proto": "tcp", "addr": "[::]", "port": "631", "process": "cupsd"},
+        ]
+        self.assertEqual(len([t for t in titles(sr.evaluate_host(snap), sr.WARNING) if "cupsd" in t]), 1)
+
     def test_root_run_script_owned_by_non_root_is_critical(self):
         snap = healthy_snapshot()
         snap["file_modes"][2]["owner"] = "sergei"
