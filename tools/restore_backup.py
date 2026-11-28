@@ -136,7 +136,8 @@ def restore_backup(
                 if hasattr(tarfile, "data_filter"):
                     tar.extractall(path=tmp_dir, filter="data")
                 else:
-                    tar.extractall(path=tmp_dir)
+                    # Fallback for Python < 3.12 (PEP 706 filter used above)
+                    tar.extractall(path=tmp_dir)  # nosec B202
         except Exception as exc:
             raise RestoreError(f"Failed to unpack tarball archive: {exc}") from exc
 

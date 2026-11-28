@@ -5,4 +5,4 @@ requests==2.34.2
 gunicorn==26.2.0
 maxminddb==3.2.0
 yt-dlp[default]==2026.8.19
-Pillow==12.3.0
+Pillow==13.0.0
